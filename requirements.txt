@@ -49,3 +49,5 @@ zope.interface==5.2.0
 django-sass
 libsass
 opencv-python~=4.5.4.60
+dj-static
+static3

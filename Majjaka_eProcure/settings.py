@@ -28,7 +28,7 @@ SECRET_KEY = '-p^#04gmm3jl$93p3jx9rm+t1nj4$xl9b_#%192&e_usmw*&nr'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['www.majjaka.com', 'majjaka.com']
 
 # Application definition
 
@@ -202,6 +202,10 @@ DEFAULT_FROM_EMAIL = 'Hiranya-Garbha <support@hiranya-garbha.com>'
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'  # Path for static files
+STATIC_ROOT = 'staticfiles'
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+
+
 LOGIN_URL = '/'  # Login URL
 AUTH_USER_MODEL = 'eProc_Registration.UserData'  # Custom User Model for authentication
 SEARCH_FORM = " "  # To enable or disable Extended search form
