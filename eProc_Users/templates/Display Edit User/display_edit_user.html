@@ -1,0 +1,264 @@
+<!--Register page template-->
+{% extends 'root/base.html' %}
+{% load static %}
+
+{% block title %}  Majjaka eProcure - Employee Details (Employee Management) {% endblock %}
+
+{% block maincontent %}
+
+
+<div class="container-fluid">
+    <div class="hg_wrapper">
+        <div>
+            <div class="hg_head1">Employee Details</div>
+            <hr class="hg_heading_hrborder">
+        </div>
+
+        <div class="card card-margin">
+
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#user_basic_data_tab">Personal Information</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#user_org_data_tab">Organizational data</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#user_buisness_doc_tab">Business Document</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="tab-content">
+
+                <div id="user_basic_data_tab" class="tab-pane active p-3">
+                     <div id="save_error_div" class="alert alert-danger display-none" role="alert" ></div>
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{ reg_form.non_field_errors }}
+                        <div class="alert alert-success display-none" id="user_basic_update_success" role="alert"></div>
+
+                        <!--    Basic Data      -->
+                        <div class="card">
+                            <h5 class="card-header">Account Information</h5>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="form-group col-md">
+                                        <label>User Name</label><span class="hg_required"></span><br>
+                                        <input type="text" class="form-control" id="username" value="{{user_info.username}}" disabled>
+                                    </div>
+                                    <div class="form-group col-md">
+                                        <label>Employee Number</label><span class="hg_required"></span><br>
+                                        <input type="text" class="form-control" id="employee_id" value="{{user_info.employee_id}}" disabled>
+                                    </div>
+                                    
+                                    <div class="form-group col-md">
+                                        <label>User Type</label><span class="hg_required"></span><br>
+                                        <input type="text" class="form-control" id="user_type" value="{{user_info.user_type}}" disabled>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md">
+                                        <label>First Name</label><span class="hg_required"></span><br>
+                                        <input type="text" class="form-control hg_edit_display_mode" id="first_name" name="first_name" value="{{user_info.first_name}}" disabled>
+                                    </div>
+                                    
+                                    <div class="form-group col-md">
+                                        <label>Last Name</label><br>
+                                        <input type="text" class="form-control hg_edit_display_mode" id="last_name" value="{{user_info.last_name}}" disabled>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="form-group col-md">
+                                        <label> Currency</label><span class="hg_required"></span><br>
+                                        <select name="" id="currency_id" class="form-control hg_edit_display_mode" disabled>
+                                            <option value="{{user_info.currency_id}}">{{user_info.currency_id}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md">
+                                        <label>Language</label><span class="hg_required"></span><br>
+                                        <select name="" id="language_id" class="form-control hg_edit_display_mode" disabled>
+                                            <option value="{{user_info.language_id}}">{{user_info.language_id}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md">
+                                        <label> Time Zone</label><span class="hg_required"></span><br>
+                                        <select name="" id="time_zone" class="form-control hg_edit_display_mode" disabled>
+                                            <option value="{{user_info.time_zone}}">{{user_info.time_zone}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <br>
+                        <!--   contact information   -->
+                        <div class="card">
+                            <h5 class="card-header">Contact Information</h5>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="form-group col-md">
+                                        <label>E-mail</label><span class="hg_required"></span><br>
+                                        <input type="email" class="form-control" id="email" name="email" value="{{user_info.email}}" disabled>
+                                    </div>
+                                    
+                                    <div class="form-group col-md">
+                                        <label>Phone</label><span class="hg_required"></span><br>
+                                        <input type="text" class="form-control hg_edit_display_mode" id="phone_num" name="phone_num" value="{{user_info.phone_num}}" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <br>
+                        <!--   Addtional information   -->
+                        <div class="card">
+                            <h5 class="card-header">Extended Information</h5>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="form-group col-md-2">
+                                        <label>Date Format</label><span class="hg_required"></span><br>
+                                        <select name="" id="date_format" class="form-control hg_edit_display_mode" disabled>
+                                            <option value="{{user_info.date_format}}">{{user_info.date_format}}</option>
+                                        </select>
+    
+                                    </div>
+                                    
+                                    <div class="form-group col-md-2">
+                                        <label>Decimal Notation</label><span class="hg_required"></span><br>
+                                        <select name="" id="decimal_notation" class="form-control hg_edit_display_mode" disabled>
+                                            <option value="{{user_info.decimal_notation}}">{{user_info.decimal_notation}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group col-md-2">
+                                        <label>Login Attempts</label><br>
+                                        <input type="text" class="form-control" id="login_attempts" value="{{user_info.login_attempts}}" disabled><br>
+                                    </div>
+                                    
+                                    <div class="form-group col-md hg-mt-2rem" >
+                                        <label>Super User</label>&nbsp;&nbsp;
+                                        {% if user_info.is_superuser %}
+                                        <input type="checkbox" id="super_user" name="" value="" class="hg_edit_display_mode" checked disabled>
+                                        {% else %}
+                                        <input type="checkbox" id="super_user" name="" value="" class="hg_edit_display_mode" value="" disabled>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="form-group col-md hg-mt-2rem" >
+                                        <label>User Status</label>&nbsp;&nbsp;
+                                        {% if user_info.is_active %}
+                                        <input type="checkbox" name="" value="" checked disabled>
+                                        {% else %}
+                                        <input type="checkbox" name="" value="" disabled>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="form-group col-md hg-mt-2rem" >
+                                        <label>User Lock Status</label>&nbsp;&nbsp;
+                                        {% if user_info.user_locked %}
+                                        <input type="checkbox" id="user_locked" name="" value="" class="hg_edit_display_mode"
+                                            checked disabled>
+                                        {% else %}
+                                        <input type="checkbox" id="user_locked" name="" value="" class="hg_edit_display_mode"
+                                            disabled>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="form-group col-md hg-mt-2rem" >
+                                        <label>User Password Status</label>&nbsp;&nbsp;
+                                        {% if user_info.pwd_locked %}
+                                        <input type="checkbox" id="pwd_locked" name="" value="" class="hg_edit_display_mode"
+                                            checked disabled>
+                                        {% else %}
+                                        <input type="checkbox" id="pwd_locked" name="" value="" class="hg_edit_display_mode"
+                                            disabled>
+                                        {% endif %}
+                                    </div>
+                                </div>    
+                            </div> 
+                            
+                        </div>
+
+                        <br>
+                        <div class="d-flex justify-content-end">
+                            <div id="save_cancel_user_info_btn" class="display-none" >
+                                <button type="button" class="btn btn-primary" onclick="save_user_basic_info()"><i class="fas fa-save"></i> save</button>
+                                <button type="button" class="btn btn-primary" onclick="cancel_user_basic_info()"><i class="fas fa-times"></i> cancel</button>
+                            </div>
+                            
+                            <div id="edit_user_info_btn">
+                                <button type="button" class="btn btn-primary" onclick="edit_user_basic_info()"><i class="fas fa-pencil-alt"></i> edit</button>
+                            </div>
+                            
+                        </div>
+                        
+                        
+                    </form>
+                </div>
+
+                <div id="user_org_data_tab" class="tab-pane fade p-3">
+                    <h3>Organizational data</h3>
+                    <p>Organizational data.</p>
+                </div>
+
+                <div id="user_buisness_doc_tab" class="tab-pane fade p-3">
+                    <h3>Business Document</h3>
+                    <p>Business Document.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+</div>
+
+<div class="hg_spacer2"> &nbsp; </div>
+
+<script>
+
+    // Global variables - master data
+    var currency_list = {{ currency_id| safe}}
+    var currency_opt = ''
+    $.each(currency_list, function (i, value) {
+        currency_opt += '<option> ' + currency_list[i] + ' </option>'
+    });
+
+    var language_list = {{ language_list| safe}}
+    var language_opt = ''
+    $.each(language_list, function (i, value) {
+        language_opt += '<option> ' + language_list[i] + ' </option>'
+    });
+
+    var timezone_list = {{ time_zones| safe}}
+    var timezone_opt = ''
+    $.each(timezone_list, function (i, value) {
+        timezone_opt += '<option> ' + timezone_list[i] + ' </option>'
+    });
+
+    decimal_list = {{ decimal_list | safe }}
+    decimal_opt = ''
+    $.each(decimal_list, function (i, value) {
+        decimal_opt += '<option> ' + decimal_list[i] + ' </option>'
+    });
+
+    date_format_list = {{ date_format_list | safe }}
+    date_format_opt = ''
+    $.each(date_format_list, function (i, value) {
+        date_format_opt += '<option> ' + date_format_list[i] + ' </option>'
+    })
+
+    function ajax_update_user_basic_data(data) {
+        urlLink = "{% url 'eProc_Users:update_user_basic_details' %}";
+        AjaxCallAPIBasic(urlLink, data)
+    }
+
+</script>
+
+<script src="{% static 'scripts/display-edit-users.js'%}"></script>
+
+{% endblock %}

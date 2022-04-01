@@ -1,0 +1,61 @@
+<script>
+    //// Ajax call function for submitting formdata
+function FormAjaxCallAPI(urlLink,data){
+    console.log(urlLink)
+  {
+       jQuery.ajax({
+           async : false,
+           type: 'POST',
+           url: urlLink,
+           contentType: "application/json; charset=utf-8",
+           data: data,
+           success: function(result){
+               response = result;
+           },
+           error: function(xhr, resp, text) {
+           },
+			cache: false,
+			processData: false,
+			contentType: false,
+
+       });
+   }
+   return response;
+};
+
+
+function AjaxCallAPI(urlLink, data){
+   jQuery.ajax({
+       async : false,
+       type: 'POST',
+       url: urlLink,
+       dataType :'json',
+       data: JSON.stringify(data),
+       success: function(result){
+           response = result;
+       },
+       error: function(xhr, resp, text) {
+       },
+       cache: false,
+       processData: false,
+       contentType: false,
+   });
+   return response;
+};
+
+function AjaxCallAPIBasic(urlLink, data) {
+    jQuery.ajax({
+       async : false,
+       type: 'POST',
+       url: urlLink,
+       data: data,
+       success: function(result){
+           response = result;
+       },
+       error: function(xhr, resp, text) {
+       },
+   });
+   return response;
+}
+
+</script>

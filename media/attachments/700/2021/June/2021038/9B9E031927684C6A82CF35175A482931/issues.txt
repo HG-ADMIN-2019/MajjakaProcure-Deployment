@@ -1,0 +1,5 @@
+1) if no default maintained in org for transaction type and favourite SC (doc number)
+2) usnscpc based on language
+3) Total value is 0 when updating
+
+validate_product_category_id_with_purchaser

@@ -1,0 +1,216 @@
+{% extends 'root/base.html' %}
+{% load static %}
+{% block title %} Majjaka eProcure - Requisition {% endblock %}
+{% block maincontent %}
+
+<!-- Requisition form start -->
+<div class="container-fluid">
+    <div class="mep-form_wrapper">
+        <form method="POST" id="requisition_form">
+            <div>
+                <div class="d-flex justify-content-between" id="shopping_cart_heading">
+                    <h3>Purchase Requisition</h3>
+                    <div>
+                        <button class="btn btn-outline-primary" type="reset" value="Reset"><i class="fas fa-sync-alt"></i>
+                            &nbsp;reset</button>
+                        <button class="btn btn-primary" type="submit"><i class="fas fa-shopping-cart"
+                                title="Shopping Cart"></i> &nbsp;add to cart</button>
+                    </div>
+                </div>
+                <hr>
+                <p class="text-muted" id="p_tag_head">To create an online requisition, complete the fields below and place
+                    the requisition in the shopping cart.
+                    Be sure to fill in the form as accurately as possible as this will enable the purchasing department
+                    (operational purchasing) to better serve you
+                    with high quality purchasing. Note that fields marked with an * are mandatory. When you check out the
+                    shopping cart the requisition will be
+                    submitted to the purchasing department (operational purchasing).
+                </p>
+
+            </div>
+
+        
+            {% csrf_token %}
+
+            <div class="alert alert-warning display-none" role="alert" id="edit_message"></div>
+            <div class="alert alert-danger display-none" id="pr_errors" role="alert"></div>
+
+            <div class="card mt-4 card-shadow-1">
+                <div class="card-body">
+                    <h5 class="card-title">Which Product/Service Are You Looking For?</h5>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="id_prod_name">Product Name</label><span class="hg_required"></span>
+                            <input type="text" id="id_prod_name" class="form-control" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="id_prod_id">Product ID</label>
+                            <input type="number" id="id_prod_id" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="id_prod_desc">Product Description</label><span class="hg_required"></span>
+                            <textarea class="form-control" rows="5" id="id_prod_desc" required></textarea>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="choose_product_cat">Product Category</label><span class="hg_required"></span>
+                            <input type="text" placeholder="Please select product category" class="form-control"
+                                id="choose_product_cat">
+                        </div>
+                   
+                        <div class="form-group col-md-6">
+                            <label for="uom_req">Unit Of Measure</label><span class="hg_required"></span>
+                            <select class="form-control selectpicker" required data-live-search="true" id="uom_req">
+                                <option value="">Please select unit of measure</option>
+                                {% for uom in unit %}
+                                <option value="{{uom.uom_id}}">{{uom.uom_id}} - {{uom}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label for="id_prod_prz">Price (Approx)<span class="hg_required"></span></label>
+                                <input type="number" min="1" id="id_prod_prz" step="0.1" class="form-control" required>
+                            </div>
+                           
+                            <div class="form-group col-md-4">
+                                <label for="id_currency">Currency<span class="hg_required"></span></label>
+                                <select class="form-control selectpicker" required data-live-search="true" id="id_currency"
+                                    required>
+                                    <option value="">Please Select Currency</option>
+                                    {% for currencies in currency %}
+                                    <option value="{{currencies}}">{{currencies}} - {{currencies.description}} </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="id_quantity">Quantity<span class="hg_required"></span></label>
+                                <input type="number" min="1" id="id_quantity" class="form-control" required>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="card mt-3 card-shadow-1">
+                <div class="card-body">
+                    <h5 class="card-title">When Do You Need The Product/Service ?</h5>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="id_lead_time">Lead Time (Business Days)<span class="hg_required"></span></label>
+                            <input type="number" min="1" id="id_lead_time" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Requisition form end -->
+
+
+
+<!--Select Product category popup -->
+{% include 'Shopping_Cart/select_product_category_modal/select_product_category.html' %}
+<!-- end Select Product category popup-->
+
+<div class="modal fade" id="confirm_add_item" tabindex="-1" role="dialog" aria-labelledby="confirm_label"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirm_label">Confirm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Item added to cart successfully.
+                Do you wish to add another Item to the cart?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                    onclick="open_close_document_detail('NO')">no</button>
+                <button type="button" class="btn btn-primary" onclick="open_close_document_detail('YES')">yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'Doc_Details/add_item_confirmation_popup.html' %}
+{% include 'root/loader.html' %}
+
+<script>
+
+    // variable to decrypted store document number 
+    var document_number_decrypted = '{{document_number_decrypted}}';
+
+    $('#requisition_form').submit(function (e) {
+        e.preventDefault();
+        let item_name = document.getElementById("id_prod_name").value
+        let prod_desc = document.getElementById("id_prod_desc").value
+        let prod_id = document.getElementById("id_prod_id").value
+        let price = document.getElementById("id_prod_prz").value
+        let prod_cat = (document.getElementById("choose_product_cat").value).split(' - ')[0]
+        let currency = document.getElementById("id_currency").value
+        let unit = document.getElementById("uom_req").value
+        let lead_time = document.getElementById("id_lead_time").value
+        let quantity = document.getElementById("id_quantity").value
+
+        // PR form validations
+        is_valid = pr_form_validation(item_name, price, lead_time, quantity)
+        if (is_valid != true) {
+            document.getElementById('pr_errors').innerHTML = is_valid;
+            $('#pr_errors').show()
+            scroll_top();
+            return false;
+        } else {
+            $('#pr_errors').hide()
+        }
+
+        pr_url = '/add_item/update_or_create_item/' + document_number
+
+        $.ajax({
+            type: 'POST',
+            url: pr_url,
+            data: JSON.stringify({
+                description: item_name,
+                ext_product_id: prod_id,
+                price: price,
+                prod_cat: prod_cat,
+                currency: currency,
+                unit: unit,
+                lead_time: lead_time,
+                quantity: quantity,
+                call_off: 'PR'
+            }),
+            success: function (response) {
+                $('#requisition_form').trigger("reset");
+                if (!is_edit) {
+                    counter = document.getElementById('cart_counter').innerHTML
+                    $('#cart_counter').html(parseInt(counter) + 1)
+                    item_added_to_cart_success_popup();
+                } else {
+                    $('#confirm_add_item').modal('show')
+                }
+                $('#pr_errors').hide()
+                scroll_top()
+            },
+            error: function (response) {
+                document.getElementById('pr_errors').innerHTML = response.responseJSON.error;
+                $('#pr_errors').show()
+                scroll_top()
+            }
+        })
+    });
+
+
+</script>
+
+
+<script src="{% static 'scripts/purchase_requisition.js' %}"></script>
+{% endblock %}

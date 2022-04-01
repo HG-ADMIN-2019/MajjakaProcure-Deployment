@@ -1,0 +1,40 @@
+
+
+shop menu ui code refactoring-heading
+ui finalization-tab
+
+1.freetext redesign
+2.my orders page redesign
+3.product&services-free text 
+ product information
+ who is supplier 
+ what dou need
+ additional information
+
+backend-tab
+
+1.add to cart functionality in new product details page 
+2.replace old product details popup with new design of product details page
+3.diplay uom discription insted of uom id across of all pages
+4.repalce supplier id with supplier first name&last name with across all pages
+
+GENRIC
+
+5. for free text items display the respective image from free text config context       form 
+6.display pc function uin addition to product category number(unspc code)
+7.ensusre camelcase font implemnet across all pages
+8.hilighting of selected catregory in category tree structure.show the respective catagorys in the results
+9.remove checkbox option in first and second step of sc vizard
+10.in productdetails poupup price is not visibale
+11.fix the discrption length in scvizard so that rest of feilds in show in single    line
+12.rename add notes to nodes in action coloumn & add attacments to attachments
+
+13 remove silent po checkbox
+14. in sc 3rd step enable the shopingcart number as a hyperlink to the document  details step
+15.saved status value not shown in my orders page
+16.remove shop on behalf of in silentpo in sved shopping cart page
+17.remove display eform button in sc saved details page
+18.remove update and delete buttons on cart over view lavel and move it to item level in action coloumn.
+19.in sc saved page update the vizard image according to the status
+20.when dispay scs details page with stauses ordered,awating approval, deleted, purchser worklist in newlesy designed page(remove vizard image)
+ 

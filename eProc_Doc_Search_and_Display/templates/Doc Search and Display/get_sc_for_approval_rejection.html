@@ -1,0 +1,177 @@
+{% extends 'root/base.html' %}
+{% load static %}
+{% block title %} Majjaka eProcure - Home {% endblock %}
+
+{% block maincontent %}
+
+<!-- Home page start (SC-HP-US01: Upon successful logging in, user should be able to see the home page of the application) -->
+
+<div class="container-fluid">
+    <div class="mep-form_wrapper">
+
+        <div class="d-flex justify-content-between mb-3">
+            <h3>My Approvals</h3>
+        </div>
+
+        <div class="card card-shadow-1">
+            <div class="card-body">
+
+                <!--Search form goes here--> 
+                <form method="POST" action="">
+                    {% csrf_token %}
+
+                    <div class="row">
+                        <div class="col-md">
+                            <label>Select Document Type: </label>
+                            {{ search_approval.document_type }}
+
+                        </div>
+                        <div class="col-md">
+                            <label>Document Number:</label>
+                            {{ search_approval.document_number }}
+                        </div>
+                        <div class="col-md">
+                            <label>Select Time Frame:</label>
+                            {{ search_approval.time_frame }}
+                        </div>
+                        <div class="col-md">
+                            <label>Cart Name:</label>
+                            {{ search_approval.cart_name }}
+                        </div>
+                        <div class="col-md search_docs">
+                            <label>Status:</label>
+                            <select name="status" id="status" class="multiple_select form-control" multiple data-selected-text-format="count" title="Select..">
+                                <option value="APPROVED">Approved</option>
+                                <option value="REJECTED">Rejected</option>
+                                <option value="AWAITING_APPROVAL">Awaiting Approval</option>
+                            </select>
+                        </div>
+                    </div>
+                    <br>
+                    <div>
+                        <button class="btn btn-outline-primary" type="reset" value="Reset"><i class="fas fa-sync-alt"></i> &nbsp;reset</button>
+                        <button class="btn btn-primary" type="submit" title="Please click to get the search details!"><i class="fas fa-search"></i> &nbsp;search </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <br>
+        <div>
+            <div class="row">
+                {% for header_app,encrypted_guid in zipped_content %}
+                <div class="col-md-4">
+                    <div class="card mb-4 box-shadow manager-approval-card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <a href="{% url 'eProc_Doc_Details:my_order_doc_details' sc_completion_flag inp_doc_type encrypted_guid 'display' 'approvals'  %}" class="approval-cart-number" target="_blank">{{header_app.3}}</a>
+                                   <!-- <span style="font-size: 2rem;">{{header_app.3}}</span> -->
+                                   <div class="text-muted"> <span class="font-italic">Created on: </span>{{header_app.1}}</div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col">
+                                    <span class="approval-card-label">Approve cart number <span class="imp-text">{{header_app.3}}</span> by<span class="font-italic text-capitalize imp-text"> {{header_app.7}}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="row no-gutters">
+                                <div class="col-sm-3">
+                                    <span class="text-muted approval-card-label">Cart Name: </span> 
+                                </div>
+                                <div class="col-sm-9">
+                                    <span class="approval-card-label">{{header_app.2}}</span>
+                                </div>
+                            </div>
+                            <div class="row no-gutters">
+                                <div class="col-sm-3">
+                                    <span class="text-muted approval-card-label">Status: </span> 
+                                </div>
+                                <div class="col-sm-9">
+                                    {% if header_app.6 == 'AWAITING_APPROVAL' %}
+                                    <span  class="approval-card-label">Awaiting Approval</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <br>
+                        
+                            <div>
+                                <button type="button" class="btn_approval btn" onclick="approver_note(this.id);" id="approver_note-{{header_app.0}}"><i class="far fa-sticky-note"></i> note </button>
+                                <button type="button"  class="btn_approval btn" onclick=" window.open('{% url 'eProc_Chat:room' 'initiate' 'INQUIRED' header_app.3 request.user.client %}','_blank')" ><i class="fas fa-info"></i> inquire </button>
+                            </div>
+                            
+                            <div  class="total-value-section">
+                                <div>
+                                    <span class="text-muted">Total Value. </span><span class="total-value-cost"> {{header_app.4}} {{header_app.5}}</span>
+                                </div>
+                                
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col mb-1">
+                                    <button type="button" onclick="approve_status(this);" class="btn btn-success btn-lg btn-block" id="APPROVER_APPROVED-{{header_app.0}}-{{header_app.3}}" > Approve</button>
+                                </div>
+                                <div class="col mb-1">
+                                    <button type="button" onclick="approve_status(this);" class="btn btn-danger btn-lg btn-block" id="APPROVER_REJECTED-{{header_app.0}}-{{header_app.3}}"> Reject</button>
+                                </div>   
+                            </div>
+                            
+                        </div>
+                    </div>
+    
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+</div>
+<div class="modal fade" id="approver_note_modal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Approver Note</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div id="approval_note">
+
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- Home page end -->
+
+
+<script src="{% static 'scripts/sc_approval_rejection.js' %}"></script>
+<script>
+
+    function ajax_approve_status(data) {
+        urlLink = "{% url 'eProc_Workflow:save_appr_status' %}";
+        let status = AjaxCallAPI(urlLink, data);
+        return status;
+    }
+
+    function ajax_get_approver_note(data) {
+        urlLink = "{% url 'eProc_Doc_Search_and_Display:get_sc_for_approval' %}";
+        let status = AjaxCallAPIBasic(urlLink, data);
+        return status;
+    }
+
+</script>
+
+{% endblock %}

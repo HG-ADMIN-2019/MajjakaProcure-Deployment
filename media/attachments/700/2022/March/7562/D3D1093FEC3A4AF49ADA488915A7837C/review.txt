@@ -1,0 +1,27 @@
+style="height:100%;" purchase_settings.html
+
+<div id="edit_button" style="display: none; margin: 2rem 2rem 2rem 0; text-align: right;"> form_fields.html
+hg_required
+
+<td><i style="color: #F0B64D;" class="fas fa-trash-alt" title="Delete Form"onclick="get_form_id_to_delete(this)"></i></td>-display_available_forms.html
+
+form ID in form builder blue color
+
+ <div class="card mb-4" style="margin-bottom: 30px;" id="supplier_det_div" style="display:none;"> error in free_text.html
+
+.multiple_select button in get_sc_approval_rejection
+
+
+py manage.py sass eProc_Basic\static\styles\scss\main.scss eProc_Basic\static\styles\css\main.css --watch
+
+py manage.py sass eProc_Chat\static\styles\scss\chat-room-main.scss eProc_Chat\static\styles\css\chat-room-main.css --watch
+
+/////////////////////////////////////////////////////////////////
+
+date 23-07-2021
+3. Login screen errors messages issue
+6. sc 2nd step, my order doc detail order button. 
+
+date 09-08-2021
+1. Add to cart not working in popup
+

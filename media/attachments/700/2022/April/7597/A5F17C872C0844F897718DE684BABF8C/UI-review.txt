@@ -1,0 +1,35 @@
+Limit order page 
+1. Warning message: limit order item can be added only if the shopping cart is empty.
+
+My orders page
+1. view info-graphics in cards about my orders, sc, 
+
+Move personal settings to navbar user dropdown 
+
+
+Product detail pop up issues
+product category not showing
+
+Product detail page issues
+product category not showing
+
+SC 2nd step
+Shopping cart - Saved - 
+Wizard header image: review order 
+Wizrard header texts: review it
+
+
+{% if hdr_det.0.status == 'SAVED' %}
+<div class="sc-status-header">
+    <div class="sc-status-page-title">
+        <h5 id="shopping_cart_mode">Display Shopping Cart</h5>
+        <p class="hg_subtext_color" id="p_tag_head">Please check your shopping cart details before you send it for approval.</p>
+    </div>
+
+    <div class="sc-status-img-container">
+        <img src="{% static 'images/Status-bar2.png'%}" class="sc-status-img" id="status_bar">
+
+    </div>
+    
+</div>
+{% endif %}

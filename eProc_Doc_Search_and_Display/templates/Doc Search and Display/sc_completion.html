@@ -1,0 +1,100 @@
+{% extends 'root/base.html' %}
+{% load static %}
+
+{% block title %} Majjaka eProcure -Purchaser Cockpit {% endblock %}
+{% block maincontent %}
+
+<div class="container-fluid">
+
+    <div class="mep-form_wrapper">
+        <div class="d-flex justify-content-between mb-3">
+            <h3>Shopping Assist</h3>
+        </div>
+
+        <!--Search form goes here-->
+        <div class="card card-shadow-1  mb-3">
+            <div class="card-body">
+                <form method="POST" action="{% url 'eProc_Doc_Search_and_Display:sc_completion_doc_search' %}">
+                    {% csrf_token %}
+    
+                    <div class="row">
+                        <div class="col-md">
+                            <label>Shopping Cart Name: </label>
+                            <input type="text" class="form-control" name="description">
+                        </div>
+                        <div class="col-md">
+                            <label>Shopping Cart Number:</label>
+                            <input type="text" class="form-control" name="doc_number" id="doc_number">
+                        </div>
+    
+                        <div class="col-md">
+                            <label>Created By:</label>
+                            <input type="text" class="form-control" name="changed_by">
+                        </div>
+    
+                        <div class="col-md">
+                            <label>Select Time Frame:</label>
+                            <select name="created_at" class="multiple_select form-control" multiple>
+                                <option value="Today">Today</option>
+                                <option value="7">Last 7 days</option>
+                                <option value="30">Last 30 days</option>
+                                <option value="90">Last 90 days</option>
+                            </select>
+                        </div>
+                    </div>
+    
+                    <br/>
+    
+                    <div>
+                        <button class="btn btn-outline-primary" type="reset" value="Reset"><i class="fas fa-sync-alt"></i> &nbsp;reset</button>
+                        <button class="btn btn-primary" type="submit" title="Please click to get the search details!" ><i class="fas fa-search"></i> &nbsp;search </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {% if sc_header_details %}
+        <table class="table_sort_filter_pagination sc_completion_table">
+            <thead>
+                <tr>
+                    <td>
+                        <div class="row h6 text-muted p-2" >
+                            <div class="col">Cart Name</div>
+                            <div class="col">SC Number</div>
+                            <div class="col">Total Value</div>
+                            <div class="col">Created On</div>
+                            <div class="col">Created By</div>
+                        </div>
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for hdr,encrypted_guid in sc_header_details %}
+                <tr>
+                    <td class="pb-2">
+                        <div class="card sc_completion_card_list">
+                            <div class="card-body">
+                                <div class="row h6">
+                                    <div class="col"><a href="{% url 'eProc_Doc_Details:doc_details' sc_completion_flag doc_type encrypted_guid 'display' 'sc_completion'  %}" target="_blank">{{ hdr.description }}</a></div>
+                                    <div class="col"><a href="{% url 'eProc_Doc_Details:doc_details' sc_completion_flag doc_type encrypted_guid 'display' 'sc_completion'  %}" target="_blank">{{ hdr.doc_number }}</a></div>
+                                    <div class="col">{{hdr.total_value}} {{ hdr.currency }}</div>
+                                    <div class="col">{{hdr.created_at}}</div>
+                                    <div class="col">{{hdr.first_name}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}   
+      
+    </div>
+
+    
+</div>
+
+<script src="{% static 'scripts/sc_completion_search.js' %}"></script>
+
+{% endblock %}

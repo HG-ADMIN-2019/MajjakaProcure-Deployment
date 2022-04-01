@@ -1,0 +1,9 @@
+from django.urls import path
+from . import views
+
+app_name = 'eProc_Purchaser_Cockpit'
+
+urlpatterns = [
+    path('incomplete_form/<str:guid>', views.incomplete_form, name='incomplete_form'),
+    path('sc_item_field_filter/', views.sc_item_field_filter, name='sc_item_field_filter'),
+]

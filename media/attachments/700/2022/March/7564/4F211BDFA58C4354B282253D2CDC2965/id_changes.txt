@@ -1,0 +1,17 @@
+1. Add button = id_add_data
+2. Upload data button = id_upload_redirect_data
+3. Edit button = id_edit_data
+4. Delete button = id_delete_data
+5. Copy button = id_copy_data
+6. Update button = id_update_data
+7. Cancel button = id_cancel_data
+8. basic table body checbox class = class_select_checkbox
+
+
+Doubt on design for Product Categories
+Transaction type duplicate folder removal doubt
+
+
+tcw60 -  1 or 2 columns
+tcw80 - 3-4 columns
+'blank' - 4> columns

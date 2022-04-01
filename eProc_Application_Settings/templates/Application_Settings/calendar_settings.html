@@ -1,0 +1,493 @@
+{% extends 'root/base.html' %}
+{% load static %}
+{% block title %} Majjaka eProcure - Calendar (Application Settings) {% endblock %}
+{% block maincontent %}
+
+<!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha512-mSYUmp1HYZDFaVKK//63EcZq4iFWFjxSL+Z3T/aCt4IO9Cejm03q3NKKYN6pFQzY0SBOr8h+eCIAZHPXcpZaNw==" crossorigin="anonymous" referrerpolicy="no-referrer" /> -->
+
+
+<div class="container-fluid">
+    <div class="configuration-table_wrapper">
+
+        <div class="elements-space-between">
+            <h3>Maintain Calendars</h3>
+            <div>
+                <button type="button" id="id_add_data" value="ADD" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
+                    <i class="fa fa-plus" title="Add Country"></i> add calendar
+                </button>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="configuration-table_section">
+            <div id="err_msg_app_settings"> </div>
+            <div id="err_msg_app_settings_t" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
+
+            <div class="table-container tcw-80">
+
+                <div class="edit-button-section mb-4">
+                    <button id="id_edit_data" class="btn btn-secondary btn-sm" onclick="onclick_edit_button()">
+                        <i class="fas fa-edit" id="edit" title="Edit"></i> edit
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm" id="id_delete_data" value="calendar_delete" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
+                        <i class="fa fa-trash" title="Delete"></i> delete
+                    </button>
+
+                    <button class="btn btn-primary btn-sm" id="id_update_data" style="display:none;" value="calendar_update" type="button" onclick="onclick_update_button()">
+                        <i class="far fa-edit" title="Update"></i> update
+                    </button>
+                    <button class="btn btn-secondary btn-sm" id="id_cancel_data" style="display:none;" type="button" onclick="display_basic_db_data()">
+                        <i class="fas fa-times" title="Cancel"></i> cancel
+                    </button>
+                </div>
+
+                <!--   display basic calendar settings table-->
+                <table id="display_basic_table" class="class_basic_calendar_table table table-bordered custom-table">
+                    <thead id="id_calendar_table_header">
+                    <tr>
+                        <th id="hg_select_checkbox" hidden>
+                            <div id="id_check_all" style="display:none;">
+                                <input type="checkbox" onchange="checkAll(this)" name="chk[]">
+                            </div>
+                        </th>
+                        <th>Calendar Number</th>
+                        <th>Description</th>
+                        <th>Country</th>
+                        <th>Year</th>
+                        <th>Working Days</th>
+                        <th hidden>guid</th>
+                    </tr>
+                    </thead>
+                    <tbody id="id_calendar_tbody">
+                    {% for calendar in calendar_data %}
+                    <tr>
+                        <td class="class_select_checkbox" hidden><input type="checkbox" class="checkbox_check" onclick="valueChanged()" required></td>
+                        <td>{{calendar.calender_id}}</td>
+                        <td>{{calendar.description}}</td>
+                        <td>{{calendar.country_desc}}</td>
+                        <td>{{calendar.year}}</td>
+                        <td>
+                                {% for ct in calendar.wday_array %}
+                                <span class="badge badge-primary">{{ct}}</span>
+                                {% endfor %}
+                        </td>
+                        <td hidden>{{calendar.calender_config_guid}}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <!--end of display basic country table-->
+
+            </div>
+
+        </div>
+    </div>
+
+    <!--modal popup for Add,copy,update and upload-->
+    <div class="modal fade" id="myModal" style="overflow:auto;">
+        <div class="modal-dialog modal-dialog-centered modal-xl" >
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title"> Maintain Calendar</h5>
+                    <button type="button" class="close remove_upload_data" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body scrollbox">
+                    <div id="id_del_add_button" class="mb-4">
+                        <button type="button" class="btn btn-primary" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row</button>
+                       <button class="btn btn-outline-danger" id="deleteBtn" >
+                            <i class="fa fa-trash"></i> delete
+
+                        </button>
+                    </div>
+
+                    <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
+                    <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
+                    <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
+                        <p id="id_error_msg_calendar_code" ></p>
+                        <p id="id_error_msg_calendar_name" ></p>
+                        <p id="id_error_msg_calendar_length" ></p>
+                    </div>
+                    <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
+                    <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
+                    <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
+
+                    <table class="class_popup_table table table-bordered mt-2" id="id_popup_table" >
+                        <thead>
+                        <tr>
+                            <th id="header_select">Select</th>
+                            <th id="calenderid" hidden>calendar Id</th>
+                            <th>Description</th>
+                            <th>Country</th>
+                            <th>Year</th>
+                            <th>Working Days</th>
+                            <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
+                            <th hidden></th>
+                        </tr>
+                        </thead>
+                        <tbody id="id_popup_tbody">
+
+                        </tbody>
+                    </table>
+                    </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!--end of modal popup for Add,copy,update and upload-->
+
+<!-- modal popup to upload the csv file; save confirmation popup; delete confirmation popup -->
+    {% include 'configuration_common_pop_up.html' %}
+
+
+    <div>
+        {% if messages %}
+        {% for message in messages %}
+        {% if message.tags == 'success' %}
+        <div style="color: green; ">{{ message }}</div>
+        {% endif %}
+        {% if message.tags == 'error' %}
+        <div style="color: red; ">{{ message }}</div>
+        {% endif %}
+        {% if message.tags == 'info' %}
+        <div style="color: Black bold"><b>{{ message }}</b> </div>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+    </div>
+</div>
+<script>
+    var rendered_calendar_data = {{calendar_data|safe}};
+
+    var render_country_data = {{country_list|safe}};
+    var calendar_data_array = {}
+    var main_table_calendar_value =[];
+    var calendar = '';
+    var edit_basic_data ='';
+    var calendar_data = new Array();
+    var GLOBAL_ACTION='';
+    var no_duplicate_entries = 'Y'
+    var Tablename = uiConstants["CONST_TABLENAME_CALENDERCONFIG"]
+    var appname = uiConstants["CONST_APPNAME01"]
+    var db_header_data = uiConstants["CONST_HEADER_DATA_COUNTRY"]
+
+    var workingdays_dropdown = '';
+    workingdays_dropdown = '<option value="1">Sunday</option> <option value="2">Monday</option> <option value="3">Tuesday</option> <option value="4">Wednesday</option> <option value="5">Thursday</option> <option value="6">Friday</option> <option value="7">Saturday</option>';
+
+    var working_days_values = [];
+    var wday_array = [];
+    $.each(rendered_calendar_data, function (i, item) {
+        working_days_values = []
+        wday_array = item.working_days.split(",");
+        for(j=0; j<wday_array.length; j++)
+        {
+            working_days_values[j] = get_days(wday_array[j]);
+         }
+     });
+
+    //**************************************
+    //onclick of add button display myModal popup and set GLOBAL_ACTION button value
+    function onclick_add_button(button){
+		$("#error_msg_id").css("display", "none")
+    	$( "#header_select").prop( "hidden", false );
+    	$("#calenderid").prop("hidden", true);
+        GLOBAL_ACTION=button.value
+        $("#id_popup_tbody").empty();
+
+         $('#id_popup_table').DataTable().destroy();
+         $("#id_popup_tbody").empty();
+        $('#myModal').modal('show');
+
+        basic_add_new_html = '<tr> <td><input type="checkbox"> </td>'+
+         '<td hidden><input class="form-control" type="text"  pattern="[A-Z]" maxlength="10"  onkeypress="return /[A-Z 0-9]/i.test(event.key)" name="calender_id" style="text-transform:uppercase;" required></td>'+
+         '<td> <input class="form-control" type="text" name="description" onkeypress="return /[A-Z 0-9]/i.test(event.key)" style="text-transform:uppercase;" > </td>'+
+         '<td><select id="country" class="input form-control" type="text" name="country"> {% for country in country_list %} <option value="{{country.country_code}}">{{country.country_name}}</option> {% endfor %} </select> </td>'+
+         '<td> <input class="form-control yearPicker" type="text" maxlength="4"  name="year"> </td>'+
+         '<td style="max-width: 100px;"> <select type="text" class="form-control multiple_select working_days" type="text" name="working_days"  multiple  title="Select.." >'+
+          '<option value="1">Sunday</option><option value="2">Monday</option><option value="3">Tuesday</option><option value="4">Wednesday</option><option value="5">Thursday</option><option value="6">Friday</option><option value="7">Saturday</option></select>'+
+          '</td>'+
+          '<td class="class_del_checkbox" hidden> <input type="checkbox"> </td>'+
+          '<td input type="text" id="calendar_config_guid" hidden></td></tr>';
+
+        $('#id_popup_tbody').append(basic_add_new_html);
+        DatePicker();
+        MultipleSelect();
+        $("#id_del_ind_checkbox").prop( "hidden", true );
+        document.getElementById("id_del_add_button").style.display = "block";
+        $("#save_id").prop("hidden", false);
+
+    }
+
+    //**********************************************************
+    function onclick_copy_update_button(data) {
+        $("#error_msg_id").css("display", "none")
+        $("#id_popup_tbody").empty();
+        $('#display_basic_table').DataTable().destroy();
+        //Reference the Table.
+        var grid = document.getElementById("display_basic_table");
+
+        //Reference the CheckBoxes in Table.
+        var checkBoxes = grid.getElementsByTagName("INPUT");
+        var edit_basic_data = "";
+        var dropdown_values = [];
+        var unique_input = '';
+        //Loop through the CheckBoxes.
+        for (var i = 1; i < checkBoxes.length; i++) {
+            if (checkBoxes[i].checked) {
+                var row = checkBoxes[i].parentNode.parentNode;
+                if(GLOBAL_ACTION == "UPDATE"){
+                    $("#calenderid").prop("hidden", false);
+                    unique_input = '<input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="calender_id" onkeypress="return /[a-z 0-9]/i.test(event.key)" maxlength="10" style="text-transform:uppercase" disabled>'
+
+                    edit_basic_data += '<tr><td hidden><input type="checkbox" required></td>'+
+                     '<td>'+unique_input+'</td>'+
+                      '<td> <input value="' + row.cells[2].innerHTML + '" class="form-control" type="text" name="description" onkeypress="return /[a-z 0-9]/i.test(event.key)"> </td>'+
+                      '<td> <select id="country" class="input form-control" type="text" name="country"  value="' + row.cells[3].innerHTML + '"> {% for country in country_list %} <option value="{{country.country_code}}">{{country.country_name}} </option> {% endfor %} </select> </td>'+
+                      '<td> <input value="' + row.cells[4].innerHTML + '" class="form-control yearPicker" type="text" maxlength="4"   name="year"> </td>'+
+                      '<td> <select id="working_days"  class="form-control multiple_select working_days" type="text" name="working_days"  multiple  title="Select.." >'+ workingdays_dropdown +'</select> </td>'+
+                      '<td class="class_del_checkbox" hidden> <input type="checkbox" > </td>'+
+                      '<td hidden><input type="text" id="calendar_config_guid" value="' + row.cells[6].innerHTML + '"></td></tr>';
+                    $("#header_select").prop("hidden", true);
+                }
+                var wdays_value = row.cells[5].innerText;
+                var wday_copy_values = [];
+                wday_copy_values = wdays_value.split(" ");
+                dropdown_values.push(wday_copy_values)
+                console.log(wday_copy_values);
+            }
+        }
+        $('#id_popup_tbody').append(edit_basic_data);
+         var i =0;
+         var day_val = '';
+        $("#id_popup_table TBODY TR").each(function() {
+        var row = $(this);
+         var workingdays_value = dropdown_values[i][0]
+          for(k=0;k<wday_copy_values.length;k++){
+          day_val = get_values(wday_copy_values[k]);
+        $(row.find("TD").eq(5).find("select option[value="+ day_val +"]")).attr('selected','selected');
+        }
+        i++;
+    });
+
+        DatePicker();
+        MultipleSelect();
+        $("#id_del_ind_checkbox").prop("hidden", true);
+        $('#myModal').modal('show');
+        table_sort_filter('id_popup_table');
+        table_sort_filter('display_basic_table');
+    }
+
+
+    //**********************
+    // validate and save for add,copy,update and upload data
+    function popup_save_data() {
+		$('#success_msg_id').empty();
+        $('#id_popup_table').DataTable().destroy();
+        var Tabledata = { "Dbl_clck_tbl_id": 'CalenderConfig' };
+        var calendar_data = new Array();
+        var main_table_low_value = [];
+
+        $('#display_basic_table').DataTable().destroy();
+        $("#display_basic_table TBODY TR").each(function () {
+            var row = $(this);
+            var main_attribute = {};
+            main_attribute.calender_id = row.find("TD").eq(1).html();
+            main_table_low_value.push(main_attribute.calender_id);
+        });
+        table_sort_filter('display_basic_table');
+                var add_basic_data = '';
+                var calendar_data_array = [];
+
+                calendar_data_array = calendarconfig_data;
+                $('#id_save_confirm_popup').modal('hide');
+				data = {'data':calendar_data_array,'table_name':'CalenderConfig','action':GLOBAL_ACTION}
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                success: function (Response) {
+                    rendered_calendar_data = Response[0];
+                    display_basic_db_data();
+                    $('#myModal').modal('hide');
+                    $('#id_error_msg').text(messageConstants["JMSG001"]);
+                    $('#success_msg_id').text(Response[1]);
+                    $("#err_msg_app_settings_t").prop("hidden", false)
+                    table_sort_filter('id_popup_table');
+                    setTimeout(function() {
+                        $("#err_msg_app_settings_t").prop("hidden", true);
+                    }, 5000)
+                    table_sort_filter('id_popup_table');
+                    DatePicker();
+                    MultipleSelect();
+                }
+            });
+        }
+
+    //*******************************************************
+    // on click add icon display the row in to add the new entries
+    function add_popup_row() {
+        basic_add_new_html = '';
+        var display_db_data = '';
+        $('#id_popup_table').DataTable().destroy();
+        $(".modal").on("hidden.bs.modal", function () {
+            $("#id_error_msg").html("");
+        });
+        basic_add_new_html ='<tr> <td> <input type="checkbox" required> </td>'+
+        '<td hidden><input class="form-control" type="text"  maxlength="10" onkeypress="return /[A-Z 0-9]/i.test(event.key)" name="calender_id" style="text-transform:uppercase" required></td>'+
+        '<td> <input class="form-control" type="text" name="description" onkeypress="return /[a-z 0-9]/i.test(event.key)" style="text-transform:uppercase"> </td>'+
+        '<td> <select id="country" class="input form-control" type="text" name="country"> {% for country in country_list %} <option value={{country.country_code}}>{{country.country_name}}</option> {% endfor %} </select> </td>'+
+        '<td> <input class="form-control yearPicker" type="text" maxlength="4"  name="year"> </td>'+
+        '<td> <select type="text" type="text" name="working_days"  class="form-control multiple_select working_days" multiple  title="Select.." >'+
+        '<option value="1">Sunday</option><option value="2">Monday</option><option value="3">Tuesday</option><option value="4">Wednesday</option><option value="5">Thursday</option><option value="6">Friday</option><option value="7">Saturday</option></select>  </td>'+
+        '<td class="class_del_checkbox" hidden> <input type="checkbox"> </td>'+
+        '<td hidden><input type="text" id="calendar_config_guid"></td></tr>';
+        $('#id_popup_tbody').append(basic_add_new_html);
+		DatePicker();
+        MultipleSelect();
+        if (GLOBAL_ACTION == "calendar_upload") {
+            $(".class_del_checkbox").prop("hidden", false);
+        }
+        table_sort_filter_popup('id_popup_table');
+    }
+
+
+    //***************************
+    //delete the selected row in db................
+    var main_table_calendar_checked = [];
+    function main_table_delete() {
+		 $('#success_msg_id').empty();
+    	 GLOBAL_ACTION = 'DELETE'
+    	 main_table_country_checked = [];
+        var Tabledata = { "Dbl_clck_tbl_id": 'CalenderConfig' };
+        $('#display_basic_table').DataTable().destroy();
+        $("#display_basic_table TBODY TR").each(function () {
+            var row = $(this);
+            var calendar_arr_obj = {};
+            calendar_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+            if(calendar_arr_obj.del_ind){
+                var cntry_name;
+                var cntry_code;
+                cntry_name = row.find("TD").eq(3).html();
+                for (i = 0; i < render_country_data.length; i++) {
+                    if (cntry_name == render_country_data[i].country_name)
+                        cntry_code = render_country_data[i].country_code;
+
+                }
+                calendar_arr_obj.calender_id = row.find("TD").eq(1).html();
+                calendar_arr_obj.country = cntry_code;
+                calendar_arr_obj.description = row.find("TD").eq(2).html();
+                calendar_arr_obj.year = row.find("TD").eq(4).html();
+                calendar_arr_obj.working_days = row.find("TD").eq(5).html();
+                calendar_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+                calendar_arr_obj.calendar_config_guid = row.find("TD").eq(6).html();
+                main_table_calendar_checked.push(calendar_arr_obj);
+            }
+        });
+        $('#id_delete_confirm_popup').modal('hide');
+		data = {'data':main_table_calendar_checked,'table_name':'CalenderConfig','action':GLOBAL_ACTION}
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+            data:
+               JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (Response) {
+                rendered_calendar_data = Response[0];
+                display_basic_db_data();
+				 $('#success_msg_id').text(Response[1]);
+                $("#err_msg_app_settings_t").prop("hidden", false);
+               // document.getElementById("err_msg_app_settings_t").innerHTML = Response[2];
+                setTimeout(function () { $("#err_msg_app_settings_t").prop("hidden", true); }, 5000);
+            }
+        });
+    }
+
+function DatePicker() {
+    $(".yearPicker").datepicker({
+         format: "yyyy",
+        viewMode: "years",
+        minViewMode: "years",
+        autoclose:true
+    });
+}
+
+function MultipleSelect() {
+     $('.working_days').selectpicker();
+    $('.multiple_select').selectpicker();
+
+
+}
+function get_days(workingday){
+        var day;
+        switch (workingday) {
+                    case '1':
+                            day = "Sun";
+                            break;
+                    case '2':
+                            day = "Mon";
+                            break;
+                    case '3':
+                            day = "Tue";
+                            break;
+                    case '4':
+                            day = "Wed";
+                            break;
+                    case '5':
+                            day = "Thur";
+                            break;
+                    case '6':
+                            day = "Fri";
+                            break;
+                    case '7':
+                            day = "Sat";
+                    }
+        return day;
+}
+
+function get_values(short_day){
+        var day;
+        switch (short_day) {
+                    case 'Sun':
+                            day = "1";
+                            break;
+                    case 'Mon':
+                            day = "2";
+                            break;
+                    case 'Tue':
+                            day = "3";
+                            break;
+                    case 'Wed':
+                            day = "4";
+                            break;
+                    case 'Thur':
+                            day = "5";
+                            break;
+                    case 'Fri':
+                            day = "6";
+                            break;
+                    case 'Sat':
+                            day = "7";
+                    }
+        return day;
+}
+
+</script>
+
+<script src="{% static 'scripts/calender_settings.js' %}"></script>
+
+{% endblock %}

@@ -1,0 +1,14 @@
+[{field_name: 'color', field_type: 'VARIANT_BASE_PRICING', variant_data: Array(1)}
+1: {field_name: 'cover', field_type: 'VARIANT_ADDITIONAL_PRICING', variant_data: Array(1)}
+2: {field_name: 'Colors', field_type: 'VARIANT_WITHOUT_PRICING', variant_data: Array(2)}]
+
+[{input_type: 'single_line_text', input_label: 'Single Line Text', required: true, allow_special_char: false}
+ {input_type: 'textarea', input_label: 'Multiline Text', required: true, allow_special_char: false}
+ {input_type: 'number', input_label: 'Numbers', required: true, allow_special_char: false}
+ {input_type: 'dropdown', input_label: 'Colors', required: true, allow_special_char: false, dropdown_options: Array(2), …}
+ {input_type: 'dropdown', input_label: 'Country', required: false, allow_special_char: false, dropdown_options: Array(25), …}
+ {input_type: 'checkbox', input_label: 'Checkbox', required: true, allow_special_char: false}]
+
+input_label = field_name
+input_type = field_data_type
+

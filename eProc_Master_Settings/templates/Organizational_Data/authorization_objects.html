@@ -1,0 +1,308 @@
+{% extends 'root/base.html' %}
+{% load static %}
+{% block title %} Majjaka eProcure - Authorization Objects (Application Settings) {% endblock %}
+{% block maincontent %}
+
+
+
+
+<div class="container-fluid">
+    <div class="configuration-table_wrapper">
+
+        <div class="elements-space-between">
+            <h3>Maintain Authorization Objects </h3>
+            <div>
+                <button class="btn btn-primary" type="button" id="id_add_data" value="ADD"  data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
+                    <i class="fa fa-plus"></i> add authorization object
+                </button>
+            </div>
+        </div>
+
+        <hr>
+        
+        <div class="configuration-table_section">
+            <div id="err_msg_app_settings"> </div>
+            <div id="err_msg_app_settings_t" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
+
+            <div class="table-container">
+                <div class="edit-button-section mb-4">
+                    <button class="btn btn-secondary btn-sm" id="id_edit_data" title="Edit" onclick="onclick_edit_button()">
+                        <i class="fas fa-edit"></i> edit
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm" id="id_delete_data" title= "DELETE" value="auth_obj_delete" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
+                        <i class="fa fa-trash"></i> delete
+                    </button>
+<!--                    <button class="btn btn-primary btn-sm" title="Copy"  id="id_copy_data"  title="Copy" style="display:none;" value="auth_obj_copy" type="button" onclick="onclick_copy_button()">-->
+<!--                        <i class="fa fa-copy"></i> copy-->
+<!--                    </button>-->
+                    <button class="btn btn-primary btn-sm"  title="Update" id="id_update_data" style="display:none;" value="auth_obj_update" type="button" onclick="onclick_update_button()">
+                        <i class="far fa-edit"></i> update
+                    </button>
+                    <button class="btn btn-secondary btn-sm" title="Cancel" id="id_cancel_data" style="display:none;" type="button" onclick="display_basic_db_data()">
+                        <i class="fas fa-times"></i> cancel
+                    </button> 
+                </div>
+
+                <table id="display_basic_table" class="class_basic_auth_obj_table table table-bordered custom-table">
+                    <thead id="id_auth_obj_table_header">
+                        <tr>
+                            <th id="hg_select_checkbox" hidden>
+                                <div id="id_check_all" style="display:none;">
+                                    <INPUT type="checkbox" onchange="checkAll(this)" name="chk[]">
+                                </div>
+                            </th>
+                            <th>Authorization Object </th>
+                            <th>Authorization Level</th>
+                            <th>Authorization Type</th>
+                            <th hidden>Del Indicator</th>
+                        </tr>
+                    </thead>
+                    <tbody id="id_auth_obj_tbody">
+                        {% for authobj in upload_authobj %}
+                        <tr>
+                            <td class="class_select_checkbox" hidden><input type="checkbox" class="checkbox_check" onclick="valueChanged()" required></td>
+                            <td>{{authobj.auth_obj_id}}</td>
+                            <td>{{authobj.auth_level_ID}}</td>
+                            <td>{{authobj.auth_level}}</td>
+                            <td hidden>del_ind</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!--modal popup for Add,copy,update and upload-->    
+    <div class="modal fade" id="myModal">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"> Maintain Authorization Object</h5>
+                    <button type="button" class="close remove_upload_data" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body scrollbox">
+                    <div id="id_del_add_button" class="mb-4">
+                        <button class="btn btn-primary" type="button" onclick="add_popup_row()">
+                            <i class="fa fa-plus"></i> add new row
+                        </button>
+                        <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')">
+                            <i class="fa fa-trash"></i> delete
+                        </button>
+                    </div>
+                    <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
+                    <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
+                    <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
+                        <p id="id_error_msg_auth_obj_code"></p>
+                        <p id="id_error_msg_auth_obj_level"></p>
+                        <p id="id_error_msg_auth_obj_length"></p>
+                    </div>
+                    
+                    <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
+                    <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
+                    <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
+
+
+                    <table class="class_popup_table table table-bordered mt-2" id="id_popup_table">
+                        <thead>
+                            <tr>
+                                <th id="header_select">Select</th>
+                                 <th>Authorization Object </th>
+                                <th>Authorization Level</th>
+                                <th>Authorization Type</th>
+                                <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
+                            </tr>
+                        </thead>
+                        <tbody id=id_popup_tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
+                    <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
+                    <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end of modal popup for Add,copy,update and upload-->    
+
+    <!-- modal popup to upload the csv file; save confirmation popup; delete confirmation popup -->
+    {% include 'configuration_common_pop_up.html' %}  
+
+    <div>
+        {% if messages %} {% for message in messages %} {% if message.tags == 'success' %}
+        <div style="color: green; ">{{ message }}</div>
+        {% endif %} {% if message.tags == 'error' %}
+        <div style="color: red; ">{{ message }}</div>
+        {% endif %} {% if message.tags == 'info' %}
+        <div style="color: Black bold"><b>{{ message }}</b> </div>
+        {% endif %} {% endfor %} {% endif %}
+    </div>
+</div>
+
+{{ auth_obj_id_db_values|json_script:"auth_obj_id_db_values" }}
+{{ auth_type_db_values|json_script:"auth_type_db_values" }}
+
+
+<script>
+    var rendered_auth_obj_data = {{ upload_authobj| safe}};
+    var rendered_auth_obj_id = JSON.parse(document.getElementById('auth_obj_id_db_values').textContent);
+    var rendered_auth_type = JSON.parse(document.getElementById('auth_type_db_values').textContent);
+    var auth_obj_data_array = {}
+    var main_table_auth_obj_value = [];
+    var auth_obj = '';
+    var edit_basic_data = '';
+    var GLOBAL_ACTION = '';
+    var no_duplicate_entries = 'Y'
+    var Tablename = uiConstants["CONST_TABLENAME_AUTH_OBJ"]
+    var appname = uiConstants["CONST_APPNAME01"]
+    var db_header_data = uiConstants["CONST_HEADER_DATA_AUTH_OBJ"]
+    //**************************************
+
+
+  
+     var auth_obj_id_dropdown = '';
+    function dropdown_value(){
+        auth_obj_id_dropdown = '';
+    $.each(rendered_auth_obj_id, function(i, item){
+        auth_obj_id_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
+       
+    })
+    }
+
+
+    var auth_type_dropdown = '';
+
+      $.each(rendered_auth_type, function(i, item){
+        auth_type_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
+
+    })
+
+    
+
+    
+    // validate and save for add,copy,update and upload data
+    function popup_save_data() {
+        $('#success_msg_id').empty()
+         $('#id_popup_table').DataTable().destroy();
+        var main_table_low_value = [];
+        no_duplicate_entries = 'Y'
+        no_duplicate_value = 'Y'
+        var error_message = '';
+        
+        $('#display_basic_table').DataTable().destroy();
+        $("#display_basic_table TBODY TR").each(function() {
+            var row = $(this);
+            var main_attribute = {};
+            main_attribute.auth_obj_id = row.find("TD").eq(1).html();
+            main_table_low_value.push(main_attribute.auth_obj_id);
+        });
+        table_sort_filter('display_basic_table');
+
+        [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, authobj_data)
+        if (error_message){
+               display_error_message(error_message)
+
+            }
+        else{
+            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+            }
+            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+                var add_basic_data = '';
+                var auth_obj_data_array = authobj_data;
+               
+                $('#id_save_confirm_popup').modal('hide');
+                data = {'data':authobj_data,'table_name':'AuthorizationObject','action':GLOBAL_ACTION}
+
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function(Response) {
+                        rendered_auth_obj_data = Response[0];
+                        rendered_auth_obj_id = Response[2];
+                        display_basic_db_data();
+                        dropdown_value();
+                        $('#myModal').modal('hide');
+                        $('#id_error_msg').text(messageConstants["JMSG001"])
+                        $('#success_msg_id').text(Response[1])
+                        $("#err_msg_app_settings_t").prop("hidden", false)
+                        table_sort_filter('id_popup_table');
+                        setTimeout(function() {
+                            $("#err_msg_app_settings_t").prop("hidden", true);
+                        }, 5000)
+                        table_sort_filter('id_popup_table');
+                    }
+                });
+            }
+            else if (error_message){
+                    display_error_message(error_message)
+            } 
+  
+
+        }
+    }
+    
+    
+    //delete the selected row in db................
+    var main_table_auth_obj_checked = [];
+
+    function main_table_delete() {
+        $('#success_msg_id').empty()
+        GLOBAL_ACTION = 'DELETE'
+        main_table_auth_obj_checked = [];
+        $('#display_basic_table').DataTable().destroy();
+        $("#display_basic_table TBODY TR").each(function() {
+            var row = $(this);
+            var auth_obj_arr_obj = {};
+            auth_obj_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+             if(auth_obj_arr_obj.del_ind){
+                auth_obj_arr_obj.auth_obj_id = row.find("TD").eq(1).html();
+                auth_obj_arr_obj.auth_level_ID = row.find("TD").eq(2).html();
+                auth_obj_arr_obj.auth_level = row.find("TD").eq(3).html();
+                main_table_auth_obj_checked.push(auth_obj_arr_obj);
+            }
+        });
+        $('#id_delete_confirm_popup').modal('hide');
+        data = {'data':main_table_auth_obj_checked,'table_name':'AuthorizationObject','action':GLOBAL_ACTION}
+
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(Response) {
+                rendered_auth_obj_data = Response[0];
+                 rendered_dropdown_values = Response[2];
+                    display_basic_db_data();
+                    dropdown_value();
+                    $('#myModal').modal('hide');
+                    $('#id_error_msg').text(messageConstants["JMSG001"])
+                    $('#success_msg_id').text(Response[1])
+                 $("#err_msg_app_settings_t").prop("hidden",false)
+                setTimeout(function() {
+                    $("#err_msg_app_settings_t").prop("hidden", true);
+                }, 5000)
+            }
+        });
+    }
+    
+    
+    
+</script>
+
+<script src="{% static 'scripts/organisational_data/org_authorization_objects.js' %}"></script>
+
+{% endblock %}

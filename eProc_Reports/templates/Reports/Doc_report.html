@@ -1,0 +1,169 @@
+{% extends 'root/base.html' %}
+{% load static %}
+
+{% block title %} Majjaka eProcure - Documents Report (Admin Tool) {% endblock %}
+
+{% block maincontent %}
+
+
+
+
+
+    {% include 'root/loader.html' %}
+
+    <div class="container-fluid">
+        <div class="hg_wrapper">
+            <div>
+                <div class="hg_head1">Documents Report</div>
+                <hr class="hg_heading_hrborder">
+            </div>
+
+            <div>
+                <form method="POST" action="{% url 'eProc_Admin_Tool:doc_search_report' %}">
+                    {% csrf_token %}
+
+                     {% if error_messages %}
+                        <div class="alert alert-danger" id="err_msg">
+                             {% for  key, value in error_messages.items %}
+                                <span class="fieldWrapper">
+                                    {{ value }}
+                                </span>
+                             {% endfor %}
+                        </div>
+                    {% endif %}
+
+<!--                    {{ sform.non_field_errors }}-->
+
+                    <div class="row">   
+                        <div class="col-md">
+                            <label>Document Type </label>
+                            {{ sform.doc_type }}
+                        </div> 
+                        <div class="col-md">
+                            <label>Company Number</label>
+                            {{ sform.company_code }}
+                        </div>
+                        <div class="col-md">
+                            <label>From Date</label>
+                            {{ sform.from_date }}
+                        </div>
+                        <div class="col-md">
+                            <label>To Date</label>
+                            {{ sform.to_date }}
+                        </div>
+                        <div class="col-md">
+                            <label>Created By</label>
+                            {{ sform.created_by }}
+                        </div>
+                        <div class="col-md">
+                            <label>Requested By</label>
+                            {{ sform.requester }}
+                        </div>
+                    </div>
+                    <br>   
+
+                    <div>
+                        <button class="btn btn-primary" type="reset" value="Reset"><i class="fas fa-sync-alt"></i>
+                            reset
+                        </button>
+
+                        <button id="hg_doc_report_search" class="btn btn-primary" onclick="search_click()" type="submit" title="Please click to get the search details!">
+                            <i class="fas fa-search"></i> search
+                        </button>
+                    </div>
+                    
+                </form>
+            </div>
+            <br>
+
+            <div class="search_result_count_card card">
+                {% if t_count > 0 %}
+                <div class="card-body" ><h6 class="card-title"> Total number of results found :{{t_count}}</h6>
+                </div>
+                {% endif %}
+                {% if t_count == 0 %}
+                <div class="card-body" ><h6 class="card-title"> No Results Found</h6>
+                </div>
+                {% endif %}
+            </div>
+
+        </div>
+                    <!--    To Display Header Details only if there are any results-->
+        {% if t_count > 0 %}
+
+        <div class="hg_wrapper">
+            <table class="table hg-striped-table table_sort_filter_export_excel" id="doc_list" >
+                <thead class="thead-light">
+                <tr>
+                    {% if inp_doc_type == 'SC' %}
+                    <th scope="col">SC Number</th>
+                    {% endif %}
+                    {% if inp_doc_type == 'PO' %}
+                    <th scope="col">PO Number</th>
+                    {% endif %}
+                    {% if inp_doc_type == 'SC' %}
+                    <th scope="col">SC Name</th>
+                    {% endif %}
+                    {% if inp_doc_type == 'PO' %}
+                    <th scope="col">PO Name</th>
+                    {% endif %}
+                    <th scope="col">Status</th>
+                    <th scope="col">Total Value</th>
+                    <th scope="col">Currency</th>
+                    <th scope="col">Requested By</th>
+
+                    <th scope="col">Created By</th>
+                    <th scope="col">Created At</th>
+                    <th scope="col">Ordered At</th>
+                    <th scope="col" hidden>Changed At</th>
+                    <th scope="col" hidden>Changed By</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!--   Looping over the cart_items to get individual fields         -->
+                {% for items,encrypted_header_guid in results %}
+                 {% if items.status != 'SAVED' %}
+                   {% if inp_doc_type == 'SC' %}
+
+                <tr>
+                    <td scope="row"><a href="{% url 'eProc_Doc_Details:my_order_doc_details' sc_completion_flag inp_doc_type encrypted_header_guid 'display' 'my_order' %}">{{ items.doc_number }}</a></td>
+                    <td scope="row">{{ items.description }}</td>
+                    {% if items.status == 'AWAITING_APPROVAL'%}
+                        <td scope="row"> <span >WAITING FOR APPROVAL</span></td>
+                     {% elif items.status == 'SAVED' %}
+                        <td scope="row"> <span>SAVED</span></td>
+                     {% elif items.status == 'APPROVED' %}
+                        <td scope="row"> <span>APPROVED</span></td>
+                     {% elif items.status == 'PURCHASER_WORKLIST' %}
+                        <td scope="row"> <span>IN PURCHASER's WORK LIST</span></td>
+                     {% elif items.status == 'REJECTED' %}
+                        <td scope="row"> <span>REJECTED</span></td>
+                    {% endif %}
+                    <td scope="row">{{ items.total_value }}</td>
+                    <td scope="row">{{ items.currency }}</td>
+                    <td scope="row">{{ items.requester }}</td>
+                    <td scope="row">{{ items.created_by }}</td>
+                    <td scope="row">{{ items.created_at }}</td>
+                    <td scope="row">{{ items.ordered_at }}</td>
+                    <td scope="row" hidden>{{ items.changed_at }}</td>
+                    <td scope="row" hidden>{{ items.changed_by }}</td>
+
+                </tr>
+                {% endif %}
+                 {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+                
+    </div>
+
+<div class="hg_spacer2"> &nbsp;</div>
+
+<script src="{% static 'scripts/doc_report.js' %}"></script>
+
+{% if inc_footer %}
+{% include 'root/footer.html' %}
+{% endif %}
+{% endblock %}

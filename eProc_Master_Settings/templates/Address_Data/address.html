@@ -1,0 +1,776 @@
+{% extends 'root/base.html' %}
+{% load static %}
+{% block title %} Majjaka eProcure - Addresses (Master Settings) {% endblock %}
+{% block maincontent %}
+
+{% include 'root/loader.html' %}
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+
+<div class="container-fluid">
+    <div class="configuration-table_wrapper">
+        <div class="elements-space-between">
+            <h3>Maintain Addresses</h3>
+            <div>
+                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_address_data' %}'"type="button">
+                    <i class="fas fa-download"></i> EXTRACT
+                </button>
+                <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_data" title="Upload Data" value="addresstype_upload"  onclick="onclick_upload_button()" type="button">
+                    <i class="fas fa-cloud-upload-alt"></i> UPLOAD DATA
+                </button>
+                <button class="btn btn-primary  " type="button" id="id_add_data" value="ADD" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
+                    <i class="fa fa-plus"></i> Add address
+                </button>
+            </div>
+
+        </div>
+        <hr>
+        <div class="configuration-table_section">
+            <div id="err_msg_app_settings"> </div>
+            <div id="err_msg_app_settings_t" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
+            <div class="table-container">
+                <div class="edit-button-section mb-4">
+                    <button class="btn btn-secondary btn-sm" id="id_edit_data" onclick="onclick_edit_button()">
+                        <i class="fas fa-edit" id="edit" title="Edit"></i> edit
+                    </button>
+
+                    <button class="btn btn-outline-danger btn-sm" id="id_delete_data" value="address_delete"
+                        style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
+                        <i class="fa fa-trash"></i> Delete
+                    </button>
+                    <button class="btn btn-primary btn-sm" id="id_copy_data" style="display:none;" value="COPY"
+                            type="button" onclick="onclick_copy_button()">
+                        <i class="fa fa-copy"></i> Copy
+                    </button>
+                    <button class="btn btn-primary btn-sm" id="id_update_data" style="display:none;"
+                            value="UPDATE" type="button" onclick="onclick_update_button()">
+                        <i class="far fa-edit"></i> Update
+                    </button>
+                    <button class="btn btn-secondary btn-sm" id="id_cancel_data" style="display:none;" type="button"
+                            onclick="display_basic_db_data()">
+                        <i class="fas fa-times"></i> cancel
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table id="display_basic_table" class="class_basic_country_table table table-bordered custom-table " >
+                        <thead id="id_address_table_header">
+                        <tr>
+                            <th id="hg_select_checkbox" hidden>
+                                <div id="id_check_all" style="display:none;">
+                                    <INPUT type="checkbox" onchange="checkAll(this)" name="chk[]">
+                                </div>
+                            </th>
+                            <th>Address Number</th>
+                            <th>Title</th>
+                            <th>Name 1</th>
+                            <th>Name 2</th>
+                            <th>Street</th>
+                            <th>Area</th>
+                            <th>Landmark</th>
+                            <th>City</th>
+                            <th>Postal Code</th>
+                            <th>Region</th>
+                            <th>Mobile</th>
+                            <th>Telephone</th>
+                            <th>Fax</th>
+                            <th>Email</th>
+                            <th>Country</th>
+                            <th>Language</th>
+                            <th>Time Zone</th>
+                            <th hidden>del_ind</th>
+                            <th hidden>Guid</th>
+                        </tr>
+                        </thead>
+                        <tbody id="id_address_tbody">
+                        {% for data in address_data %}
+                        <tr>
+                            <td class="class_select_checkbox" hidden>
+                                <input type="checkbox" class="checkbox_check" onclick="valueChanged()" required>
+                            </td>
+                            <td>{{ data.address_number}}</td>
+                            <td>{{ data.title}}</td>
+                            <td>{{ data.name1}}</td>
+                            <td>{{ data.name2}}</td>
+                            <td>{{ data.street}}</td>
+                            <td>{{ data.area}}</td>
+                            <td>{{ data.landmark }}</td>
+                            <td>{{ data.city}}</td>
+                            <td>{{ data.postal_code }}</td>
+                            <td>{{ data.region }}</td>
+                            <td>{{ data.mobile_number }}</td>
+                            <td>{{ data.telephone_number }}</td>
+                            <td>{{ data.fax_number }}</td>
+                            <td>{{ data.email }}</td>
+                            {% for ct in country_list %}
+                            {% if data.country_code == ct.country_code %}
+                            <td>{{ct.country_name}}</td>
+                            {% endif %}
+                            {% endfor %}
+                            {% for lang in language_list %}
+                            {% if data.language_id == lang.language_id %}
+                            <td>{{lang.description}}</td>
+                            {% endif %}
+                            {% endfor %}
+                            {% for tz in time_zone_data %}
+                            {% if data.time_zone == tz.time_zone %}
+                            <td>{{tz.description}}</td>
+                            {% endif %}
+                            {% endfor %}
+                            <td hidden>{{ data.del_ind}}</td>
+                            <td hidden>{{ data.address_guid}}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end of display basic address type table-->
+
+    <!-- The Modal -->
+    <div class="modal fade" id="myModal">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 95%;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"> Maintain Address</h5>
+                    <button type="button" class="close remove_upload_data" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body scrollbox">
+
+                    <div id="id_del_add_button">
+                        <button class="btn btn-primary" type="button" onclick="add_popup_row()"><i
+                                class="fa fa-plus"></i> add new row</button>
+                        <button class="btn btn-outline-danger"
+                            onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash"></i>
+                            delete</button>
+                    </div>
+
+                    <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
+                    <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
+                    <div id="id_check_special_character_messages"
+                         class="alert alert-danger check_special_character_messages" hidden>
+                        <p id="id_error_msg_address"></p>
+                        <p id="id_error_msg_description"></p>
+                        <p id="id_error_msg_description_length"></p>
+                    </div>
+                    <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
+                    <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
+                    <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
+
+                    <div style="overflow:auto;">
+                        <table class="class_popup_table table table-bordered mt-2" id="id_popup_table">
+                            <thead>
+                            <tr>
+                                <th id="header_select">Select</th>
+                                <th>Address Number</th>
+                                <th>Title</th>
+                                <th>Name 1</th>
+                                <th>Name 2</th>
+                                <th>Street</th>
+                                <th>Area</th>
+                                <th>Landmark</th>
+                                <th>City</th>
+                                <th>Postal Code</th>
+                                <th>Region</th>
+                                <th>Mobile</th>
+                                <th>Telephone</th>
+                                <th>Fax</th>
+                                <th>Email</th>
+                                <th>Country</th>
+                                <th>Language</th>
+                                <th>Time Zone</th>
+                                <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
+                                <th hidden>Guid</th>
+                            </tr>
+                            </thead>
+                            <tbody id="id_popup_tbody">
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
+                    <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
+                    <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include 'configuration_common_pop_up.html' %}
+
+    <div>
+        {% if messages %}
+        {% for message in messages %}
+        {% if message.tags == 'success' %}
+        <div style="color: green; ">{{ message }}</div>
+        {% endif %}
+        {% if message.tags == 'error' %}
+        <div style="color: red; ">{{ message }}</div>
+        {% endif %}
+        {% if message.tags == 'info' %}
+        <div style="color: Black bold"><b>{{ message }}</b> </div>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+<script>
+
+    var rendered_address_data = {{ address_data| safe}};
+    var render_language_data = {{ language_list| safe}};
+    var render_country_data = {{ country_list| safe}};
+    var render_timezone_data = {{ time_zone_data| safe}};
+    var address_data_array = {}
+    var main_table_address_value = [];
+    var address = '';
+    var edit_basic_data = '';
+    var GLOBAL_ACTION = '';
+    var no_duplicate_entries = 'Y'
+    var Tablename = uiConstants["CONST_TABLENAME_COUNTRY"]
+    var appname = uiConstants["CONST_APPNAME01"]
+    var db_header_data = uiConstants["CONST_HEADER_DATA_COUNTRY"]
+    //console.log(rendered_address_data);
+    // validate and save for add,copy,update and upload data
+
+    function popup_save_data() {
+        $('#success_msg_id').empty()
+        $('#id_popup_table').DataTable().destroy();
+<!--        var Tabledata = { "Dbl_clck_tbl_id": 'OrgAddress' };-->
+        var countries_data = new Array();
+        var main_table_low_value = [];
+<!--        var validate_add_attributes = [];-->
+<!--        var address = {};-->
+<!--        $("#id_popup_table TBODY TR").each(function () {-->
+<!--            var row = $(this);-->
+<!--            address = {};-->
+<!--            address.address_number = row.find("TD").eq(1).find('input[type="text"]').val();-->
+<!--            address.title = row.find("TD").eq(2).find('input[type="text"]').val();-->
+<!--            address.name1 = row.find("TD").eq(3).find('input[type="text"]').val();-->
+<!--            address.name2 = row.find("TD").eq(4).find('input[type="text"]').val();-->
+<!--            address.street = row.find("TD").eq(5).find('input[type="text"]').val();-->
+<!--            address.area = row.find("TD").eq(6).find('input[type="text"]').val();-->
+<!--            address.landmark = row.find("TD").eq(7).find('input[type="text"]').val();-->
+<!--            address.city = row.find("TD").eq(8).find('input[type="text"]').val();-->
+<!--            address.postal_code = row.find("TD").eq(9).find('input[type="text"]').val();-->
+<!--            address.region = row.find("TD").eq(10).find('input[type="text"]').val();-->
+<!--            address.mobile_number = row.find("TD").eq(11).find('input[type="text"]').val();-->
+<!--            address.telephone_number = row.find("TD").eq(12).find('input[type="text"]').val();-->
+<!--            address.fax_number = row.find("TD").eq(13).find('input[type="text"]').val();-->
+<!--            address.email = row.find("TD").eq(14).find('input[type="text"]').val();-->
+<!--            address.country_code = row.find("TD").eq(15).find('select[type="text"]').val();-->
+<!--            address.language_id = row.find("TD").eq(16).find('select[type="text"]').val();-->
+<!--            address.time_zone = row.find("TD").eq(17).find('select[type="text"]').val();-->
+<!--            address.del_ind = row.find("TD").eq(18).find('input[type="checkbox"]').is(':checked');-->
+<!--            address.address_guid = row.find("TD").eq(19).find('input[type="text"]').val();-->
+<!--            console.log(address.address_guid)-->
+
+<!--            if (address == undefined) {-->
+<!--                address.address_number = row.find("TD").eq(1).find('input[type="text"]').val();-->
+<!--            }-->
+<!--            validate_add_attributes.push(address.address_number);-->
+<!--            countries_data.push(address);-->
+<!--        });-->
+        $('#display_basic_table').DataTable().destroy();
+        $("#display_basic_table TBODY TR").each(function () {
+            var row = $(this);
+            var main_attribute = {};
+            main_attribute.address_number = row.find("TD").eq(1).html();
+            main_table_low_value.push(main_attribute.address_number);
+        });
+        table_sort_filter('display_basic_table');
+        //$("#id_error_msg").empty();
+                   [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, address_data)
+                   if (error_message){
+                display_error_message(error_message)
+
+            }
+            else{
+        if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+            [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+        }
+        if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+            var add_basic_data = '';
+            var address_data_array = address_data;
+<!--            $("#id_popup_table tbody tr").each(function (index) {-->
+<!--                var row = $(this);-->
+<!--                var address_object = {};-->
+<!--                address_object.address_number = row.find("TD").eq(1).find('select[type="text"]').val();-->
+<!--                address_object.title = row.find("TD").eq(2).find('input[type="text"]').val();-->
+<!--                address_object.name1 = row.find("TD").eq(3).find('input[type="text"]').val();-->
+<!--                address_object.name2 = row.find("TD").eq(4).find('input[type="text"]').val();-->
+<!--                address_object.street = row.find("TD").eq(5).find('input[type="text"]').val();-->
+<!--                address_object.area = row.find("TD").eq(6).find('input[type="text"]').val();-->
+<!--                address_object.landmark = row.find("TD").eq(7).find('input[type="text"]').val();-->
+<!--                address_object.city = row.find("TD").eq(8).find('input[type="text"]').val();-->
+<!--                address_object.postal_code = row.find("TD").eq(9).find('input[type="text"]').val();-->
+<!--                address_object.region = row.find("TD").eq(10).find('input[type="text"]').val();-->
+<!--                address_object.mobile_number = row.find("TD").eq(11).find('input[type="text"]').val();-->
+<!--                address_object.telephone_number = row.find("TD").eq(12).find('input[type="text"]').val();-->
+<!--                address_object.fax_number = row.find("TD").eq(13).find('input[type="text"]').val();-->
+<!--                address_object.email = row.find("TD").eq(14).find('input[type="text"]').val();-->
+<!--                address_object.country_code = row.find("TD").eq(15).find('select[type="text"]').val();-->
+<!--                address_object.language_id = row.find("TD").eq(16).find('select[type="text"]').val();-->
+<!--                address_object.time_zone = row.find("TD").eq(17).find('select[type="text"]').val();-->
+<!--                address_object.address_guid = row.find("TD").eq(19).find('input[type="text"]').val();-->
+<!--                address_object.del_ind = row.find("TD").eq(18).find('input[type="checkbox"]').is(':checked');-->
+<!--                address_data_array.push(address_object);-->
+<!--            });-->
+            $('#id_save_confirm_popup').modal('hide');
+            data = {'data':address_data,'table_name':'OrgAddress','action':GLOBAL_ACTION}
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
+                data:JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (Response) {
+                    rendered_address_data = Response[0];
+                    display_basic_db_data();
+                    $('#myModal').modal('hide');
+                    $('#id_error_msg').text(messageConstants["JMSG001"])
+                    $('#success_msg_id').text(Response[1])
+                    $("#err_msg_app_settings_t").prop("hidden", false)
+                    //document.getElementById("err_msg_app_settings_t").innerHTML = Response[1]
+                    setTimeout(function () { $("#err_msg_app_settings_t").prop("hidden", true); }, 5000)
+                    table_sort_filter('id_popup_table');
+                }
+            });
+
+        }
+
+    else if (error_message){
+                     display_error_message(error_message)
+
+      }
+    }
+}
+    // on click add icon display the row in to add the new entries
+    function add_popup_row() {
+        basic_add_new_html = '';
+        var display_db_data = '';
+        $('#id_popup_table').DataTable().destroy();
+        $(".modal").on("hidden.bs.modal", function () {
+            $("#id_error_msg").html("");
+        });
+        basic_add_new_html = '<tr><td><input type="checkbox" required></td>' +
+            '<td><input class="form-control"  type="text"   name="address_number"></td>' +
+            '<td><input class="form-control"  type="text"   name="title"></td>' +
+            '<td><input class="form-control"  type="text"   name="name1"></td>' +
+            '<td><input class="form-control"  type="text"   name="name2"></td>' +
+            '<td><input class="form-control"  type="text"   name="street"></td>' +
+            '<td><input class="form-control"  type="text"   name="area"></td>' +
+            '<td><input class="form-control"  type="text"   name="landmark"></td>' +
+            '<td><input class="form-control"  type="text"   name="city"></td>' +
+            '<td><input class="form-control"  type="text"   name="postal_code"></td>' +
+            '<td><input class="form-control"  type="text"   name="region"></td>' +
+            '<td><input class="form-control"  type="text"   name="mobile_number"></td>' +
+            '<td><input class="form-control"  type="text"   name="telephone_number"></td>' +
+            '<td><input class="form-control"  type="text"   name="fax_number"></td>' +
+            '<td><input class="form-control"  type="text"   name="email"></td>' +
+            '<td><select class="form-control"  type="text"  name="country_code">' +
+            {% for data in country_list %}
+        '<option value={{data.country_code}}>{{data.country_name}}</option>' +
+            {% endfor %}
+        '</select></td>' +
+            '<td><select class="form-control"  type="text"   name="language_id" >' +
+            {% for data in language_list %}
+        '<option value={{data.language_id}}>{{data.description}}</option>' +
+            {% endfor %}
+        '</select></td>' +
+            '<td><select class="form-control"  type="text"   name="time_zone" >' +
+            {% for data in time_zone_data %}
+        '<option value={{data.time_zone}}>{{data.description}}</option>' +
+            {% endfor %}
+        '</select></td>' +
+            '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
+            '<td hidden><input  type="text"  name="guid"></td></tr>';
+        $('#id_popup_tbody').append(basic_add_new_html);
+        if (GLOBAL_ACTION == "address_upload") {
+            $(".class_del_checkbox").prop("hidden", false);
+        }
+        table_sort_filter_popup_pagination('id_popup_table');
+    }
+
+   
+
+    //delete the selected row in db................
+    var main_table_address_checked = [];
+    function main_table_delete() {
+           $('#success_msg_id').empty()
+        GLOBAL_ACTION = 'DELETE'
+        main_table_address_checked = [];
+<!--        var Tabledata = { "Dbl_clck_tbl_id": 'OrgAddress' };-->
+        $('#display_basic_table').DataTable().destroy();
+        $("#display_basic_table TBODY TR").each(function () {
+            var row = $(this);
+            var address_arr_obj = {};
+            var cntry_name = '';
+            var cntry_code = '';
+            var lang_desc;
+            var lang_code;
+            lang_desc = row.find("TD").eq(16).html();
+            for (i = 0; i < render_language_data.length; i++) {
+                if (lang_desc == render_language_data[i].description)
+                    lang_code = render_language_data[i].language_id
+            }
+
+            cntry_name = row.find("TD").eq(15).html();
+            for (i = 0; i < render_country_data.length; i++) {
+                if (cntry_name == render_country_data[i].country_name)
+                    cntry_code = render_country_data[i].country_code;
+            }
+            console.log(cntry_name);
+            var timezone_desc = row.find("TD").eq(17).html();
+            var time_zone;
+            for (i = 0; i < render_timezone_data.length; i++) {
+                if (timezone_desc == render_timezone_data[i].description)
+                    time_zone = render_timezone_data[i].time_zone
+            }
+            address_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+            if (address_arr_obj.del_ind == 1){
+            address_arr_obj.address_number = row.find("TD").eq(1).html();
+            address_arr_obj.title = row.find("TD").eq(2).html();
+            address_arr_obj.name1 = row.find("TD").eq(3).html();
+            address_arr_obj.name2 = row.find("TD").eq(4).html();
+            address_arr_obj.street = row.find("TD").eq(5).html();
+            address_arr_obj.area = row.find("TD").eq(6).html();
+            address_arr_obj.landmark = row.find("TD").eq(7).html();
+            address_arr_obj.city = row.find("TD").eq(8).html();
+            address_arr_obj.postal_code = row.find("TD").eq(9).html();
+            address_arr_obj.region = row.find("TD").eq(10).html();
+            address_arr_obj.mobile_number = row.find("TD").eq(11).html();
+            address_arr_obj.telephone_number = row.find("TD").eq(12).html();
+            address_arr_obj.fax_number = row.find("TD").eq(13).html();
+            address_arr_obj.email = row.find("TD").eq(14).html();
+            address_arr_obj.country_code = cntry_code;
+            address_arr_obj.language_id = lang_code;
+            address_arr_obj.time_zone = time_zone;
+            address_arr_obj.address_guid = row.find("TD").eq(19).html();
+            main_table_address_checked.push(address_arr_obj);
+            }
+        });
+       // document.getElementById('id_delete_confirm_popup').style.display = "none"
+       $('#id_delete_confirm_popup').modal('hide');
+        data = {'data':main_table_address_checked,'table_name':'OrgAddress','action':GLOBAL_ACTION}
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
+            data:
+                JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (Response) {
+                console.log(Response);
+                rendered_address_data = Response[0];
+                display_basic_db_data();
+                 $('#success_msg_id').text(Response[1])
+                $("#err_msg_app_settings_t").prop("hidden", false)
+               // document.getElementById("err_msg_app_settings_t").innerHTML = Response[2];
+                setTimeout(function () { $("#err_msg_app_settings_t").prop("hidden", true); }, 5000)
+            }
+        });
+    }
+
+
+    //onclick of add button display myModal popup and set GLOBAL_ACTION button value
+    function onclick_add_button(button) {
+         $("#error_msg_id").css("display", "none")
+    $("#header_select").prop( "hidden", false );
+        GLOBAL_ACTION = button.value
+        $("#id_popup_tbody").empty();
+        $('#myModal').modal('show');
+        basic_add_new_html = '<tr><td><input type="checkbox" required></td>' +
+            '<td><input class="form-control"  type="text"   name="address_number"></td>'+
+            '<td><input class="form-control"  type="text" maxlength="40" onkeypress="return /[A-Z]/i.test(event.key)"  name="title"></td>' +
+            '<td><input class="form-control"  type="text"   maxlength="40" onkeypress="return /[A-Z]/i.test(event.key)" name="name1"></td>' +
+            '<td><input class="form-control"  type="text"   maxlength="40" onkeypress="return /[A-Z]/i.test(event.key)" name="name2"></td>' +
+            '<td><input class="form-control"  type="text"   maxlength="100" onkeypress="return /[A-Z0-9]/i.test(event.key)" name="street"></td>' +
+            '<td><input class="form-control"  type="text"   maxlength="100" onkeypress="return /[A-Z0-9]/i.test(event.key)" name="area"></td>' +
+            '<td><input class="form-control"  type="text"    maxlength="100" onkeypress="return /[A-Z0-9]/i.test(event.key)" name="landmark"></td>' +
+            '<td><input class="form-control"  type="text"   maxlength="20" onkeypress="return /[A-Z]/i.test(event.key)"name="city"></td>' +
+            '<td><input class="form-control"  type="text"    maxlength="10" onkeypress="return /[0-9]/i.test(event.key)" name="postal_code"></td>' +
+            '<td><input class="form-control"  type="text" maxlength="30" onkeypress="return /[A-Z]/i.test(event.key)" name="region"></td>' +
+            '<td><input class="form-control"  type="text"    maxlength="20" onkeypress="return /[0-9]/i.test(event.key)" name="mobile_number"></td>' +
+            '<td><input class="form-control"  type="text"   maxlength="20" onkeypress="return /[0-9]/i.test(event.key)" name="telephone_number"></td>' +
+            '<td><input class="form-control"  type="text"    maxlength="30" onkeypress="return /[0-9]/i.test(event.key)" name="fax_number"></td>' +
+            '<td><input class="form-control"  type="text"   maxlength="100" name="email"></td>' +
+            '<td><select class="form-control"  type="text"   name="country_code">' +
+            {% for data in country_list %}
+        '<option value={{data.country_code}}>{{data.country_name}}' +
+            {% endfor %}
+        '</select></td>' +
+            '<td><select class="form-control"  type="text"   name="language_id" >' +
+            {% for data in language_list %}
+        '<option value={{data.language_id}}>{{data.description}}' +
+            {% endfor %}
+        '</select></td>' +
+            '<td><select class="form-control"  type="text"   name="time_zone" >' +
+            {% for data in time_zone_data %}
+        '<option value={{data.time_zone}}>{{data.description}}' +
+            {% endfor %}
+        '</select></td>' +
+            '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
+            '<td hidden><input  type="text"  name="guid"></td></tr>';
+        $('#id_popup_tbody').append(basic_add_new_html);
+        table_sort_filter('id_popup_table');
+        $("#id_del_ind_checkbox").prop("hidden", true);
+        document.getElementById("id_del_add_button").style.display = "block";
+        $("#save_id").prop("hidden", false);
+    }
+
+
+    function onclick_copy_update_button() {
+         $("#error_msg_id").css("display", "none")
+
+        $("#id_popup_tbody").empty();
+        $('#display_basic_table').DataTable().destroy();
+        //Reference the Table.
+        var grid = document.getElementById("display_basic_table");
+
+        //Reference the CheckBoxes in Table.
+        var checkBoxes = grid.getElementsByTagName("INPUT");
+        var edit_basic_data = "";
+        //Loop through the CheckBoxes.
+        for (var i = 1; i < checkBoxes.length; i++) {
+            if (checkBoxes[i].checked) {
+                var row = checkBoxes[i].parentNode.parentNode;
+                if (GLOBAL_ACTION == "COPY") {
+                guid = '';
+
+                edit_basic_data += '<tr ><td><input type="checkbox" required></td>' +
+                '<td><input class="form-control"  type="text"  value="' + row.cells[1].innerHTML + '"  name="address_number"></td>' +
+                '<td><input class="form-control"  type="text"  value="' + row.cells[2].innerHTML + '"  name="title"></td>' +
+                '<td><input class="form-control"  type="text" value="' + row.cells[3].innerHTML + '"  name="name1"></td>' +
+                '<td><input class="form-control"  type="text" value="' + row.cells[4].innerHTML + '"  name="name2"></td>' +
+                '<td><input class="form-control"  type="text" value="' + row.cells[5].innerHTML + '"  name="street"></td>' +
+                '<td><input class="form-control"  type="text" value="' + row.cells[6].innerHTML + '"  name="area"></td>' +
+                '<td><input class="form-control"  type="text" value="' + row.cells[7].innerHTML + '"  name="landmark"></td>' +
+                '<td><input class="form-control"  type="text" value="' + row.cells[8].innerHTML + '"  name="city"></td>' +
+                '<td><input class="form-control"  type="text"  value="' + row.cells[9].innerHTML + '"  name="postal_code"></td>' +
+                '<td><input class="form-control"  type="text" value="' + row.cells[10].innerHTML + '"  name="region"></td>' +
+                '<td><input class="form-control"  type="text" value="' + row.cells[11].innerHTML + '"  name="mobile_number"></td>' +
+                '<td><input class="form-control"  type="text" value="' + row.cells[12].innerHTML + '"  name="telephone_number"></td>' +
+                '<td><input class="form-control"  type="text"  value="' + row.cells[13].innerHTML + '"  name="fax_number"></td>' +
+                '<td><input class="form-control"  type="text" value="' + row.cells[14].innerHTML + '"  name="email"></td>' +
+                '<td><select class="form-control"  type="text"  value="' + row.cells[15].innerHTML + '"  name="country_code" >' +
+                {% for data in country_list %}
+                '<option value={{data.country_code}}>{{data.country_name}}' +
+                    {% endfor %}
+                '</select></td>' +
+                    '<td><select class="form-control"  type="text" value="' + row.cells[16].innerHTML + '"  name="language_id">' +
+                    {% for data in language_list %}
+                '<option value={{data.language_id}}>{{data.description}}' +
+                    {% endfor %}
+                '</select></td>' +
+                    '<td><select class="form-control"  type="text" value="' + row.cells[17].innerHTML + '"  name="time_zone">' +
+                    {% for data in time_zone_data %}
+                '<option value={{data.time_zone}}>{{data.description}}' +
+                    {% endfor %}
+                '</select></td>' +
+                '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
+                '<td hidden><input  type="text" class="form-control"  name="guid" value="' +guid+ '"></td></tr>';
+            }
+            else {
+            guid = row.cells[18].innerHTML;
+            edit_basic_data += '<tr ><td hidden><input type="checkbox" required></td>' +
+                '<td><input class="form-control"  type="text"  value="' + row.cells[1].innerHTML + '"  name="address number" disabled></td>' +
+                '<td><input class="form-control"  type="text"  value="' + row.cells[2].innerHTML + '"  name="title"></td>' +
+                '<td><input class="form-control"  type="text" value="' + row.cells[3].innerHTML + '"  name="name1"></td>' +
+                '<td><input class="form-control"  type="text" value="' + row.cells[4].innerHTML + '"  name="name2"></td>' +
+                '<td><input class="form-control"  type="text" value="' + row.cells[5].innerHTML + '"  name="street"></td>' +
+                '<td><input class="form-control"  type="text" value="' + row.cells[6].innerHTML + '"  name="area"></td>' +
+                '<td><input class="form-control"  type="text" value="' + row.cells[7].innerHTML + '"  name="landmark"></td>' +
+                '<td><input class="form-control"  type="text" value="' + row.cells[8].innerHTML + '"  name="city"></td>' +
+                '<td><input class="form-control"  type="text"  value="' + row.cells[9].innerHTML + '"  name="postal_code"></td>' +
+                '<td><input class="form-control"  type="text" value="' + row.cells[10].innerHTML + '"  name="region"></td>' +
+                '<td><input class="form-control"  type="text" value="' + row.cells[11].innerHTML + '"  name="mobile_number"></td>' +
+                '<td><input class="form-control"  type="text" value="' + row.cells[12].innerHTML + '"  name="telephone_number"></td>' +
+                '<td><input class="form-control"  type="text"  value="' + row.cells[13].innerHTML + '"  name="fax_number"></td>' +
+                '<td><input class="form-control"  type="text" value="' + row.cells[14].innerHTML + '"  name="email"></td>' +
+                '<td><select class="form-control"  type="text" disabled value="' + row.cells[15].innerHTML + '"  name="country_code" >' +
+                {% for data in country_list %}
+                '<option value={{data.country_code}}>{{data.country_name}}' +
+                    {% endfor %}
+                '</select></td>' +
+                    '<td><select class="form-control"  type="text" disabled value="' + row.cells[16].innerHTML + '"  name="language_id">' +
+                    {% for data in language_list %}
+                '<option value={{data.language_id}}>{{data.description}}' +
+                    {% endfor %}
+                '</select></td>' +
+                    '<td><select class="form-control"  disabled type="text" value="' + row.cells[17].innerHTML + '"  name="time_zone">' +
+                    {% for data in time_zone_data %}
+                '<option value={{data.time_zone}}>{{data.description}}' +
+                    {% endfor %}
+                '</select></td>' +
+                '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
+                '<td hidden><input  type="text" class="form-control"  name="guid" value="' +guid+ '"></td></tr>';
+                 $("#header_select").prop("hidden",true);
+            }
+        }
+        }
+        $('#id_popup_table').append(edit_basic_data);
+        $("#id_del_ind_checkbox").prop("hidden", true);
+
+        $('#myModal').modal('show');
+        table_sort_filter('id_popup_table');
+        table_sort_filter('display_basic_table');
+    }
+
+function onclick_display_csv_data() {
+    $('#id_popup_table').DataTable().destroy();
+    formdata = new FormData();
+    formdata.append("file_attach", $('#id_file_data_upload').prop('files')[0]);
+    formdata.append("Tablename",Tablename);
+    formdata.append("appname",appname);
+    db_header_data = db_header_data
+    formdata.append("db_header_data",db_header_data);
+    $('#id_data_upload').modal('hide');
+    //$('#myModal').modal('show');$('#myModal').modal('show');
+    $('#id_popup_tbody').empty();
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'eProc_Configuration:data_upload_fk' %}",
+        data: formdata,
+        contentType: "application/json; charset=utf-8",
+        success: function(response) {
+            if(response == "Please check the uploaded csv file") {
+                $("#id_error_msg_upload").prop("hidden",false)
+                document.getElementById("id_error_msg_upload").innerHTML = response;
+                document.getElementById("id_error_msg_upload").style.color = "Red";
+                $('#id_data_upload').modal('show');
+            }
+            else{
+                var address_data_array = response;
+                var edit_basic_data = '';
+                var del_ind = '';
+                var dropdown_array = [];
+                $("#id_popup_tbody").empty();
+                    $.each(response, function (i, value) {
+                        var guid = 'GUID'
+
+                        var company_id = value[14]
+                        var langauge_id = value[15]
+                        var time_zone= value[16]
+                        dropdown_array.push([company_id, langauge_id,time_zone])
+                        for(var i=0; i<rendered_address_data.length; i++){
+                        data_dict = rendered_address_data[i];
+
+                            company_id_compare = data_dict['company_id'];
+                            langauge_id_compare = data_dict['language_id'];
+                            time_zone_compare  =  data_dict['time_zone'];
+                            }
+                        del_ind = '<td>' + value[17] + '</td>'
+                    if (value[17] == 1) {
+                        del_ind=' <input type="checkbox" value="' + value[2] + '" checked>'
+                    }
+                    else {
+                        del_ind= '<input type="checkbox" value="' + value[2] + '" required>'
+                    }
+                  edit_basic_data += '<tr ><td><input type="checkbox" required></td>' +
+                '<td><input class="form-control"  type="text"  value="' + value[0] + '"  name="address number"></td>' + +
+                '<td><input class="form-control"  type="text"  value="' + value[1] + '"  name="title"></td>' +
+                '<td><input class="form-control"  type="text" value="' + value[2] + '"  name="name1"></td>' +
+                '<td><input class="form-control"  type="text" value="' + value[3] + '"  name="name2"></td>' +
+                '<td><input class="form-control"  type="text" value="' + value[4] + '"  name="street"></td>' +
+                '<td><input class="form-control"  type="text" value="' + value[5] + '"  name="area"></td>' +
+                '<td><input class="form-control"  type="text" value="' + value[6] + '"  name="landmark"></td>' +
+                '<td><input class="form-control"  type="text" value="' + value[7] + '"  name="city"></td>' +
+                '<td><input class="form-control"  type="text"  value="' + value[8] + '"  name="postal_code"></td>' +
+                '<td><input class="form-control"  type="text" value="' + value[9] + '"  name="region"></td>' +
+                '<td><input class="form-control"  type="text" value="' + value[10]+ '"  name="mobile_number"></td>' +
+                '<td><input class="form-control"  type="text" value="' + value[11] + '"  name="telephone_number"></td>' +
+                '<td><input class="form-control"  type="text"  value="' + value[12] + '"  name="fax_number"></td>' +
+                '<td><input class="form-control"  type="text" value="' + value[13] + '"  name="email"></td>' +
+                '<td><select class="form-control"  type="text"  value="' + value[14] + '"  name="country_code" >' +
+                {% for data in country_list %}
+                '<option value={{data.country_code}}>{{data.country_name}}' +
+                    {% endfor %}
+                '</select></td>' +
+                    '<td><select class="form-control"  type="text" value="' + value[15] + '"  name="language_id">' +
+                    {% for data in language_list %}
+                '<option value={{data.language_id}}>{{data.description}}' +
+                    {% endfor %}
+                '</select></td>' +
+                    '<td><select class="form-control"  type="text" value="' + value[16] + '"  name="time_zone">' +
+                    {% for data in time_zone_data %}
+                '<option value={{data.time_zone}}>{{data.description}}' +
+                    {% endfor %}
+                '</select></td>' +
+                '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+
+                });
+               $('#id_popup_tbody').append(edit_basic_data);
+                    var i =0;
+                  $("#id_popup_table TBODY TR").each(function() {
+                    var row = $(this);
+
+                        var company_id = dropdown_array[i][0]
+                        var langauge_id = dropdown_array[i][1]
+                        var time_zone = dropdown_array[i][2]
+                        $(row.find("TD").eq(1).find("select option[value="+address_number+"]")).attr('selected','selected');
+                        var address_val = address_number_value_find(address_number)
+                        row.find("TD").eq(14).find("select").append(address_val.company_dropdwn)
+                        row.find("TD").eq(15).find("select").append(address_val.language_dropdwn)
+                        row.find("TD").eq(16).find("select").append(address_val.time_zone_dropdwn)
+                        $(row.find("TD").eq(14).find("select option[value="+company_id+"]")).attr('selected','selected');
+                        $(row.find("TD").eq(15).find("select option[value="+langauge_id+"]")).attr('selected','selected');
+                        $(row.find("TD").eq(16).find("select option[value="+time_zone+"]")).attr('selected','selected');
+
+                        $(row.find("TD").eq(14).find("select")).change(function(){
+                            row.find("TD").eq(15).find("select").empty()
+                            row.find("TD").eq(16).find("select").empty()
+
+                            address_val = row.find("TD").eq(1).find("select option:selected").val();
+
+                            var address_val = address_number_value_find(address_val)
+                            row.find("TD").eq(14).find("select").append(address_val.company_dropdwn)
+                            row.find("TD").eq(15).find("select").append(address_val.language_dropdwn)
+                            row.find("TD").eq(16).find("select").append(address_val.time_zone_dropdwn)
+                            row.find("TD").eq(20).html("1")
+                        })
+                        i = i + 1;
+                        })
+                $("#id_del_ind_checkbox").prop("hidden", false);
+                    $(".class_del_checkbox").prop("hidden", false);
+                    $('#myModal').modal('show');
+                    $('#id_data_upload').modal('hide');
+                    document.getElementById("id_del_add_button").style.display = "block";
+                    document.getElementById("id_check_data").style.display = "block";
+                    $("#id_check_data").prop("hidden", false);
+                    $("#save_id").prop("hidden", true);
+                    table_sort_filter_popup_pagination('id_popup_table')
+            }
+        },
+        cache: false,
+        processData: false,
+        contentType: false,
+    });
+}
+function onclick_copy_button() {
+    GLOBAL_ACTION = "COPY"
+    onclick_copy_update_button("copy")
+    document.getElementById("id_del_add_button").style.display = "block";
+}
+
+// on click update icon display the selected checkbox data to update
+function onclick_update_button() {
+    GLOBAL_ACTION = "UPDATE"
+    onclick_copy_update_button("update")
+    document.getElementById("id_del_add_button").style.display = "none";
+}
+</script>
+<script src="{% static 'scripts/address_data/master_address.js' %}"></script>
+
+{% endblock %}

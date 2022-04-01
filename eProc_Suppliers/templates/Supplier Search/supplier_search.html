@@ -1,0 +1,237 @@
+{% extends 'root/base.html' %}
+{% load static %}
+
+{% block title %} Majjaka eProcure - Supplier Management (Admin Tool) {% endblock %}
+{% block maincontent %}
+
+<div class="container-fluid">
+    <div class="hg_wrapper">
+
+        <div class="elements-space-between">
+            <span class="hg_head1">Supplier Management</span>
+            <div>
+                <button class="btn btn-primary" onclick="window.open(href = '{% url 'eProc_Suppliers:supplier_registration' %}')">
+                    <i class="fas fa-user-plus"></i> 
+                    Create Supplier
+                </button>
+                <button class="btn btn-primary" id="basic_save_upld_redirect" onclick="onclick_upload_button()">
+                    <i class="fas fa-cloud-upload-alt"></i> 
+                    upload data
+                </button>
+            </div>
+        </div>
+
+        <hr class="hg_heading_hrborder">
+
+        <div>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md">
+                        <label for="">First Name</label>
+                        <input type="text" class="form-control" id="name1" name="name1" >
+                    </div>
+                    <div class="col-md">
+                        <label for="">Last Name</label>
+                        <input type="text" class="form-control" id="name2" name="name2">
+                    </div>
+                    <div class="col-md">
+                        <label for="">Supplier Number</label>
+                        <input type="text" class="form-control" id="supplier_id" name='supplier_id'>
+                    </div>
+                    <div class="col-auto my-1">
+                        <button class="button-search-users btn btn-primary" type="submit"
+                                title="Please click to get the search details!" onclick="reload()"><i class="fas fa-search"></i> search
+                        </button>
+                    </div>
+                </div>
+                <hr>
+                <div class="elements-space-between" data-toggle="collapse" data-target="#supplier_adv_search">
+                    <span class="h5">Advanced Search</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div id="supplier_adv_search" class="advanced-search-collapse collapse">
+                    <div class="row">
+                        <div class="col-md">
+                            <label for="">Search Term 1</label>
+                            <input type="text" class="form-control" id="search_term1" name="search_term1">
+                        </div>
+                        <div class="col-md">
+                            <label for="">Search Term 2</label>
+                            <input type="text" class="form-control" id="search_term2" name="search_term2">
+                        </div>
+                        <div class="col-md">
+                            <label for="">Country</label>
+                            <select name="country_code" id="country_code" class="form-control">
+                                <option value="">select</option>
+                                {% for countries in get_country_id %}
+                                <option value="{{countries.country_code}}">{{countries.country_code}} - {{countries.country_name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md">
+                            <label for="">City</label>
+                            <input type="text" class="form-control" id="city" name="city">
+                        </div>
+                        <div class="col-md">
+                            <label for="">Purchasing Organization</label>
+                            <input type="text" class="form-control" id="porg" name="purchasing_org">
+                        </div>
+                        <div class="col-md">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="block">
+                                <label class="form-check-label" for="">
+                                    Purchase Block
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col">
+                        <input type="reset" value="Clear filters" class="ip-form-clear-filters">
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        {% if supplier_results.count > 0 %}
+        <div class="search_result_count_card card">
+            <div class="card-body">
+                <h6 class="card-title">Total number of results found
+                    :{{supplier_results.count}}</h6>
+            </div>
+        </div>
+        {% elif supplier_results.count == 0  %}
+        <div class="search_result_count_card card">
+            <div class="card-body">
+                <h6 class="card-title">No Results Found</h6>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if supplier_results %}
+
+    <div class="hg_wrapper">
+        <table id="sup_tab" class="table hg-striped-table table_sort_filter_export_excel">
+            <thead class="thead-light">
+            <tr>
+                <th> Supplier Number  </th>
+                <th> First Name </th>
+                <th> Last Name </th>
+                <th> City </th>
+                <th> Email</th>
+                <th> Supplier Status</th>
+                <th> Country</th>
+                <th> Registration Number</th>
+                <th> Purchase Block</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for results, encrypted_supplier_id in supplier_results %}
+            <tr id="tr_{{results.supplier_id}}">
+                <td><a href="{% url 'eProc_Admin_Tool:sup_details_page' encrypted_supplier_id %}" id="{{results.supplier_id}}" class="deletepop" target="_blank">{{results.supplier_id}}</a></td>
+                <td>{{results.name1}}</td>
+                <td>{{results.name2}}</td>
+                <td>{{results.city}}</td>
+                <td>{{results.email}}</td>
+                <td>
+                    {% if results.is_active %}
+                    Active
+                    {% else %}
+                    Inactive
+                    {% endif %}
+                    </td>
+                <td>{{results.country_code_id}}</td>
+                <td>{{results.registration_number}}</td>
+                <td>{{results.block}}</td>
+                <td><i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete User" id="{{results.supp_guid}}-{{results.supplier_id}}"
+                          data-toggle="modal"  data-target="#confirm_delete_pop_up" onclick="get_supplier_detail_to_delete(this.id)" ></i></td>
+
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% endif %}
+     <!--modal popup for user delete-->
+<div class="modal fade" id="confirm_delete_pop_up" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Please Confirm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                You are about to delete form "<span id="form_id_del"></span>". Are you sure?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="delete_supplier()">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<script src="{% static 'scripts/supplier-search.js' %}"> </script>
+<script>
+var GLOBAL_SUPPLIER_GUID = '';
+function reload()
+{
+localStorage.setItem("name1", document.getElementById("name1").value);
+localStorage.setItem("name2", document.getElementById("name2").value);
+localStorage.setItem("supplier_id", document.getElementById("supplier_id").value);
+localStorage.setItem("search_term1", document.getElementById("search_term1").value);
+localStorage.setItem("search_term2", document.getElementById("search_term2").value);
+console.log(document.getElementById("city").value);
+localStorage.setItem("city", document.getElementById("city").value);
+localStorage.setItem("country_code", document.getElementById("country_code").value);
+}
+
+//onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
+function onclick_upload_button() {
+    GLOBAL_ACTION = "supplier_upload"
+    $("#id_popup_tbody").empty();
+    $('#id_data_upload').modal('show');
+}
+
+function get_supplier_detail_to_delete(element) {
+        data_delete = element.split('-');
+        GLOBAL_SUPPLIER_GUID = data_delete[0]
+        document.getElementById("form_id_del").innerHTML = data_delete[1];
+        $('#confirm_delete_pop_up').modal('show')
+    }
+
+// Function to delete User
+function delete_supplier() {
+        var user_data = data_delete
+        $('#confirm_delete_pop_up').modal('hide');
+        data = {'data':user_data}
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'eProc_Suppliers:delete_supplier' %}",
+        data:JSON.stringify(data),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (Response) {
+            $('#success_msg_id').text(Response.success_message)
+           // document.getElementById("success_msg_id").text = Response.success_message;
+            $("#error_msg_div").prop("hidden",false)
+            setTimeout(function(){$("#error_msg_div").prop("hidden",true);},5000)
+        }
+    });
+
+}
+
+</script>
+
+{% endblock %}

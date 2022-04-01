@@ -1,0 +1,224 @@
+<!--Register page template-->
+{% extends 'root/base.html' %}
+{% load static %}
+
+{% block title %} Register a new user {% endblock %}
+
+{% block maincontent %}
+
+
+<div class="container-fluid">
+    <div class="hg_wrapper">
+        <div>
+            <div class="hg_head1">User Registration</div>
+            <hr class="hg_heading_hrborder">
+        </div>
+
+        <div class="card card-margin">
+
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#basic_data_tab">Basic Data</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#org_data_tab">Organizational data</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#buisness_doc_tab">Business Document</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="tab-content">
+
+                <div id="basic_data_tab" class="tab-pane active hg_tabcontent p-3">
+                   
+                    <!-- Display the success message upon successful registration-->
+                   
+                    <div>
+                        {% if messages %}
+                        <div class="alert alert-success">
+                            {% for message in messages %}
+                            <div class="{{ message.tags }}">{{ message }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <form method="POST" id="user_register_forms">
+                        {% csrf_token %}
+
+                        <!-- Display the eror messages during registration -->
+                        {% if reg_form.errors %}
+                        <div class="alert alert-danger">
+                            {% for field in reg_form %}
+                                {% if field.errors %}
+                                {{ field.label }}: {{ field.errors|striptags }} <br>
+                                {% endif %}
+                            {% endfor%}
+                        </div>
+                        {% endif %}
+                        
+
+                        <div class="card">
+                            <h5 class="card-header">Basic Data</h5>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="form-group col-md">
+                                        <label>User Name:</label><span class="hg_required"></span><br>
+                                        {{ reg_form.username }}
+                                    </div>
+                                    <div class="form-group col-md">
+                                        <label>Employee Id:</label><span class="hg_required"></span><br>
+                                        {{ reg_form.employee_id }}
+                                    </div>
+                                    <div class="form-group col-md">
+                                        <label>User Type:</label><span class="hg_required"></span><br>
+                                        {{ reg_form.user_type }}
+                                    </div>
+                                    
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md">
+                                        <label>First Name:</label><span class="hg_required"></span><br>
+                                        
+                                        {{ reg_form.first_name }}
+                                    </div>
+                                    <div class="form-group col-md">
+                                        <label>Last Name:</label><br>
+                                        {{ reg_form.last_name }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md">
+                                        <label> Currency:</label><span class="hg_required"></span><br>
+                                        {{ reg_form.currency_id }}
+                                    </div>
+                                    <div class="form-group col-md">
+                                        <label>Language:</label><span class="hg_required"></span><br>
+                                        {{ reg_form.language_id }}
+                                    </div>
+                                    <div class="form-group col-md">
+                                        <label> Time Zone:</label><span class="hg_required"></span><br>
+                                        {{ reg_form.time_zone }}
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <br>
+                        <!--   contact information   -->
+                        <div class="card">
+                            <h5 class="card-header">Contact Information</h5>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="form-group col-md">
+                                        <label>E-mail:</label><span class="hg_required"></span><br>
+                                        {{ reg_form.email }}
+                                    </div>
+                                    <div class="form-group col-md">
+                                        <label>Phone Number:</label><span class="hg_required"></span><br>
+                                        {{ reg_form.phone_num }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+
+                        <!--   Addtional information   -->
+                        <div class="card">
+                            <h5 class="card-header">Extended Data</h5>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="form-group col-md">
+                                        <label>Date Format:</label><span class="hg_required"></span><br>
+                                        {{ reg_form.date_format }}
+                                    </div>
+                                    <div class="form-group col-md">
+                                        <label>Decimal Notation:</label><span class="hg_required"></span><br>
+                                        {{ reg_form.decimal_notation }}
+                                    </div>
+                                    <div class="form-group col-md hg-mt-2rem" >
+                                        <label>SSO User:</label>&nbsp;&nbsp;<input type="checkbox" name="SSO User" value="SSO User">
+                                    </div>
+                                   
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="d-flex justify-content-end">
+                            <div>
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">reset</button>
+                                <button class="btn btn-primary" type="submit" title="Click here to Register" ><i class="fas fa-check"></i> register</button>
+                            </div>
+                        </div>
+                        
+                    </form>
+                    <!--User register form-->
+                </div>
+
+                <div id="org_data_tab" class="tab-pane fade hg_tabcontent p-3">
+                    <h3>Organizational data</h3>
+                    <p>Organizational data.</p>
+                </div>
+
+                <div id="buisness_doc_tab" class="tab-pane fade hg_tabcontent p-3">
+                    <h3>Business Document</h3>
+                    <p>Business Document.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="d-flex justify-content-end">
+                <div>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+            </div>
+            
+                
+            
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                Are you sure you want to reset the form?
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+                <button type="button" class="btn btn-primary" id="user_form_reset">Yes</button>
+            </div>
+
+        </div>
+    </div>
+</div> 
+
+<div class="hg_spacer2"> &nbsp; </div>
+
+
+<script>
+
+$(document).ready(function(){
+  $("#user_form_reset").click(function(){
+    $('#user_register_form')[0].reset();
+    $('#myModal').modal('hide');
+  });
+  $('#nav_menu_items').remove();
+  $("body").css("padding-top", "4rem");
+});
+
+// Get the element with id="defaultOpen" and click on it
+document.getElementById("defaultOpen").click();
+
+</script>
+
+{% endblock %}

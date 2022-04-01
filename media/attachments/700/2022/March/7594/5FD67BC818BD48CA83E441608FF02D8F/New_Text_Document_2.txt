@@ -1,0 +1,97 @@
+Camel case for text
+notes_added-D53E4EFCFFE1455492FD08EB77819D6C
+tables - size, header title, responsiveness, gaps
+buttons - types, button texts
+modals - size
+
+multiple configuration tables: short text finalization
+
+transaction types tables : heading issue
+
+Buttons
+delete : class="btn btn-outline-danger btn-sm"
+
+Exclude search option(plugin) from add pop up
+
+Maintain Work Flow Accounting - table width issue
+
+
+
+notes_added-D53E4EFCFFE1455492FD08EB77819D6C
+
+
+Apollo plugin
+varun.sharma@majjaka.com
+majjaka2022sales
+
+
+pradeep.kumar@medlife.com
+manoj.negi@in.unisys.com
+jayanta.sarkar@ngahr.com
+sumon.bhattacharjee@transformco.com
+kp.ramesh@sasken.com
+raviganeshv@cloudninecare.com
+lakshminarayana.neti@biologicale.com
+manish.singhvi@marlabs.com
+anand.balakrishnan@mindteck.com
+rajib.bhattacharya@softwareag.com
+nitesh.aggarwal@infosys.com
+bapu.kalluri@vbshilpa.com
+ajay.chawla@stl.tech
+ganesh.mopidevi@solara.co.in
+rajiv.sharma@slkgroup.com
+harsha.nandepu@metroapi.com
+nitesh.lohiya@shadowfax.in
+viplava@microland.com
+ballav.mundra@hexagon.com
+omveerk@americanoncology.com
+rajesh.nag@infiniminds.com
+sitarama.sarma@ctrls.in
+prachi.rathore@strides.com
+vishnu.ch@optimuspharma.com
+rahul.sachan@onmobile.com
+girdhar.kumar@waycool.in
+prashant.kumar@sonata-software.com
+hemant.lal@apollohl.com
+nagendrappa.venkataramanappa@allstate.com
+vinod.rao@acg-world.com
+manoj.moorjani@puresoftware.com
+ashish.jain@luminad.com
+brenda.pereira@zentiva.com
+inderpal.singh@fareportal.com
+jaipal.singh@lalpathlabs.com
+
+dinesh.negi@clearmedi.com
+
+kiran.narayan@dragarwal.com
+supratika.tripathi@marksanspharma.com
+govind.joshi@usv.in
+pranav.d@reproindialtd.com
+manish.panjwani@samil.in
+bhavesh.pujara@glenmarklifesciences.com
+shashank.mistry@epicentertechnology.com
+saurabh.lall@maxhealthcare.com
+karthik.srinivasan@metropolisindia.com
+nikhil.toshniwal@agrevolution.in
+vineet.aggarwal@parashospitals.com
+shekhar.varma@zycus.com
+nitin.agrawal@smt.in
+anshuman.thakur@3i-infotech.com
+
+
+6EF38D0DD39441FC9830033455067648
+
+rendered_item_guid
+
+header level
+ScAccounting-acc_cat-HEADER-GUID
+ScAccounting-acc_val-HEADER-GUID
+
+item level
+ScAccounting-acc_cat-
+ScAccounting-acc_val-
+
+
+My topic:
+1. UI features in Shopping cart 2nd step and My orders doc details
+2. UI update in call off forms and doc search - with Iliyaz

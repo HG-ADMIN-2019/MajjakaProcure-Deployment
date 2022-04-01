@@ -1,0 +1,54 @@
+<!--Login page template-->
+{% extends 'root/base.html' %}
+{% load static %}
+{% block title %} Majjaka Shop Login {% endblock %}
+
+{% block maincontent %}
+
+
+
+
+<div class="container-flex">
+    <div class="row no-gutters majjaka-login-form">
+        <div class="col-lg-8 login-page-image">
+            <img src="/static/images/ctnt_bg.png">
+        </div>
+        <div class="majjaka-login-form__body col-lg-4">
+            <div class="login_page_logo">
+                <img src="/static/images/Brandtext-Black.svg" class="img-fluid" alt="">
+            </div>
+            <form method="POST" class="login-page-form">
+                {% csrf_token %}
+                <div class="h4 login-page-form-heading">Sign in to your account</div>
+                <div class="login-messages">
+                    {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-danger">{{ message }}&nbsp;&nbsp;{{attempts_left}}</div>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <input id="email-id" type="email" name='email-id' title="Email-Id" class="form-control" placeholder="Email address" required />
+                </div>
+                <div class="form-group">
+                    <input id="password" type="password" name="password" title="Password" class="form-control" placeholder="Password" required />
+                </div>
+                <div class="form-group">
+                    <input type="submit" name="submit" value="LOGIN" title="Click here to Login"
+                        class="btn btn-primary" onclick="sessionStorage.clear()" />
+                </div>
+                <input type="hidden" name="next" value="{{ req.GET.next }}" />
+                <div style="text-align:center"><a href="{% url 'eProc_Login:password_reset' %}"> Forgot your password?</a></div>
+            </form>
+            <div class="text-center">
+                <a href="{% url 'eProc_Basic:terms_of_use' %}" target="_blank ">Terms of use.</a>
+                <a href="{% url 'eProc_Basic:private_policy' %}" target="_blank " >Privacy policy</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+    {% endblock %}
+
+

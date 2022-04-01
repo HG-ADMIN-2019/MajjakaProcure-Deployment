@@ -1,0 +1,1203 @@
+{% extends 'root/base.html' %}
+{% load static %}
+{% block maincontent %}
+
+
+{% include 'root/navbar.html' %}
+{% include 'root/loader.html' %}
+<head>
+    <style>
+        .hg_required::before {
+            content: " *";
+            color: red;
+        }
+    </style>
+</head>
+<body >
+<div class="hg_spacing">
+    <div style="font-size:30px;margin-top:20px">Maintain List of products in catalogs</div>
+    <hr class="hg_heading_hrborder">
+    <div class="hg_spacing"></div>
+    <button class="btn btn-primary hg_button_margin" onclick="edit_catalogs()" id="edit_cat" style="display: block;"><i
+            class="fas fa-pencil-alt"></i> Edit Catalogs</button>
+    <button class="btn btn-primary hg_catalog_edit_mode" id="add_new" onclick="addproduct('prod_service')" style="display:none;" >Add
+        Product/Service </button>
+    <button class="btn btn-primary hg_catalog_edit_mode hg_button_margin" id="delete_cat" onclick="application_settings_delete_Row('list_of_prods')" style=" display:none;margin-top:20px"> <i
+            class="fa fa-trash" aria-hidden="true" title="Delete Line"></i>Delete</button>
+</div>
+<div id="prod_service" style="display: none;padding:30%;padding-top:5%;" class="modal" >
+    <div class="modal-content"   style="width:600px; height:500px;padding: 10px; overflow-y: scroll; padding-left: 20px;">
+        <div class="modal-header">
+            <h5 class="modal-title">Add Product/Service</h5>
+            <!--                    <hr class="hg_heading_hrborder">-->
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick='document.getElementById("prod_service").style.display = "none"' >
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p id="err_prd_ser"></p>
+            <div class=" form-group">
+                <div>
+                    Product Id:<span class="hg_required"></span><br>
+                </div>
+                <div> <input type="text" id = "prd_prd_id" class="form-control hg_inputTxt hg_check_filled hg_get_feilds"></div>
+            </div>
+            <div class=" form-group">
+                <div>
+                    Description:<span class="hg_required"></span><br>
+                </div>
+                <div> <input type="text" id="prd_desc" class="form-control hg_inputTxt hg_check_filled hg_get_feilds"></div>
+            </div>
+            <div class=" form-group">
+                <div> Long text:<br> </div>
+                <div>
+                    <textarea rows="4" id = "prd_lng_txt" cols="65" class="form-control hg_inputTxt hg_get_feilds"></textarea>
+                </div>
+            </div>
+            <div class=" form-group">
+                <div>
+                    Supplier Id:<span class="hg_required"></span><br>
+                </div>
+                <div>
+                    <select name="suppliers" class="form-control hg_choiceField hg_get_feilds" id="pfm_supplier_list">
+
+                    </select>
+                </div>
+            </div>
+            <div class=" form-group">
+                <div>
+                    Product Category:<span class="hg_required"></span><br>
+                </div>
+                <div><input type="text" id="prd_prd_cate" class="form-control hg_inputTxt hg_check_filled hg_get_feilds"></div>
+            </div>
+            <div class=" form-group">
+                <div>
+                    Select Catalog:<span class="hg_required"></span><br>
+                </div>
+                <div> <select name="catalogs" class="form-control hg_choiceField hg_get_feilds hg_check_filled"
+                              id="pfm_catalog_list"></select></div>
+            </div>
+            <div class=" form-group">
+                <div> Product type:<br></div>
+                <div>
+                    <select class="form-control hg_choiceField hg_get_feilds" id="pro_type" name="prod_types">
+                        <option value="01"> 01 Product</option>
+                        <option value="02"> 02 Service</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-check form-check-inline">
+                <div> Price on Request:<br></div>
+                <div style="padding:10px;"> <input type="checkbox" id="prd_prc_req" class="form-check-input hg_get_feilds"></div>
+            </div>
+            <div class=" form-group">
+                <div>
+                    Unit:<span class="hg_required"></span><br>
+                </div>
+                <div> <select name="units_l" class="form-control hg_choiceField hg_get_feilds" id="pfm_units_list"></select></div>
+            </div>
+            <div class=" form-group">
+                <div> Price Unit:<br></div>
+                <div> <input type="text" id="prd_prs_unit" class="form-control hg_inputTxt hg_get_feilds"></div>
+            </div>
+            <div class=" form-group">
+                <div>
+                    Currency:<span class="hg_required"></span><br>
+                </div>
+                <div> <select class="form-control hg_choiceField hg_get_feilds" id="pfm_currency_list" name="currencies"></select>
+                </div>
+            </div>
+            <div class=" form-group">
+                <div>
+                    Price:<span class="hg_required"></span><br>
+                </div>
+                <div> <input type="text" id = "prd_prc" class="form-control hg_inputTxt hg_check_filled hg_get_feilds "></div>
+            </div>
+            <div class=" form-group">
+                <div> Manufacturer:<br></div>
+                <div> <input type="text" id ="prd_mnf" class="form-control hg_inputTxt hg_get_feilds"></div>
+            </div>
+
+            <div class=" form-group">
+                <div> Manufacturer Product No:<br></div>
+                <div> <input type="text" id="prd_mnf_no" class="form-control hg_inputTxt hg_get_feilds"></div>
+            </div>
+
+            <div class=" form-group">
+                <div> Brand:<br> </div>
+                <div> <input type="text" id="prd_brnd" class="form-control hg_inputTxt hg_get_feilds"></div>
+            </div>
+
+            <div class=" form-group">
+                <div>Lead Time:<span class="hg_required"></span><br></div>
+                <div> <input type="text" id="prd_lead" class="form-control hg_inputTxt hg_check_filled hg_get_feilds"></div>
+            </div>
+
+            <div class=" form-group">
+                <div> Quantity Available: </div>
+                <div> <input type="text" id="prd_qnt" class="form-control hg_inputTxt hg_get_feilds"></div>
+            </div>
+
+            <div class=" form-group">
+                <div>Minimum Quantity:<span class="hg_required"></span><br> </div>
+                <div> <input type="text" id="prd_mini_qnt" class="form-control hg_inputTxt hg_get_feilds"></div>
+            </div>
+
+            <div class=" form-group">
+                <div> Offer Key:<br></div>
+                <div> <input type="text" id="prd_off_key" class="form-control hg_inputTxt hg_get_feilds"></div>
+            </div>
+
+            <div class=" form-group">
+                <div> Country:<br></div>
+                <div> <select class="form-control hg_choiceField hg_get_feilds"  id="pfm_country_list" name="countries_l"></select>
+                </div>
+            </div>
+
+            <div class=" form-group">
+                <div> Language:<br></div>
+                <div> <select class="form-control hg_choiceField hg_get_feilds" id="pfm_language_list" name="Language_l"></select>
+                </div>
+            </div>
+            <div class=" form-group">
+                <div> UNSPSC:<br></div>
+                <div> <select class="form-control hg_choiceField hg_get_feilds" id="pfm_unspsc_list" name="unspsc_l"></select>
+                </div>
+            </div>
+
+            <div class=" form-group">
+                <div> Search Term 1:<br> </div>
+                <div> <input type="text" id="prd_search1" class="form-control hg_inputTxt hg_get_feilds"></div>
+            </div>
+
+            <div class=" form-group">
+                <div> Search Term 2:<br> </div>
+                <div> <input type="text" id="prd_search2" class="form-control hg_inputTxt hg_get_feilds"></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary"
+                    onclick="document.getElementById('prod_service').style.display = 'none'"><i
+                    class="fas fa-times"></i> cancel</button>
+            <button class="btn btn-primary" onclick="validation_check()"><i class="fas fa-save"></i> save</button>
+        </div>
+    </div>
+</div>
+<br>
+<br>
+<br>
+<div style="margin-left:30%">
+    <table id="list_of_prods" style=" border: none;" class="table_sort_filter table-striped">
+        <thead id="display_header">
+        <tr>
+            <th id="hg_select_checkbox" style="padding:10px; width:30px;" hidden>Select</th>
+            <th style="padding:10px; width:30px;">Product Id</th>
+            <th style="padding:10px; width:30px;">Description</th>
+            <th style="padding:10px; width:30px;">Supplier Id</th>
+            <th style="padding:10px; width:30px;">Lead Time</th>
+            <th style="padding:10px; width:30px;">Unit</th>
+            <th style="padding:10px; width:30px;">Price</th>
+            <th style="padding:10px; width:30px;">Currency</th>
+            <th style="padding:10px; width:30px;" hidden>Long text</th>
+            <th style="padding:10px; width:30px;" hidden>Product Category</th>
+            <th style="padding:10px; width:30px;" hidden>Select Catalog</th>
+            <th style="padding:10px; width:30px;" hidden>Product type</th>
+            <th style="padding:10px; width:30px;" hidden>Price on Request</th>
+            <th style="padding:10px; width:30px;" hidden>Price Unit</th>
+            <th style="padding:10px; width:30px;" hidden>Manufacturer</th>
+            <th style="padding:10px; width:30px;" hidden>Manufacturer Product No</th>
+            <th style="padding:10px; width:30px;" hidden>Brand</th>
+            <th style="padding:10px; width:30px;" hidden>Quantity Available</th>
+            <th style="padding:10px; width:30px;" hidden>Minimum Quantity</th>
+            <th style="padding:10px; width:30px;" hidden>Offer Key</th>
+            <th style="padding:10px; width:30px;" hidden>Country</th>
+            <th style="padding:10px; width:30px;" hidden>Language</th>
+            <th style="padding:10px; width:30px;" hidden>UNSPSC</th>
+            <th style="padding:10px; width:30px;" hidden>Search Term 1</th>
+            <th style="padding:10px; width:30px;" hidden>Search Term 2</th>
+            <th style="padding:10px; width:30px;" hidden>Catalog Item</th>
+            <th style="padding:10px; width:30px;" class="action_class" hidden>Action</th>
+            <th style="padding:10px; width:30px;"> View Images</th>
+            <th style="padding:10px; width:30px;" class="action_class" hidden> Upload Images</th>
+
+        </tr>
+        </thead>
+        <tbody id="display_data">
+        {% for pcattegories in upload_product_cattegories %}
+        <tr id="{{pcattegories.product_id}}" >
+            <td>{{pcattegories.product_id}}</td>
+            <td>{{pcattegories.short_desc}}</td>
+            <td>{{pcattegories.supplier_id}}</td>
+            <td>{{pcattegories.lead_time}}</td>
+            <td>{{pcattegories.unit}}</td>
+            <td>{{pcattegories.price}}</td>
+            <td>{{pcattegories.currency}}</td>
+            <td hidden>{{pcattegories.long_desc}}</td>
+            <td hidden>{{pcattegories.prod_cat_id}}</td>
+            <td hidden>{{pcattegories.catalog_id}}</td>
+            <td hidden>{{pcattegories.product_type}}</td>
+            <td hidden>{{pcattegories.price_on_request}}</td>
+            <td hidden>{{pcattegories.price_unit}}</td>
+            <td hidden>{{pcattegories.manufacturer}}</td>
+            <td hidden>{{pcattegories.manu_prod}}</td>
+            <td hidden>{{pcattegories.brand}}</td>
+            <td hidden>{{pcattegories.quantity_avail}}</td>
+            <td hidden>{{pcattegories.quantity_min}}</td>
+            <td hidden>{{pcattegories.offer_key}}</td>
+            <td hidden>{{pcattegories.country_of_origin}}</td>
+            <td hidden>{{pcattegories.language}}</td>
+            <td hidden>{{pcattegories.unspsc}}</td>
+            <td hidden>{{pcattegories.search_term1}}</td>
+            <td hidden>{{pcattegories.search_term2}}</td>
+            <td hidden>{{pcattegories.catalog_item}}</td>
+            <td class="hg_catalog_edit_mode" hidden><i class='fas fa-edit' style='color:orange' title='Edit' onclick= 'view_detail({{pcattegories.product_id}})'></i></td>
+            <td class="view_img"><a onclick="get_image_detail({{pcattegories.product_id}})" href="#">View</a>  </td>
+            <td class="hg_catalog_edit_mode" hidden><a onclick="attachments_popup({{pcattegories.product_id}})"><i class="fa fa-upload" aria-hidden="true"></i></a></td>
+            <td hidden></td>
+
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div>
+    <button id="basic_edit_save" type="button" class="btn btn-primary hg_catalog_edit_mode  hg_cancel_save_button_align" onclick="cancel_catalog_changes()" style="display: none;"><i
+            class="fas fa-times"></i> cancel</button>
+    <button class="btn btn-primary hg_catalog_edit_mode hg_button_margin hg_cancel_save_button_align" id="save_cat" onclick="catalog_save_basic()" style="display: none;"><i
+            class="fas fa-save"></i> Save </button>
+    <button class="btn btn-primary hg_catalog_edit_mode hg_button_margin hg_cancel_save_button_align" id="upload_prod_services" onclick="basic_save_upld_redirect()" style="display: none;"><i
+            class="fas fa-save"></i> Upload Data </button>
+</div>
+<div style="display: none">
+    <select id="drop_down_attr"> </select>
+    <select id="drop_down_attr1"> </select>
+</div>
+<!--Start attachments popup-->
+<div class="modal fade" id="attachments_popup">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" >
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Product and Services Images</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div id="id_prod_cat_error_msg" class="alert alert-danger" style="display: none;"></div>
+            <div id="id_prod_cat_success_messages" class="alert alert-success" style="display: none;"></div>
+            <!-- Modal body -->
+            <div class="modal-body" style="height:200px;">
+                Image 1: <input type="checkbox" id="id_default_img1" name="image" > <input id="id_image1" type="file"><br>
+                Image 2: <input type="checkbox" id="id_default_img2" name="image" > <input id="id_image2" type="file"><br>
+                Image 3: <input type="checkbox" id="id_default_img3" name="image" > <input id="id_image3" type="file"><br>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="hg_button">cancel</button>
+                <button type="button" onclick="save_to_index_db()" class="hg_button">OK</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!--End attachments popup-->
+
+
+<!--Start attachments popup-->
+<div class="modal fade" id="view_image_popup">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" >
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">View Images</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!--                <a class="example-image-link" href="images/image-1.jpg" data-lightbox="example-1"><img class="example-image" src="/media/catalog/700/10104/img4.jpg" alt="Girl looking out people on beach"></a>-->
+                <i  onclick="item_detail_previous()" style="color:orange;" class="fas fa-chevron-circle-left"></i>
+                <img id="img_1"  onerror='this.src="/static/images/no_image_available.png"' style="border: 1px solid #e9ecef; display:none;"  class="mr-3 catalog_img" width="50%" height="50%">
+                <img id="img_2" onerror='this.src="/static/images/no_image_available.png"' style="border: 1px solid #e9ecef; display:none;"  class="mr-3 catalog_img" width="50%" height="50%">
+                <img id="img_3" onerror='this.src="/static/images/no_image_available.png"' style="border: 1px solid #e9ecef; dispay:none;"  class="mr-3 catalog_img" width="50%" height="50%">
+                <i  style="color:orange; height=50px; width=50px;" onclick="item_detail_next()" class="fas fa-chevron-circle-right"></i>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="hg_button">OK</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!--End attachments popup-->
+
+<script>
+    var content_managment_settings ='{{content_managment_settings|safe}}';
+    //var rendered_product_data ="{{upload_product_cattegories|safe}}";
+
+    var rendered_supplier_data={{supp_data|safe}};
+    var rendered_currency_data={{currency_list|safe}};
+    var rendered_UOM_data={{get_units|safe}};
+    var rendered_country={{country_list|safe}};
+    var rendered_language={{language_list|safe}};
+    var rendered_catalog={{catalogs_list|safe}};
+    var rendered_unspsc={{unspsc_list|safe}};
+
+
+
+
+    var suplier_dropdwn = ""
+    var Uom_dropdwn = ""
+    var currency_dropdwn = ""
+    var edit_catalog_tr = ""
+    var edit_catalog_save_ind = ""
+    var product_categories =""
+
+//######################################### Start Intializing Index DB ##############################################
+         //prefixes of implementation that we want to test
+         window.indexedDB = window.indexedDB || window.mozIndexedDB ||
+         window.webkitIndexedDB || window.msIndexedDB;
+
+         //prefixes of window.IDB objects
+         window.IDBTransaction = window.IDBTransaction ||
+         window.webkitIDBTransaction || window.msIDBTransaction;
+         window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange ||
+         window.msIDBKeyRange
+
+         if (!window.indexedDB) {
+            window.alert(messageConstants["JMSG044"])
+         }
+
+
+         var db;
+         var request = window.indexedDB.open("store_product_detail_images", 1);
+
+         request.onerror = function(event) {
+            console.log("error: ");
+         };
+
+         request.onsuccess = function(event) {
+            db = request.result;
+            console.log("success: "+ db);
+         };
+
+         request.onupgradeneeded = function(event) {
+            var db = event.target.result;
+            var objectStore = db.createObjectStore("hg_prod_detail_images", {keyPath: "image_id"});
+         }
+//######################################### End Intializing Index DB ##############################################
+
+
+//##################################### CLEAR ATTACHEMENTS
+function clear_session_data(){
+        sessionStorage.clear();
+        localStorage.clear();
+        var req = window.indexedDB.deleteDatabase('store_product_detail_images');
+        req.onsuccess = function () {
+            alert(messageConstants["JMSG050"]);
+        };
+    }
+//######################################### start Function to convert File type to base64 type ########################
+// Function to convert File type to base64 type
+    const toBase64 = file => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ end Function to convert File type to base64 type $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+
+//#################################### START SAVE IMAGE INTO SESSION #######################################################
+async function save_to_index_db(){
+    $('#id_prod_cat_error_msg').empty();
+    $('#id_prod_cat_success_messages').empty();
+    document.getElementById('id_prod_cat_error_msg').style.display = 'none';
+    document.getElementById('id_prod_cat_success_messages').style.display = 'none';
+    if (($('#id_default_img1').is(":checked") == false) && ($('#id_default_img2').is(":checked") == false) && ($('#id_default_img3').is(":checked") == false)){
+        error_message = 'Please select Default';
+        $('#id_prod_cat_error_msg').empty();
+        $('#id_prod_cat_error_msg').html(error_message);
+        document.getElementById('id_prod_cat_error_msg').style.display = 'block';
+    }
+    else{
+        // store image 1 into session
+        input_file_id = 'id_image1';
+        var img1_default_flag = '';
+        if ($('#id_default_img1').is(":checked"))
+        {
+         img1_default_flag = 1;
+        }
+        img_id = GLOBAL_PROD_CAT_ID+"-1";
+        var file = document.querySelector('#'+input_file_id)
+        var img_extension_list = ['PNG','JPG', 'JPEG', 'BMP', 'TIF', 'TIFF', 'GIF']
+        var error_message = ''
+        attached_file = file.files[0];
+        if (attached_file){
+            file_extension = (attached_file.name).split(".")[1]
+            file_extension = file_extension.toUpperCase();
+            if(jQuery.inArray(file_extension, img_extension_list) != -1) {
+                if (attached_file.size <= 200000){
+                    base64_converted = await toBase64(attached_file);
+
+                    var request = db.transaction(["hg_prod_detail_images"], "readwrite")
+                        .objectStore("hg_prod_detail_images")
+                        .add({ image_id: img_id,default_flag:img1_default_flag, dataUrl: base64_converted ,file_name: attached_file.name});
+                    request.onsuccess = function(event) {
+                       //alert("Attachment added");
+                    };
+
+                    request.onerror = function(event) {
+                       //alert("Failed to upload");
+                    };
+                }
+                else {
+                    error_message = messageConstants["JMSG041"] +  "200KB" ;
+                }
+            }
+            else {
+                error_message = messageConstants["JMSG032"];
+
+            }
+         }
+         else if(img1_default_flag == 1){
+            error_message = messageConstants["JMSG021"];
+         }
+
+        if (!error_message){
+            // store image 2 into session
+            input_file_id = 'id_image2';
+            img_id = GLOBAL_PROD_CAT_ID+"-2";
+            var img2_default_flag = '';
+             if ($('#id_default_img2').is(":checked"))
+            {
+                img2_default_flag = 1;
+            }
+            var file = document.querySelector('#'+input_file_id)
+            attached_file = file.files[0];
+            if(attached_file){
+                file_extension = (attached_file.name).split(".")[1]
+                file_extension = file_extension.toUpperCase();
+                if(jQuery.inArray(file_extension, img_extension_list) != -1) {
+                    if (attached_file.size <= 200000){
+                        base64_converted = await toBase64(attached_file);
+
+                        var request = db.transaction(["hg_prod_detail_images"], "readwrite")
+                            .objectStore("hg_prod_detail_images")
+                            .add({ image_id: img_id,default_flag:img2_default_flag, dataUrl: base64_converted ,file_name: attached_file.name});
+                        request.onsuccess = function(event) {
+                           //alert("Attachment added");
+                        };
+
+                        request.onerror = function(event) {
+                           //alert("Failed to upload");
+                        };
+                    }
+                    else {
+                        error_message = messageConstants["JMSG041"] +  "200KB" ;
+                    }
+                }
+                else {
+                error_message = messageConstants["JMSG032"];
+                }
+            }
+            else if(img2_default_flag == 1){
+                error_message = messageConstants["JMSG021"];
+            }
+        }
+
+
+        if (!error_message){
+            // store image 3 into session
+            input_file_id = 'id_image3';
+            img_id = GLOBAL_PROD_CAT_ID+"-3";
+            var img3_default_flag = '';
+            if ($('#id_default_img3').is(":checked"))
+            {
+                img3_default_flag = 1;
+            }
+            var file = document.querySelector('#'+input_file_id)
+            attached_file = file.files[0];
+            if(attached_file){
+                file_extension = (attached_file.name).split(".")[1]
+                file_extension = file_extension.toUpperCase();
+                if(jQuery.inArray(file_extension, img_extension_list) != -1) {
+                    if (attached_file.size <= 200000){
+                        base64_converted = await toBase64(attached_file);
+
+                        var request = db.transaction(["hg_prod_detail_images"], "readwrite")
+                            .objectStore("hg_prod_detail_images")
+                            .add({ image_id: img_id,default_flag:img3_default_flag, dataUrl: base64_converted ,file_name: attached_file.name});
+                        request.onsuccess = function(event) {
+                           //alert("Attachment added");
+                        };
+
+                        request.onerror = function(event) {
+                           //alert("Failed to upload");
+                        };
+                     }
+                    else {
+                        error_message = messageConstants["JMSG041"] +  "200KB" ;
+                    }
+                }
+                else {
+                    error_message = messageConstants["JMSG032"];
+                }
+            }
+            else if(img3_default_flag == 1){
+                error_message = messageConstants["JMSG021"];
+            }
+        }
+        if (error_message){
+            $('#id_prod_cat_error_msg').empty();
+            $('#id_prod_cat_error_msg').html(error_message);
+            document.getElementById('id_prod_cat_error_msg').style.display = 'block';
+        }
+        else {
+            $('#id_prod_cat_error_msg').empty();
+            $('#id_prod_cat_success_messages').empty();
+            $('#id_prod_cat_success_messages').html(messageConstants["JMSG019"]);
+            document.getElementById('id_prod_cat_error_msg').style.display = 'none';
+            document.getElementById('id_prod_cat_success_messages').style.display = 'block';
+            $('#attachments_popup').modal('hide');
+        }
+    }
+
+}
+
+
+//#################################### END SAVE IMAGE INTO SESSION #######################################################
+
+//#################################### START ON CLICK OF VIEW IMAGE #####################################################
+function get_image_detail(product_id){
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'eProc_Catalog:get_image_detail' %}",
+        data: JSON.stringify(product_id),
+        success: function (response) {
+        static_url = '/media/';
+        if (response[0]){
+                $('#img_1').attr('src',static_url+ response[0].fields.image_url);
+            }
+            else{
+                $('#img_1').attr('src',"/static/images/no_image_available.png");
+            }
+            if (response[1]){
+                $('#img_2').attr('src',static_url+ response[1].fields.image_url);
+            }
+            else{
+                $('#img_2').attr('src',"/static/images/no_image_available.png");
+            }
+            if (response[2]){
+                $('#img_3').attr('src',static_url+response[2].fields.image_url);
+             }
+            else{
+                $('#img_3').attr('src',"/static/images/no_image_available.png");
+            }
+            image_visible_div = 0
+            show_image_div()
+        $('#view_image_popup').modal('show');
+        }
+    });
+}
+//#################################### END ON CLICK OF VIEW IMAGE #####################################################
+
+
+//################################## START ONCLICK NEXT BUTTON #########################################################
+var image_visible_div = 0;
+function item_detail_next(){
+    if (image_visible_div == $(".catalog_img").length - 1){
+    image_visible_div = 0;
+    }
+    else{
+        image_visible_div ++;
+    }
+    show_image_div();
+}
+//################################## END ONCLICK NEXT BUTTON ###########################################################
+
+
+//################################## START ONCLICK PREVIOUS BUTTON #####################################################
+function item_detail_previous(){
+    if (image_visible_div == 0){
+    image_visible_div = $(".catalog_img").length - 1;
+    }
+    else{
+        image_visible_div --;
+    }
+    show_image_div();
+}
+//################################## END ONCLICK PREVIOUS BUTTON #######################################################
+
+
+//################################## START SHOW IMAGE  #################################################################
+function show_image_div(){
+     $(".catalog_img").hide();
+     $(".catalog_img:eq(" + image_visible_div + ")").show();
+
+}
+//################################## END SHOW IMAGE  #################################################################
+//***********************************Start attachement popup display *******************************************
+var GLOBAL_PROD_CAT_ID = '';
+function attachments_popup(prod_id){
+    GLOBAL_PROD_CAT_ID = prod_id;
+    var img1_key_id = prod_id+"-1"
+    var img2_key_id = prod_id+"-2"
+    var img3_key_id = prod_id+"-3"
+    var request = db.transaction(["hg_prod_detail_images"], "readwrite")
+        .objectStore("hg_prod_detail_images")
+        request.delete(img1_key_id);
+        request.delete(img2_key_id);
+        request.delete(img3_key_id);
+        $("#id_image1").val(null);
+        $("#id_image2").val(null);
+        $("#id_image3").val(null);
+    $('#id_prod_cat_error_msg').empty();
+    $('#id_prod_cat_success_messages').empty();
+    $('#attachments_popup').modal('show');
+}
+//***********************************Start attachement popup display *******************************************
+// on click of save, save edited data into db
+function catalog_save_basic() {
+    attachment_data_array = new Array();
+    var objectStore = db.transaction("hg_prod_detail_images").objectStore("hg_prod_detail_images");
+    objectStore.openCursor().onsuccess = function (event) {
+        var cursor = event.target.result;
+        if (cursor) {
+                attachment_data_object = {}
+                attachment_pk = cursor.value.image_id;
+                attachment_data_object.image_id = cursor.value.image_id;
+                attachment_data_object.dataUrl = cursor.value.dataUrl;
+                attachment_data_object.file_name = cursor.value.file_name;
+                attachment_data_object.default_image = cursor.value.default_flag;
+                attachment_data_array.push(attachment_data_object)
+
+                cursor.continue();
+            }
+        else {
+            data = new FormData();
+            for(img=0;img<attachment_data_array.length; img++){
+            var image_data =attachment_data_array[img];
+            var abc = dataURLtoFile(image_data['dataUrl'],image_data['file_name']);
+            var file_name = image_data['file_name'];
+            data.append(image_data['image_id'], dataURLtoFile(image_data['dataUrl'],image_data['file_name']))
+            data.append('file_name', image_data['file_name'])
+            data.append('Prod_cat', image_data['image_id'])
+            data.append('default_image_value', image_data['default_image'])
+            console.log(abc)
+            }
+
+            var product_data = new Array();
+            $("#list_of_prods TBODY TR").each(function () {
+                var row = $(this);
+                var get_product_data = {};
+
+                        get_product_data.product_id = row.find("TD").eq(1).text();
+                        get_product_data.short_desc = row.find("TD").eq(2).text();
+                        get_product_data.supplier_id = row.find("TD").eq(3).text();
+                        get_product_data.lead_time = row.find("td:eq(4) ").text()
+                        get_product_data.unit = row.find("TD").eq(5).text();
+                        get_product_data.price = row.find("td:eq(6) ").text()
+                        get_product_data.currency = row.find("TD").eq(7).text();
+
+                        get_product_data.long_desc = row.find("td:eq(8)").text()
+                        get_product_data.prod_cat_id = row.find("td:eq(9) ").text()
+                        get_product_data.catalog_id = row.find("td:eq(10) ").text()
+                        get_product_data.product_type = row.find("td:eq(11) ").text()
+                        get_product_data.price_on_request = row.find("td:eq(12) ").text()
+                        get_product_data.price_unit = row.find("td:eq(13) ").text()
+                        get_product_data.manufacturer = row.find("td:eq(14) ").text()
+                        get_product_data.manu_prod = row.find("td:eq(15) ").text()
+                        get_product_data.brand = row.find("td:eq(16) ").text()
+                        get_product_data.quantity_avail = row.find("td:eq(17) ").text()
+                        get_product_data.quantity_min = row.find("td:eq(18) ").text()
+                        get_product_data.offer_key = row.find("td:eq(19) ").text()
+                        var country_of_origin=row.find("TD").eq(20).text();
+                        get_product_data.country_of_origin = country_of_origin.replace(/\s/g, '')
+
+                        get_product_data.language = row.find("TD").eq(21).text();
+                        get_product_data.unspsc = row.find("td:eq(22) ").text()
+                        get_product_data.search_term1 = row.find("td:eq(23) ").text()
+                        get_product_data.search_term2 = row.find("td:eq(24) ").text()
+                        get_product_data.catalog_item = row.find("td:eq(25) ").text()
+                       product_data.push(get_product_data);
+            })
+            data.append('update', JSON.stringify(product_data))
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Application_Settings:save_product_details_images' %}",
+                data: data,
+                success: function (Response) {
+                console.log(Response)
+                 $( "#hg_select_checkbox").prop( "hidden", true );
+                         $('tr td:nth-child(1)').hide();
+                        $( ".action_class").prop( "hidden", true );
+                        $( ".hg_catalog_edit_mode").prop( "hidden", true );
+                        document.getElementById("edit_cat").style.display = "block";
+                        document.getElementById("add_new").style.display = "none";
+                        document.getElementById("delete_cat").style.display = "none";
+                        document.getElementById("save_cat").style.display = "none";
+
+                clearData();
+                },
+                cache: false,
+                processData: false,
+                contentType: false,
+                error: function(data){
+
+                 }
+            });
+		}
+
+    };
+    console.log(attachment_data_array);
+
+}
+
+function clearData() {
+  // open a read/write db transaction, ready for clearing the data
+  var transaction = db.transaction("hg_prod_detail_images", "readwrite");
+
+
+  transaction.onerror = function(event) {
+  };
+
+  // create an object store on the transaction
+  var objectStore = transaction.objectStore("hg_prod_detail_images");
+
+  // Make a request to clear all the data out of the object store
+  var objectStoreRequest = objectStore.clear();
+
+  objectStoreRequest.onsuccess = function(event) {
+  };
+};
+//*******************
+
+// Function convert base64 converted url to File type
+    function dataURLtoFile(dataUrl, filename) {
+        var array = dataUrl.split(','),
+            mime = array[0].match(/:(.*?);/)[1],
+            converted_to_atob = atob(array[1]),
+            atob_length = converted_to_atob.length,
+            u8arr = new Uint8Array(atob_length);
+
+        while(atob_length--){
+            u8arr[atob_length] = converted_to_atob.charCodeAt(atob_length);
+        }
+        file_data = new File([u8arr], filename, {type:mime})
+        return file_data;
+    }
+
+//****************************
+// on click edit icon display the data in edit mode
+
+function edit_catalogs(){
+
+    var edit_basic_data = '';
+    product_categories_array = []
+    $('#list_of_prods tbody tr').each(function (index) {
+        var row = $(this);
+        var product_categories_object = {};
+        $("<td />").html('<input type="checkbox"/>').prependTo(row);
+        product_categories_object.product_id = row.find("td:eq(1)").html();
+        product_categories_object.short_desc = row.find("td:eq(2)").html();
+        product_categories_object.supplier_id = row.find("td:eq(3)").html();
+        product_categories_object.lead_time = row.find("td:eq(4)").html();
+        product_categories_object.unit = row.find("td:eq(5)").html();
+        product_categories_object.price = row.find("td:eq(6)").html();
+        product_categories_object.currency = row.find("td:eq(7)").html();
+        product_categories_object.long_desc = row.find("td:eq(8)").html();
+        product_categories_object.prod_cat_id = row.find("td:eq(9)").html();
+        product_categories_object.catalog_id = row.find("td:eq(10)").html();
+        product_categories_object.product_type = row.find("td:eq(11)").html();
+        product_categories_object.price_on_request = row.find("td:eq(12)").html();
+        product_categories_object.price_unit = row.find("td:eq(13)").html();
+        product_categories_object.manufacturer = row.find("td:eq(14)").html();
+        product_categories_object.manu_prod = row.find("td:eq(15)").html();
+        product_categories_object.brand = row.find("td:eq(16)").html();
+        product_categories_object.quantity_avail = row.find("td:eq(17)").html();
+        product_categories_object.quantity_min = row.find("td:eq(18)").html();
+        product_categories_object.offer_key = row.find("td:eq(19)").html();
+        product_categories_object.country_of_origin = row.find("td:eq(20)").html();
+        product_categories_object.language = row.find("td:eq(21)").html();
+        product_categories_object.unspsc = row.find("td:eq(22)").html();
+        product_categories_object.search_term1 = row.find("td:eq(23)").html();
+        product_categories_object.search_term2 = row.find("td:eq(24)").html();
+        product_categories_object.catalog_item = row.find("td:eq(25)").html();
+
+
+        product_categories_array.push(product_categories_object);
+    })
+    $( "#hg_select_checkbox").prop( "hidden", false );
+     $( ".action_class").prop( "hidden", false );
+     $( ".hg_catalog_edit_mode").prop( "hidden", false );
+
+        document.getElementById("edit_cat").style.display = "none";
+        document.getElementById("add_new").style.display = "block";
+       // document.getElementById("icon_disp").style.display = "block";
+        document.getElementById("basic_edit_save").style.display = "block";
+        document.getElementById("save_cat").style.display = "block";
+        document.getElementById("delete_cat").style.display = "block";
+        document.getElementById("upload_prod_services").style.display = "block";
+
+}
+//********************************
+function addproduct(){
+
+
+         var supplier_options = ""
+                    $.each(rendered_supplier_data, function (i, item) {
+                        //supplier_options += '<option value="' + item[0] + '">' + item[0] + "--" + item[1] + '</option>';
+                        supplier_options += '<option >' + item.supplier_id + '</option>'
+                    });
+                    $("#pfm_supplier_list").append(supplier_options)
+
+
+         var units_options = ""
+                    $.each(rendered_UOM_data, function (i, item) {
+                        units_options += '<option value="'+ item.uom_id +'">' + item.uom_description + '</option>'
+                    });
+                    $("#pfm_units_list").append(units_options)
+
+        var currency_options = ""
+                    $.each(rendered_currency_data, function (i, item) {
+                       currency_options += '<option value="'+ item.currency_id +'">' + item.description + '</option>'
+                    });
+                    $("#pfm_currency_list").append(currency_options)
+
+        var catalog_options = ""
+                    $.each(rendered_catalog, function (i, item) {
+
+                        catalog_options += '<option >' + item + '</option>'
+                    });
+                    $("#pfm_catalog_list").append(catalog_options)
+
+        var country_options = ""
+                    $.each(rendered_country, function (i, item) {
+
+                       country_options += '<option value="'+ item.country_code +'">' + item.country_name +'</option>';
+                    });
+                    $("#pfm_country_list").append(country_options)
+
+        var lang_options = ""
+                    $.each(rendered_language, function (i, item) {
+
+                        lang_options += '<option value="'+ item.language_id +'">' + item.description + '</option>'
+                    });
+                    $("#pfm_language_list").append(lang_options)
+
+        var unspsc_options = ""
+                    $.each(rendered_unspsc, function (i, item) {
+                      unspsc_options += '<option value="'+ item.prod_cat_id + '">' + item.prod_cat_id +'</option>'
+                    });
+                    $("#pfm_unspsc_list").append(unspsc_options)
+
+
+       $("#prod_service").css("display", "block")
+
+}
+
+
+
+//************************
+
+
+        function validation_check() {
+            $("#err_prd_ser").empty()
+            let check_data = document.getElementsByClassName("hg_check_filled")
+            for (let i = 0; i < check_data.length; i++) {
+                if (check_data[i].value === undefined || check_data[i].value === "") {
+                    document.getElementById("err_prd_ser").innerHTML = messageConstants["JMSG020"];
+                    document.getElementById("err_prd_ser").style.color = "red"
+                    validations_to_add = "X"
+                    break;
+                }
+            }
+            if (validations_to_add == "") {
+                prod_service()
+            }
+        }
+//*************************
+let validations_to_add = ""
+ function prod_service() {
+
+
+        let id = document.getElementById("prd_prd_id").value;
+        let desc = document.getElementById("prd_desc").value;
+        let sup_id = document.getElementById("pfm_supplier_list").value;
+        let lead_tim = document.getElementById("prd_lead").value;
+        let unit =  document.getElementById("pfm_units_list").value;
+        let price = document.getElementById("prd_prc").value;
+        let currency =  document.getElementById("pfm_currency_list").value;
+        let long_txt =  document.getElementById("prd_lng_txt").value;
+        let cat_item =  document.getElementById("prd_prd_cate").value;
+        let cat_id =  document.getElementById("pfm_catalog_list").value;
+        let prod_type = document.getElementById("pro_type").value;
+        let pric_on_req =  document.getElementById("prd_prc_req").value;
+        let pric_unit =  document.getElementById("prd_prs_unit").value;
+        let manufac =  document.getElementById("prd_mnf").value;
+        let manuprod =  document.getElementById("prd_mnf_no").value;
+        let brand =  document.getElementById("prd_brnd").value;
+        let qunt_avl =  document.getElementById("prd_qnt").value;
+        let qunt_min =  document.getElementById("prd_mini_qnt").value;
+        let off_key =  document.getElementById("prd_off_key").value;
+        let country =  document.getElementById("pfm_country_list").value;
+        let language =  document.getElementById("pfm_language_list").value;
+        let unspsc =  document.getElementById("pfm_unspsc_list").value;
+        let serch_trm1 =  document.getElementById("prd_search1").value;
+        let serch_trm2 =  document.getElementById("prd_search2").value;
+
+
+
+         let input = {
+                "id": id,
+                "short_desc": desc,
+                "supplier_id": sup_id,
+                "lead_time": lead_tim,
+                "unit": unit,
+                "price": price,
+                "currency": currency,
+                "long_desc":long_txt,
+                "prod_cat_id":cat_item,
+                "catalog_id":cat_id,
+                "product_type":prod_type,
+                "price_on_request":pric_on_req,
+                "price_unit": pric_unit,
+                "manufacturer": manufac,
+                "manu_prod": manuprod,
+                "brand": brand,
+                "quantity_avail": qunt_avl,
+                "quantity_min": qunt_min,
+                "offer_key": off_key,
+                "country_of_origin": country,
+                "language": language,
+                "unspsc": unspsc,
+                "search_term1": serch_trm1,
+                "search_term2": serch_trm2,
+
+
+            }
+
+
+
+            $("#" + id).empty()
+            var child = '<td><input type= "checkbox" class="hg_deleteable"></td><td>' + id + '</td><td>' + desc + '</td><td>' + sup_id + '</td><td>' + lead_tim + '</td><td>' + unit + '</td><td>' + price + '</td><td>' + currency + '</td><td hidden>' + long_txt + '</td><td hidden>' + cat_item + '</td><td hidden>' + cat_id + '</td><td hidden>' + prod_type + '</td><td hidden>' + pric_on_req + '</td><td hidden>' + pric_unit + '</td><td hidden>' + manufac + '</td><td hidden>' + manuprod + '</td><td hidden>' + brand + '</td><td hidden>' + qunt_avl + '</td><td hidden>' + qunt_min + '</td><td hidden>' + off_key + '</td><td hidden>' + country + '</td><td hidden>' + language + '</td><td hidden>' + unspsc + '</td><td hidden>' + serch_trm1 + '</td><td hidden>' + serch_trm2 + '</td> <td class="hg_catalog_edit_mode"><a onclick="view_detail(' + id + ')">Update</a></td><td class="view_img"><a onclick="get_image_detail(' + id + ')" href="#">View</a> </td> <td class="hg_catalog_edit_mode"><a onclick="attachments_popup(' + id + ')">Upload</a></td>';
+            $("#" + id).append(child)
+            $('#prod_service').modal('hide');
+
+
+
+
+                document.getElementById("prod_service").style.display = "none"
+                // $('#prod_service').find('input:number').val('');
+              //  $('#prod_service').find('input:text').val('');
+
+            }
+//****************************
+
+  //onclick of cancel............
+
+function cancel_catalog_changes(){
+    var edit_basic_data = '';
+   $('#display_data').empty();
+    $.each(product_categories_array, function( index, value ) {
+      edit_basic_data +='<tr><td>'+ value['product_id'] +'</td><td>'+ value['short_desc'] +'</td><td>'+ value['supplier_id'] +'</td><td>'+ value['lead_time'] +'</td><td>'+ value['unit'] +'</td><td>'+ value['price'] +'</td><td>'+ value['currency'] +'</td><td hidden>'+ value['long_desc'] +'</td><td hidden>'+ value['prod_cat_id'] +'</td><td hidden>'+ value['catalog_id'] +'</td><td hidden>'+ value['product_type'] +'</td><td hidden>'+ value['price_on_request'] +'</td><td hidden>'+ value['price_unit'] +'</td><td hidden>'+ value['manufacturer'] +'</td><td hidden>'+ value['manu_prod'] +'</td><td hidden>'+ value['brand'] +'</td><td hidden>'+ value['quantity_avail'] +'</td><td hidden>'+ value['quantity_min'] +'</td><td hidden>'+ value['country_of_origin'] +'</td><td hidden>'+ value['language'] +'</td><td hidden>'+ value['unspsc'] +'</td><td hidden>'+ value['search_term1'] +'</td><td hidden>'+ value['search_term2'] +'</td><td hidden>'+ value['catalog_item'] +'</td><td class="view_img"><a onclick="get_image_detail('+ value['product_id']+')" href="#">View</a>  </td></tr>'
+    });
+     $('#display_data').append(edit_basic_data);
+     $( "#hg_select_checkbox").prop( "hidden", true );
+     $( ".action_class").prop( "hidden", true );
+
+
+
+
+    document.getElementById("basic_edit_save").style.display = "none";
+        document.getElementById("edit_cat").style.display = "block";
+        document.getElementById("add_new").style.display = "none";
+        document.getElementById("delete_cat").style.display = "none";
+        document.getElementById("save_cat").style.display = "none";
+
+
+}
+//**********************
+//sort and filter feature for tables
+$(document).ready(function(){
+    table_sort_filter()
+
+});
+
+$("input:checkbox").on('click', function() {
+  // in the handler, 'this' refers to the box clicked on
+  var $box = $(this);
+  if ($box.is(":checked")) {
+    // the name of the box is retrieved using the .attr() method
+    // as it is assumed and expected to be immutable
+    var group = "input:checkbox[name='" + $box.attr("name") + "']";
+    // the checked state of the group/box on the other hand will change
+    // and the current value is retrieved using .prop() method
+    $(group).prop("checked", false);
+    $box.prop("checked", true);
+  } else {
+    $box.prop("checked", false);
+  }
+});
+
+
+
+//********************
+//onclick of delete,delete the row.
+  function application_settings_delete_Row(myTable) {
+            try {
+                var table = document.getElementById(myTable);
+                var rowCount = table.rows.length;
+
+                for (var i = 0; i < rowCount; i++) {
+                    var row = table.rows[i];
+                    var chkbox = row.cells[0].childNodes[0];
+                    if (null != chkbox && true == chkbox.checked) {
+                        table.deleteRow(i);
+                        rowCount--;
+                        i--;
+                    }
+                }
+                return rowCount;
+            } catch (e) {
+                alert(e);
+            }
+        }
+
+//*******************
+
+
+ //var catalog_detail = {{catalogs_list|safe}};
+        var GLOBAL_PRODUCT_ID = '';
+        function view_detail(prd_detail){
+
+
+            GLOBAL_PRODUCT_ID = prd_detail;
+            product_cat_id={}
+        product_cat_id["prod_id"] = prd_detail;
+        $.ajax({
+				type : 'POST',
+				url : "{% url 'eProc_Catalog:get_prod_details' %}",
+				data: JSON.stringify(product_cat_id),
+				success: function (response) {
+
+				   var supplier_options = ""
+				   var default_supplier_id = '';
+				   var default_uom_data = '';
+				   var default_currency = '';
+				   var default_catalog = '';
+				   var default_country = '';
+				   var default_language_id = '';
+				   var default_unspsc = '';
+                    $.each(rendered_supplier_data, function (i, item) {
+                        if(response[0].fields.supplier_id == item.supplier_id){
+                            default_supplier_id = '<option value="'+ item.supplier_id +'" >' + item.supplier_id + '</option>'
+                        }
+                        else{
+                        supplier_options += '<option value="'+ item.supplier_id +'">' + item.supplier_id + '</option>';
+                        }
+                    });
+                    $("#pfm_supplier_list").append(default_supplier_id + supplier_options)
+
+
+                     var units_options = ""
+                    $.each(rendered_UOM_data, function (i, item) {
+                        if(response[0].fields.unit == item.uom_description){
+                            default_uom_data = '<option value="'+ item.uom_id +'">' + item.uom_description + '</option>'
+                        }
+                        else{
+                        units_options += '<option value="'+ item.uom_id +'">' + item.uom_description + '</option>'
+                        }
+                    });
+                    $("#pfm_units_list").append(default_uom_data+units_options)
+
+        var currency_options = ""
+                    $.each(rendered_currency_data, function (i, item) {
+                        if(response[0].fields.currency_id == item.currency_id){
+                            default_currency = '<option value="'+ item.currency_id +'">' + item.currency_id + '</option>'
+                        }
+                        else{
+                       currency_options += '<option value="'+ item.currency_id +'">' + item.currency_id + '</option>'
+                       }
+                    });
+                    $("#pfm_currency_list").append(default_currency+currency_options)
+
+        var catalog_options = ""
+                    $.each(rendered_catalog, function (i, item) {
+                    if(response[0].fields.catalog_id == item){
+                            default_catalog = '<option >' + item + '</option>';
+                    }
+                    else{
+
+                        catalog_options += '<option >' + item + '</option>';
+                    }
+                    });
+                    $("#pfm_catalog_list").append(default_catalog+catalog_options)
+
+        var country_options = ""
+                    $.each(rendered_country, function (i, item) {
+                    if(response[0].fields.country_of_origin == item){
+                            default_country =  '<option value="'+ item.country_code +'">' + item.country_code +'</option>';
+                    }
+                    else{
+
+                       country_options += '<option value="'+ item.country_code +'">' + item.country_code +'</option>';
+                       }
+                    });
+                    $("#pfm_country_list").append(default_country+country_options)
+
+        var lang_options = ""
+                    $.each(rendered_language, function (i, item) {
+                    if(response[0].fields.language == item.language_id){
+                            default_language_id =  '<option value="'+ item.language_id +'">' + item.description + '</option>';
+                    }
+                    else{
+
+                        lang_options += '<option value="'+ item.language_id +'">' + item.description + '</option>';
+                     }
+                    });
+                    $("#pfm_language_list").append(default_language_id+lang_options)
+
+
+                        var unspsc_options = ""
+                    $.each(rendered_unspsc, function (i, item) {
+                        if(response[0].fields.unspsc == item.prod_cat_id){
+                            default_unspsc =  '<option >' + item.prod_cat_id + '</option>'
+                        }
+                        else{
+                          unspsc_options += '<option >' + item.prod_cat_id +  '</option>'
+                        }
+                    });
+                    $("#pfm_unspsc_list").append(default_unspsc+unspsc_options)
+                $("#prd_prd_id").val(response[0].fields.product_id);
+				$("#prd_prd_id").attr("disabled", "disabled");
+				$("#prd_desc").val(response[0].fields.short_desc);
+				$("#prd_lng_txt").val(response[0].fields.long_desc);
+				$("#prd_lead").val(response[0].fields.lead_time + ' ');
+				$("#prd_prc").val(response[0].fields.price);
+				$("#prd_prd_cate").val(response[0].fields.prod_cat_id);
+				$("#product_type").val(response[0].fields.product_type);
+				$("#price_on_request").val(response[0].fields.price_on_request);
+				$("#prd_prs_unit").val(response[0].fields.price_unit);
+				$("#prd_mnf").val(response[0].fields.manufacturer);
+				$("#prd_mnf_no").val(response[0].fields.manu_prod);
+				$("#prd_brnd").val(response[0].fields.brand);
+				$("#prd_qnt").val(response[0].fields.quantity_avail);
+				$("#prd_mini_qnt").val(response[0].fields.quantity_min);
+				$("#prd_off_key").val(response[0].fields.offer_key);
+				$("#prd_search1").val(response[0].fields.search_term1);
+				$("#prd_search2").val(response[0].fields.search_term2);
+				$('#prod_service').modal('show');
+            }
+        });
+    }
+//*****************************
+ // on click of upload , redirect to Upload functionality db
+        function basic_save_upld_redirect() {
+
+            window.open(href = "{% url 'eProc_Upload:upload_data_table'  %}", "_blank");
+
+            }
+
+</script>
+</body>
+{% endblock %}

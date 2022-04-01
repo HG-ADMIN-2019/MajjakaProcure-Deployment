@@ -1,0 +1,9 @@
+1) Adding, editing, deleting items to cart
+2) Check functionality
+3) Adding attachments in 2nd step
+4) saving and ordering of shopping cart
+5) Delivery date functionality
+6) Currency conversion related topics
+7) Adding item to saved cart both in doc detail and sc completion
+8) Editing item in saved cart
+9) Custom decorators

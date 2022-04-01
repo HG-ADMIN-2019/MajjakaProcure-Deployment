@@ -1,0 +1,47 @@
+{% load static %}
+<div class="modal fade" id="EditShipAddr">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Edit Current Address</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="alert alert-danger display-none" id="edit_address_error_div"></div>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group"><label>Street:</label><br>
+                        <input type="text" class="form-control hg_edit_address hg_special_character"  id="street_input" value=""></div>
+                    <div class="form-group"><label>Area:</label><br>
+                        <input type="text" class="form-control hg_edit_address hg_special_character" id="area_input" value=""></div>
+                    <div class="form-group"><label>Landmark:</label><br>
+                        <input type="text" class="form-control hg_edit_address hg_special_character" id="landmark_input" value=""></div>
+                    <div class="form-group"><label>City:</label><br>
+                        <input type="text" class="form-control  hg_edit_address hg_special_character" id="city_input" value=""></div>
+                    <div class="form-group"><label>Postal code:</label><br>
+                        <input type="text" class="form-control hg_edit_address hg_special_character" id="pcode_input" value=""></div>
+                    <div class="form-group"><label>Region:</label><br>
+                        <input type="text" class="form-control hg_edit_address hg_special_character" id="region_input" value=""></div>
+                    
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fas fa-times"></i> CLOSE</button>
+                <button type="button" id="submit_addr" class="btn btn-primary" onclick="submitAddress()"><i class="fas fa-save"></i> &nbsp;SUBMIT </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if is_second_step %}
+<script src="{% static 'scripts/edit_ship_address_sc2nd_step.js' %}"> </script>
+{% endif %}
+
+{% if is_document_detail %}
+<script src="{% static 'scripts/edit_ship_address_document_detail.js' %}"> </script>
+{% endif %}

@@ -1,0 +1,608 @@
+{% extends 'root/base.html' %}
+{% load static %}
+{% block title %} Majjaka eProcure - Account Assignment Descriptions (Master Settings) {% endblock %}
+{% block maincontent %}
+
+<div class="container-fluid">
+    <div class="configuration-table_wrapper">
+
+        <div class="elements-space-between">
+            <h3>Maintain Account Assignment Descriptions</h3>
+            <div>
+                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_accdesc_data' %}'"type="button">
+                    <i class="fas fa-download"></i> extract
+                </button>
+                <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_aad" value="aad_upload" onclick="onclick_upload_button()" type="button">
+                    <i class="fas fa-cloud-upload-alt"></i>  upload data
+                </button>
+                <button class="btn btn-primary" type="button" id="id_add_data" value="ADD" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this);">
+                    <i class="fa fa-plus"></i> add Account Assignment Description
+                </button>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="configuration-table_section">
+            <div id="err_msg_app_settings"> </div>
+            <div id="err_msg_app_settings_t" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
+
+            <div class="table-container">
+                <div class="edit-button-section mb-4">
+                    <button class="btn btn-secondary btn-sm" id="id_edit_data" onclick="onclick_edit_button()">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm" id="id_delete_data" value="aad_delete" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
+                        <i class="fa fa-trash"></i> Delete
+                    </button>
+                    <button class="btn btn-primary btn-sm" id="id_copy_data" style="display:none;" value="COPY" type="button" onclick="onclick_copy_button()">
+                        <i class="fa fa-copy"></i> Copy
+                    </button>
+                    <button class="btn btn-primary btn-sm" id="id_update_data" style="display:none;" value="UPDATE" type="button" onclick="onclick_update_button()">
+                        <i class="far fa-edit"></i> Update
+                    </button>
+                    <button class="btn btn-secondary btn-sm" id="id_cancel_data" style="display:none;" type="button" onclick="display_basic_db_data()">
+                        <i class="fas fa-times"></i> cancel
+                    </button>
+                </div>
+
+                <!--   display basic aad table-->
+                <table id="display_basic_table" class="class_basic_aad_table table table-bordered custom-table">
+                    <thead id="id_aad_table_header">
+                    <tr>
+                        <th id="hg_select_checkbox" hidden>
+                            <div id="id_check_all" style="display:none;">
+                                <INPUT type="checkbox" onchange="checkAll(this)" name="chk[]">
+                            </div>
+                        </th>
+                        <th>Account Assignment Value</th>
+                        <th>Description</th>
+                        <th>Account Assignment Category</th>
+                        <th>Company Number</th>
+                        <th>Language</th>
+                        <th hidden>guid</th>
+                    </tr>
+                    </thead>
+                    <tbody id="id_aad_tbody">
+                    {% for accassignment in account_assignment %}
+                    <tr>
+                        <td class="class_select_checkbox" hidden><input type="checkbox" class="checkbox_check" onclick="valueChanged()" required></td>
+                        <td>{{accassignment.account_assign_value}}</td>
+                        <td>{{accassignment.description}}</td>
+                        <td>{{ accassignment.account_assign_cat}}</td>
+                        <td>{{accassignment.company_id}}</td>
+                        <td>{{accassignment.language_id}}</td>
+                        <td hidden>{{accassignment.acc_desc_guid}}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="myModal">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"> Maintain Account Assignment Description</h5>
+                    <button type="button" class="close remove_upload_data" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body scrollbox">
+                    <div id="id_del_add_button">
+                        <button class="btn btn-primary"  type="button" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row</button>
+                        <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash" aria-hidden="true" title="Delete Line"></i> delete</button>
+                    </div>
+
+                    <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
+                    <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
+                    <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
+                        <p id="id_error_msg_aad_code"></p>
+                        <p id="id_error_msg_aad_name"></p>
+                        <p id="id_error_msg_aad_length"></p>
+                    </div>
+                    <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
+                    <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
+                    <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
+
+
+                    <table class="class_popup_table table table-bordered mt-2" id="id_popup_table">
+                        <thead>
+                        <tr>
+                            <th id="header_select">Select</th>
+                            <th>Account Assignment Value</th>
+                            <th>Description</th>
+                            <th>Account Assignment Category</th>
+                            <th>Company Number</th>
+                            <th>Language</th>
+                            <th hidden>guid</th>
+                            <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
+                            <th hidden>Confirm Value</th>
+                        </tr>
+                        </thead>
+                        <tbody id="id_popup_tbody">
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="id_delete_invalid_aav"  style="display:none;" type="button" onclick="delete_invalid_aav()"><i class="fas fa-check"></i> delete invalid account values</button>
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
+                    <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
+                    <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
+               </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- modal popup to upload the csv file; save confirmation popup; delete confirmation popup -->
+    {% include 'configuration_common_pop_up.html' %}
+
+    <div>
+        {% if messages %} {% for message in messages %} {% if message.tags == 'success' %}
+        <div style="color: green; ">{{ message }}</div>
+        {% endif %} {% if message.tags == 'error' %}
+        <div style="color: red; ">{{ message }}</div>
+        {% endif %} {% if message.tags == 'info' %}
+        <div style="color: Black bold"><b>{{ message }}</b> </div>
+        {% endif %} {% endfor %} {% endif %}
+    </div>
+</div>
+
+<script>
+    var master_data_settings = '{{master_data_settings|safe}}';
+    var rendered_accdatadescs_data ={{account_assignment|safe}};
+    var rendered_accasscat_data ={{upload_data_acccat|safe}};
+    var rendered_accasscat_values ={{upload_accassvalues|safe}};
+    var rendered_company_data ={{upload_data_company|safe}};
+    var rendered_language_data ={{upload_data_language|safe}};
+    var aad_data_array = {}
+    var main_table_aad_value = [];
+    var aad = '';
+    var edit_basic_data = '';
+    var GLOBAL_ACTION = '';
+    var no_duplicate_entries = 'Y'
+    var Tablename = uiConstants["CONST_TABLENAME_AAD"]
+    var appname = uiConstants["CONST_APPNAME01"]
+    var db_header_data = uiConstants["CONST_HEADER_DATA_AAD"]
+    var account_assign_array = [];
+    //************************************************
+    acc_ass_dropdwn = '';
+    company_dropdwn = '';
+    language_dropdwn = '';
+    acc_ass_val_dropdwn = '';
+    acc_ass_val_list = [];
+
+
+    $.each(rendered_accasscat_data, function (i, item) {
+        acc_ass_dropdwn += '<option value="' + item.account_assign_cat + '">' + item.account_assign_cat + '</option>'
+                $('drop_down_attr').empty()
+                $('drop_down_attr').append(acc_ass_dropdwn)
+    });
+    $.each(rendered_company_data, function (i, item) {
+        company_dropdwn += '<option  value="' + item.company_id + '">' + item.company_id + '</option>'
+                $('drop_down_attr1').empty()
+                $('drop_down_attr1').append(company_dropdwn)
+    });
+
+    $.each(rendered_language_data, function (i, item) {
+        language_dropdwn += '<option value="' + item.language_id + '">' + item.language_id + '</option>'
+                $('drop_down_attr2').empty()
+                $('drop_down_attr2').append(language_dropdwn)
+    });
+    $.each(rendered_accasscat_values, function (i, item) {
+        acc_ass_val_dropdwn += '<option value="' + item.account_assign_value + '">' + item.account_assign_value + '</option>'
+        acc_ass_val_dict = {};
+        acc_ass_val_dict.account_assign_value = item.account_assign_value
+        acc_ass_val_dict.account_assign_cat = item.account_assign_cat
+        acc_ass_val_dict.company_id = item.company_id
+        acc_ass_val_list.push(acc_ass_val_dict)
+        account_assign_array.push(item.account_assign_value)
+    });
+
+
+    function onclick_display_csv_data() {
+        var invalid_acc_assn = [];
+        formdata = new FormData();
+        formdata.append("file_attach", $('#id_file_data_upload').prop('files')[0]);
+        formdata.append("Tablename", Tablename);
+        formdata.append("appname", appname);
+        db_header_data = db_header_data
+        formdata.append("db_header_data", db_header_data);
+        $('#id_data_upload').modal('hide');
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:data_upload_fk' %}",
+            data: formdata,
+            contentType: "application/json; charset=utf-8",
+            success: function(response) {
+                if (response == "Please check the uploaded csv file") {
+                    $("#id_error_msg_upload").prop("hidden", false)
+                    document.getElementById("id_error_msg_upload").innerHTML = response;
+                    document.getElementById("id_error_msg_upload").style.color = "Red";
+                    $('#id_data_upload').modal('show');
+                } else {
+                    aad_data_array = response;
+                    var edit_basic_data = '';
+                    var del_ind = '';
+                    var dropdown_array = [];
+                    $("#id_popup_tbody").empty();
+                    $.each(response, function(i, value) {
+                        var guid = 'GUID'
+                        var account_assgn_val = value[0]
+                        var acc_cat = value[2]
+                        var company_id = value[3]
+                        var langauge_id = value[4]
+                        dropdown_array.push([account_assgn_val, acc_cat, company_id, langauge_id])
+                        for(var i=0; i<rendered_accdatadescs_data.length; i++){
+                            data_dict = rendered_accdatadescs_data[i];
+                            acc_val_compare = data_dict['account_assign_value'];
+                            acc_cat_compare = data_dict['description'];
+                            company_id_compare = data_dict['company_id'];
+                            langauge_id_compare = data_dict['language_id'];
+                            }
+
+
+                        del_ind = '<td>' + value[5] + '</td>'
+                        if (value[5] == 1) {
+                            del_ind = ' <input type="checkbox" value="' + value[5] + '" checked>'
+                        } else {
+                            del_ind = '<input type="checkbox" value="' + value[5] + '" required>'
+                        }
+                        if(account_assign_array.includes(value[0])){
+                            edit_basic_data += '<tr ><td><input class="input" type="checkbox" required></td><td><select id="acc_ass_val_dropdw">' + acc_ass_val_dropdwn + ' </select></td><td><input class="form-control" type="text" value="' + value[1] + '"  maxlength="255" onkeypress="return /[a-z ]/i.test(event.key)" style="text-transform:uppercase" </td><td><select id="acc_ass_dropdwn"></select></td><td ><select id="company_dropdwn"></select></td><td><select id="language_dropdwn">' + language_dropdwn + '</select></td><td hidden><input class="form-control" type="text" value="" ></td><td>' + del_ind + '</td><td hidden>1</td></tr>';
+                        }
+                        else{
+                            edit_basic_data += '<tr ><td><input class="input" type="checkbox" checked required></td><td><select id="acc_ass_val_dropdw">' + acc_ass_val_dropdwn + ' </select></td><td><input class="form-control" type="text" value="' + value[1] + '"  maxlength="255" onkeypress="return /[a-z ]/i.test(event.key)" style="text-transform:uppercase" </td><td><select id="acc_ass_dropdwn"></select></td><td ><select id="company_dropdwn"></select></td><td><select id="language_dropdwn">' + language_dropdwn + '</select></td><td hidden><input class="form-control" type="text" value="" ></td><td>' + del_ind + '</td><td hidden>0</td></tr>';
+                            invalid_acc_assn.push(value[0])
+                        }
+                    });
+
+                    $('#id_popup_tbody').append(edit_basic_data);
+                    var i = 0;
+                    $("#id_popup_table TBODY TR").each(function() {
+                        var row = $(this);
+                        var account_assgn_val = dropdown_array[i][0]
+                        var acc_cat = dropdown_array[i][1]
+                        var company_id = dropdown_array[i][2]
+                        var langauge_id = dropdown_array[i][3]
+                        $(row.find("TD").eq(1).find("select option[value="+account_assgn_val+"]")).attr('selected','selected');
+                        var assign_val = account_assignment_value_find(account_assgn_val)
+                        row.find("TD").eq(3).find("select").append(assign_val.acc_ass_dropdwn)
+                        row.find("TD").eq(4).find("select").append(assign_val.company_dropdwn)
+                        $(row.find("TD").eq(3).find("select option[value="+acc_cat+"]")).attr('selected','selected');
+                        $(row.find("TD").eq(4).find("select option[value="+company_id+"]")).attr('selected','selected');
+                        $(row.find("TD").eq(5).find("select option[value="+langauge_id+"]")).attr('selected','selected');
+
+                        $(row.find("TD").eq(1).find("select")).change(function(){
+                            row.find("TD").eq(3).find("select").empty()
+                            row.find("TD").eq(4).find("select").empty()
+
+                            account_assign = row.find("TD").eq(1).find("select option:selected").val();
+
+                            var assign_val = account_assignment_value_find(account_assign)
+                            row.find("TD").eq(3).find("select").append(assign_val.acc_ass_dropdwn)
+                            row.find("TD").eq(4).find("select").append(assign_val.company_dropdwn)
+                            row.find("TD").eq(7).html("1")
+                        })
+                        i = i + 1;
+                        })
+                    $("#id_del_ind_checkbox").prop("hidden", false);
+                    $(".class_del_checkbox").prop("hidden", false);
+                    $('#myModal').modal('show');
+                    $('#id_data_upload').modal('hide');
+                    document.getElementById("id_del_add_button").style.display = "block";
+                    document.getElementById("id_check_data").style.display = "block";
+                    $("#id_check_data").prop("hidden", false);
+                    $("#save_id").prop("hidden", true);
+                    table_sort_filter_popup_pagination('id_popup_table')
+                }
+            },
+            cache: false,
+            processData: false,
+            contentType: false,
+
+        });
+    }
+
+
+    // validate and save for add,copy,update and upload data
+    function popup_save_data() {
+        $('#success_msg_id').empty()
+<!--        $('#id_popup_table').DataTable().destroy();-->
+<!--        var Tabledata = {-->
+<!--            "Dbl_clck_tbl_id": 'upload_accdatades'-->
+<!--        };-->
+        var countries_data = new Array();
+        var main_table_low_value = [];
+        var validate_add_attributes = [];
+        var aad = {};
+        no_duplicate_entries = 'Y'
+        no_duplicate_value = 'Y'
+        var error_message = '';
+        $('#display_basic_table').DataTable().destroy();
+        $("#id_popup_table TBODY TR").each(function() {
+            var row = $(this);
+            aad = {};
+            aad.account_assign_value = row.find("TD").eq(1).find("select option:selected").val();
+            aad.description = (row.find("TD").eq(2).find('input[type="text"]').val()).toUpperCase();
+            aad.account_assign_cat = row.find("TD").eq(3).find("select option:selected").val();
+            aad.company_id = row.find("TD").eq(4).find("select option:selected").val();
+            aad.language_id = row.find("TD").eq(5).find("select option:selected").val();
+            aad.acc_desc_guid = (row.find("TD").eq(6).find('input').val());
+            if (aad == undefined) {
+                aad.account_assign_value = row.find("TD").eq(1).find('input[type="text"]').val();
+            }
+            var compare = aad.account_assign_value + '-' + aad.account_assign_cat + '-' + aad.company_id
+            validate_add_attributes.push(compare);
+            countries_data.push(aad);
+        });
+        $('#display_basic_table').DataTable().destroy();
+        $("#display_basic_table TBODY TR").each(function() {
+            var row = $(this);
+            var main_attribute = {};
+            main_attribute.account_assign_value = row.find("TD").eq(1).html()
+
+            main_attribute.account_assign_cat = row.find("TD").eq(3).html()
+            main_attribute.company_id = row.find("TD").eq(4).html()
+
+
+            var compare_maintable = main_attribute.account_assign_value + '-'+ main_attribute.account_assign_cat + '-' + main_attribute.company_id;
+            main_table_low_value.push(compare_maintable);
+        });
+        table_sort_filter('display_basic_table');
+        //$("#id_error_msg").empty();
+        [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, aad)
+        if (error_message){
+        display_error_message(error_message)
+
+    }
+    else{
+        if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+           [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+        }
+        if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+            var add_basic_data = '';
+            var aad_data_array = countries_data;
+<!--            $("#id_popup_table tbody tr").each(function(index) {-->
+<!--                var row = $(this);-->
+<!--                var aad_object = {};-->
+<!--                aad_object.account_assign_value = row.find("TD").eq(1).find("select option:selected").val();-->
+<!--                aad_object.description = (row.find("TD").eq(2).find('input[type="text"]').val()).toUpperCase();-->
+<!--                aad_object.account_assign_cat = row.find("TD").eq(3).find("select option:selected").val();-->
+<!--                aad_object.company_id = row.find("TD").eq(4).find("select option:selected").val();-->
+<!--                aad_object.language_id = row.find("TD").eq(5).find("select option:selected").val();-->
+<!--                aad_object.acc_desc_guid = (row.find("TD").eq(6).find('input').val());-->
+<!--                aad_object.del_ind = row.find("TD").eq(7).find('input[type="checkbox"]').is(':checked');-->
+<!--                aad_data_array.push(aad_object);-->
+<!--            });-->
+            $('#id_save_confirm_popup').modal('hide');
+            data = {'data':countries_data,'table_name':'AccountingDataDesc','action':GLOBAL_ACTION}
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(Response) {
+                    rendered_accdatadescs_data = Response[0];
+                    display_basic_db_data();
+                    $('#myModal').modal('hide');
+                    $('#id_error_msg').text(messageConstants["JMSG001"])
+                    $('#success_msg_id').text(Response[1])
+                    $("#err_msg_app_settings_t").prop("hidden", false)
+                    //document.getElementById("err_msg_app_settings_t").innerHTML = Response[1]
+                    table_sort_filter('id_popup_table');
+                    setTimeout(function() {
+                        $("#err_msg_app_settings_t").prop("hidden", true);
+                    }, 5000)
+                    table_sort_filter('id_popup_table');
+                }
+            });
+
+        }
+        else if (error_message){
+            display_error_message(error_message)
+
+        }
+    }
+    }
+
+    //delete the selected row in db................
+    var main_table_aad_checked = [];
+
+    function main_table_delete() {
+        $('#success_msg_id').empty()
+        GLOBAL_ACTION = 'DELETE'
+        main_table_aad_checked = [];
+<!--        var Tabledata = {-->
+<!--            "Dbl_clck_tbl_id": 'upload_accdatades'-->
+<!--        };-->
+        $('#display_basic_table').DataTable().destroy();
+        $("#display_basic_table TBODY TR").each(function() {
+            var row = $(this);
+            var aad_arr_obj = {};
+            aad_arr_obj.del_ind =  row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+            if(aad_arr_obj.del_ind){
+            aad_arr_obj.account_assign_value = row.find("TD").eq(1).html()
+            aad_arr_obj.description = (row.find("TD").eq(2).html()).toUpperCase()
+            aad_arr_obj.account_assign_cat = row.find("TD").eq(3).html()
+            aad_arr_obj.company_id = row.find("TD").eq(4).html()
+            aad_arr_obj.language_id = row.find("TD").eq(5).html()
+            aad_arr_obj.acc_desc_guid = row.find("TD").eq(6).html()
+
+            main_table_aad_checked.push(aad_arr_obj);
+            }
+        });
+        $('#id_delete_confirm_popup').modal('hide');
+            //document.getElementById('id_delete_confirm_popup').style.display = "none"
+            data = {'data':main_table_aad_checked,'table_name':'AccountingDataDesc','action':GLOBAL_ACTION}
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(Response) {
+                rendered_accdatadescs_data = Response[0];
+                display_basic_db_data();
+                $('#success_msg_id').text(Response[1])
+                $("#err_msg_app_settings_t").prop("hidden", false)
+                setTimeout(function() {
+                    $("#err_msg_app_settings_t").prop("hidden", true);
+                }, 5000)
+            }
+        });
+    }
+    //*************************
+
+    //check function restricting special char and diaplay the data count of csv file
+    function check_data() {
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_check_success_messages").empty()
+        $("#id_check_error_messages").empty()
+        $("#id_check_success_messages").prop("hidden", true)
+        $("#id_check_error_messages").prop("hidden", true)
+        $("#id_check_special_character_messages").prop("hidden", true)
+        document.getElementById("id_error_msg_aad_code").innerHTML = "";
+        document.getElementById("id_error_msg_aad_name").innerHTML = "";
+        document.getElementById("id_error_msg_aad_length").innerHTML = "";
+        Duplicate_count = 0;
+        count = 0;
+        var aad_array = new Array
+        var DB_array = new Array
+        var aad_list = new Array
+        var aad_code_check = new Array
+        var invalid_count = 0;
+        del_ind = ''
+        $("#id_popup_table TBODY TR").each(function() {
+            var row = $(this);
+
+            //*************** reading data from the pop-up ***************
+                account_assign_value = row.find("TD").eq(1).find("select option:selected").val();
+                description = (row.find("TD").eq(2).find('input[type="text"]').val()).toUpperCase();
+                account_assign_cat = row.find("TD").eq(3).find("select option:selected").val();
+                company_id = row.find("TD").eq(4).find("select option:selected").val();
+                language_id = row.find("TD").eq(5).find("select option:selected").val();
+                check_value = row.find("TD").eq(8).html()
+            checked_box = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked')
+            if (checked_box) {
+                del_ind = '1'
+            } else {
+                del_ind = '0'
+            }
+            if(check_value == "1"){
+                aad_list.push([account_assign_value, description, company_id, del_ind, account_assign_cat, language_id])
+                }
+                else{
+                count = count + 1;
+                invalid_count = invalid_count + 1;
+                }
+                var compare = account_assign_value + '-' + account_assign_cat + '-' + company_id + '-' + language_id
+
+            var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+
+            //*************** checking for special characters for aad description ***************
+            if (format.test(description)) {
+                document.getElementById("id_error_msg_aad_name").innerHTML = messageConstants["JMSG003"] + "Description";
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                count = count + 1;
+            } else {
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+            }
+
+            if (aad_code_check.includes(compare)) {
+                $(row).css("background-color", "#f8d7da");
+                Duplicate_count = Duplicate_count + 1;
+                //$(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                //$(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
+
+            } else {
+                $(row).css("background-color", "");
+            }
+            if(invalid_count != 0){
+                $("#id_delete_invalid_aav").show()
+            }
+            else{
+                $("#id_delete_invalid_aav").hide()
+            }
+            if(check_value=="0"){
+                document.getElementById("id_error_msg_aad_name").innerHTML = messageConstants["JMSG052"];
+                $(row.find("TD").eq(1).find("select")).css("border", "1px solid #FF0000");
+                count = count + 1;
+            } else {
+                $(row.find("TD").eq(2).find("select")).css("border", "none");
+            }
+
+            aad_code_check.push(compare)
+        });
+
+        //*************** shows save button if there are no errors(special characters and max length) ***************
+        if (count == 0) {
+            $("#id_check_special_character_messages").prop("hidden", true)
+            $("#save_id").prop("hidden", false);
+        }
+        popup_data_dict = {
+            'data_list': aad_list,
+            'Tablename': Tablename,
+            'appname': appname,
+            'db_header_data': ['ACCOUNT_ASSIGN_VALUE', 'DESCRIPTION', 'COMPANY_ID', 'del_ind', 'ACCOUNT_ASSIGN_CAT', 'LANGUAGE_ID']
+        }
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Master_Settings:check_data_acct_asst_val' %}",
+            data: JSON.stringify(popup_data_dict),
+            success: function(response) {
+                table_sort_filter_popup_pagination('id_popup_table')
+                $("#id_check_special_character_messages").prop("hidden", false)
+                if (count == 0) {
+                    $("#id_check_special_character_messages").prop("hidden", true)
+                }
+
+                //*************** retrieving data counts from views ***************
+                check_messages = response
+                var newArrayDataOfOjbect = Object.values(check_messages)
+                $("#id_check_success_messages").prop("hidden", false)
+
+                //*************** if pop-up data count is greater than zero ***************
+                if (newArrayDataOfOjbect[1] > 0) {
+                    $("#id_check_success_messages").append('<p>' + messageConstants["JMSG010"] + newArrayDataOfOjbect[0] + '</p>')
+                    $("#id_check_success_messages").append('<p>' + messageConstants["JMSG011"] + newArrayDataOfOjbect[1] + '</p>')
+                    $("#id_check_success_messages").append('<p>' + messageConstants["JMSG012"] + newArrayDataOfOjbect[3] + '</p>')
+                    $("#id_check_success_messages").append('<p>' + messageConstants["JMSG013"] + newArrayDataOfOjbect[4] + '</p>')
+                    $("#id_check_success_messages").append('<p>' + messageConstants["JMSG014"] + newArrayDataOfOjbect[5] + '</p>')
+                    $("#id_check_success_messages").append('<p>' + messageConstants["JMSG053"] + newArrayDataOfOjbect[6] + '</p>')
+                    //*************** if duplicate data data count is greater than zero ***************
+                    if (Duplicate_count > 0) {
+                        $("#id_check_error_messages").prop("hidden", false)
+                        $("#id_check_error_messages").append('<p>' + messageConstants["JMSG015"] + Duplicate_count + '</p>')
+                        $("#id_check_error_messages").append('<p style = "font-weight: bold;">' + messageConstants["JMSG001"] + ' </p>')
+                        $("#save_id").prop("hidden", true);
+                        $("#id_delete_duplicate").show()
+                    } else {
+                        $("#id_check_error_messages").prop("hidden", true)
+                        $("#id_delete_duplicate").hide()
+                    }
+                }
+                //*************** if pop-up data count is zero ***************
+                else {
+                    $("#id_check_success_messages").hide()
+                    $("#id_check_error_messages").prop("hidden", false)
+                    $("#id_check_error_messages").append('<p>' + messageConstants["JMSG006"] + '</p>')
+                    $("#save_id").prop("hidden", true);
+                }
+            }
+        });
+    }
+
+</script>
+
+<script src="{% static 'scripts/accounting_data/acc_assign_desc.js' %}"></script>
+{% endblock %}

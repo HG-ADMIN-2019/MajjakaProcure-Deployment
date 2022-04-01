@@ -1,0 +1,4 @@
+1. When it  comes to the Ui its far superior to the earlier tree structure menu.
+2. to open the config functionality in the same tab.
+3. basic data, app and master data configuration, were the parent node.
+4. the tables that are part of the parent node are being shown in tile format, with an indivual icon and name

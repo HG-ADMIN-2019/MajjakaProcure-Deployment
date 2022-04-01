@@ -1,0 +1,1 @@
+delete_all_shopping_carts('700', 'SANJAY')

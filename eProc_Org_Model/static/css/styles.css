@@ -1,0 +1,535 @@
+*{
+  box-sizing: border-box;
+  color: black;
+/*  font-family: Verdana;*/
+  font-style: normal;
+  font-size: 15px;
+}
+
+body {
+	margin: 0;
+	box-sizing: border-box;
+  color: black;
+  font-family: Verdana;
+  font-size: 16px;
+}
+/* Tree Structure CSS */
+.tree, .tree ul {
+    margin:0;
+    padding:0;
+    list-style:none
+}
+.tree ul {
+    margin-left:1em;
+    position:relative
+}
+.tree ul ul {
+    margin-left:.5em
+}
+.tree ul:before {
+    content:"";
+    display:block;
+    width:0;
+    position:absolute;
+    top:0;
+    bottom:0;
+    left:0;
+    border-left:1px solid
+}
+.tree li {
+    margin:0;
+    padding:0 1em;
+    line-height:2em;
+    color:#369;
+    font-weight:700;
+    position:relative
+}
+.tree ul li:before {
+    content:"";
+    display:block;
+    width:10px;
+    height:0;
+    border-top:1px solid;
+    margin-top:-1px;
+    position:absolute;
+    top:1em;
+    left:0
+}
+.tree ul li:last-child:before {
+    background:#fff;
+    height:auto;
+    top:1em;
+    bottom:0
+}
+.indicator {
+    margin-right:5px;
+}
+.tree li a {
+    text-decoration: none;
+    color:#369;
+}
+.tree li button, .tree li button:active, .tree li button:focus {
+    text-decoration: none;
+    color:#369;
+    border:none;
+    background:transparent;
+    margin:0px 0px 0px 0px;
+    padding:0px 0px 0px 0px;
+    outline: 0;
+}
+
+/* Navbar */
+.navbar {
+  width: 100%;
+  height: 63px;
+  background-color: black;
+  border-top: 3px solid #007bff;
+
+}
+.navbar input, .navbar button {
+  float: none;
+  border-radius:3px;
+  padding: 5px;
+  margin-top: 17px;
+  margin-right: 20px;
+  margin-bottom:17px;
+  margin-left:10px;
+  text-decoration: none;
+  border: none;
+  outline: none;
+}
+.navbar input {
+  color: black;
+}
+.navbar button {
+  background-color:white;
+}
+#org-btn {
+  width:35px;
+  cursor:pointer;
+}
+/* Toggle switch */
+.switch {
+  position: relative;
+  float: right;
+  margin : 17px 20px 17px 10px;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  float: right;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+input:checked + .slider {
+  background-color:#f2aa00;
+}
+input:focus + .slider {
+  box-shadow: 0 0 1px #f2aa00;
+}
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+.slider.round:before {
+  border-radius: 50%;
+}
+.orgIcon{
+  color: #f2aa00;
+}
+
+/* Body */
+.content {
+  width: 100%;
+  height: -webkit-calc(100% - 63.01px);
+  height: calc(100% - 63.01px);
+  position: fixed;
+}
+.content .left-panel{
+  margin: 0px;
+  width: 350px;
+  height: -webkit-calc(100% - 63.01px);
+  height: calc(100% - 63.01px);
+  background-color: #fff;
+  position: fixed;
+  overflow: hidden;
+  color: #757575;
+}
+.content .left-panel:hover{
+  overflow: auto;
+}
+.content .right-panel {
+  width: -webkit-calc(100% - 350.01px);
+  width: calc(100% - 350.01px);
+  height: -webkit-calc(100% - 63.01px);
+  height: calc(100% - 63.01px);
+  margin-left: 350px;
+  background-color: #d7d7d7;
+  position: fixed;
+  overflow-y: auto;
+}
+.content .left-panel::-webkit-scrollbar{
+  width: 8px;
+}
+.content .left-panel::-webkit-scrollbar-thumb{
+  border: 2px solid rgba(0, 0, 0, 0);
+  background-clip: padding-box;
+  background-color: rgba(158,158,158,.6);
+  border-radius: 10px;
+}
+/* Popup Box */
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 8888; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: white; /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  border-radius:3px;
+}
+
+@media (min-width: 1366px) {
+.modal_content, .modal-conform, .modal-msg{
+  background-color: #fefefe;
+  margin: 34vh auto; /* 50% from the top and centered */
+  padding: 0px;
+  border-radius: 3px;
+}
+
+.modal_content{
+  width: 30%; /* Could be more or less, depending on screen size */
+}
+.modal-conform {
+  width: 23%; /* Could be more or less, depending on screen size */
+}
+.modal-msg{
+  width: 23%;
+  height: 120px;
+}
+/*.modal-header{
+  padding:10px;
+  width: 100%;
+  height: 45px;
+  background-color:black;
+  color:white;
+  border-radius:3px;
+}*/
+.msg-header{
+  padding:10px;
+  width:100%;
+  height:45px;
+  background-color:black;
+  color:white;
+  border-radius:3px;
+}
+.modal-body, .modal-footer, .conform-modal {
+  padding:20px; 
+}
+
+.model-body label {
+  margin:3px;
+}
+
+input.create-org {
+  padding: 5px 5px;
+  border-radius: 3px;
+  border: 0.5px solid;
+  outline: none;
+}
+.msg-header{
+  padding:10px;
+  width: 100%;
+  height:40px;
+}
+.msg-body {
+  padding: 10px;
+  text-align: center;
+}
+.modal-btn, #create-btn, input.modal-btn, #modal-btn1, .msg-btn{
+  padding:5px;
+  border-radius:3px;
+  border:none;
+  outline:none;
+  background-color:#d7d7d7;
+  position:relative;
+}
+.modal-btn, #modal-btn1{
+  left:200px;
+  top:10px;
+}
+.msg-btn{
+  top: 10px;
+  left: 150px;
+}
+
+
+input#create-btn {
+  left: 320px;
+  margin-bottom: 10px;
+}
+
+form {
+  padding: 25px;
+  margin: 25px;
+  background: #eee; 
+}
+
+/* The Close modalOpen */
+.close {
+  color: black;
+  float: right;
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  padding:10px;
+}
+
+.close:hover,
+.close:focus {
+  color: whitesmoke;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.leftpd {
+  padding:20px;
+}
+
+.downpd {
+  padding-bottom: 20px;
+}
+
+.enter-orgnm {
+  width:360px;
+  margin-left:20px;
+  margin-top: 10px;
+  text-align:left;
+}
+
+.errmsg {
+  padding: 10px 10px 0px 20px;
+}
+}
+/* tree structure */
+ul, #tree_Structure {
+  list-style-type: none;
+  padding-left: 10px;
+  padding-top: 5px;
+  /* color: blue; */
+}
+
+#tree_Structure {
+  margin-left: 10px;
+  padding: 0;
+}
+
+#tree_Structure li {
+  padding-bottom: 5px;
+  /* background-color: #fff5e3;
+  margin: 1px; */
+}
+
+.treeIcon {
+  padding-left: 5px;
+  padding-top:5px;
+  padding-right:5px;
+  color: #f2aa00;
+}
+
+.treeIcon1 {
+  font-size: 12px;
+  color: blue;
+}
+ul, #treeStructure, .expand{
+  color: #757575;
+}
+.caret{
+  cursor: pointer;
+}
+/* endtree structure */
+
+/* Footer start */
+.ftr {
+    position: fixed;
+    bottom: 0px;
+    background-color: black;
+    color: white;
+    height: 25px;
+    width: 100%;
+    font-size: 12px;
+    text-align: left;
+    /* padding-top: 5px;
+    padding-bottom: 10px; */
+    padding: 5px 0px 10px 10px;
+    border-bottom: 2px solid blue;
+}
+/* Footer end */
+
+/* details page css */
+ 
+/* Style the tab */
+.tab {
+  overflow: hidden;
+  margin-top:40px;
+  background-color: #f1f1f1;
+ }
+
+/* Style for buttons inside the tab */
+.tab button {
+  background-color: inherit;
+  border: 1px solid #ccc;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 17px;
+  margin-bottom: 15px;
+  width: 120px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: black;
+  color:white;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 20px;
+  float: left;
+  display: block;
+  width: 100%;
+  background-color: #f2f2f2;
+ 
+}
+
+/* tab save and cancel options */
+.tab_options{
+    float:right;
+}
+
+/* basic data alignment*/
+.basicData_align {
+  width:15%;
+  float :left;
+  }
+
+/* css for input types with in tabs*/
+.tabcontent input {
+    padding:5px;
+    border-radius:3px;
+    border: .5px solid;
+    outline:none;
+	
+}
+
+/* css for non editable fields with in tabs*/
+  .nonEditable {
+    padding:5px;
+    border-radius:3px;
+    border: .5px solid;
+    outline:none;
+    background-color: rgb(215, 215, 215);
+  }
+/* end of details */
+
+/* CSS3 */
+
+.custom-menu {
+  display: none;
+  z-index: 1000;
+  position: inherit;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  overflow: hidden;
+  width: 200px;
+  white-space: nowrap;
+  font-family: sans-serif;
+  -webkit-box-shadow: 2px 2px 7px 0px rgba(50, 50, 50, 0.5);
+  -moz-box-shadow: 2px 2px 7px 0px rgba(50, 50, 50, 0.5);
+  box-shadow: 2px 2px 7px 0px rgba(50, 50, 50, 0.5);
+  }
+
+  
+/*.custom-menu {
+  display: none;
+  z-index: 1000;
+  position: relative;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  overflow: hidden;
+  width: 200px;
+  white-space: nowrap;
+  font-family: sans-serif;
+  -webkit-box-shadow: 2px 2px 7px 0px rgba(50, 50, 50, 0.5);
+  -moz-box-shadow: 2px 2px 7px 0px rgba(50, 50, 50, 0.5);
+  box-shadow: 2px 2px 7px 0px rgba(50, 50, 50, 0.5);
+  }*/
+
+  .custom-menu li {
+  padding: 5px 10px;
+  }
+
+  .custom-menu li:hover {
+  background-color: grey;
+  cursor: pointer;
+  color: white;
+  }
+
+  select.createnode {
+  padding: 5px 5px;
+  border-radius: 3px;
+  border: 0.5px solid;
+  outline: none;
+}
+
+input.createnode {
+  padding: 5px 5px;
+  border-radius: 3px;
+  border: 0.5px solid;
+  outline: none;
+}
+.highlight_login_user{
+    background:lightgrey;
+    color: rgb(0, 92, 191);
+}

@@ -1,0 +1,545 @@
+{% extends 'root/base.html' %}
+{% load static %}
+{% block title %} Majjaka eProcure - Documents (Application Settings) {% endblock %}
+{% block maincontent %}
+
+
+
+
+    <div class="container-fluid">
+        <div class="configuration-table_wrapper">
+            <div class="elements-space-between">
+               <h3>Maintain Documents</h3>
+                <div>
+                    <button type="button" id="id_add_data" title="Add Document Types" value="ADD" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
+                        <i class="fa fa-plus" ></i> add document
+                    </button>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="configuration-table_section">
+                <div id="err_msg_app_settings"> </div>
+                <div id="err_msg_app_settings_t" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
+                  <div class="table-container tcw-60">
+                       <div class="edit-button-section mb-4">
+                            <button class="btn btn-secondary btn-sm" title="Edit" id="id_edit_data"  onclick="onclick_edit_button()">
+                                <i class="fas fa-edit"></i> edit
+                            </button>
+
+                            <button class="btn btn-outline-danger  btn-sm" id="id_delete_data" value="doctype_delete" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
+                                <i class="fa fa-trash" aria-hidden="true" title="Delete Line"></i> delete
+                            </button>
+<!--                            <button class="btn btn-primary btn-sm" id="id_copy_data" style="display:none;" value="COPY"  type="button" onclick="onclick_copy_button()">-->
+<!--                                <i class="fa fa-copy"></i> copy-->
+<!--                            </button>-->
+<!--                            <button class="btn btn-primary btn-sm" id="id_update_data" style="display:none;" value="UPDATE"  type="button" onclick="onclick_update_button()">-->
+<!--                                <i class="far fa-edit"></i> update-->
+<!--                            </button>-->
+                            <button  class="btn btn-secondary btn-sm" id="id_cancel_data" style="display:none;" onclick="display_basic_db_data()">
+                                <i class="fas fa-times"></i> cancel
+                            </button>
+
+                    </div>
+                    <table id="display_basic_table" class="class_basic_doctype_table table table-bordered custom-table">
+                        <thead id="id_doctype_table_header">
+                            <tr>
+                                <th id="hg_select_checkbox" hidden>
+                                    <div id="id_check_all" style="display:none;">
+                                        <INPUT type="checkbox" onchange="checkAll(this)" name="chk[]">
+                                    </div>
+                                </th>
+                                <th>Document Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody id="id_doctype_tbody">
+                            {% for doctype in upload_document_type %}
+                            <tr>
+                                <td class="class_select_checkbox" hidden><input type="checkbox" class="checkbox_check" onclick="valueChanged()" required></td>
+                                <td>{{doctype.document_type}}</td>
+                                <td>{{doctype.document_type_desc}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+            <!--modal popup for Add,copy,update and upload-->
+
+        <!-- The Modal -->
+        <div class="modal fade" id="myModal" style="overflow:auto;">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"> Maintain Document Types</h5>
+                        <button type="button" class="close remove_upload_data" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body scrollbox">
+                        <div id="id_del_add_button" class="mb-4">
+                            <button class="btn btn-primary" type="button" onclick="add_popup_row()">
+                                <i class="fa fa-plus"></i> add new row
+                            </button>
+                            <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')">
+                                <i class="fa fa-trash"></i> delete
+                            </button>
+                        </div>
+
+                        <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
+                        <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
+                        <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
+                            <p id="id_error_msg_doctype_code"></p>
+                            <p id="id_error_msg_doctype_name"></p>
+                            <p id="id_error_msg_doctype_length"></p>
+                        </div>
+                        <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
+                        <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
+                        <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
+
+                        <table class="class_popup_table table table-bordered mt-2" id="id_popup_table">
+                            <thead>
+                                <tr>
+                                     <th id="header_select">Select</th>
+                                     <th>Document Type</th>
+                                     <th>Description</th>
+                                     <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
+                                </tr>
+                            </thead>
+                            <tbody id=id_popup_tbody>
+
+                            </tbody>
+                        </table>
+
+                    </div>
+
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                        <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
+                        <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
+                        <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
+                       
+                    </div>
+                </div>
+            </div>
+         </div>
+        
+
+         {% include 'configuration_common_pop_up.html' %}
+            <div>
+                {% if messages %} {% for message in messages %} {% if message.tags == 'success' %}
+                <div style="color: green; ">{{ message }}</div>
+                {% endif %} {% if message.tags == 'error' %}
+                <div style="color: red; ">{{ message }}</div>
+                {% endif %} {% if message.tags == 'info' %}
+                <div style="color: Black bold"><b>{{ message }}</b> </div>
+                {% endif %} {% endfor %} {% endif %}
+            </div>
+        </div>
+
+ 
+
+<script>
+
+
+var rendered_doctype_data = {{ upload_document_type| safe}};
+var rendered_dropdown_db_values = {{dropdown_db_values|safe}}
+var rendered_dropdown_db_values_onload = {{dropdown_db_values_onload|safe}}
+var doctype_data_array = {}
+var main_table_doctype_value = [];
+var doctype = '';
+var edit_basic_data = '';
+var GLOBAL_ACTION = '';
+var no_duplicate_entries = 'Y'
+var Tablename = uiConstants["CONST_TABLENAME_DOCTYPE"]
+var appname = uiConstants["CONST_APPNAME01"]
+var db_header_data = uiConstants["CONST_HEADER_DATA_DOCTYPE"]
+
+
+        var document_type_dropdown= '';
+        function dropdown_value(){
+        document_type_dropdown = '';
+        $.each(rendered_dropdown_db_values, function(i, item){
+            document_type_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
+        });
+        }
+
+         var document_type_dropdown_onload= '';
+         $.each(rendered_dropdown_db_values_onload, function(i, item){
+            document_type_dropdown_onload += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
+        });
+
+
+//onclick of add button display myModal popup and set GLOBAL_ACTION button value
+
+function onclick_add_button(button) {
+     dropdown_value();
+    $("#error_msg_id").css("display", "none")
+    $( "#header_select").prop( "hidden", false );
+    GLOBAL_ACTION = button.value
+    $('#id_popup_table').DataTable().destroy();
+    $("#id_popup_tbody").empty();
+    $('#myModal').modal('show');
+  
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
+         '<td><select type="text" class="input form-control documenttype" id="documenttype-1"  name="documenttype" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ document_type_dropdown +'</select></td>'+
+        '<td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td>'+
+        '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    $('#id_popup_tbody').append(basic_add_new_html);
+    table_sort_filter('id_popup_table');
+    $("#id_del_ind_checkbox").prop("hidden", true);
+    document.getElementById("id_del_add_button").style.display = "block";
+    $("#save_id").prop("hidden", false);
+}
+
+// on click add icon display the row in to add the new entries
+function add_popup_row() {
+    dropdown_value();
+    $("#error_msg_id").css("display", "none")
+    basic_add_new_html = '';
+    var display_db_data = '';
+    var getid = $(".documenttype:last").attr("id");
+    var getindex = getid.split("-")[1]
+    var inc_index = Number(getindex)+1
+    $('#id_popup_table').DataTable().destroy();
+    $(".modal").on("hidden.bs.modal", function () {
+    $("#id_error_msg").html(" ");
+     });
+     
+     basic_add_new_html = '<tr ><td><input type="checkbox" required></td>'+
+     '<td><select type="text" class="input form-control documenttype" id="documenttype-'+inc_index+'" name="documenttype" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ document_type_dropdown +'</select></td>'+
+    '<td><input class="form-control description" type="text" id="description-'+inc_index+'" name="description" disabled></td>'+
+    '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+ 
+ 
+    $('#id_popup_tbody').append(basic_add_new_html);
+    if (GLOBAL_ACTION == "doctype_upload") {
+        $(".class_del_checkbox").prop("hidden", false);
+    }
+    table_sort_filter_popup('id_popup_table');
+}
+
+
+
+function onclick_copy_update_button(data) {
+    $("#error_msg_id").css("display", "none")
+    $('#display_basic_table').DataTable().destroy();
+    $('#id_popup_table').DataTable().destroy();
+    $("#id_popup_tbody").empty();
+    //Reference the Table.
+    var grid = document.getElementById("display_basic_table");
+
+    //Reference the CheckBoxes in Table.
+    var checkBoxes = grid.getElementsByTagName("INPUT");
+    var edit_basic_data = "";
+    var dropdown_values = [];
+    //Loop through the CheckBoxes.
+    for (var i = 1; i < checkBoxes.length; i++) {
+        if (checkBoxes[i].checked) {
+            var row = checkBoxes[i].parentNode.parentNode;
+           
+
+            if(GLOBAL_ACTION == "UPDATE"){
+            edit_basic_data += '<tr><td><input type="checkbox" required></td>'+
+            '<td><select type="text" class="input form-control" id="approvaltype" value="' + row.cells[2].innerHTML + '" name="approvaltype" disabled>'+ document_type_dropdown +'</select></td>'+
+            '<td><input value="' + row.cells[2].innerHTML + '" type="text" class ="form-control" onkeypress="return /[a-z ]/i.test(event.key)" name="doctypedescription"  maxlength="30" style="text-transform:uppercase" required></td>'+
+            '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+             $("#header_select").prop("hidden", false);
+        }
+        else{
+            edit_basic_data += '<tr><td><input type="checkbox" required></td>'+
+            '<td><select type="text" class="input form-control value="' + row.cells[2].innerHTML + '" documenttype" id="documenttype-1"  name="documenttype" onchange="GetSelectedTextValue(this)">'+ document_type_dropdown +'</select></td>'+
+            '<td><input class="input form-control description" id="description-1" value="' + row.cells[2].innerHTML + '" type="text"  name="description" disabled></td>'+
+            '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+            $("#header_select").prop("hidden", false);
+        }
+            var document_type_value = row.cells[1].innerHTML
+            dropdown_values.push([document_type_value])
+        }
+    }
+    $('#id_popup_table').append(edit_basic_data);
+
+    var i =0;
+        $("#id_popup_table TBODY TR").each(function() {
+        var row = $(this);
+         var documenttype_value = dropdown_values[i][0]
+        $(row.find("TD").eq(1).find("select option[value="+documenttype_value+"]")).attr('selected','selected');
+        i++;
+    });
+
+    $("#id_del_ind_checkbox").prop("hidden", true);
+    $('#myModal').modal('show');
+    table_sort_filter('display_basic_table');
+    table_sort_filter('id_popup_table');
+}
+
+// validate and save for add,copy,update and upload data
+function popup_save_data() {
+    $('#success_msg_id').empty()
+    $('#id_popup_table').DataTable().destroy();
+ 
+   
+    var main_table_low_value = [];
+    
+    no_duplicate_entries = 'Y'
+    no_duplicate_value = 'Y'
+    var error_message = '';
+    
+ 
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function () {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.document_type = row.find("TD").eq(1).html();
+        main_table_low_value.push(main_attribute.document_type);
+    });
+    table_sort_filter('display_basic_table');
+
+    [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, doctype_data)
+    if (error_message){
+        display_error_message(error_message)
+
+    }
+    else{
+        if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+            [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+        }
+        if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+            var add_basic_data = '';
+            var doctype_data_array = doctype_data;
+
+            $('#id_save_confirm_popup').modal('hide');    
+
+        data = {'data':doctype_data,'table_name':'DocumentType','action':GLOBAL_ACTION}   
+            
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (Response) {
+                    rendered_doctype_data = Response[0];
+                    rendered_dropdown_db_values = Response[2];
+                    display_basic_db_data();
+                    dropdown_value();
+                    $('#myModal').modal('hide');
+                    $('#id_error_msg').text(messageConstants["JMSG001"])
+                    $('#success_msg_id').text(Response[1])
+                    //document.getElementById("err_msg_app_settings_t").innerHTML = Response[1]
+                    $("#err_msg_app_settings_t").prop("hidden", false)
+                    table_sort_filter('id_popup_table');
+                    setTimeout(function () {
+                        $("#err_msg_app_settings_t").prop("hidden", true);
+                    }, 5000)
+                    table_sort_filter('id_popup_table');
+                }
+            });
+
+        }
+        else if (error_message){
+                   display_error_message(error_message)
+        }
+    }
+}
+
+//delete the selected row in db................
+var main_table_doctype_checked = [];
+
+function main_table_delete() {
+    $('#success_msg_id').empty()
+    GLOBAL_ACTION = 'DELETE'
+    main_table_doctype_checked = [];
+    
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function () {
+        var row = $(this);
+        var doctype_arr_obj = {};
+        doctype_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+        if(doctype_arr_obj.del_ind){
+            doctype_arr_obj.document_type = row.find("TD").eq(1).html();
+            doctype_arr_obj.document_type_desc = row.find("TD").eq(2).html();
+            main_table_doctype_checked.push(doctype_arr_obj);
+        }
+    });
+    $('#id_delete_confirm_popup').modal('hide');
+    data = {'data':main_table_doctype_checked,'table_name':'DocumentType','action':GLOBAL_ACTION}
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+        data: JSON.stringify(data),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (Response) {
+            console.log(Response)
+            rendered_doctype_data = Response[0];
+            rendered_dropdown_db_values = Response[2];
+            display_basic_db_data();
+            $('#success_msg_id').text(Response[1])
+            $("#err_msg_app_settings_t").prop("hidden", false)
+            //document.getElementById("err_msg_app_settings_t").innerHTML = Response[2];
+            setTimeout(function () {
+                $("#err_msg_app_settings_t").prop("hidden", true);
+            }, 5000)
+        }
+    });
+}
+
+
+//check function restricting special char and diaplay the data count of csv file
+function check_data() {
+    $('#id_popup_table').DataTable().destroy();
+    $("#id_check_success_messages").empty()
+    $("#id_check_error_messages").empty()
+    $("#id_check_success_messages").prop("hidden", true)
+    $("#id_check_error_messages").prop("hidden", true)
+    $("#id_check_special_character_messages").prop("hidden", true)
+    document.getElementById("id_error_msg_doctype_code").innerHTML = "";
+    document.getElementById("id_error_msg_doctype_name").innerHTML = "";
+    document.getElementById("id_error_msg_doctype_length").innerHTML = "";
+    count = 0;
+    var doctype_array = new Array
+    var DB_array = new Array
+    var doctype_list = new Array
+    var document_type_check = new Array
+    del_ind = ''
+
+    $("#id_popup_table TBODY TR").each(function () {
+        var row = $(this);
+
+        //*************** reading data from the pop-up ***************
+        document_type_desc = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
+        document_type = row.find("TD").eq(1).find('select[type="text"]').val().toUpperCase();
+        checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
+        if (checked_box) {
+            del_ind = '1'
+        } else {
+            del_ind = '0'
+        }
+        doctype_list.push([document_type, document_type_desc, del_ind])
+        var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+
+        //*************** checking for max length for doctype code (max length = 5) ***************
+        if (document_type.length > 5) {
+            document.getElementById("id_error_msg_doctype_length").innerHTML = messageConstants["JMSG004"] + "Doc Type Code";
+            $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+            count = count + 1;
+        }
+
+        //*************** checking for special characters for doctype code ***************
+        else if (format.test(document_type)) {
+            document.getElementById("id_error_msg_doctype_code").innerHTML = messageConstants["JMSG003"] + "Doc Type Code";
+            $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+            count = count + 1;
+        } else {
+            $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
+        }
+
+        //*************** checking for special characters for doctype name ***************
+        if (format.test(document_type_desc)) {
+            document.getElementById("id_error_msg_doctype_name").innerHTML = messageConstants["JMSG003"] + "Doc Type Name";
+            $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
+            count = count + 1;
+        } else {
+            $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+        }
+        if (document_type_check.includes(document_type)) {
+            $(row).css({
+                "background-color": "#E0FFFF",
+                "border": "1px solid #000000"
+            });
+            //$(row).css("border", "1px solid #000000");
+            //$(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+            //$(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
+
+        } else {
+            $(row).css("background-color", "");
+        }
+        document_type_check.push(document_type)
+    });
+
+    //*************** shows save button if there are no errors(special characters and max length) ***************
+    if (count == 0) {
+        $("#id_check_special_character_messages").prop("hidden", true)
+        $("#save_id").prop("hidden", false);
+    }
+    popup_data_dict = {
+        'data_list': doctype_list,
+        'Tablename': Tablename,
+        'appname': appname,
+        'db_header_data': db_header_data
+    }
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'eProc_Basic_Settings:check_data' %}",
+        data: JSON.stringify(popup_data_dict),
+        success: function (response) {
+            table_sort_filter_popup_pagination('id_popup_table')
+            $("#id_check_special_character_messages").prop("hidden", false)
+            if (count == 0) {
+                $("#id_check_special_character_messages").prop("hidden", true)
+            }
+
+            //*************** retrieving data counts from views ***************
+            check_messages = response
+            var newArrayDataOfOjbect = Object.values(check_messages)
+            $("#id_check_success_messages").prop("hidden", false)
+
+            //*************** if pop-up data count is greater than zero ***************
+            if (newArrayDataOfOjbect[1] > 0) {
+                $("#id_check_success_messages").append('<p>' + messageConstants["JMSG010"] + newArrayDataOfOjbect[0] + '</p>')
+                $("#id_check_success_messages").append('<p>' + messageConstants["JMSG011"] + newArrayDataOfOjbect[1] + '</p>')
+                $("#id_check_success_messages").append('<p>' + messageConstants["JMSG012"] + newArrayDataOfOjbect[3] + '</p>')
+                $("#id_check_success_messages").append('<p>' + messageConstants["JMSG013"] + newArrayDataOfOjbect[4] + '</p>')
+                $("#id_check_success_messages").append('<p>' + messageConstants["JMSG014"] + newArrayDataOfOjbect[5] + '</p>')
+
+                //*************** if duplicate data data count is greater than zero ***************
+                if (newArrayDataOfOjbect[2] > 0) {
+                    $("#id_check_error_messages").prop("hidden", false)
+                    $("#id_check_error_messages").append('<p>' + messageConstants["JMSG015"] + newArrayDataOfOjbect[2] + '</p>')
+                    $("#id_check_error_messages").append('<p style = "font-weight: bold;">' + messageConstants["JMSG001"] + ' </p>')
+                    $("#save_id").prop("hidden", true);
+                    $("#id_delete_duplicate").show();
+                } else {
+                    $("#id_check_error_messages").prop("hidden", true)
+                    $("#id_delete_duplicate").hide();
+                }
+            }
+            //*************** if pop-up data count is zero ***************
+            else {
+                $("#id_check_success_messages").hide()
+                $("#id_check_error_messages").prop("hidden", false)
+                $("#id_check_error_messages").append('<p>' + messageConstants["JMSG006"] + '</p>')
+                $("#save_id").prop("hidden", true);
+            }
+        }
+    });
+}
+
+
+function GetSelectedTextValue(documenttype) {
+    var selectedText = documenttype.options[documenttype.selectedIndex].innerHTML;
+    var selectedValue = documenttype.value;
+	var selectedId = (documenttype.id).split('-')[1];
+     $.each (rendered_dropdown_db_values, function(i, item){
+        if(selectedValue == item.field_type_id){
+           // alert(item.field_type_desc);//
+            $('#description-'+selectedId).val(item.field_type_desc);
+        }
+    });
+
+}
+
+
+</script>
+
+<script src="{% static 'scripts/upload_doc_type.js' %}"></script>
+
+{% endblock %}

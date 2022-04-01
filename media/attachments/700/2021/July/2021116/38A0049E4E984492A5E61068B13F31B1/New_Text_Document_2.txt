@@ -1,0 +1,4 @@
+client to basic settings
+calender to basic settings
+delete transactional data settings
+purch cockpit conf to application settings

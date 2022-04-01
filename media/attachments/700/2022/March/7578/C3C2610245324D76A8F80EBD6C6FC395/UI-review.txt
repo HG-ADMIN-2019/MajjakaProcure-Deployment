@@ -1,0 +1,14 @@
+Limit order page 
+1. Warning message: limit order item can be added only if the shopping cart is empty.
+
+My orders page
+1. view info-graphics in cards about my orders, sc, 
+
+Move personal settings to navbar user dropdown 
+
+
+Product detail pop up issues
+product category not showing
+
+Product detail page issues
+product category not showing

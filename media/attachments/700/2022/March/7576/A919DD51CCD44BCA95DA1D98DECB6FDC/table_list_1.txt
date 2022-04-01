@@ -1,0 +1,17 @@
+
+Unique together tables : 
+
+1. Tansaction type(FAV)
+2. Tansaction type(SC)
+3. Tansaction type(PO)
+4. Messageid description
+5. Accounting assignment values
+6. Product Categories Description 
+7. approver limit value
+8. approval limit
+9. Spend Limit ID
+10. Spending limit value
+11. Payment Terms Description
+12. Address Types
+13. purchasing group
+14. purchasng organization

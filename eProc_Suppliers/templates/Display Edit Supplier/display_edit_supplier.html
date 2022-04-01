@@ -1,0 +1,430 @@
+<!--Register page template-->
+{% extends 'root/base.html' %}
+{% load static %}
+
+{% block title %}  Majjaka eProcure - Supplier Details (Supplier Management) {% endblock %}
+
+{% block maincontent %}
+
+<div class="container-fluid">
+    <div class="hg_wrapper">
+
+        <div>
+            <div class="hg_head1">Supplier Details</div>
+            <hr class="hg_heading_hrborder">
+        </div>
+
+        <!--Register type drop down-->
+        <div class="card card-margin">
+
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#basic_data_tab">Supplier Information</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#org_data_tab">Organizational Information</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#buisness_doc_tab">Business Document</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="tab-content">
+
+                <div id="basic_data_tab" class="tab-pane active p-3" >
+                     <div id="save_error_div" class="alert alert-danger display-none" role="alert" ></div>
+                    {{ supplier_form.non_field_errors }}
+                    <!-- Display the success message upon successful registration-->
+                    <div>
+                        {% if messages %}
+                        {% for message in messages %}
+                        <div class="{{ message.tags }}">{{ message }}</div>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+
+
+                    <!--Supplier register form-->
+                    <form method="POST" id="supplier_form_field" name="supplier_form_field">
+                        {% csrf_token %}
+                        <div class="alert alert-success display-none" id="supplier_basic_update_success" role="alert"></div>
+                        <!--    Basic Data      -->
+                        <div class="card">
+                            <h5 class="card-header">Account Information</h5>
+                            <div class="card-body">
+                                <div class="row">
+                                    <input value="{{supplier_info.supp_guid}}" id="supplier_guid" hidden>
+
+                                    <div class="form-group col-md">
+                                        <label> Supplier Number</label><span class="hg_required"></span><br>
+                                        <input type="text" class="form-control" id="supplier_id" value="{{supplier_info.supplier_id}}"  disabled>
+                                    </div>
+
+                                    <div class="form-group col-md">
+                                        <label> Supplier Type</label><span class="hg_required"></span><br>
+                                        <select name="" id="supplier_type" class="form-control" disabled>
+                                            <option value="{{supplier_info.supp_type}}">{{supplier_info.supp_type}}</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group col-md">
+                                        <label> Registration Number</label><span class="hg_required"></span><br>
+                                        <input type="text" class="form-control" id="supplier_regnum" value="{{supplier_info.registration_number}}" disabled>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-md">
+                                        <label> First Name</label><span class="hg_required"></span><br>
+                                        <input type="text" class="form-control hg_edit_display_mode" id="name1" name="name1" value="{{supplier_info.name1}}" required disabled>
+                                    </div>
+
+                                    <div class="form-group col-md">
+                                        <label> Last Name</label><br>
+                                        <input type="text" class="form-control hg_edit_display_mode" id="name2" value="{{supplier_info.name2}}" disabled>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-md">
+                                        <label> Currency</label><span class="hg_required"></span><br>
+                                        <select name="" id="currency_id" class="form-control hg_edit_display_mode" disabled>
+                                            <option value="{{supplier_info.currency_id}}">{{supplier_info.currency_id}}</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group col-md">
+                                        <label> Language</label><span class="hg_required"></span><br>
+                                        <select name="" id="language_id" class="form-control hg_edit_display_mode" disabled>
+                                            <option value="{{supplier_info.language_id}}">{{supplier_info.language_id}}</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group col-md">
+                                        <label> Country</label><span class="hg_required"></span><br>
+                                        <select name="" id="country_code_id" class="form-control hg_edit_display_mode" disabled>
+                                            <option value="{{supplier_info.country_code}}">{{supplier_info.country_code}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-md">
+                                        <label> City</label><span class="hg_required"></span><br>
+                                        <input type="text" class="form-control hg_edit_display_mode" id="city_id" name="city_id" value="{{supplier_info.city}}" disabled>
+                                    </div>
+
+                                    <div class="form-group col-md">
+                                        <label> Street</label><br>
+                                        <input type="text" class="form-control hg_edit_display_mode" id="street_id" value="{{supplier_info.street}}" disabled>
+                                    </div>
+
+                                    <div class="form-group col-md">
+                                        <label> Postal Code</label><br>
+                                        <input type="text" class="form-control hg_edit_display_mode" id="postal_code_id" value="{{supplier_info.postal_code}}" disabled>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md">
+                                    <div style="display:flex">
+                                       <div>
+                                         {% for x in supp_img_info %}
+                                            <img src="{{ x.image_url.url }}" style="height:200px;width:200px; margin: 10px;border: 2px solid blue" onerror='this.src="/static/images/no-image-cropped.png"'>
+                                        {% endfor %}
+                                       </div>
+                                        <div>
+                                            <label> Upload Supplier Image</label><br>
+                                            <input type="file" class="hg_edit_display_mode" name="supplier_image" id="supplier_image_id" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <br>
+                        <!--  Contact information  -->
+                        <div class="card">
+                            <h5 class="card-header">Contact information</h5>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="form-group col-md">
+                                        <label> E-mail</label><span class="hg_required"></span><br>
+                                        <input type="email" class="form-control hg_edit_display_mode" id="email_id" name="email_id" value="{{supplier_info.email}}" disabled>
+                                    </div>
+
+                                    <div class="form-group col-md">
+                                        <label> Phone</label><br>
+                                        <input type="text" class="form-control hg_edit_display_mode" id="landline_id" value="{{supplier_info.landline}}" disabled>
+                                    </div>
+
+                                    <div class="form-group col-md">
+                                        <label> Mobile</label><br>
+                                        <input type="text" class="form-control hg_edit_display_mode" id="mobile_num_id" value="{{supplier_info.mobile_num}}" disabled>
+                                    </div>
+
+                                    <div class="form-group col-md">
+                                        <label> Fax</label><br>
+                                        <input type="text" class="form-control hg_edit_display_mode" id="fax_id" value="{{supplier_info.fax}}" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <br>
+                        <!--     Extended data       -->
+                        <div class="card">
+                            <h5 class="card-header">Extended data</h5>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="form-group col-md">
+                                        <label> Search Term 1</label><br>
+                                        <input type="text" class="form-control hg_edit_display_mode" id="search_term1_id" value="{{supplier_info.search_term1}}" disabled>
+                                    </div>
+
+                                    <div class="form-group col-md">
+                                        <label> Search Term 2</label><br>
+                                        <input type="text" class="form-control hg_edit_display_mode" id="search_term2_id" value="{{supplier_info.search_term2}}" disabled>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md">
+                                        <label> Working Days</label><br>
+                                        <input type="text" class="form-control hg_edit_display_mode" id="working_days_id" value="{{supplier_info.working_days}}" disabled>
+                                    </div>
+
+                                    <div class="form-group col-md">
+                                        <label> Duns Number</label><br>
+                                        <input type="text" class="form-control hg_edit_display_mode" id="duns_number_id" value="{{supplier_info.duns_number}}" disabled>
+                                    </div>
+
+                                    <div class="form-group col-md">
+                                        <label> Output Medium </label><br>
+                                        <select name="" id="output_medium_id" class="form-control hg_edit_display_mode" disabled>
+                                            <option value="{{supplier_info.output_medium}}">{{supplier_info.output_medium}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <br>
+                        <!-- Additional Contact -->
+                        <div class="card">
+                            <h5 class="card-header">Additional Contact</h5>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="form-group col-md">
+                                        <label> E-mail 1</label><br>
+                                        <input type="text" class="form-control hg_edit_display_mode" id="email1_id" value="{{supplier_info.email1}}" disabled>
+                                    </div>
+
+                                    <div class="form-group col-md">
+                                        <label> E-mail 2</label><br>
+                                        <input type="text" class="form-control hg_edit_display_mode" id="email2_id" value="{{supplier_info.email2}}" disabled>
+                                    </div>
+
+                                    <div class="form-group col-md">
+                                        <label> E-mail 3</label><br>
+                                        <input type="text" class="form-control hg_edit_display_mode" id="email3_id" value="{{supplier_info.email3}}" disabled>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-md-4">
+                                        <label> E-mail 4</label><br>
+                                        <input type="text" class="form-control hg_edit_display_mode" id="email4_id" value="{{supplier_info.email4}}" disabled>
+                                    </div>
+
+                                    <div class="form-group col-md-4">
+                                        <label> E-mail 5</label><br>
+                                        <input type="text" class="form-control hg_edit_display_mode" id="email5_id" value="{{supplier_info.email5}}" disabled>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <br>
+                        <div class="d-flex justify-content-end">
+                            <div id="sbd_save_cancel_button" class="display-none">
+                                <button type="button" id="save_basic" name="save_basic" class="btn btn-primary" onclick="save_basic_details();"><i class="fas fa-save"></i> save</button>
+                                <button type="button" class="btn btn-primary" onclick="cancel_basic_details();"><i class="fas fa-times"></i> cancel</button>
+                            </div>
+                            <div id="sbd_edit_button">
+                                <button type="button" class="btn btn-primary" onclick="edit_basic_supp_data();"><i class="fas fa-pencil-alt"></i> edit</button>
+    
+                            </div>
+                        </div>
+                        
+                    </form>
+                </div>
+
+
+                <div id="org_data_tab" class="tab-pane fade p-3">
+                    <div class="alert alert-success display-none" id="supplier_org_update_success" role="alert"></div>
+
+                    <div class="card">
+                        <h5 class="card-header">Organizational Details</h5>
+                        <div class="card-body">
+                            <div id="supp_org_edit" class="mb-3" style="display: block;">
+                                <button class="btn btn-primary" onclick="edit_supp_org(this);"><i class="fas fa-edit" title="Edit Organizational data" ></i> Edit</button>
+                            </div>
+                            <div id="supp_org_add_delete_line" class="mb-3 display-none">
+                                <button class="btn btn-primary" onclick="supp_org_add_new_line()">
+                                    <i class="fa fa-plus" aria-hidden="true" id="add_line" title="Add Line"></i> Add</button>
+                                <button class="btn btn-primary" onclick="delete_supplier_purch_data()">
+                                    <i class="fa fa-trash" aria-hidden="true" id="delete_line" title="Delete Line" ></i> Delete</button>
+                            </div>
+                            <div>
+                                <table id="supp_org_details_table" class="org_registration_table">
+                                    <thead id="supp_org_header" class="thead-light">
+                                    <tr>
+                                        <th>Purchasing organization </th>
+                                        <th>PO Currency</th>
+                                        <th>Payment Terms</th>
+                                        <th>INCO Term </th>
+                                        <th>Confirmation Based Invoice</th>
+                                        <th>Confirmation & Invoice</th>
+                                        <th>Confirmation Only </th>
+                                        <th>PO Response</th>
+                                        <th>Shipping Notification</th>
+                                        <th>Purchase Block</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="supp_org_body">
+                                    {% for data in supplier_org_info %}
+                                    <tr>
+                                        <td hidden>{{data.guid}}</td>
+                                        <td>{{data.porg_id}}</td>
+                                        <td>{{data.currency_id}}</td>
+                                        <td>{{data.payment_term_key}}</td>
+                                        <td>{{data.incoterm_key}}</td>
+                                        <td>
+                                            {% if data.gr_inv_vrf %}
+                                            <input type="checkbox" name="gr_inv_vrf" value="" checked disabled>
+                                            {% else %}
+                                            <input type="checkbox" name="gr_inv_vrf" value="" disabled>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if data.inv_conf_exp %}
+                                            <input type="checkbox" name="inv_conf_exp" value="" checked disabled>
+                                            {% else %}
+                                            <input type="checkbox" name="inv_conf_exp" value="" disabled>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if data.gr_conf_exp %}
+                                            <input type="checkbox" name="gr_conf_exp" value="" checked disabled>
+                                            {% else %}
+                                            <input type="checkbox" name="gr_conf_exp" value="" disabled>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if data.po_resp %}
+                                            <input type="checkbox" name="po_resp" value="" checked disabled>
+                                            {% else %}
+                                            <input type="checkbox" name="po_resp" value="" disabled>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if data.ship_notif_exp %}
+                                            <input type="checkbox" name="ship_notif_exp" value="" checked disabled>
+                                            {% else %}
+                                            <input type="checkbox" name="ship_notif_exp" value="" disabled>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if data.purch_block %}
+                                            <input type="checkbox" name="purch_block" value="" checked disabled>
+                                            {% else %}
+                                            <input type="checkbox" name="purch_block" value="" disabled>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="supp_org_cancel_save" class="display-none">
+                                <button class="btn btn-primary hg_button_margin" onclick="cancel_supp_org_data()"><i class="fas fa-times"></i> cancel</button>
+                                <button id="save" name="save" onclick="supp_org_data_save()" class="btn btn-primary hg_button_margin"> <i class="fas fa-save"></i> save</button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div id="buisness_doc_tab" class="tab-pane fade p-3">
+                    <h3>Business Document</h3>
+                    <p>Business Document.</p>
+                    <select id="testid" class="form-control"></select>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="hg_spacer2"> &nbsp; </div>
+    </div>
+
+<script>
+
+// Global variables - master data
+var porg_list = {{purch_org_list|safe}}
+var porg_opt = ''
+for( let porg = 0; porg < porg_list.length; porg++ ) {
+    porg_opt += '<option> '+porg_list[porg]+' </option>'
+}
+
+var currency_list = {{currency_id|safe}}
+var currency_opt = ''
+for ( let curr=0; curr < currency_list.length; curr++ ){
+    currency_opt += '<option> '+currency_list[curr]+' </option>'
+}
+
+var payterm_list = {{payterm_list|safe}}
+var payterm_opt = ''
+for ( let payterm=0; payterm < payterm_list.length; payterm++ ){
+    payterm_opt += '<option> '+payterm_list[payterm]+' </option>'
+}
+
+var incoterm_list = {{incoterm_list|safe}}
+var incoterm_opt = ''
+for ( let incoterm=0; incoterm < incoterm_list.length; incoterm++ ){
+    incoterm_opt += '<option> '+incoterm_list[incoterm]+' </option>'
+}
+
+var country_list = {{country_list|safe}}
+var country_opt = ''
+$.each(country_list, function(i, value){
+    country_opt += '<option> '+country_list[i]+' </option>'
+});
+
+var language_list = {{language_list|safe}}
+var language_opt = ''
+$.each(language_list, function(i, value){
+    language_opt += '<option> '+language_list[i]+' </option>'
+});
+
+
+function ajax_update_supplier_basic_details(data) {
+    let urlLink = "{% url 'eProc_Suppliers:update_suppliers_basic_details' %}"
+    FormAjaxCallAPI(urlLink,data)
+}
+
+function ajax_update_supplier_org_details(data) {
+    let urlLink = "{% url 'eProc_Suppliers:update_supplier_purch_details' %}"
+    AjaxCallAPI(urlLink, data)
+}
+
+</script>
+
+<script src="{% static 'scripts/display-edit-supplier.js' %}"></script>
+
+
+{% endblock %}
+

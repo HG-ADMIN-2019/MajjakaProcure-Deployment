@@ -1,0 +1,101 @@
+Basic Product Information (all mandatory fields)
+Product Id: Internal Product No 
+Description - Product Name - text  REQ
+Long text: - Product Description - text  REQ
+Unit - dropdown REQ
+Lead Time - text REQ
+UNSPSC - Product Category (UNSPSC)- dropdown REQ(description)
+Minimum Quantity - Minimum Order Quantity - text  REQ(information)
+Price Unit: - text
+Price - text  REQ
+Currency- dropdown  REQ
+
+Extended Product Information
+Product Type - Product Type* - dropdown - hardcode 01 - product, 02 - service
+Quantity Available: Available Quantity - text  REQ(stock availavble)
+Country - Country of Origin* - dropdown  REQ
+Language- Product Language*- dropdown
+Product Status - show only if value exists  
+
+
+Assigned Catalog
+catalog id - Additional backend logic to be written - to support multiple entries 
+
+
+Price on Request
+check box
+
+Additional Product Information
+Search Term 1 - Keywords 1 - text
+Search Term 2 - Keywords 2 - text
+Manufacturer* - text   REQ
+Manufacturer Product No: - text
+Brand - text  REQ
+Offer Key - text REQ
+Product Category - Custom Product Category - text  REQ
+Contract Number - user entered field - text  REQ
+Product Source system* - dropdown - hardcode it to ERP1
+
+Supplier Information
+SUPP_PROD_NUMBER - Supplier Product Number* - text
+Supplier Details* - dropdown - Supplier ID and Supplier Name together   REQ
+
+Product Multimedia Information
+EXTERNAL_LINK - Product webpage  REQ
+Product Images  REQ
+Attachments from attachments table Brochure  
+
+=============================================================================
+
+Create New Fields - Product and Service eForm
+EFORM_ID - eForm ID 
+Names of the respective data type elements
+For data type drop down use the following names
+  User Selection
+  Basic Pricing
+  Addon Pricing
+  Tiered Pricing
+
+Create/Update Product Specifications
+
+
+=================================================
+supplier_product_number = supplier_product_id
+product_webpage_link= external_link
+product_contract_num = ctr_num
+product_source_system = products_detail_source_system
+= product_status
+	
+size validation
+format validation
+
+Error/Issue
+global product id and interal produc id not same in add new product
+
+
+1. Products and service configuration
+Show default product image in 1st column, Remove view images column 
+
+2. Product and Service Details
+
+ - View Products and service page
+   Discussion needed for segregation of fields and layout
+   Validations required
+   Upload images section redesign
+   Introduce a right slide-in menu for form builder functionality
+
+ - Add new product and services page
+   
+3. Catalog Configuration
+ - Table redesign
+ - Pop-up redesign
+4. Product details popup redesign
+
+:::max length:::
+Manufacturer 
+brand
+search_term1
+search_term2
+prod_cat_id
+
+
