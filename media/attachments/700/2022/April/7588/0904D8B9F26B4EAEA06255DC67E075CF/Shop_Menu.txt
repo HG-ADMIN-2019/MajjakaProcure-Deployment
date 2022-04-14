@@ -1,0 +1,19 @@
+http://127.0.0.1:8000/catalog/get_products_services/All/supplier/SUP001/create - Change supplier to suppliers
+http://127.0.0.1:8000/catalog/get_products_services/All/prod_category/10000001/create - Change prod_category to product_categories
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+=======================================================
+Freetext - Information about freetext
+Pr - Review the infor about PR

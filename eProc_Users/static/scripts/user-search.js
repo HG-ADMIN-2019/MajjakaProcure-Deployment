@@ -1,6 +1,6 @@
  // Script to generate sort and filter feature for tables
  $(document).ready( function() {
-   // nav_bar_admin();
+    nav_bar_admin();
     table_sort_filter_export_excel();
    $('#username').val(localStorage.getItem("username"));
    $('#first_name').val(localStorage.getItem("first_name"));

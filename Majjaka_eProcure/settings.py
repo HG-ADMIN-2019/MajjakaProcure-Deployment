@@ -28,7 +28,7 @@ SECRET_KEY = '-p^#04gmm3jl$93p3jx9rm+t1nj4$xl9b_#%192&e_usmw*&nr'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['www.majjaka.com', 'majjaka.com']
+ALLOWED_HOSTS = ['www.majjaka-eprocure.com', 'majjaka-eprocure.com']
 
 # Application definition
 

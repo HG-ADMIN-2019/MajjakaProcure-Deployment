@@ -4,76 +4,76 @@
 {% block title %} Majjaka eProcure - Employee Management (Admin Tool){% endblock %}
 {% block maincontent %}
 <style>
-.toggle {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  display: block;
-  height: auto;
-  width: 7.5rem;
-  margin: auto;
-  cursor: pointer;
-}
-.toggle-input {
-  display: none;
-  margin: 0;
-}
-.toggle-off,
-.toggle-on {
-  height: 1.8125rem;
-  width: 1.8125rem;
-  color: rgba(46, 45, 44, 0.1);
-  vertical-align: top;
-  text-align: center;
-  line-height: 1.8125rem !important;
-}
-.toggle-input:checked + .toggle-controller.default-success {
-  border: 0.125rem solid rgba(108, 211, 61, 0.75);
-  background: rgba(108, 211, 61, 0.375);
-}
-.toggle-input:checked + .toggle-controller.default-success:after {
-  left: 1.5625rem;
-}
-.toggle-controller.default-success {
-  position: relative;
-  display: inline-block;
-  height: 1.5625rem;
-  width: 3.125rem;
-  border: 0.125rem solid rgba(46, 45, 44, 0.05);
-  -webkit-border-radius: 1.5625rem;
-  -moz-border-radius: 1.5625rem;
-  border-radius: 1.5625rem;
-  -webkit-box-shadow: inset 0 0 0.1875rem rgba(46, 45, 44, 0.25);
-  -moz-box-shadow: inset 0 0 0.1875rem rgba(46, 45, 44, 0.25);
-  box-shadow: inset 0 0 0.1875rem rgba(46, 45, 44, 0.25);
-  background: rgba(46, 45, 44, 0.025);
-  -webkit-transition: all 0.25s ease;
-  -moz-transition: all 0.25s ease;
-  -o-transition: all 0.25s ease;
-  transition: all 0.25s ease;
-}
-.toggle-controller.default-success:after {
-  position: absolute;
-  top: 0;
-  left: 0;
-  content: '';
-  display: block;
-  height: 1.5625rem;
-  width: 1.5625rem;
-  -webkit-border-radius: 1.5625rem;
-  -moz-border-radius: 1.5625rem;
-  border-radius: 1.5625rem;
-  -webkit-box-shadow: 0 0.0625rem 0.125rem rgba(46, 45, 44, 0.2);
-  -moz-box-shadow: 0 0.0625rem 0.125rem rgba(46, 45, 44, 0.2);
-  box-shadow: 0 0.0625rem 0.125rem rgba(46, 45, 44, 0.2);
-  background: white;
-  -webkit-transition: all 0.25s ease;
-  -moz-transition: all 0.25s ease;
-  -o-transition: all 0.25s ease;
-  transition: all 0.25s ease;
-}
-.toggle-off.active {color:red;}
-.toggle-on.active {color:blue;}
+<!--.toggle {-->
+<!--  -webkit-box-sizing: border-box;-->
+<!--  -moz-box-sizing: border-box;-->
+<!--  box-sizing: border-box;-->
+<!--  display: block;-->
+<!--  height: auto;-->
+<!--  width: 7.5rem;-->
+<!--  margin: auto;-->
+<!--  cursor: pointer;-->
+<!--}-->
+<!--.toggle-input {-->
+<!--  display: none;-->
+<!--  margin: 0;-->
+<!--}-->
+<!--.toggle-off,-->
+<!--.toggle-on {-->
+<!--  height: 1.8125rem;-->
+<!--  width: 1.8125rem;-->
+<!--  color: rgba(46, 45, 44, 0.1);-->
+<!--  vertical-align: top;-->
+<!--  text-align: center;-->
+<!--  line-height: 1.8125rem !important;-->
+<!--}-->
+<!--.toggle-input:checked + .toggle-controller.default-success {-->
+<!--  border: 0.125rem solid rgba(108, 211, 61, 0.75);-->
+<!--  background: rgba(108, 211, 61, 0.375);-->
+<!--}-->
+<!--.toggle-input:checked + .toggle-controller.default-success:after {-->
+<!--  left: 1.5625rem;-->
+<!--}-->
+<!--.toggle-controller.default-success {-->
+<!--  position: relative;-->
+<!--  display: inline-block;-->
+<!--  height: 1.5625rem;-->
+<!--  width: 3.125rem;-->
+<!--  border: 0.125rem solid rgba(46, 45, 44, 0.05);-->
+<!--  -webkit-border-radius: 1.5625rem;-->
+<!--  -moz-border-radius: 1.5625rem;-->
+<!--  border-radius: 1.5625rem;-->
+<!--  -webkit-box-shadow: inset 0 0 0.1875rem rgba(46, 45, 44, 0.25);-->
+<!--  -moz-box-shadow: inset 0 0 0.1875rem rgba(46, 45, 44, 0.25);-->
+<!--  box-shadow: inset 0 0 0.1875rem rgba(46, 45, 44, 0.25);-->
+<!--  background: rgba(46, 45, 44, 0.025);-->
+<!--  -webkit-transition: all 0.25s ease;-->
+<!--  -moz-transition: all 0.25s ease;-->
+<!--  -o-transition: all 0.25s ease;-->
+<!--  transition: all 0.25s ease;-->
+<!--}-->
+<!--.toggle-controller.default-success:after {-->
+<!--  position: absolute;-->
+<!--  top: 0;-->
+<!--  left: 0;-->
+<!--  content: '';-->
+<!--  display: block;-->
+<!--  height: 1.5625rem;-->
+<!--  width: 1.5625rem;-->
+<!--  -webkit-border-radius: 1.5625rem;-->
+<!--  -moz-border-radius: 1.5625rem;-->
+<!--  border-radius: 1.5625rem;-->
+<!--  -webkit-box-shadow: 0 0.0625rem 0.125rem rgba(46, 45, 44, 0.2);-->
+<!--  -moz-box-shadow: 0 0.0625rem 0.125rem rgba(46, 45, 44, 0.2);-->
+<!--  box-shadow: 0 0.0625rem 0.125rem rgba(46, 45, 44, 0.2);-->
+<!--  background: white;-->
+<!--  -webkit-transition: all 0.25s ease;-->
+<!--  -moz-transition: all 0.25s ease;-->
+<!--  -o-transition: all 0.25s ease;-->
+<!--  transition: all 0.25s ease;-->
+<!--}-->
+<!--.toggle-off.active {color:red;}-->
+<!--.toggle-on.active {color:blue;}-->
 
 </style>
 
@@ -84,12 +84,12 @@
             <span class="hg_head1">Employee Management</span>
             <div>
                 <button class="btn btn-primary" onclick="window.open(href = '{% url 'eProc_Users:register_page' %}')"><i class="fas fa-user-plus"></i> Create Employee</button>
-                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_employee_data' %}'"type="button">
-                    <i class="fas fa-download"></i> extract
-                </button>
-                <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_data"  title="Upload Data" value="employee_upload"  onclick="onclick_upload_button();" type="button">
-                    <i class="fas fa-cloud-upload-alt"></i> upload data
-                </button>
+<!--                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_employee_data' %}'"type="button">-->
+<!--                    <i class="fas fa-download"></i> extract-->
+<!--                </button>-->
+<!--                <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_data"  title="Upload Data" value="employee_upload"  onclick="onclick_upload_button();" type="button">-->
+<!--                    <i class="fas fa-cloud-upload-alt"></i> upload data-->
+<!--                </button>-->
             </div>
         </div>
 
@@ -399,7 +399,7 @@
 
     <!--end of modal popup for Add,copy,update and upload-->
 
-    {% include 'configuration_common_pop_up.html' %}
+
 <script src="{% static 'scripts/user-search.js' %}"></script>
 <script>
 var emp_data_array = {}
@@ -537,38 +537,38 @@ function main_table_delete(){
     });
 }
 <!-- toggle button for User lock-->
-$(document).ready(function() {
-    $('.toggle-input').change(function() {
+<!--$(document).ready(function() {-->
+<!--    $('.toggle-input').change(function() {-->
 
-     var data = {}
-        if($(this).is(':checked')) {
-            console.log('This is firing');
-            $('.toggle-off').removeClass('active');
-            $('.toggle-on').addClass('active');
-            data.flag = true
-        } else {
-            $('.toggle-off').addClass('active');
-            $('.toggle-on').removeClass('active');
-            data.flag = false
-        }
-        var id = this.id
-        data.employee_id = id
-        jQuery.ajax({
-       type: 'POST',
-       url: "{% url 'eProc_Admin_Tool:lock_unlock_emp' %}",
-       dataType :'json',
-       data: JSON.stringify(data),
-       success: function(result){
+<!--     var data = {}-->
+<!--        if($(this).is(':checked')) {-->
+<!--            console.log('This is firing');-->
+<!--            $('.toggle-off').removeClass('active');-->
+<!--            $('.toggle-on').addClass('active');-->
+<!--            data.flag = true-->
+<!--        } else {-->
+<!--            $('.toggle-off').addClass('active');-->
+<!--            $('.toggle-on').removeClass('active');-->
+<!--            data.flag = false-->
+<!--        }-->
+<!--        var id = this.id-->
+<!--        data.employee_id = id-->
+<!--        jQuery.ajax({-->
+<!--       type: 'POST',-->
+<!--       url: "{% url 'eProc_Admin_Tool:lock_unlock_emp' %}",-->
+<!--       dataType :'json',-->
+<!--       data: JSON.stringify(data),-->
+<!--       success: function(result){-->
 
-       },
-       error: function(xhr, resp, text) {
-       },
-       cache: false,
-       processData: false,
-       contentType: false,
-   });
-    });
-});
+<!--       },-->
+<!--       error: function(xhr, resp, text) {-->
+<!--       },-->
+<!--       cache: false,-->
+<!--       processData: false,-->
+<!--       contentType: false,-->
+<!--   });-->
+<!--    });-->
+<!--});-->
 
 //onclick of data Upload copy data to modal pop-up
 
