@@ -61,12 +61,13 @@ function compare_table_for_duplicate_entries(validate_add_attributes, approval_t
   }
     else {
          $.each(approval_type, function (i, item) {
-//        if (item.app_types.length == 0) {
-//        error_message = messageConstants["JMSG002"] + "Approval Type";
-//        no_duplicate_value = 'N'
-//         return [no_duplicate_value,error_message]
-//    }
-    if (item.appr_type_desc.length == 0) {
+        if (item.app_types.length == 0) {
+
+        error_message = messageConstants["JMSG002"] + "Approval Type";
+
+        no_duplicate_value = 'N'
+         return [no_duplicate_value,error_message]
+    } if (item.appr_type_desc.length == 0) {
         error_message = messageConstants["JMSG002"] + "Description";
         no_duplicate_value = 'N'
         return [no_duplicate_value,error_message]

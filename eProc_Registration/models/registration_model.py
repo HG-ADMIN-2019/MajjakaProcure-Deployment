@@ -32,7 +32,7 @@ class UserData(AbstractUser, DBQueriesUser):
     date_joined = models.DateTimeField(db_column='DATE_JOINED', null=True)
     first_login = models.DateTimeField(db_column='FIRST_LOGIN', null=True)
     last_login = models.DateTimeField(db_column='LAST_LOGIN', null=True)
-    is_active = models.BooleanField(db_column='IS_ACTIVE', default=True, null=False)
+    is_active = models.BooleanField(db_column='IS_ACTIVE', default=True, null=False) # if user is not login more than few months then set this flag to true
     is_superuser = models.BooleanField(db_column='IS_SUPERUSER', default=False, null=False)
     is_staff = models.BooleanField(db_column='IS_STAFF', default=True, null=False)
     date_format = models.CharField(db_column='DATE_FORMAT', max_length=30, null=True)
@@ -40,7 +40,7 @@ class UserData(AbstractUser, DBQueriesUser):
     decimal_notation = models.CharField(db_column='DECIMAL_NOTATION', max_length=15, null=True)
     user_type = models.CharField(db_column='USER_TYPE', max_length=25, default=False, null=False)
     login_attempts = models.PositiveIntegerField(db_column='LOGIN_ATTEMPTS', default=False, null=False)
-    user_locked = models.BooleanField(default=False, null=False, db_column='USER_LOCKED')
+    user_locked = models.BooleanField(default=False, null=False, db_column='USER_LOCKED')#Admin user explicitly lock the user
     pwd_locked = models.BooleanField(db_column='PWD_LOCKED', default=False, null=False)
     sso_user = models.BooleanField(default=False, null=True, db_column='SSO_USER')
     user_data_created_at = models.DateTimeField(db_column='USER_DATA_CREATED_AT', blank=True, null=True)

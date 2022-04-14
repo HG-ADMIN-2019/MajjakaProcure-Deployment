@@ -53,7 +53,7 @@ function open_search_modal(){
     else{
         $("#button_action").css("display", "block");
     }
-    $("#prod_service_search").modal('toggle');
+    // $("#prod_service_search").modal('toggle');
 }
 //############################### END ONCLICK OF INPUT TEXT IN SEARCH FIELD ##############################################
 
@@ -62,25 +62,14 @@ function open_search_modal(){
 function search_type(data) {
     var result = data.value;
     GLOBAL_PROD_SEARCH_TYPE = data.value;
-    if(!!result && result == 'RNODE') {
-      $("#hg_org_search_term").hide();
-      $("#org-list").attr('hidden', false);
-    }
-    var search_ele = "<button style='cursor: auto;' class='btn btn-light mr-2' id='hg_filter_select_value' value="+
+    var search_ele = "<button style='cursor: auto;' class='btn btn-light mr-2' id='catalog_filter_select_value' value="+
      result + ">" + result +"<span style='cursor: pointer; margin-left: 5px;' aria-hidden='true' onclick='hg_search_term_close()'>&times;</span></button>"
-    $("#hg_filter_select").html(search_ele)
-    $("#hg_org_search_patterns").removeClass("d-block")
-    $("#hg_org_search_patterns").addClass("d-none")
+    $("#catalog_filter_select").html(search_ele)
 }
 
 function hg_search_term_close() {
     GLOBAL_PROD_SEARCH_TYPE = 'ALL';
-    $("#hg_filter_select_value").remove()
-    $("#hg_org_search_patterns").removeClass("d-none")
-    $("#hg_org_search_patterns").addClass("d-block")
-    $("#hg_org_search_result").empty()
-    $("#org-list").attr('hidden', true);
-    $("#hg_org_search_term").show();
+    $("#catalog_filter_select_value").remove()
 }
 //################################## END SEARCH TYPE ###############################################################
 
@@ -220,7 +209,7 @@ function add_catalog_popup(){
     }
     catalog_item["document_number"] = document_number;
     if(GLOBAL_EFORM_FLAG){
-        catalog_item['eform_id'] = document.getElementById("eform_id").textContent;
+        catalog_item['eform_id'] = eform_id
         eform_check = validate_eform()
         catalog_item['eform_detail'] = get_eform_data()
         catalog_item['quantity_guid'] = GLOBAL_QUANTITY.eform_field_config_guid
@@ -261,26 +250,44 @@ function validate_eform(){
 // get eform data
 function get_eform_data(){
     var eform_data = []
+    $('.dummy_class_price_data').each(function() {
+        var eform_data_dictionary ={}
+        var selected_price_id = this.id
+            drop_down = selected_price_id.split("-")
+            //eform_detail = get_eform_ui_detail(drop_down[1],drop_down[2])
+            eform_data_dictionary = {'pricing_type':drop_down[0],
+                                     'eform_field_config_guid':drop_down[1],
+                                     'eform_id':GLOBAL_FROM_ID,
+                                     'product_eform_pricing_guid':drop_down[2]}
+
+        eform_data.push(eform_data_dictionary)
+    });
     $('.dummy_eform_class').each(function() {
         var eform_data_dictionary ={}
-        var option_value = this.value
-        if(GLOBAL_EFORM_FLAG)
-        {
-            drop_down = option_value.split("|")
-            if (drop_down.length == 3 ){
-                eform_data_dictionary = {'pricing_type':'WITHOUT_PRICING','eform_field_data':drop_down[1],
-                'eform_field_config_guid':this.id,'eform_id':GLOBAL_FROM_ID,'eform_field_name':drop_down[0],
-                'eform_field_count':drop_down[2]}
-            }
-            else{
-                eform_data_dictionary = {'pricing_type':drop_down[1],'eform_field_data':drop_down[3],'eform_field_name':drop_down[0],
-                'pricing_data':drop_down[2],'eform_field_config_guid':this.id ,'eform_id':GLOBAL_FROM_ID,'eform_field_count':drop_down[5]}
-            }
-
-        }
+        var selected_price_id = this.value
+        drop_down = selected_price_id.split("-")
+        eform_data_dictionary = {'pricing_type':drop_down[0],
+                                 'eform_field_config_guid':drop_down[1],
+                                 'eform_id':GLOBAL_FROM_ID,
+                                 'data':drop_down[2],
+                                 'product_eform_pricing_guid':''}
         eform_data.push(eform_data_dictionary)
     });
     return eform_data
+}
+function get_eform_ui_detail(eform_config_guid,eform_pricing_guid){
+    var eform_detail = {}
+    $.each(eform_detail, function (i, eform_config) {
+        if(eform_config.eform_field_config_guid==eform_config_guid){
+             $.each(eform_config.pricing, function (i, eform_pricing) {
+                if (eform_pricing.product_eform_pricing_guid == eform_pricing_guid){
+                    eform_detail = eform_pricing
+                }
+             });
+
+        }
+    });
+    return eform_detail
 }
 
 

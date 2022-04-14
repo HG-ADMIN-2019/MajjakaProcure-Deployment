@@ -1,6 +1,6 @@
 {% extends 'root/base.html' %}
 {% load static %}
-{% block title %} Majjaka eProcure - Customer UNSPSC Code Descriptions (Master Settings) {% endblock %}
+{% block title %} Customer UNSPSC Code Descriptions (Master Settings) {% endblock %}
 {% block maincontent %}
 
 <div class="container-fluid">
@@ -9,7 +9,7 @@
             <h3>Maintain Customer UNSPSC Code Descriptions</h3>
             <div>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_cusprodcatdesc_template' %}'"type="button">
-                    <i class="fas fa-download"></i> Extract Template
+                    <i class="fas fa-download"></i> download Template
                 </button>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_cusprodcatdesc_data' %}'"type="button">
                     <i class="fas fa-download"></i> extract
@@ -197,7 +197,7 @@
     var no_duplicate_entries = 'Y'
     var Tablename = uiConstants["CONST_TABLENAME_CUSTPRODCATDESC"]
     var appname = uiConstants["CONST_APPNAME01"]
-    var db_header_data = uiConstants["CONST_HEADER_DATA_CUSTPRODCATDESC"]
+    var db_header_data = uiConstants['PRODUCT CATEGORY','DESCRIPTION','LANGUAGE ID', 'del_ind']
     var language_id_dropdown = '';
     var prod_cat_id_dropdown = '';
     var prod_cat_id_dropdown1 = '';
@@ -216,43 +216,46 @@
 function onclick_display_csv_data() {
     $('#id_popup_table').DataTable().destroy();
     formdata = new FormData();
-    formdata.append("file_attach", $('#id_file_data_upload').prop('files')[0]);
-    formdata.append("Tablename",Tablename);
-    formdata.append("appname",appname);
-    db_header_data = db_header_data
-    formdata.append("db_header_data",db_header_data);
-    $('#id_data_upload').modal('hide');
-    //$('#myModal').modal('show');$('#myModal').modal('show');
-    $('#id_popup_tbody').empty();
-    $.ajax({
-        type: 'POST',
-        url: "{% url 'eProc_Configuration:data_upload_fk' %}",
-        data: formdata,
-        contentType: "application/json; charset=utf-8",
-        success: function(response) {
-            if(response == "Please check the uploaded csv file") {
-                $("#id_error_msg_upload").prop("hidden",false)
-                document.getElementById("id_error_msg_upload").innerHTML = response;
-                document.getElementById("id_error_msg_upload").style.color = "Red";
-                $('#id_data_upload').modal('show');
-            }
-            else{
-                var cusprodcatdesc_data_array = response;
-                var edit_basic_data = '';
-                var del_ind = '';
-                var dropdown_values = [];
-                $("#id_popup_tbody").empty();
-                    $.each(response, function (i, value) {
-                    var prod_cat_id_value = value[1]
-                    var language_id_value = value[3]
-                    dropdown_values.push([prod_cat_id_value, language_id_value])
-                    del_ind = '<td>' + value[3] + '</td>'
-                    if (value[2] == 1) {
-                        del_ind=' <input type="checkbox" value="' + value[2] + '" checked>'
+     attached_file = $('#id_file_data_upload').prop('files')[0]
+            file_extension = (attached_file.name).split(".")[1]
+            file_extension = file_extension.toUpperCase();
+
+            if(file_extension == 'CSV'){
+                formdata.append("file_attach", attached_file);
+                formdata.append("Tablename",Tablename);
+                formdata.append("appname",appname);
+            $('#id_data_upload').modal('hide');
+            $('#id_popup_tbody').empty();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Basic_Settings:data_upload' %}",
+                data: formdata,
+                contentType: "application/json; charset=utf-8",
+                success: function(response) {
+                    if(response.error_message){
+                        $("#id_error_msg_upload").prop("hidden",false)
+                        document.getElementById("id_error_msg_upload").innerHTML = response.error_message;
+                        document.getElementById("id_error_msg_upload").style.color = "Red";
+                        $('#id_data_upload').modal('show');
                     }
                     else {
-                        del_ind= '<input type="checkbox" value="' + value[2] + '" required>'
-                    }
+                             cusprodcatdesc_data_array = response.data;
+
+                            var edit_basic_data = '';
+                            var del_ind = '';
+                            var dropdown_values = [];
+                            $("#id_popup_tbody").empty();
+                                $.each(response.data, function (i, value) {
+                                var prod_cat_id_value = value[1]
+                                var language_id_value = value[3]
+                                dropdown_values.push([prod_cat_id_value, language_id_value])
+                                del_ind = '<td>' + value[3] + '</td>'
+                                if (value[3] == 1) {
+                                    del_ind=' <input type="checkbox" value="' + value[3] + '" checked>'
+                                }
+                                else {
+                                    del_ind= '<input type="checkbox" value="' + value[3] + '" required>'
+                                }
 
                   edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class="form-control">value ="' + value[0] + '"'+prod_cat_id_dropdown+'</select></td><td><input class = "form-control" type="text" name="description" value ="' + value[1] + '" maxlength="200" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td><select class="form-control">value ="' + value[2] + '"'+language_id_dropdown+'</select></td><td hidden></td><td>'+ del_ind +'</td></tr>';
                 });
@@ -260,15 +263,15 @@ function onclick_display_csv_data() {
                     var i =0;
 
 
-                       //$("#id_popup_table TBODY TR").each(function() {-->
-                       //var row = $(this);-->
-                       //var prod_cat_id_value = dropdown_values[i][0]-->
-                       //var language_id_value = dropdown_values[i][1]-->
+                       $("#id_popup_table TBODY TR").each(function() {
+                       var row = $(this);
+                       var prod_cat_id_value = dropdown_values[i][0]
+                       var language_id_value = dropdown_values[i][1]
 
-                      //$(row.find("TD").eq(1).find("select option[value="+prod_cat_id_value+"]")).attr('selected','selected');-->
-                        //$(row.find("TD").eq(3).find("select option[value="+language_id_value+"]")).attr('selected','selected');-->
-                        //i++;
-                       //})
+                      $(row.find("TD").eq(1).find("select option[value="+prod_cat_id_value+"]")).attr('selected','selected');
+                        $(row.find("TD").eq(3).find("select option[value="+language_id_value+"]")).attr('selected','selected');
+                        i++;
+                       })
                 $( "#id_del_ind_checkbox").prop( "hidden", false );
                 $( "#header_select").prop( "hidden", false );
                 $( ".class_del_checkbox").prop( "hidden", false );
@@ -281,11 +284,20 @@ function onclick_display_csv_data() {
                 table_sort_filter('id_popup_table')
             }
         },
-        cache: false,
-        processData: false,
-        contentType: false,
-    });
+                cache: false,
+                processData: false,
+                contentType: false,
+            });
+        }
+
+ else{
+        $("#id_error_msg_upload").prop("hidden",false)
+        document.getElementById("id_error_msg_upload").innerHTML = messageConstants["JMSG110"];
+        document.getElementById("id_error_msg_upload").style.color = "Red";
+        $('#id_data_upload').modal('show');
+    }
 }
+
 
 // validate and save for add,copy,update and upload data
     function popup_save_data() {

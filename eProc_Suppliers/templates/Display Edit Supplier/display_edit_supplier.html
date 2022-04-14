@@ -2,7 +2,7 @@
 {% extends 'root/base.html' %}
 {% load static %}
 
-{% block title %}  Majjaka eProcure - Supplier Details (Supplier Management) {% endblock %}
+{% block title %}  Supplier Details (Supplier Management) {% endblock %}
 
 {% block maincontent %}
 
@@ -59,19 +59,26 @@
 
                                     <div class="form-group col-md">
                                         <label> Supplier Number</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control" id="supplier_id" value="{{supplier_info.supplier_id}}"  disabled>
+                                        <input type="text" class="form-control hg_edit_display_mode" id="supplier_id" value="{{supplier_info.supplier_id}}" disabled>
                                     </div>
 
                                     <div class="form-group col-md">
                                         <label> Supplier Type</label><span class="hg_required"></span><br>
-                                        <select name="" id="supplier_type" class="form-control" disabled>
+                                        <select name="" id="supplier_type" class="form-control hg_edit_display_mode" disabled>
+                                            {% if supplier_info.supp_type %}
                                             <option value="{{supplier_info.supp_type}}">{{supplier_info.supp_type}}</option>
+                                            {% else %}
+                                            <option value="">Select</option>
+                                            {% endif %}
+                                            <option value="One Time">One Time</option>
+                                            <option value="Preferred">Preferred</option>
+                                            <option value="Fixed">Fixed</option>
                                         </select>
                                     </div>
 
                                     <div class="form-group col-md">
                                         <label> Registration Number</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control" id="supplier_regnum" value="{{supplier_info.registration_number}}" disabled>
+                                        <input type="text" class="form-control hg_edit_display_mode" id="supplier_regnum" value="{{supplier_info.registration_number}}" disabled>
                                     </div>
                                 </div>
 
@@ -202,7 +209,14 @@
                                     <div class="form-group col-md">
                                         <label> Output Medium </label><br>
                                         <select name="" id="output_medium_id" class="form-control hg_edit_display_mode" disabled>
+                                            {% if supplier_info.output_medium %}
                                             <option value="{{supplier_info.output_medium}}">{{supplier_info.output_medium}}</option>
+                                            {% else %}
+                                            <option value="">Select</option>
+                                            {% endif %}
+                                            <option value="Email">Email</option>
+                                            <option value="XML">XML</option>
+                                            <option value="Integrated">Integrated</option>
                                         </select>
                                     </div>
                                 </div>
@@ -254,10 +268,10 @@
                             </div>
                             <div id="sbd_edit_button">
                                 <button type="button" class="btn btn-primary" onclick="edit_basic_supp_data();"><i class="fas fa-pencil-alt"></i> edit</button>
-    
+
                             </div>
                         </div>
-                        
+
                     </form>
                 </div>
 
@@ -372,7 +386,16 @@
     </div>
 
 <script>
+var GLOBAL_ACTION
+$(document).ready(function(){
+    $('#nav_menu_items').remove();
+    $("body").css("padding-top", "4rem");
+    GLOBAL_ACTION = '{{supplier_action}}';
+        if(GLOBAL_ACTION == 'CREATE'){
+            edit_basic_supp_data();
+        }
 
+});
 // Global variables - master data
 var porg_list = {{purch_org_list|safe}}
 var porg_opt = ''
@@ -413,7 +436,8 @@ $.each(language_list, function(i, value){
 
 function ajax_update_supplier_basic_details(data) {
     let urlLink = "{% url 'eProc_Suppliers:update_suppliers_basic_details' %}"
-    FormAjaxCallAPI(urlLink,data)
+    var response = FormAjaxCallAPI(urlLink,data)
+    return response
 }
 
 function ajax_update_supplier_org_details(data) {
@@ -424,7 +448,6 @@ function ajax_update_supplier_org_details(data) {
 </script>
 
 <script src="{% static 'scripts/display-edit-supplier.js' %}"></script>
-
 
 {% endblock %}
 

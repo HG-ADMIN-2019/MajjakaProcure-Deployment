@@ -107,6 +107,8 @@ class CompareTableHeader:
             for upload_csv_header in range(len(upload_csv_header_data)):
                 if upload_csv_header_data[upload_csv_header] not in self.field_name:
                     error_message = MSG189
+                    print(upload_csv_header_data[upload_csv_header])
+                    print(self.field_name)
                     return error_message,correct_order_list
                 pair = []
                 if db_header['field_name'] == upload_csv_header_data[upload_csv_header]:

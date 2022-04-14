@@ -1,5 +1,5 @@
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
-from eProc_Form_Builder.models import EformData
+from eProc_Form_Builder.models import EformData, EformFieldData
 from eProc_Notes_Attachments.models import Attachments, Notes
 from eProc_Shopping_Cart.models import ScItem, PurchasingData, ScAccounting, ScAddresses, ScApproval, ScHeader
 
@@ -29,7 +29,7 @@ def delete_all_shopping_carts(filter_criteria, client):
             django_query_instance.django_filter_delete_query(ScAddresses, {'item_guid': item_guid,
                                                                            'client': client})
 
-            django_query_instance.django_filter_delete_query(EformData, {'item_guid': item_guid,
+            django_query_instance.django_filter_delete_query(EformFieldData, {'item_guid': item_guid,
                                                                          'client': client})
 
             django_query_instance.django_filter_delete_query(ScItem, {'guid': item_guid,

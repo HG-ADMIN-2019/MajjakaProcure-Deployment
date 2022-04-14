@@ -238,6 +238,8 @@ def save_basic_data(request):
 
 def upload_countries(request):
     upload_country = get_configuration_data(Country, {'del_ind': False}, ['country_code', 'country_name'])
+    # str = 'hello'
+    # print(str.upper())
     return render(request, 'Basic_setting_Upload/upload_countries.html',
                   {'upload_countries': upload_country,
                    'inc_nav': True})
@@ -334,11 +336,21 @@ def extract_country_template(request):
 
 def extract_timezone_template(request):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="Timezone_Template.CSV"'
+    response['Content-Disposition'] = 'attachment; filename="Timezone Template.CSV"'
 
     writer = csv.writer(response)
 
     writer.writerow(["TIME_ZONE", "DESCRIPTION", "UTC_DIFFERENCE", "DAYLIGHT_SAVE_RULE", "del_ind"])
+    return response
+
+
+def extract_currency_template(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="Currency Template.CSV"'
+
+    writer = csv.writer(response)
+
+    writer.writerow(["CURRENCY_ID", "DESCRIPTION", "del_ind"])
     return response
 
 

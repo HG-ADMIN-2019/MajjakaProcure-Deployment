@@ -26,22 +26,6 @@
 
 .products-catalog {
 
-    .jumbotron {
-        border-radius: 0;
-        background: rgb(238,174,202);
-        background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%);
-
-        .input-group {
-            margin: 0 auto;
-            width: 60%;
-            padding-top: 5px;
-        }
-    }
-
-    .products-catalog__header-text {
-        text-align:center;
-    }
-
     .products-catalog__selection-tab {
         padding-left: 1rem;
     }
@@ -89,6 +73,43 @@
             }
         }
     }
+
+    .products-catalog-header {
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+        background-color: white;
+        margin-bottom: 2rem;
+
+        &__section {
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 50%;
+            padding-right: 15px;
+            padding-left: 15px;
+        }
+
+        &__text {
+            text-align:center;
+        }
+
+        &__search-input-group {
+            padding: 2px; 
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem; 
+            display: flex;
+
+            input[type='text'] {
+                border: none;
+            }
+        }
+
+        .sfps-button {
+            display: flex;
+        }
+
+    }
+    
+    
 }
 
 .product-selection-tabcontent {

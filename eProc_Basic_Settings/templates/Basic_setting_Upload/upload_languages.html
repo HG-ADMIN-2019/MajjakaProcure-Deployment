@@ -1,6 +1,6 @@
 {% extends 'root/base.html' %} 
 {% load static %}
-{% block title %} Majjaka eProcure - Languages (Basic Settings) {% endblock %}
+{% block title %} Languages (Basic Settings) {% endblock %}
 {% block maincontent %}
 
 <div class="container-fluid">
@@ -10,7 +10,7 @@
             <h3>Maintain Languages</h3>
             <div>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_language_template' %}'"type="button">
-                    <i class="fas fa-download"></i> Extract Template
+                    <i class="fas fa-download"></i> download Template
                 </button>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_language_data' %}'" type="button">
                     <i class="fas fa-download"></i> extract

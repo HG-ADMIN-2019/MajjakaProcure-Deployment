@@ -16,7 +16,7 @@ class SearchManagerApprovalsForm(forms.Form):
         ('Today', 'Today'),
         ('7', 'Last 7 Days'),
         ('30', 'Last 30 Days'),
-        ('90', 'last 90 Days')
+        ('90', 'Last 90 Days')
     )
     time_frame = forms.ChoiceField(
         label='Select Time Frame', choices=timeframe, widget=forms.Select(attrs={'class': 'form-control'}),

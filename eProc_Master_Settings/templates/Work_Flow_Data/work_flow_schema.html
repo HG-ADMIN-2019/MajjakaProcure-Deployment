@@ -1,6 +1,6 @@
 {% extends 'root/base.html' %}
 {% load static %}
-{% block title %} Majjaka eProcure - Work Flow Schemas (Master Settings) {% endblock %}
+{% block title %} Work Flow Schemas (Master Settings) {% endblock %}
 {% block maincontent %}
 
 
@@ -10,7 +10,7 @@
             <h3>Maintain Work Flow Schemas</h3>
             <div>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_workflowschema_template' %}'"type="button">
-                    <i class="fas fa-download"></i> Extract Template
+                    <i class="fas fa-download"></i> download Template
                 </button>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_workflowschema_data' %}'"type="button">
                     <i class="fas fa-download"></i> extract
@@ -189,7 +189,7 @@
     var no_duplicate_entries = 'Y'
     var Tablename = uiConstants["CONST_TABLENAME_WFSCHEMA"]
     var appname = uiConstants["CONST_APPNAME01"]
-    var db_header_data = uiConstants["CONST_HEADER_DATA_WFSCHEMA"]
+    var db_header_data = uiConstants['WORKFLOW SCEHMA','APPROVAR TYPES','COMPANY CODE','del_ind']
     var wrksch_types_dropdown = '';
     var wrksch_types_dropdown_onload  = '';
 
@@ -583,7 +583,9 @@ function display_error_message(error_message){
 $('#save_id').click(function () {
     $('#myModal').modal('hide');
     duplicate_entry = [];
+    wfschema_data = new Array();
     validate_add_attributes = [];
+    var  wfschema = {};
     $("#id_popup_table TBODY TR").each(function () {
            var row = $(this);
            wfschema = {};
@@ -613,43 +615,45 @@ $('#save_id').click(function () {
  function onclick_display_csv_data() {
     $('#id_popup_table').DataTable().destroy();
     formdata = new FormData();
-    formdata.append("file_attach", $('#id_file_data_upload').prop('files')[0]);
-    formdata.append("Tablename",Tablename);
-    formdata.append("appname",appname);
-    db_header_data = db_header_data
-    formdata.append("db_header_data",db_header_data);
-    $('#id_data_upload').modal('hide');
-    //$('#myModal').modal('show');$('#myModal').modal('show');
-    $('#id_popup_tbody').empty();
-    $.ajax({
-        type: 'POST',
-        url: "{% url 'eProc_Configuration:data_upload_fk' %}",
-        data: formdata,
-        contentType: "application/json; charset=utf-8",
-        success: function(response) {
-            if(response == "Please check the uploaded csv file") {
-                $("#id_error_msg_upload").prop("hidden",false)
-                document.getElementById("id_error_msg_upload").innerHTML = response;
-                document.getElementById("id_error_msg_upload").style.color = "Red";
-                $('#id_data_upload').modal('show');
-            }
-            else{
-                var workflowschema_data_array = response;
-                var edit_basic_data = '';
-                var del_ind = '';
-                var dropdown_values = [];
-                $("#id_popup_tbody").empty();
-                    $.each(response, function (i, value) {
-                    var app_types_value = value[1]
-                    var company_id_value = value[2]
-                    dropdown_values.push([app_types_value, company_id_value])
-                    del_ind = '<td>' + value[3] + '</td>'
-                    if (value[3] == 1) {
-                        del_ind=' <input type="checkbox" value="' + value[2] + '" checked>'
+     attached_file = $('#id_file_data_upload').prop('files')[0]
+            file_extension = (attached_file.name).split(".")[1]
+            file_extension = file_extension.toUpperCase();
+
+            if(file_extension == 'CSV'){
+                formdata.append("file_attach", attached_file);
+                formdata.append("Tablename",Tablename);
+                formdata.append("appname",appname);
+            $('#id_data_upload').modal('hide');
+            $('#id_popup_tbody').empty();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Basic_Settings:data_upload' %}",
+                data: formdata,
+                contentType: "application/json; charset=utf-8",
+                success: function(response) {
+                    if(response.error_message){
+                        $("#id_error_msg_upload").prop("hidden",false)
+                        document.getElementById("id_error_msg_upload").innerHTML = response.error_message;
+                        document.getElementById("id_error_msg_upload").style.color = "Red";
+                        $('#id_data_upload').modal('show');
                     }
                     else {
-                        del_ind= '<input type="checkbox" value="' + value[2] + '" required>'
-                    }
+                        var workflowschema_data_array = response.data;
+                        var edit_basic_data = '';
+                        var del_ind = '';
+                        var dropdown_values = [];
+                        $("#id_popup_tbody").empty();
+                            $.each(response.data, function (i, value) {
+                            var app_types_value = value[1]
+                            var company_id_value = value[2]
+                            dropdown_values.push([app_types_value, company_id_value])
+                            del_ind = '<td>' + value[3] + '</td>'
+                            if (value[3] == 1) {
+                                del_ind=' <input type="checkbox" value="' + value[2] + '" checked>'
+                            }
+                            else {
+                                del_ind= '<input type="checkbox" value="' + value[2] + '" required>'
+                            }
 
                   edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><input class = "form-control" type="text" name="workflowschema" value ="' + value[0] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td><select class="form-control">value ="' + value[1] + '"'+app_types_value+'</select></td><td><select class="form-control">value ="' + value[2] + '"'+company_id_value+'</select></td><td hidden></td><td>'+ del_ind +'</td></tr>';
                 });
@@ -678,10 +682,18 @@ $('#save_id').click(function () {
                 table_sort_filter('id_popup_table')
             }
         },
-        cache: false,
-        processData: false,
-        contentType: false,
-    });
+                cache: false,
+                processData: false,
+                contentType: false,
+            });
+        }
+
+   else{
+        $("#id_error_msg_upload").prop("hidden",false)
+        document.getElementById("id_error_msg_upload").innerHTML = messageConstants["JMSG110"];
+        document.getElementById("id_error_msg_upload").style.color = "Red";
+        $('#id_data_upload').modal('show');
+    }
 }
 
 //check function restricting special char and diaplay the data count of csv file

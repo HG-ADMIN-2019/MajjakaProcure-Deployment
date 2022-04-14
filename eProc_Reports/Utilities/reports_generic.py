@@ -1,7 +1,7 @@
 import re
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.get_db_query import getClients
-from eProc_Configuration.models import Languages,  OrgCompanies
+from eProc_Configuration.models import Languages, OrgCompanies
 from eProc_Registration.models import UserData
 from eProc_Configuration.models.development_data import *
 
@@ -15,9 +15,18 @@ def get_companylist(req):
                                                                 'company_id')
 
 
+def get_companyDetails(req):
+    client = getClients(req)
+    return django_query_instance.django_filter_only_query(OrgCompanies, {'client': client, 'del_ind': False})
+
+
 def get_account_assignlist(req):
     return django_query_instance.django_filter_value_list_query(AccountAssignmentCategory, {'del_ind': False},
                                                                 'account_assign_cat')
+
+
+def get_account_assignvalues(req):
+    return django_query_instance.django_filter_only_query(AccountAssignmentCategory, {'del_ind': False})
 
 
 def get_langlist(req):

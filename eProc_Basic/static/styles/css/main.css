@@ -1253,22 +1253,6 @@ table th {
   /* Style the tab */
 }
 
-.products-catalog .jumbotron {
-  border-radius: 0;
-  background: #eeaeca;
-  background: radial-gradient(circle, #eeaeca 0%, #94bbe9 100%);
-}
-
-.products-catalog .jumbotron .input-group {
-  margin: 0 auto;
-  width: 60%;
-  padding-top: 5px;
-}
-
-.products-catalog .products-catalog__header-text {
-  text-align: center;
-}
-
 .products-catalog .products-catalog__selection-tab {
   padding-left: 1rem;
 }
@@ -1314,6 +1298,40 @@ table th {
 .products-catalog .hg_tab button.active {
   border-bottom: solid 5px #0089ff;
   color: #0089ff;
+}
+
+.products-catalog .products-catalog-header {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+  background-color: white;
+  margin-bottom: 2rem;
+}
+
+.products-catalog .products-catalog-header__section {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 50%;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+.products-catalog .products-catalog-header__text {
+  text-align: center;
+}
+
+.products-catalog .products-catalog-header__search-input-group {
+  padding: 2px;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  display: flex;
+}
+
+.products-catalog .products-catalog-header__search-input-group input[type='text'] {
+  border: none;
+}
+
+.products-catalog .products-catalog-header .sfps-button {
+  display: flex;
 }
 
 .product-selection-tabcontent {
@@ -1497,6 +1515,7 @@ table th {
 
 .sc-button-group {
   flex-wrap: wrap-reverse;
+  margin-bottom: 1rem;
 }
 
 @media screen and (max-width: 992px) {

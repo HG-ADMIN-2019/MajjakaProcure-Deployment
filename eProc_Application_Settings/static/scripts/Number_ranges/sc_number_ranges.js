@@ -1,6 +1,7 @@
 var numberranges_data = new Array();
 var validate_add_attributes = [];
 var number_range={};
+var seq_array= [];
 //onclick of add button display myModal popup and set GLOBAL_ACTION button value
 function onclick_add_button(button) {
     $("#error_msg_id").css("display", "none")
@@ -15,6 +16,7 @@ function onclick_add_button(button) {
     $("#id_del_ind_checkbox").prop("hidden", true);
     document.getElementById("id_del_add_button").style.display = "block";
     $("#save_id").prop("hidden", false);
+    nextval = max_sequence;
 }
 
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
@@ -256,7 +258,7 @@ function main_range_check_function(number_range,check_number_range){
 function inRange(x, min, max) {
     return !((x-min)*(x-max) <= 0);
 }
-
+var nextval = max_sequence ;
 // on click add icon display the row in to add the new entries
 function add_popup_row() {
   $("#error_msg_id").css("display", "none")
@@ -266,7 +268,8 @@ function add_popup_row() {
     $(".modal").on("hidden.bs.modal", function () {
         $("#id_error_msg").html("");
     });
-    basic_add_new_html = '<tr ><td class="number_range_checkbox"><input type="checkbox" required></td><td><input class="form-control"  type="text" maxlength="2" onkeypress="return /[0-9]/i.test(event.key)" name="sequence" style="text-transform:uppercase;" required></td><td><input class="form-control" type="text" maxlength="100000000" onkeypress="return /[0-9]/i.test(event.key)" name="starting" style="text-transform:uppercase;" required></td><td><input class="form-control" type="text" maxlength="100000000" onkeypress="return /[0-9]/i.test(event.key)" name="ending" style="text-transform:uppercase;" required></td><td><input class="form-control" type="text" maxlength="100000000" onkeypress="return /[0-9]/i.test(event.key)" name="current" style="text-transform:uppercase;" required></td>><td hidden><input class="form-control" type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    nextval += 1;
+    basic_add_new_html = '<tr ><td class="number_range_checkbox"><input type="checkbox" required></td><td><input class="form-control"  type="text" maxlength="2" value = '+ nextval +' onkeypress="return /[0-9]/i.test(event.key)" name="sequence" style="text-transform:uppercase;" required></td><td><input class="form-control" type="text" maxlength="100000000" onkeypress="return /[0-9]/i.test(event.key)" name="starting" style="text-transform:uppercase;" required></td><td><input class="form-control" type="text" maxlength="100000000" onkeypress="return /[0-9]/i.test(event.key)" name="ending" style="text-transform:uppercase;" required></td><td><input class="form-control" type="text" maxlength="100000000" onkeypress="return /[0-9]/i.test(event.key)" name="current" style="text-transform:uppercase;" required></td>><td hidden><input class="form-control" type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     if (GLOBAL_ACTION == "number_range") {
         $(".class_del_checkbox").prop("hidden", false);

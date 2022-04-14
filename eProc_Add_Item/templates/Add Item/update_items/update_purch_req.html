@@ -6,24 +6,24 @@
 
     <div class="form-row">
         <div class="form-group col-md-6">
-            <label for="update-pr-item_name">Product Name:<span class="hg_required"></span></label>
+            <label for="update-pr-item_name">Product/Service Name<span class="hg_required"></span></label>
             <input type="text" minlength="3" class="form-control form-control-sm" maxlength="40" id="update-pr-item_name" required />
         </div>
     
         <div class="form-group col-md-6">
-            <label for="update-pr-prod_desc">Product Description:<span class="hg_required"></span></label>
+            <label for="update-pr-prod_desc">Description<span class="hg_required"></span></label>
             <input type="text" class="form-control form-control-sm" maxlength="255" id="update-pr-prod_desc" required />
         </div>
     </div>
     
     <div class="form-row">
         <div class="form-group col-md-6">
-            <label for="update-pr-product_id">Product Id:</label>
+            <label for="update-pr-product_id"> Product/Service ID </label>
             <input type="text" class="form-control form-control-sm" id="update-pr-product_id"  maxlength="20" />
         </div>
     
         <div class="form-group col-md-6">
-            <label for="update-pr-prod_cat">Product Category:<span class="hg_required"></span></label>
+            <label for="update-pr-prod_cat">Product Category<span class="hg_required"></span></label>
             <select id="update-pr-prod_cat" class="form-control form-control-sm selectpicker" data-live-search="true" required>
                 {% for product_cat in product_category %}
                 <option value="{{product_cat.prod_cat_id}}" id="{{product_cat.prod_cat_id}}">{{product_cat.prod_cat_id}} - {{product_cat.category_desc}}</option>
@@ -34,12 +34,12 @@
 
     <div class="form-row">
         <div class="form-group col-md-4">
-            <label for="update-pr-price">Price:<span class="hg_required"></span></label>
+            <label for="update-pr-price">Price (Approx)<span class="hg_required"></span></label>
             <input id="update-pr-price" type="number" class="form-control form-control-sm" maxlength="15" required />
         </div>
     
         <div class="form-group col-md-4">
-            <label for="update-pr-currency">Currency:<span class="hg_required"></span></label>
+            <label for="update-pr-currency">Currency<span class="hg_required"></span></label>
             <select id="update-pr-currency" class="form-control form-control-sm selectpicker" data-live-search="true" required >
                 {% for currencies in currency %}
                 <option id="{{currencies}}" value="{{currencies}}">{{currencies}} - {{currencies.description}}</option>
@@ -48,10 +48,10 @@
         </div>
     
         <div class="form-group col-md-4">
-            <label for="update-pr-uom">Unit of Measure:<span class="hg_required"></span></label>
+            <label for="update-pr-uom">Unit of Measure<span class="hg_required"></span></label>
             <select id="update-pr-uom" class="form-control form-control-sm selectpicker" data-live-search="true" required>
                 {% for uom in unit %}
-                <option id="{{uom}}" value="{{uom.uom_id}}">{{uom.uom_id}} - {{uom}}</option>
+                <option id="{{uom}}" value="{{uom.uom_id}}">{{uom.uom_id}} - {{uom.uom_description}}</option>
                 {% endfor %}
             </select>
         </div>
@@ -59,18 +59,18 @@
 
     <div class="form-row">
         <div class="form-group col-md-6">
-            <label for="update-pr-lead_time">Lead Time:<span class="hg_required"></span></label>
+            <label for="update-pr-lead_time">Lead Time (Business Days)<span class="hg_required"></span></label>
             <input id="update-pr-lead_time" type="number" maxlength="3" minlength="1" min="1" class="form-control form-control-sm" required />
         </div>
     
         <div class="form-group col-md-6">
-            <label for="update-pr-quantity">Quantity:<span class="hg_required"></span></label>
+            <label for="update-pr-quantity">Quantity<span class="hg_required"></span></label>
             <input id="update-pr-quantity" type="number" min="1" minlength="1" maxlength="10" class="form-control form-control-sm" required />
         </div>
     </div>
 
     <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fas fa-times"></i> close</button>
+        <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><i class="fas fa-times"></i> close</button>
         <button type="button" class="btn btn-primary" id="save_pr_form_data"><i class="fas fa-save"></i> save</button>
     </div>
 
@@ -219,7 +219,7 @@
                 $('#id_dynamic').empty();
                 if (response.manager_detail) {
                     $.each(response.manager_detail, function (i, item) {
-                        if (item == 'AUTO') {
+                        if (item == 'Auto') {
                             error_msg = '<br><br><span>Status:Auto Approved</span>'
                         }
                         else {

@@ -8,16 +8,18 @@ Author:
 """
 
 # Function to display home page of shopping cart app
+import csv
+
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from pymysql import NULL
 
 from eProc_Basic.Utilities.constants.constants import CONST_DATE_FORMAT, CONST_DECIMAL_NOTATION
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.encryption_util import encrypt, decrypt
-from eProc_Basic.Utilities.functions.get_db_query import get_country_id, getClients
+from eProc_Basic.Utilities.functions.get_db_query import get_country_id, getClients, get_user_id_by_email_id
 from eProc_Basic.Utilities.functions.str_concatenate import concatenate_str
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Configuration.models import *
@@ -28,10 +30,11 @@ from eProc_Registration.models import UserData
 from eProc_Reports.Report_Forms.SearchDoc_forms import DocumentSearchForm
 from eProc_Reports.Report_Forms.user_report_form import UserReportForm
 from eProc_Reports.Utilities.reports_generic import get_companylist, get_usrid_by_username, get_account_assignlist, \
-    get_langlist
+    get_langlist, get_companyDetails, get_account_assignvalues
 from eProc_Shopping_Cart.context_processors import update_user_info
 from eProc_Shopping_Cart.models import ScHeader
 from eProc_Suppliers.Utilities.supplier_generic import supplier_detail_search
+from eProc_Suppliers.Utilities.supplier_specific import get_supplier_data, update_country_encrypt
 from eProc_Suppliers.models import OrgSuppliers
 from eProc_Users.Utilities.user_generic import user_detail_search
 from eProc_Basic_Settings.views import JsonParser_obj
@@ -139,17 +142,9 @@ def supplier_search(request):
 
     if request.method == 'GET':
         supplier_id_encrypted = []
-        supplier_results = django_query_instance.django_filter_query(SupplierMaster,
-                                                                     {'client': client,
-                                                                      'del_ind': False,
-                                                                      'block': False}, None, None)
-        for supplier in supplier_results:
-            for country_dictionary in country_dictionary_list:
-                if supplier['country_code_id'] == country_dictionary['country_code']:
-                    supplier['country_code_id'] = country_dictionary['country_name']
-            supplier_id_encrypted.append(encrypt(supplier['supplier_id']))
+        supplier_results = get_supplier_data()
 
-        context['supplier_results'] = zip(supplier_results, supplier_id_encrypted)
+        context['supplier_results'] = supplier_results
 
     if request.method == 'POST':
         supplier_id_encrypted = []
@@ -178,14 +173,7 @@ def supplier_search(request):
 
         supplier_results = supplier_detail_search(**search_fields)
 
-        # supplier_results = django_query_instance.django_filter_only_query(SupplierMaster, search_fields)
-        for supplier in supplier_results:
-            for country_dictionary in country_dictionary_list:
-                if supplier['country_code_id'] == country_dictionary['country_code']:
-                    supplier['country_code_id'] = country_dictionary['country_name']
-            supplier_id_encrypted.append(encrypt(supplier['supplier_id']))
-
-        context['supplier_results'] = zip(supplier_results, supplier_id_encrypted)
+        context['supplier_results'] = update_country_encrypt(supplier_results)
 
     return render(request, 'Supplier Search/supplier_search.html', context)
 
@@ -231,7 +219,11 @@ def sup_details(req, supplier_id):
     :param req: Form Request
     :return: Supplier details pop-up page
     """
-    supplier_id = decrypt(supplier_id)
+    if supplier_id != 'None':
+        supplier_action = 'UPDATE'
+        supplier_id = decrypt(supplier_id)
+    else:
+        supplier_action = 'CREATE'
     update_user_info(req)
     supplier_info = django_query_instance.django_get_query(SupplierMaster, {'supplier_id': supplier_id,
                                                                             'client': global_variables.GLOBAL_CLIENT})
@@ -249,6 +241,7 @@ def sup_details(req, supplier_id):
     context = {
         'inc_nav': True,
         'inc_footer': True,
+        'supplier_action': supplier_action,
         'supplier_info': supplier_info,
         'supplier_org_info': supplier_org_info,
         'purch_org_list': django_query_instance.django_filter_value_list_query(OrgPorg, {
@@ -302,7 +295,7 @@ def user_report(request):
             inp_username = request.POST.get('username')
             inp_active = request.POST.get('active')
 
-            if inp_active == 'on':
+            if inp_active == 'Active':
                 active = True
             else:
                 active = False
@@ -421,8 +414,8 @@ def approval_report(request):
     page_range = 0
     final_list = []
 
-    company_array = get_companylist(request)
-    acc_value_array = get_account_assignlist(request)
+    company_array = get_companyDetails(request)
+    acc_value_array = get_account_assignvalues(request)
 
     if not request.method == 'POST':
         if 'final_list' in request.session:
@@ -816,3 +809,26 @@ def lock_unlock_emp(request):
                                                   {'pwd_locked': emp_lock_flag_detail['flag']})
     response = {}
     return JsonResponse(response, safe=False)
+
+
+def get_username(request):
+    user_data = JsonParser_obj.get_json_from_req(request)
+    if user_data:
+        username = get_user_id_by_email_id(user_data)
+
+    return JsonResponse(username, safe=False)
+
+
+def extract_employee_template(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="Employee_Template.CSV"'
+
+    writer = csv.writer(response)
+
+    writer.writerow(
+        ['EMAIL', 'USERNAME', 'PERSON_NO', 'FORM_OF_ADDRESS', 'FIRST_NAME', 'LAST_NAME', 'PHONE_NUM', 'PASSWORD',
+         'DATE_JOINED', 'FIRST_LOGIN', 'LAST_LOGIN', 'IS_ACTIVE', 'IS_SUPERUSER', 'IS_STAFF', 'DATE_FORMAT',
+         'EMPLOYEE_ID', 'DECIMAL_NOTATION', 'USER_TYPE', 'LOGIN_ATTEMPTS', 'USER_LOCKED', 'PWD_LOCKED', 'SSO_USER',
+         'VALID_FROM', 'VALID_TO', 'del_ind', 'CURRENCY_ID', 'LANGUAGE_ID', 'OBJECT_ID', 'TIME_ZONE'])
+
+    return response

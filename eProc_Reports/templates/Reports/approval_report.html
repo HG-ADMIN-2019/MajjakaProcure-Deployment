@@ -1,7 +1,7 @@
 {% extends 'root/base.html' %}
 {% load static %}
 
-{% block title %} Majjaka eProcure - Approvals (Admin Tool) {% endblock %}
+{% block title %} Approvals (Admin Tool) {% endblock %}
 
 {% block maincontent %}
 
@@ -23,9 +23,10 @@
                     <div class="row">
                         <div class="col-md">
                             <label>Company Number </label>
+
                             <select name="comp_code_app" id="id_comp_code_app" class="form-control">
                                 <option value="null" selected="true" disabled="disabled">Select </option>
-                                {% for comp in comp_list %}<option value="{{ comp }}"> {{ comp }} </option>{% endfor %}
+                                {% for comp in comp_list %}<option value="{{ comp.company_id }}"> {{ comp.company_id}} - {{comp.name1 }} </option>{% endfor %}
                             </select>
                         </div>
 
@@ -33,7 +34,7 @@
                             <label>Account Assignment Category</label>
                             <select name="acc_assgn_cat" id="id_acc_assgn_cat" class="form-control">
                                 <option value="null" selected="true" disabled="disabled">Select </option>
-                                {% for acc_cat in acct_val_list %}<option value="{{ acc_cat }}"> {{ acc_cat }} </option>
+                                {% for acc_cat in acct_val_list %}<option value="{{ acc_cat.account_assign_cat }}"> {{acc_cat.account_assign_cat}}-{{acc_cat.description}} </option>
                                 {% endfor %}
                             </select>
                         </div>

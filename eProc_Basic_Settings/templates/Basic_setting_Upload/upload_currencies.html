@@ -1,6 +1,6 @@
 {% extends 'root/base.html' %}
 {% load static %}
-{% block title %} Majjaka eProcure - Currencies (Basic Settings) {% endblock %}
+{% block title %} Currencies (Basic Settings) {% endblock %}
 {% block maincontent %}
 
 
@@ -10,6 +10,9 @@
         <div class="elements-space-between">
             <h3>Maintain Currencies</h3>
             <div>
+                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_currency_template' %}'"type="button">
+                    <i class="fas fa-download"></i> download Template
+                </button>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_currency_data' %}'" type="button">
                     <i class="fas fa-download"></i> extract
                 </button>
@@ -18,6 +21,9 @@
                 </button>
                 <button type="button" id="id_add_data" value="ADD" class="btn btn-primary"  title="Add Currency" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add currency
+                </button>
+                <button class="btn btn-primary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                    <i class="fa fa-plus"></i> close
                 </button>
             </div>
         </div>
@@ -478,6 +484,19 @@
             });
         }
         //**********************************************
+        function GetReferrer() {
+             window.history.back();
+              var preUrl = document.referrer;
+              console.log(preUrl);
+              window.open('', '_self', '').close();
+               var win = window.open(preUrl);
+                win.focus();
+              if (preUrl == null)
+                     return "The previous page url is empty";
+               else
+                     return preUrl;
+       }
+
 
     </script>
 

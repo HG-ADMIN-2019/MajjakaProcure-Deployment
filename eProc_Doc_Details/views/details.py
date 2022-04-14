@@ -810,6 +810,7 @@ def auto_complete_goods_receiver(request):
         receiver_names = list()
         for names in qs:
             receiver_names.append(names.first_name + ' ' + names.last_name + ' - ' + names.email)
+        print(receiver_names)
         return JsonResponse(receiver_names, safe=False)
 
 

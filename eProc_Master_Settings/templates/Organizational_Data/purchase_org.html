@@ -1,6 +1,6 @@
 {% extends 'root/base.html' %}
 {% load static %}
-{% block title %} Majjaka eProcure - Purchasing Organizations (Master Settings) {% endblock %}
+{% block title %} Purchasing Organizations (Master Settings) {% endblock %}
 {% block maincontent %}
 
 <div class="container-fluid">
@@ -11,7 +11,7 @@
             <h3>Maintain Purchasing Organizations</h3>
             <div>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_porg_template' %}'"type="button">
-                    <i class="fas fa-download"></i> Extract Template
+                    <i class="fas fa-download"></i> download Template
                 </button>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_porg_data' %}'"type="button">
                     <i class="fas fa-download"></i> extract
@@ -185,7 +185,7 @@
     var rendered_company_data = {{ upload_data_OrgCompanies| safe}};
     var Tablename = uiConstants["CONST_TABLENAME_PURORG"]
     var appname = uiConstants["CONST_APPNAME01"]
-    var db_header_data = uiConstants["CONST_HEADER_DATA_PURORG"]
+    var db_header_data = uiConstants[ 'PORG_ID', 'DESCRIPTION','COMPANY_ID','OBJECT_ID','del_ind']
 
     var object_id_dropdwn = ""
 
@@ -264,44 +264,46 @@ function display_basic_db_data(){
 function onclick_display_csv_data() {
     $('#id_popup_table').DataTable().destroy();
     formdata = new FormData();
-    formdata.append("file_attach", $('#id_file_data_upload').prop('files')[0]);
-    formdata.append("Tablename",Tablename);
-    formdata.append("appname",appname);
-    db_header_data = db_header_data
-    formdata.append("db_header_data",db_header_data);
-    $('#id_data_upload').modal('hide');
-    //$('#myModal').modal('show');$('#myModal').modal('show');
-    $('#id_popup_tbody').empty();
-    $.ajax({
-        type: 'POST',
-        url: "{% url 'eProc_Configuration:data_upload_fk' %}",
-        data: formdata,
-        contentType: "application/json; charset=utf-8",
-        success: function(response) {
-            if(response == "Please check the uploaded csv file") {
-                $("#id_error_msg_upload").prop("hidden",false)
-                document.getElementById("id_error_msg_upload").innerHTML = response;
-                document.getElementById("id_error_msg_upload").style.color = "Red";
-                $('#id_data_upload').modal('show');
-            }
-            else{
-                var pgroup_data_array = response;
-                var edit_basic_data = '';
-                var del_ind = '';
-                var dropdown_values = [];
-                $("#id_popup_tbody").empty();
-                    $.each(response, function (i, value) {
-                    var company_id_value = value[3]
-                    var object_id_value = value[4]
+   attached_file = $('#id_file_data_upload').prop('files')[0]
+            file_extension = (attached_file.name).split(".")[1]
+            file_extension = file_extension.toUpperCase();
 
-                    dropdown_values.push([company_id_value, object_id_value])
-                    del_ind = '<td>' + value[3] + '</td>'
-                    if (value[4] == 1) {
-                        del_ind=' <input type="checkbox" value="' + value[4] + '" checked>'
+            if(file_extension == 'CSV'){
+                formdata.append("file_attach", attached_file);
+                formdata.append("Tablename",Tablename);
+                formdata.append("appname",appname);
+            $('#id_data_upload').modal('hide');
+            $('#id_popup_tbody').empty();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Basic_Settings:data_upload' %}",
+                data: formdata,
+                contentType: "application/json; charset=utf-8",
+                success: function(response) {
+                    if(response.error_message){
+                        $("#id_error_msg_upload").prop("hidden",false)
+                        document.getElementById("id_error_msg_upload").innerHTML = response.error_message;
+                        document.getElementById("id_error_msg_upload").style.color = "Red";
+                        $('#id_data_upload').modal('show');
                     }
                     else {
-                        del_ind= '<input type="checkbox" value="' + value[4] + '" required>'
-                    }
+                        var pgroup_data_array = response.data;
+                        var edit_basic_data = '';
+                        var del_ind = '';
+                        var dropdown_values = [];
+                        $("#id_popup_tbody").empty();
+                            $.each(response.data, function (i, value) {
+                            var company_id_value = value[3]
+                            var object_id_value = value[4]
+
+                            dropdown_values.push([company_id_value, object_id_value])
+                            del_ind = '<td>' + value[4] + '</td>'
+                            if (value[4] == 1) {
+                                del_ind=' <input type="checkbox" value="' + value[4] + '" checked>'
+                            }
+                            else {
+                                del_ind= '<input type="checkbox" value="' + value[4] + '" required>'
+                            }
 
                      edit_basic_data += '<tr ><td class="class_select_checkbox"><input type="checkbox" required></td><td><input type="text" class="form-control" value="' + value[0] + '" maxlength="8" onkeypress="return /[a-z]/i.test(event.key)" required></td><td><input type="text" class="form-control" value="' + value[1] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td><select class="form-control">value ="' + value[2] + '"'+company_dropdwn+'</select></td><td><select class="form-control">value ="' + value[2] + '"'+object_id_dropdwn+'</select></td><td>' + del_ind + '</td></tr>';
                  });
@@ -330,10 +332,17 @@ function onclick_display_csv_data() {
                 table_sort_filter('id_popup_table')
             }
         },
-        cache: false,
-        processData: false,
-        contentType: false,
-    });
+            cache: false,
+            processData: false,
+            contentType: false,
+        });
+    }
+ else{
+        $("#id_error_msg_upload").prop("hidden",false)
+        document.getElementById("id_error_msg_upload").innerHTML = messageConstants["JMSG110"];
+        document.getElementById("id_error_msg_upload").style.color = "Red";
+        $('#id_data_upload').modal('show');
+    }
 }
 
 // validate and save for add,copy,update and upload data

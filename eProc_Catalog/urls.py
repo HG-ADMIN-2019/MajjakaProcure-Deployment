@@ -20,8 +20,6 @@ urlpatterns = [
      path('get_image_detail/', views.get_image_detail, name='get_image_detail'),
      path('auto_completion_search/', views.auto_completion_search, name='auto_completion_search'),
      # path('get_product_service_prod_details/<str:product_id>/<str:catalog_id>', views.get_product_service_product_details, name='get_product_service_product_details'),
-     path('get_product_service_prod_details/<str:product_id>/', views.get_product_service_product_details, name='get_product_service_product_details'),
-
      # path('get_search_result/<str:selected_catalog>/<str:document_number>', views.get_search_result, name='get_search_result'),
 
 

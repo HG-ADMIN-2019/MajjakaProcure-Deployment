@@ -108,7 +108,7 @@ function onclick_update_button() {
 //**********************************************************
 
 function onclick_copy_update_button() {
-    
+
     $("#error_msg_id").css("display", "none")
      $('#display_basic_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
@@ -124,7 +124,7 @@ function onclick_copy_update_button() {
     for (var i = 1; i < checkBoxes.length; i++) {
         if (checkBoxes[i].checked) {
             var row = checkBoxes[i].parentNode.parentNode;
-            var document_type = row.cells[1].innerHTML
+            var document_type = row.cells[3].innerHTML
             var sequence = row.cells[4].innerHTML
             var active_inactive = row.cells[5].innerHTML
             dropdown_val.push([document_type, sequence, active_inactive])
@@ -134,16 +134,17 @@ function onclick_copy_update_button() {
             });
             rendered_sequence_array.push(sequence)
 
+
             guid = ''
             if (GLOBAL_ACTION == "UPDATE") {
                 guid = row.cells[6].innerHTML
 
             eliminate_used_sequence()
-            edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select disabled>' + doc_type_dropdown + '</select></td><td><input class="input form-control" type="text" maxlength="15" value="' + row.cells[2].innerHTML + '" onkeypress="return /[a-z0-9 ]/i.test(event.key)" name="transaction type" style="text-transform:uppercase;" disabled></td><td><input type="text" class= "form-control" maxlength="100" value="' + row.cells[3].innerHTML + '" onkeypress="return /[a-z0-9 ]/i.test(event.key)" name="transaction description" style="text-transform:uppercase;" required></td><td><select class="input form-control">' + sequence_dropdown + '</select></td><td><select class="input form-control">' + active_inactive_dropdown + '</select></td><td hidden><input type="text" class= "form-control" value="' + guid + '"></td><td hidden><input type="checkbox" required></td></tr>';
+            edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><input class="input form-control" type="text" maxlength="15" value="' + row.cells[1].innerHTML + '" onkeypress="return /[a-z0-9 ]/i.test(event.key)" name="transaction type" style="text-transform:uppercase;" disabled></td><td><input type="text" class= "form-control" maxlength="100" value="' + row.cells[2].innerHTML + '" onkeypress="return /[a-z0-9 ]/i.test(event.key)" name="transaction description" style="text-transform:uppercase;" required></td><td><select class="input form-control" disabled>' + document_type_dropdown + '</select></td><td><select class="input form-control" disabled>' + sequence_dropdown + '</select></td><td><select class="input form-control">' +active_inactive_dropdown_onload+ '</select></td><td hidden><input type="text" class= "form-control" value="' + guid + '"></td><td hidden><input type="checkbox" required></td></tr>';
             }
             else{
             eliminate_used_sequence()
-            edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select disabled>' + doc_type_dropdown + '</select></td><td><input class="input form-control" type="text" maxlength="15" value="' + row.cells[2].innerHTML + '" onkeypress="return /[a-z0-9 ]/i.test(event.key)" name="transaction type" style="text-transform:uppercase;" required></td><td><input type="text" class= "form-control" maxlength="100" value="' + row.cells[3].innerHTML + '" onkeypress="return /[a-z0-9 ]/i.test(event.key)" name="transaction description" style="text-transform:uppercase;" required></td><td><select class="input form-control">' + sequence_dropdown + '</select></td><td><select class="input form-control">' + active_inactive_dropdown + '</select></td><td hidden><input type="text" class= "form-control" value="' + guid + '"></td><td hidden><input type="checkbox" required></td></tr>';
+            edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><input class="input form-control" type="text" maxlength="15" value="' + row.cells[1].innerHTML + '" onkeypress="return /[a-z0-9 ]/i.test(event.key)" name="transaction type" style="text-transform:uppercase;"></td><td><input type="text" class= "form-control" maxlength="100" value="' + row.cells[2].innerHTML + '" onkeypress="return /[a-z0-9 ]/i.test(event.key)" name="transaction description" style="text-transform:uppercase;" required></td><td><select class="input form-control" disabled>' + document_type_dropdown + '</select></td><td><select class="input form-control">' + sequence_dropdown + '</select></td><td><select class="input form-control">' +active_inactive_dropdown+ '</select></td><td hidden><input type="text" class= "form-control" value="' + guid + '"></td><td hidden><input type="checkbox" required></td></tr>';
             }
 
         }
@@ -158,12 +159,7 @@ function onclick_copy_update_button() {
 
         $(row.find("TD").eq(1).find("select option[value=" + document_type + "]")).attr('selected', 'selected');
         $(row.find("TD").eq(4).find("select option[value=" + sequence + "]")).attr('selected', 'selected');
-        if (active_inactive == 'ACTIVE') {
-            $(row.find("TD").eq(5).find("select option[value=" + true + "]")).attr('selected', 'selected');
-        }
-        else {
-            $(row.find("TD").eq(5).find("select option[value=" + false + "]")).attr('selected', 'selected');
-        }
+        $(row.find("TD").eq(5).find("select option[value=" + active_inactive + "]")).attr('selected', 'selected');
         $(row.find("TD").eq(1).find("select option[value=" + document_type + "]")).attr('selected', 'selected');
 
         i = i + 1;
@@ -269,33 +265,7 @@ function display_error_message(error_message){
 
 
 
-//onclick of cancel display the table in display mode............
-function display_basic_db_data() {
-    $('#display_basic_table').DataTable().destroy();
-    $('#id_transaction_types_tbody').empty();
-    var edit_basic_data = '';
-    $.each(rendered_transaction_types_data, function (i, item) {
-        edit_basic_data += '<tr ><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.document_type + '</td><td>' + item.transaction_type + '</td><td>' + item.description + '</td><td>' + item.sequence + '</td><td>' + item.active_inactive + '</td><td hidden>' + item.guid + '</td></tr>';
-        sequence_remove_array.push(item.sequence)
-    });
-    $('#id_transaction_types_tbody').append(edit_basic_data);
-    $("#hg_select_checkbox").prop("hidden", true);
-    $(".class_select_checkbox").prop("hidden", true);
-    $('input:checkbox').removeAttr('checked');
-    $('#id_edit_data').show();
-    $('#id_cancel_data').hide();
-    //document.getElementById("id_upload_redirect_transaction_types").style.display = "none";
-    $("#id_delete_data").hide();
-    $("#id_copy_data").hide();
-    $("#id_update_data").hide();
-    $("#id_save_confirm_popup").hide();
-    $("#id_delete_confirm_popup").hide();
-    $('#id_check_all').hide();
-    table_sort_filter('display_basic_table');
-}
 
-//***************************
-//**********************************************
 
 function delete_duplicate() {
     $('#id_popup_table').DataTable().destroy();
@@ -330,9 +300,9 @@ $('#save_id').click(function () {
         var row = $(this);
         transaction_types = {};
         transaction_types.del_ind = row.find("TD").eq(7).find('input[type="checkbox"]').is(':checked');
-        transaction_types.document_type = row.find("TD").eq(1).find("select option:selected").val();
-        transaction_types.transaction_type = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-        transaction_types.description = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
+        transaction_types.document_type = row.find("TD").eq(3).find("select option:selected").val();
+        transaction_types.transaction_type = row.find("TD").eq(1).find('input[type="text"]').val();
+        transaction_types.description = row.find("TD").eq(2).find('input[type="text"]').val();
         transaction_types.sequence = row.find("TD").eq(4).find("select option:selected").val();
         transaction_types.active_inactive = row.find("TD").eq(5).find("select option:selected").val();
         transaction_types.guid = row.find("TD").eq(6).find('input[type="text"]').val();
@@ -344,6 +314,14 @@ $('#save_id').click(function () {
         if (transaction_types.guid == undefined){
             transaction_types.guid = ''
         }
+
+         if (transaction_types.active_inactive == "Active"){
+            transaction_types.active_inactive = "True"
+         }
+
+         if (transaction_types.active_inactive == "Inactive"){
+            transaction_types.active_inactive = "False"
+         }
         validate_add_attributes.push(transaction_types.transaction_type);
         transaction_types_data.push(transaction_types);
     });

@@ -1,6 +1,6 @@
 {% extends 'root/base.html' %}
 {% load static %}
-{% block title %} Majjaka eProcure - Authorization Objects (Application Settings) {% endblock %}
+{% block title %} Authorization Objects (Application Settings) {% endblock %}
 {% block maincontent %}
 
 
@@ -150,12 +150,15 @@
 
 {{ auth_obj_id_db_values|json_script:"auth_obj_id_db_values" }}
 {{ auth_type_db_values|json_script:"auth_type_db_values" }}
+{{ auth_obj_id_db_values_onload|json_script:"auth_obj_id_db_values_onload" }}
+
 
 
 <script>
     var rendered_auth_obj_data = {{ upload_authobj| safe}};
     var rendered_auth_obj_id = JSON.parse(document.getElementById('auth_obj_id_db_values').textContent);
     var rendered_auth_type = JSON.parse(document.getElementById('auth_type_db_values').textContent);
+    var rendered_auth_obj_data_onload = JSON.parse(document.getElementById('auth_obj_id_db_values_onload').textContent);
     var auth_obj_data_array = {}
     var main_table_auth_obj_value = [];
     var auth_obj = '';
@@ -177,6 +180,12 @@
        
     })
     }
+
+    var auth_obj_id_db_values_onload = '';
+     $.each(rendered_auth_obj_data_onload, function(i, item){
+        auth_obj_id_db_values_onload += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
+
+    })
 
 
     var auth_type_dropdown = '';

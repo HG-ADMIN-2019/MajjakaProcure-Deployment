@@ -79,11 +79,11 @@
                 <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> send to purchasing team</button>
                 {% endif %}
         
-                {% if sc_appr.0.app_id != 'AUTO' and not sc_completion %}
+                {% if sc_appr.0.app_id != 'Auto' and not sc_completion %}
                 <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> submit for approval</button>
                 {% endif %}
         
-                {% if sc_appr.0.app_id == 'AUTO' and not sc_completion %}
+                {% if sc_appr.0.app_id == 'Auto' and not sc_completion %}
                 <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> place order</button>
                 {% endif %}
         
@@ -205,7 +205,7 @@
 
             <!-- Modal Header -->
             <div class="modal-header">
-                <h4 class="modal-title">Add a note to Approver</h4>
+                <h4 class="modal-title">Approver Note</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
 

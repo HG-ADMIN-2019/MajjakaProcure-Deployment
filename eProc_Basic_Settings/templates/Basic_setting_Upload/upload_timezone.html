@@ -1,6 +1,6 @@
 {% extends 'root/base.html' %}
 {% load static %}
-{% block title %} Majjaka eProcure - Timezones (Basic Settings) {% endblock %}
+{% block title %} Timezones (Basic Settings) {% endblock %}
 {% block maincontent %}
 
 {% include 'root/loader.html' %}
@@ -13,7 +13,7 @@
             <h3>Maintain Timezones</h3>
             <div>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_timezone_template' %}'"type="button">
-                    <i class="fas fa-download"></i> Extract Template
+                    <i class="fas fa-download"></i> download Template
                 </button>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_timezone_data' %}'"type="button">
                     <i class="fas fa-download"></i> extract
@@ -185,6 +185,7 @@
 
         //onclick of data Upload copy data to modal pop-up
         function onclick_display_csv_data() {
+            $("#error_msg_id").css("display", "none");
             $('#id_popup_table').DataTable().destroy();
             formdata = new FormData();
             attached_file = $('#id_file_data_upload').prop('files')[0]

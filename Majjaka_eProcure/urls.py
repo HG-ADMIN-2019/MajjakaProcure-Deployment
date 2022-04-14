@@ -53,7 +53,7 @@ urlpatterns = [
     path('home/', include('eProc_Shop_Home.urls')),
     path('add_item/', include('eProc_Add_Item.urls')),
     path('support/', include('eProc_Org_Support.urls')),
-    path('doc_search_and_display/', include('eProc_Doc_Search_and_Display.urls')),
+    path('search/', include('eProc_Doc_Search_and_Display.urls')),
     path('users/', include('eProc_Users.urls')),
     path('suppliers/', include('eProc_Suppliers.urls')),
     path('manage-content/', include('eProc_Manage_Content.urls')),

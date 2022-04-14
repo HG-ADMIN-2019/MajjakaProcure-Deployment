@@ -56,8 +56,20 @@ urlpatterns = [
     path('extract_porg_data', views.extract_porg_data, name='extract_porg_data'),
     path('extract_porg_template', views.extract_porg_template, name='extract_porg_template'),
     path('extract_address_data', views.extract_address_data, name='extract_address_data'),
+    path('extract_approvertype_template', views.extract_approvertype_template, name='extract_approvertype_template'),
+    path('extract_approver_type_data', views.extract_approver_type_data, name='extract_approver_type_data'),
+    path('extract_incoterms_data', views.extract_incoterms_data, name='extract_incoterms_data'),
+    path('extract_incoterm_template', views.extract_incoterm_template, name='extract_incoterm_template'),
+    path('extract_payterms_data', views.extract_payterms_data, name='extract_payterms_data'),
+    path('extract_payterm_template', views.extract_payterm_template, name='extract_payterm_template'),
     path('custom_UNSPSC_codes', views.upload_cust_prod_cat, name='upload_cust_prod_cat'),
     path('custom_UNSPSC_code_descriptions', views.upload_cust_prod_cat_desc, name='upload_cust_prod_cat_desc'),
-
+    path('extract_spendlimitval_data_template', views.extract_spendlimitval_data_template, name='extract_spendlimitval_data_template'),
+    path('extract_accdesc_data_template', views.extract_accdesc_data_template, name='extract_accdesc_data_template'),
+    path('extract_aav_data_template', views.extract_aav_data_template, name='extract_aav_data_template'),
+    path('extract_address_data_Template', views.extract_address_data_Template, name='extract_address_data_Template'),
+    path('extract_approverlimit_data_template', views.extract_approverlimit_data_template, name='extract_approverlimit_data_template'),
+    path('extract_approverlimitval_data_template', views.extract_approverlimitval_data_template,name='extract_approverlimitval_data_template'),
+    path('extract_orgcompany_data_template', views.extract_orgcompany_data_template,name='extract_orgcompany_data_template'),
 
 ]

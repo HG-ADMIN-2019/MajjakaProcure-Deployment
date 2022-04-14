@@ -14,18 +14,20 @@ from eProc_Basic.Utilities.functions.json_parser import JsonParser
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Basic.Utilities.messages.messages import MSG016, MSG087
 from eProc_Basic.decorators import authorize_view
-from eProc_Configuration.models import Currency, UnitOfMeasures, FreeTextForm
+from eProc_Configuration.models import Currency, UnitOfMeasures, FreeTextForm, ProductsDetail, ImagesUpload
 from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_currency
-from eProc_Form_Builder.Utilities.form_builder_generic import FormBuilder
+from eProc_Form_Builder.Utilities.form_builder_generic import FormBuilder, get_product_specification_details, \
+    get_eform_update_price
 from eProc_Form_Builder.models import EformFieldData
 from eProc_Price_Calculator.Utilities.price_calculator_generic import calculate_total_value, calculate_item_total_value
+from eProc_Shop_Home.models import RecentlyViewedProducts
 from eProc_Shopping_Cart.Shopping_Cart_Forms.call_off_forms.free_text_form import CreateFreeText
 from eProc_Shopping_Cart.Shopping_Cart_Forms.call_off_forms.limit_form import CreateLimitOrderForm
 from eProc_Shopping_Cart.Shopping_Cart_Forms.call_off_forms.purchase_requisition_form import CreatePurchaseReqForm
 from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_prod_cat, get_supplier_first_second_name
 from eProc_Shopping_Cart.Utilities.save_order_edit_sc import EditShoppingCart
 from eProc_Shopping_Cart.Utilities.shopping_cart_specific import update_supplier_uom, update_supplier_desc, \
-    update_unspsc
+    update_unspsc, update_country
 from eProc_Shopping_Cart.context_processors import update_user_info
 from eProc_System_Settings.Utilities.system_settings_generic import sys_attributes
 
@@ -294,3 +296,112 @@ def save_eform_data(eform_data):
         django_query_instance.django_update_query(EformFieldData,
                                                   {'eform_field_data_guid': eform_detail['eform_transaction_guid']},
                                                   {'eform_field_data': eform_detail['eform_data']})
+
+def get_product_service_product_details(request, product_id):
+    """
+
+    :param request:
+    :return:
+    """
+    update_user_info(request)
+    eform_detail = []
+    product_specification = []
+    quantity_dictionary = []
+    item_price = None
+    username = global_variables.GLOBAL_LOGIN_USERNAME
+    client = global_variables.GLOBAL_CLIENT
+    product_details = {}
+    prod_id = product_id
+    # catalog_id = catalog_id
+    prod_detail = {}
+    context = {
+        'inc_nav': True,
+        'inc_footer': True,
+    }
+    if django_query_instance.django_existence_check(ProductsDetail, {'client': global_variables.GLOBAL_CLIENT,
+                                                                     'product_id': prod_id}):
+        prod_detail = django_query_instance.django_filter_query(ProductsDetail,
+                                                                {'client': global_variables.GLOBAL_CLIENT,
+                                                                 'product_id': prod_id}, None, None)[0]
+        prod_detail_get_query = django_query_instance.django_get_query(ProductsDetail,
+                                                                       {'client': global_variables.GLOBAL_CLIENT,
+                                                                        'product_id': prod_id})
+        if prod_detail:
+            prod_detail = update_supplier_uom(prod_detail)
+            prod_detail = update_unspsc(prod_detail,'prod_cat_id_id')
+            prod_detail = update_country(prod_detail)
+
+        if prod_detail_get_query.eform_id:
+            eform_detail, item_price, quantity_dictionary = get_eform_update_price(prod_detail_get_query.eform_id)
+
+            for data in eform_detail:
+                data['eform_field_data'] = data['eform_field_data'].split('|~#')
+
+        if prod_detail_get_query.product_info_id:
+            product_specification = get_product_specification_details(prod_detail_get_query.product_info_id)
+        if item_price:
+            prod_detail['price'] = item_price
+
+    context['prod_detail'] = prod_detail
+
+    prod_img_detail = django_query_instance.django_filter_query(ImagesUpload,
+                                                                {'client': global_variables.GLOBAL_CLIENT,
+                                                                 'image_id': prod_id,
+                                                                 'image_type': CONST_CATALOG_IMAGE_TYPE
+                                                                 }, None, None)
+
+    # Add to recently viewed products
+    existing_product_query = django_query_instance.django_filter_only_query(RecentlyViewedProducts, {
+        'product_id': prod_id,
+        'username': username,
+        'client': client,
+        'del_ind': False
+    })
+    if not existing_product_query.exists():
+        django_query_instance.django_create_query(RecentlyViewedProducts, {
+            'recently_viewed_prod_guid': guid_generator(),
+            'client': global_variables.GLOBAL_CLIENT,
+            'username': global_variables.GLOBAL_LOGIN_USERNAME,
+            'product_id': prod_detail['product_id'],
+            'catalog_id': prod_detail['prod_cat_id_id'],
+            'recently_viewed_prod_created_at': datetime.datetime.now(),
+            'recently_viewed_prod_created_by': global_variables.GLOBAL_LOGIN_USERNAME,
+            'del_ind': False
+        })
+
+    recently_viewed_products_query = django_query_instance.django_filter_only_query(RecentlyViewedProducts, {
+        'username': username,
+        'client': client,
+        'del_ind': False
+    })
+
+    context['prod_img_detail'] = prod_img_detail
+    context['eform_detail'] = eform_detail
+    context['quantity_dictionary'] = quantity_dictionary
+    context['product_specification'] = product_specification
+    if existing_product_query.exists():
+        existing_product_query.update(recently_viewed_prod_changed_at=datetime.datetime.now(),
+                                      recently_viewed_prod_changed_by=username)
+        print(context)
+        return render(request, 'Product_Details_Page/product_detail_page.html', context)
+
+    if recently_viewed_products_query.count() == CONST_USER_RECENTLY_VIEWED:
+        django_query_instance.django_filter_only_query(RecentlyViewedProducts, {
+            'username': username,
+            'client': client,
+            'del_ind': False
+        }).earliest('recently_viewed_prod_created_at').delete()
+
+    guid = guid_generator()
+    # django_query_instance.django_update_or_create_query(RecentlyViewedProducts, {'recently_viewed_prod_guid': guid}, {
+    #     'username': username,
+    #     'product_id': prod_id,
+    #     'catalog_id': catalog_id,
+    #     'recently_viewed_prod_created_at': datetime.datetime.now(),
+    #     'recently_viewed_prod_created_by': username,
+    #     'recently_viewed_prod_changed_at': datetime.datetime.now(),
+    #     'recently_viewed_prod_changed_by': username,
+    #     'client_id': client,
+    # })
+    print(context)
+    return render(request, 'Product_Details_Page/product_detail_page.html', context)

@@ -9,5 +9,6 @@ urlpatterns = [
     path('update_supplier_purch_details/', update_supplier_purch_details, name='update_supplier_purch_details'),
     path('supplier_register/', supplier_registration_form, name='supplier_registration'),
     path('delete_supplier/', delete_supplier, name='delete_supplier'),
+    path('supplier_blocking/', supplier_blocking, name='supplier_blocking'),
 ]
 

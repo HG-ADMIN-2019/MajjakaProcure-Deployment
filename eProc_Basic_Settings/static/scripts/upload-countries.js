@@ -16,6 +16,7 @@ function onclick_add_button(button) {
     $("#id_del_ind_checkbox").prop("hidden", true);
     document.getElementById("id_del_add_button").style.display = "block";
     $("#save_id").prop("hidden", false);
+
 }
 
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
@@ -209,6 +210,7 @@ function display_basic_db_data() {
     $('#id_delete_confirm_popup').modal('hide');
     $('#id_check_all').hide(); 
     table_sort_filter('display_basic_table');
+
 }
 
 

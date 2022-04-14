@@ -526,14 +526,14 @@ const check_ui_errors_warnings = (error_messages) => {
     var msg = "JMSG049";
 
      msg_type = message_config_details(msg, url_new);
-    if(multiple_purch_group[0] == 'MULTIPLE' && (purchase_group==0))
+    if(multiple_purch_group[0] == CONST_MULTIPLE && (purchase_group==0))
     {
         error_messages += msg_type.messages_id_desc[0];
 //        $('#sc_error_msg').html(error_messages);
 //        $('#sc_error_msg').show();
         message_type_check("sc_error_msg", msg_type.messages_id_desc[0])
     } else $('sc_error_msg').hide()
-    if(multiple_purch_group[0] == 'MULTIPLE' && (purchase_group==1)){
+    if(multiple_purch_group[0] == CONST_MULTIPLE && (purchase_group==1)){
          warning_messages += msg_type.messages_id_desc[0];
           message_type_check("sc_warning_messages", msg_type.messages_id_desc[0])
 //        $('#sc_warning_messages').html(warning_messages)
@@ -555,7 +555,7 @@ const check_manager_detail = (response) => {
     $('#id_dynamic').empty();
     if (response.manager_detail){
         $.each(response.manager_detail, function (i, item) {
-            if (item == 'AUTO'){
+            if (item == 'Auto'){
                 double_angular = '<div class="approval-overview__next-icon-container"><i class="fas fa-angle-double-right fa-3x"></i></div>';
                 manager_icon += '' + double_angular + '<div class="approval-overview__user-icon-container ao-workflow-user"><div class="workflow-user-bg"><i class="fas fa-user-check fa-2x icon-workflow-auto" aria-hidden="true"></i></div><button type="button" class="button-workflow-user">' + item.first_name + '</button></div>';
             }

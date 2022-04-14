@@ -1,14 +1,14 @@
 {% extends 'root/base.html' %}
 {% load static %}
 
-{% block title %} Majjaka eProcure - Free Text {% endblock %}
+{% block title %} Free Text (Shop){% endblock %}
 {% block maincontent %}
 
 
     <!-- Free text form start (SC-FT-US01: As a user I should be able to enter an item in Free Text form) -->
-<div class="container-fluid">    
+<div class="container-fluid">
     <div class="mep-form_wrapper">
-        
+
         <form method="POST" id="free_text_form_submit">
             {% csrf_token %}
             <div>
@@ -27,46 +27,47 @@
 
             <div class="card mt-4 card-shadow-1">
 
-                <h5 class="card-header">Which Product/Service Are You Looking For?</h5>
+                <h5 class="card-header">Which Product/Service are you looking for ?</h5>
                 <div class="card-body">
+                <h5 class="card-title">What do you need ?</h5>
 
                     <div>
                         <div class="row">
                             <div class="col">
-                                <div>Product/Service Name<span class="hg_required"></span></div>
+                                <div>Product Name:<span class="hg_required"></span></div>
                                 <div>{{ free_text_form.product_name }}</div>
                             </div>
                             <div class="col mb-3">
-                                <div>Description<span class="hg_required"></span></div>
+                                <div>Description:<span class="hg_required"></span></div>
                                 <div>{{ free_text_form.description }}</div>
                             </div>
                             <div class="w-100"></div>
                             <div class="col">
-                                <div>Estimated Price In ({{configured_free_text_form.currency_id}})<span class="hg_required"></span></div>
+                                <div>Estimated Price in({{configured_free_text_form.currency_id}}):<span class="hg_required"></span></div>
                                 <div>{{ free_text_form.price }}</div>
                             </div>
                             <div class="col">
-                                <div>Price Per Unit<span class="hg_required"></span></div>
+                                <div>Estimated Price Per Unit:<span class="hg_required"></span></div>
                                 <div>{{ free_text_form.price_unit }}</div>
                             </div>
 
                             <div class="col mb-3">
-                                <div>Unit Of Measure<span class="hg_required"></span></div>
+                                <div>Unit of Measure:<span class="hg_required"></span></div>
                                 <div>
                                     <select id="uom_free_text" class="form-control selectpicker" data-live-search="true" title="Select unit of measure" required>
                                         {% for uom in unit %}
-                                        <option value="{{uom.uom_id}}">{{uom.uom_id}} - {{uom}}</option>
+                                        <option value="{{uom.uom_id}}">{{uom.uom_id}} - {{uom.uom_description}}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
                             </div>
                             <div class="w-100"></div>
                             <div class="col">
-                                <div>Delivery Date<span class="hg_required"></span></div>
+                                <div>Delivery Date:<span class="hg_required"></span></div>
                                 <div>{{ free_text_form.delivery_date }}</div>
                             </div>
                             <div class="col">
-                                <div>Quantity<span class="hg_required"></span></div>
+                                <div>Quantity:<span class="hg_required"></span></div>
                                 {{ free_text_form.quantity }}
                             </div>
                         </div>
@@ -76,7 +77,7 @@
 
             <div class="card mt-4 card-shadow-1" id="eform_card_details">
                 <div class="card-body">
-                <h5 class="card-title">Additional Information</h5>
+                <h5 class="card-title">What Are The Custom Fields ?</h5>
 
                     <span id="is_eform" hidden>no_eform</span>
                     <div id="eform_fields" class="row"></div>
@@ -84,27 +85,26 @@
             </div>
 
 
-            <div class="card mb-4" id="supplier_det_div">
-                <h5 class="card-header">Product/Service Information</h5>
+            <div class="card mt-4 card-shadow-1" id="supplier_det_div">
                 <div class="card-body">
-                <h5 class="card-title">Product Information</h5>
+                <h5 class="card-title">What Are The Free Text Details ?</h5>
 
                     <div class="row">
                         <div class="col">
-                            <b>Lead Time</b><br>
+                            <b>Lead Time:</b><br>
                             <span id="lead_time">{{configured_free_text_form.lead_time}}</span>
                         </div>
                         <div class="col mb-3">
-                            <b>FreeText Description</b><br>
+                            <b>FreeText Description:</b><br>
                             <span id="catalog_id">{{configured_free_text_form.description}}</span>
                         </div>
                         <div class="w-100"></div>
                         <div class="col mb-3">
-                            <b>Product Category</b><br>
-                            <span id="product_category_id">{{configured_free_text_form.product_category_id}} - {{configured_free_text_form.prod_cat_desc}}</span>
+                            <b>UNSPSC:</b><br>
+                            <span id="product_category_id">{{configured_free_text_form.product_category_id}}</span>
                         </div>
                         <div class="col">
-                            <b>eForm ID</b><br>
+                            <b>Form ID:</b><br>
                             <span id="eform_id">{{configured_free_text_form.form_id}}</span>
                         </div>
                     </div>
@@ -113,36 +113,34 @@
         </form>
 
         <div class="card mt-4 card-shadow-1">
-        <div class="card mb-4">
-            <h5 class="card-header">Supplier Information</h5>
             <div class="card-body">
             <h5 class="card-title">Who is the supplier ?</h5>
 
                 <div class="row">
                     <div class="col">
-                        <b>Supplier Number</b><br>
+                        <b>Supplier ID:</b><br>
                         <span id="supplier_id">{{configured_free_text_form.supplier_id}}</span>
                     </div>
                     <div class="col">
-                        <b>Supplier Name</b><br>
+                        <b>Supplier Name:</b><br>
                         <span id="supplier_name">{{configured_free_text_form.supplier_name}}</span>
                     </div>
                     <div class="col">
-                        <b>Supplier Article Number</b><br>
+                        <b>Supplier Article Number:</b><br>
                         <span id="supplier_article_number">{{configured_free_text_form.supplier_article_number}}</span>
                     </div>
                     <div class="w-100 p-2"></div>
                     <div class="col">
-                        <b>First Name</b><br>
+                        <b>First Name:</b><br>
                         <span id="supplier_firstname">{{configured_free_text_form.supplier_firstname}}</span>
                     </div>
                     <div class="col">
-                        <b>Last Name</b><br>
+                        <b>Last Name:</b><br>
                         <span id="supplier_lastname">{{configured_free_text_form.supplier_lastname}}</span>
                     </div>
 
                     <div class="col">
-                        <b>Email</b><br>
+                        <b>Email:</b><br>
                         <span id="supplier_email">{{configured_free_text_form.supplier_email}}</span>
                     </div>
                 </div>
@@ -152,6 +150,7 @@
 </div>
 <!-- Free text form end -->
 
+<div class="hg_ftr">© 2019 Hiranya-Garbha Consultancy. All rights reserved.</div>
 
 {% include 'root/loader.html' %}
 {% include 'Doc_Details/add_item_confirmation_popup.html' %}
@@ -355,9 +354,9 @@ $('#free_text_form_submit').submit(function (e) {
 
 // Function display configured freetext form fields from MSS_FREETEXT_FORM
 
-    // var form_date_today = 
+    // var form_date_today =
     const display_configured_fields = configured_free_text_form => {
-        var eform_configured = configured_free_text_form['eform_configured'] 
+        var eform_configured = configured_free_text_form['eform_configured']
         delete configured_free_text_form.eform_configured
         form_basic_fields = Object.keys(configured_free_text_form)
         for(i = 0; i < form_basic_fields.length; i++) {
@@ -391,7 +390,7 @@ $('#free_text_form_submit').submit(function (e) {
                     options = get_options_from_string(string)
                     input_type_value = input_type_value.split('-')[0]
                     div_content += '<div class="col-6"><label for="'+ form_field +'">'+ form_field_value +'</label>:'+ required +'<select class="form-control selectpicker" data-live-search="true" id="'+ form_field +'" '+ is_required_attribute +'>'+ options +'</select></div>' + line_sperator
-                }            
+                }
                 else if(input_type_value == 'date'){
                     dateframe_array.push(form_field_value)
                     div_content += '<div class="col-6"><label for="'+ form_field +'">'+ form_field_value +'</label>:'+ required +'<input onkeypress="'+ special_char +'" class="form-control '+ form_field_value +'" type="' + input_type_value + '" min="{{date_today|date:"Y-m-d"}}" id="'+ form_field +'" '+ is_required_attribute +'></div>' + line_sperator

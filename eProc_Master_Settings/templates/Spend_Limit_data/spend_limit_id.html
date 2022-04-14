@@ -1,6 +1,6 @@
 {% extends 'root/base.html' %}
 {% load static %}
-{% block title %} Majjaka eProcure - Spending Limits (Master Settings) {% endblock %}
+{% block title %} Spending Limits (Master Settings) {% endblock %}
 {% block maincontent %}
 
 
@@ -12,7 +12,7 @@
             <h3>Maintain Spending Limits</h3>
             <div>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_spendlimit_template' %}'"type="button">
-                    <i class="fas fa-download"></i> Extract Template
+                    <i class="fas fa-download"></i> download Template
                 </button>
 
                 <button class="btn btn-outline-primary" title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_spendlimit_data'%} '"type="button">
@@ -181,7 +181,7 @@
     var rendered_spndlimval_data ={{spend_limit_value|safe}};
     var Tablename = uiConstants["CONST_TABLENAME_SPEND_LIMIT_ID"]
     var appname = uiConstants["CONST_APPNAME01"]
-    var db_header_data = uiConstants["CONST_HEADER_DATA_SPEND_LIMIT_ID"]
+    var db_header_data = uiConstants['SPEND_CODE_ID', 'SPENDER_USERNAME', 'COMPANY_ID', 'del_ind']
     var spend_limit_data_array = {}
     var main_table_spend_limit_id_value = [];
     var spend_limit_id = '';
@@ -238,44 +238,46 @@
 function onclick_display_csv_data() {
         $('#id_popup_table').DataTable().destroy();
         formdata = new FormData();
-        formdata.append("file_attach", $('#id_file_data_upload').prop('files')[0]);
-        formdata.append("Tablename", Tablename);
-        formdata.append("appname", appname);
-        db_header_data = db_header_data
-        formdata.append("db_header_data", db_header_data);
-        $('#id_data_upload').modal('hide');
-        $('#id_popup_tbody').empty();
+          attached_file = $('#id_file_data_upload').prop('files')[0]
+            file_extension = (attached_file.name).split(".")[1]
+            file_extension = file_extension.toUpperCase();
 
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Configuration:data_upload_fk' %}",
-            data: formdata,
-            contentType: "application/json; charset=utf-8",
-            success: function(response) {
-                if (response == "Please check the uploaded csv file") {
-                    $("#id_error_msg_upload").prop("hidden", false)
-                    document.getElementById("id_error_msg_upload").innerHTML = response;
-                    document.getElementById("id_error_msg_upload").style.color = "Red";
-                    $('#id_data_upload').modal('show');
-                } else {
-                    var spendlimid_data_array = response;
+            if(file_extension == 'CSV'){
+                formdata.append("file_attach", attached_file);
+                formdata.append("Tablename",Tablename);
+                formdata.append("appname",appname);
+            $('#id_data_upload').modal('hide');
+            $('#id_popup_tbody').empty();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Basic_Settings:data_upload' %}",
+                data: formdata,
+                contentType: "application/json; charset=utf-8",
+                success: function(response) {
+                    if(response.error_message){
+                        $("#id_error_msg_upload").prop("hidden",false)
+                        document.getElementById("id_error_msg_upload").innerHTML = response.error_message;
+                        document.getElementById("id_error_msg_upload").style.color = "Red";
+                        $('#id_data_upload').modal('show');
+                    }
+                    else {
+                    var spendlimid_data_array = response.data;
                     var edit_basic_data = '';
                     var dropdown_values = [];
                     var del_ind = '';
                     $("#id_popup_tbody").empty();
-                    $.each(response, function(i, value) {
-
-
-                        var company_type_value = value[1]
-                        dropdown_values.push([company_type_value])
+                    $.each(response.data, function(i, value) {
                         del_ind = '<td>' + value[3] + '</td>'
                         if (value[3] == 1) {
-                            del_ind = ' <input type="checkbox" value="' + value[1] + '" checked>'
+                            del_ind = ' <input type="checkbox" value="' + value[3] + '" checked>'
                         } else {
-                            del_ind = '<input type="checkbox" value="' + value[1] + '" required>'
+                            del_ind = '<input type="checkbox" value="' + value[3] + '" required>'
                         }
                         edit_basic_data += '<tr><td><input type="checkbox" required></td><td><input class="form-control"  type="text" value="'+value[0]+'" maxlength="16" onkeypress="return /[a-z0-9]/i.test(event.key)" name="spend_code_id" style="text-transform:uppercase;" required></td><td><input class="form-control"  type="text" value="'+value[1]+'" maxlength="16" onkeypress="return /[a-z0-9]/i.test(event.key)" name="spender_username" style="text-transform:uppercase;" required></td><td><select class="form-control">'+company_dropdwn+'</select></td><td>' + del_ind + '</td></tr>';
                     });
+                        var spend_limit_id = value[1]
+                        var company_type_value = value[3]
+                        dropdown_values.push([company_type_value])
                     $('#id_popup_tbody').append(edit_basic_data);
                     var i =0;
                     $("#id_popup_table TBODY TR").each(function() {
@@ -296,11 +298,18 @@ function onclick_display_csv_data() {
                     table_sort_filter_popup_pagination('id_popup_table')
                 }
             },
-            cache: false,
-            processData: false,
-            contentType: false,
+                    cache: false,
+                    processData: false,
+                    contentType: false,
 
-        });
+                });
+            }
+           else{
+            $("#id_error_msg_upload").prop("hidden",false)
+            document.getElementById("id_error_msg_upload").innerHTML = messageConstants["JMSG110"];
+            document.getElementById("id_error_msg_upload").style.color = "Red";
+            $('#id_data_upload').modal('show');
+        }
     }
 
 
@@ -487,14 +496,14 @@ function onclick_copy_update_button() {
 
                 guid = row.cells[4].innerHTML;
                 unique_input ='<select class="form-control">'+spendcodeid_dropdwn+' </select>'
-                edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td>'+unique_input+'</td><td><input class="form-control" type="text" value="'+row.cells[2].innerHTML+'" maxlength="16" onkeypress="return /[a-z0-9]/i.test(event.key)" name="spend_username" style="text-transform:uppercase;" disabled></td><td><select class="form-control" value="' + row.cells[3].innerHTML + '"disabled>'+company_dropdwn+'</select></td><td hidden><input type="text" value="'+guid+'" hidden></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td>'+unique_input+'</td><td><input class="form-control" type="text" value="'+row.cells[2].innerHTML+'" maxlength="16" onkeypress="return /[a-z0-9]/i.test(event.key)" name="spend_username" style="text-transform:uppercase;" disabled></td><td><select class="form-control" value="' + row.cells[3].innerHTML + '"disabled>'+company_dropdwn+'</select></td><td hidden><input type="text"  value="' + row.cells[4].innerHTML + '"  hidden></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                 $("#header_select").prop("hidden", true);
 
             } else{
 
                 guid = 'GUID';
                 unique_input ='<select class="form-control">'+spendcodeid_dropdwn+' </select>'
-               edit_basic_data += '<tr><td><input type="checkbox" required></td><td>'+unique_input+'</td><td><input class="form-control" type="text" value="'+row.cells[2].innerHTML+'" maxlength="16" onkeypress="return /[a-z0-9]/i.test(event.key)" name="spender_username" style="text-transform:uppercase;" required></td><td><select class="form-control" value="' + row.cells[3].innerHTML + '">'+company_dropdwn+'</select></td><td hidden><input type="text" value="'+guid+'" hidden></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+               edit_basic_data += '<tr><td><input type="checkbox" required></td><td>'+unique_input+'</td><td><input class="form-control" type="text" value="'+row.cells[2].innerHTML+'" maxlength="16" onkeypress="return /[a-z0-9]/i.test(event.key)" name="spender_username" style="text-transform:uppercase;" required></td><td><select class="form-control" value="' + row.cells[3].innerHTML + '">'+company_dropdwn+'</select></td><td hidden><input type="text"  value="' + row.cells[4].innerHTML + '"  hidden></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                 $("#header_select").prop("hidden", false);
 
             }
@@ -627,7 +636,7 @@ function add_popup_row() {
     $(".modal").on("hidden.bs.modal", function () {
         $("#id_error_msg").html(" ");
     });
-    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><select class="form-control">'+spendcodeid_dropdwn+'</select></td><td><input class="input form-control" type="text"  maxlength="16" style="text-transform:uppercase"</td><td ><select class = "input form-control"> ' + company_dropdwn + '</select></td><td hidden><guid></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><select class="form-control">'+spendcodeid_dropdwn+'</select></td><td><input class="input form-control" type="text"  maxlength="16" style="text-transform:uppercase"</td><td ><select class = "input form-control"> ' + company_dropdwn + '</select></td><td hidden><input  type="text" class="form-control"  name="guid"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
 
    $('#id_popup_tbody').append(basic_add_new_html);
    if (GLOBAL_ACTION == "spendlimitid_upload") {
@@ -695,7 +704,7 @@ function onclick_add_button(button) {
     $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
     $('#myModal').modal('show');
-    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><select class="form-control">'+spendcodeid_dropdwn+'</select></td><td><input class="input form-control" type="text"  maxlength="16" style="text-transform:uppercase"</td><td ><select class = "input form-control"> ' + company_dropdwn + '</select></td><td hidden><guid></td><td hidden><del_ind></td></tr>';
+    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><select class="form-control">'+spendcodeid_dropdwn+'</select></td><td><input class="input form-control" type="text"  maxlength="16" style="text-transform:uppercase"</td><td ><select class = "input form-control"> ' + company_dropdwn + '</select></td><td hidden><input  type="text" class="form-control"  name="guid"></td><td hidden><del_ind></td></tr>';
 
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');

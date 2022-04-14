@@ -17,11 +17,11 @@
 <div class="sc-status-header">
     <div class="sc-status-page-title">
         <h5>Your Shopping Cart</h5>
-        <p class="hg_subtext_color">Overview of your shopping cart.</p>
+        <p class="hg_subtext_color">Overview of your shopping cart</p>
     </div>
 
     {% if cart_counter == 0 %}
-    <div class="hg_empty_cart h5 hg_h1tag">Your Shopping Cart is empty</div>
+    <div class="hg_empty_cart h5 hg_h1tag">Your shopping cart is empty</div>
     <br>
     <a href="{% url 'eProc_Shop_Home:shopping_cart_home' %}" class="badge badge-light hg_gb_btn">< Go Back</a>
     {% endif %}
@@ -81,13 +81,12 @@
 
                 <!-- Modal Header -->
                 <div class="modal-header">
+                    <h5 class="modal-title">Favourite Shopping Cart Name</h5>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
 
                 <!-- Modal body -->
                 <div class="modal-body">
-                    
-                    <h5 class="modal-title">Give a name to your favourite shopping cart</h5>
                     <div class="alert alert-danger display-none" id="fav_name_error_message" role="alert"></div>
                     <div class="alert alert-success display-none" id="fav_name_success_message" role="alert"></div>
                     <div><input type="text" id="favourite_sc_name_input" value="" class="form-control"></div>

@@ -10,37 +10,35 @@ Author:
 """
 
 import io
+import csv
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core import serializers
 from django.http import HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
 
-from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
-from eProc_Basic.Utilities.functions.json_parser import JsonParser
-from eProc_Basic.Utilities.functions.str_concatenate import split_str
-from eProc_Configuration.models import *
 from eProc_Attributes.views import JsonParser_obj
-from eProc_Basic.Utilities.functions.get_db_query import getClients, get_country_data
+from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
+from eProc_Basic.Utilities.functions.get_db_query import getClients
 from eProc_Basic.Utilities.functions.guid_generator import guid_generator
-from django.core import serializers
-from django.http import JsonResponse
-from eProc_Configuration.Utilities.application_settings_specific import save_app_data_into_db, \
-    save_calendar_data_into_db, save_actasmt_data_into_db, save_messageId_data_into_db, save_messageIdDesc_data_into_db, \
+from eProc_Basic.Utilities.functions.json_parser import JsonParser
+from eProc_Basic_Settings.Utilities.basic_settings_specific import save_prodcat_data_into_db
+from eProc_Configuration.Utilities.application_settings_specific import save_actasmt_data_into_db, \
+    save_messageId_data_into_db, save_messageIdDesc_data_into_db, \
     save_calendarholiday_data_into_db, \
     save_calendar_data_into_db, \
     save_documenttype_data_into_db, save_transactiontype_data_into_db
 from eProc_Configuration.Utilities.application_settings_specific import save_app_data_into_db, save_client_data_into_db, \
     save_number_range_data_into_db
+from eProc_Configuration.models import *
 from eProc_Master_Settings.Utilities.master_settings_specific import save_orgnode_types_data_into_db, \
     save_orgattributes_data_into_db, save_authorobject_data_into_db, save_auth_group_data_into_db, \
     save_roles_data_into_db, save_auth_data_into_db
 from eProc_Shopping_Cart.context_processors import update_user_info
 from eProc_Upload.Utilities.upload_data.upload_basic_pk_fk_tables import UploadPkFkTables
 from eProc_Upload.Utilities.upload_data.upload_pk_tables import CompareTableHeader, MSG048
-from eProc_Basic_Settings.Utilities.basic_settings_specific import csv_data_arrangement, csv_preview_data, \
-    save_prodcat_data_into_db
-import csv
 
 django_query_instance = DjangoQueries()
 

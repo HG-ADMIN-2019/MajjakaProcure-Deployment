@@ -1,6 +1,6 @@
 {% extends 'root/base.html' %}
 {% load static %}
-{% block title %} Search Documents {% endblock %}
+{% block title %} My Orders (Shop) {% endblock %}
 
 {% block maincontent %}
 
@@ -11,7 +11,7 @@
 
         <!--Search page-->
         <div class="d-flex justify-content-between mb-3">
-            <h3>Search for Documents</h3>
+            <h3>My Documents</h3>
         </div>
 
         <!--Search form goes here-->
@@ -35,11 +35,11 @@
                             {{ sform.time_frame }}
                         </div>
                         <div class="col-md">
-                            <label>Shopping Cart Name</label>
+                            <label>Document Name</label>
                             {{ sform.SCName }}
                         </div>
                         <div class="col-md search_docs">
-                            <label>Status</label>
+                            <label>Document Status</label>
                             <select name="status" id="status" class="multiple_select form-control" multiple data-selected-text-format="count" title="Select..">
                                 <option value="SAVED">Saved</option>
                                 <option value="APPROVED">Approved</option>
@@ -79,9 +79,9 @@
         
         <div class="d-flex justify-content-end mt-3 mb-3">
             {% if t_count > 0 %}
-            <h6 class="text-muted"> Total Number Of Results Found {{t_count}}</h6>
+            <h6 class="text-muted"> Total number of results found {{t_count}}</h6>
             {% elif t_count == 0 %}
-            <h6 class="text-muted"> Total Number Of Results Found {{t_count}}</h6>
+            <h6 class="text-muted"> Total number of results found {{t_count}}</h6>
             {% endif %}
         </div>
         <!--    To Display Header Details only if there are any results-->
@@ -93,11 +93,11 @@
                 <tr>
                     <td>
                         <div class="row h6 ml-2 text-muted">
-                            <div class="col">Shopping Cart Number</div>
-                            <div class="col">Shopping Cart Name</div>
+                            <div class="col">Document Number</div>
+                            <div class="col">Document Name</div>
                             <div class="col">Created On </div>
                             <div class="col">Total Value</div>
-                            <div class="col">Status</div>
+                            <div class="col">Document Status</div>
                         </div>
                     </td>
                 </tr>
@@ -135,7 +135,7 @@
                                         {% for sc_app in sc_appr %}
                                         {% if sc_app.header_guid_id in sc_head.guid and sc_app.step_num == '1'  %}
 
-                                        {% if sc_app.app_id != 'AUTO'  %}
+                                        {% if sc_app.app_id != 'Auto'  %}
                                         {% if sc_head.status == 'AWAITING_APPROVAL'%} 
                                         <span class="badge badge-pill badge_status_await_approval">WAITING FOR APPROVAL</span>
 
@@ -154,7 +154,7 @@
                                         
                                         {% endif %}
                                         
-                                        {% elif sc_app.app_id == 'AUTO' %}
+                                        {% elif sc_app.app_id == 'Auto' %}
                                         {% if sc_head.status == 'PURCHASER_WORKLIST' %}
                                         <span class="badge badge-pill badge_status_purch_wrkl">IN PURCHASER's WORK LIST</span>
 

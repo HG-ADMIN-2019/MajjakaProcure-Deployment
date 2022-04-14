@@ -1,6 +1,6 @@
 from django.db.models import Max
 from django.shortcuts import render
-from eProc_Basic.Utilities.constants.constants import CONST_DOC_TYPE_SC,CONST_DEFAULT_CLIENT
+from eProc_Basic.Utilities.constants.constants import CONST_DOC_TYPE_SC, CONST_DEFAULT_CLIENT
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.get_db_query import getClients, get_country_data
 from eProc_Basic.Utilities.global_defination import global_variables
@@ -12,6 +12,7 @@ from eProc_Configuration.views import weekday
 from eProc_Shopping_Cart.context_processors import update_user_info
 
 django_query_instance = DjangoQueries()
+
 
 def upload_clients(request):
     upload_client = get_configuration_data(OrgClients, {'del_ind': False}, ['client', 'description'])
@@ -101,22 +102,25 @@ def display_calendar(request):
                   {'calendar_data': calender_data, 'country_list': country_list, 'inc_nav': True,
                    })
 
+
 def number_range_shopping_cart(request):
     update_user_info(request)
     client = global_variables.GLOBAL_CLIENT
 
     upload_numberrange = get_configuration_data(NumberRanges,
-                                                {'client': client, 'document_type': CONST_DOC_TYPE_SC, 'del_ind': False},
+                                                {'client': client, 'document_type': CONST_DOC_TYPE_SC,
+                                                 'del_ind': False},
                                                 ['guid', 'sequence', 'starting',
                                                  'ending', 'current'])
-    sequence= NumberRanges.objects.filter(client=client, document_type="DOC01", del_ind=False).aggregate(Max('sequence'))
-    sequence_max=sequence['sequence__max']
+    sequence = NumberRanges.objects.filter(client=client, document_type="DOC01", del_ind=False).aggregate(
+        Max('sequence'))
+    sequence_max = sequence['sequence__max']
 
     application_settings = 'application_settings'
     return render(request, 'Shop_Number_Ranges/shopping_cart/shopping_cart_number_range.html',
-                  {'upload_numberrange': upload_numberrange, 'application_settings': application_settings,'sequence':sequence_max,
+                  {'upload_numberrange': upload_numberrange, 'application_settings': application_settings,
+                   'sequence': sequence_max,
                    'inc_nav': True})
-
 
 
 def number_range_purchase_order(request):
@@ -126,11 +130,13 @@ def number_range_purchase_order(request):
                                                 ['guid', 'sequence', 'starting',
                                                  'ending', 'current'])
 
-    sequence= NumberRanges.objects.filter(client=client, document_type="DOC02", del_ind=False).aggregate(Max('sequence'))
-    sequence_max=sequence['sequence__max']
+    sequence = NumberRanges.objects.filter(client=client, document_type="DOC02", del_ind=False).aggregate(
+        Max('sequence'))
+    sequence_max = sequence['sequence__max']
     application_settings = 'application_settings'
     return render(request, 'Shop_Number_Ranges/purchase_orders/purchase_orders_number_range.html',
-                  {'upload_numberrange': upload_numberrange, 'application_settings': application_settings,'sequence':sequence_max,
+                  {'upload_numberrange': upload_numberrange, 'application_settings': application_settings,
+                   'sequence': sequence_max,
                    'inc_nav': True})
     # client = getClients(request)
     # upload_numberrange_po = list(
@@ -224,15 +230,15 @@ def org_node_types(request):
         OrgNodeTypes.objects.filter(client=client, del_ind=False).values('node_type_guid', 'node_type', 'description'))
 
     upload_dropdown_db_values = list(
-        FieldTypeDesc.objects.filter(field_name='org_node_types', used_flag=False, del_ind=False).values('field_type_id',
-                                                                                               'field_type_desc'
-                                                                                                ))
-
+        FieldTypeDesc.objects.filter(field_name='org_node_types', used_flag=False, del_ind=False).values(
+            'field_type_id',
+            'field_type_desc'
+        ))
 
     master_data_settings = 'master_data_settings'
     return render(request, 'Organizational_Data/org_node_types.html',
                   {'org_node_types': upload_orgnodetypes, 'master_data_settings': master_data_settings,
-                   'upload_dropdown_db_values': upload_dropdown_db_values,'inc_nav': True})
+                   'upload_dropdown_db_values': upload_dropdown_db_values, 'inc_nav': True})
 
 
 def org_attributes(request):
@@ -241,13 +247,13 @@ def org_attributes(request):
                                                            'multiple_value', 'allow_defaults', 'inherit_values',
                                                            'maximum_length'))
     upload_dropdown_db_values = list(
-        FieldTypeDesc.objects.filter(field_name='attribute_id',used_flag=False,del_ind=False).values('field_type_id',
+        FieldTypeDesc.objects.filter(field_name='attribute_id', used_flag=False, del_ind=False).values('field_type_id',
+                                                                                                       'field_type_desc'
+                                                                                                       ))
+    upload_dropdown_db_values_onload = list(
+        FieldTypeDesc.objects.filter(field_name='attribute_id', del_ind=False).values('field_type_id',
                                                                                       'field_type_desc'
                                                                                       ))
-    upload_dropdown_db_values_onload = list(
-        FieldTypeDesc.objects.filter(field_name='attribute_id',del_ind=False).values('field_type_id',
-                                                                                                    'field_type_desc'
-                                                                                                       ))
     master_data_settings = 'master_data_settings'
     return render(request, 'Organizational_Data/org_attributes.html',
                   {'org_attributes': upload_orgattributes, 'master_data_settings': master_data_settings,
@@ -258,21 +264,24 @@ def org_attributes(request):
 
 def auth_objects(request):
     upload_authobj = list(
-        AuthorizationObject.objects.filter(del_ind=False).values('auth_obj_id','auth_level_ID',
-                                                                   'auth_level',))
+        AuthorizationObject.objects.filter(del_ind=False).values('auth_obj_id', 'auth_level_ID',
+                                                                 'auth_level', ))
     auth_obj_id_db_values = list(
         FieldTypeDesc.objects.filter(field_name='auth_obj_id', used_flag=False, del_ind=False).values('field_type_id',
+                                                                                                      'field_type_desc'))
+    auth_obj_id_db_values_onload = list(
+        FieldTypeDesc.objects.filter(field_name='auth_obj_id', del_ind=False).values('field_type_id',
                                                                                      'field_type_desc'))
 
     auth_type_db_values = list(
         FieldTypeDesc.objects.filter(field_name='auth_level', del_ind=False).values('field_type_id',
-                                                                                     'field_type_desc'))
-
+                                                                                    'field_type_desc'))
 
     master_data_settings = 'master_data_settings'
     return render(request, 'Organizational_Data/authorization_objects.html',
                   {'upload_authobj': upload_authobj, 'master_data_settings': master_data_settings,
-                    'auth_obj_id_db_values': auth_obj_id_db_values,'auth_type_db_values': auth_type_db_values,'inc_nav': True})
+                   'auth_obj_id_db_values': auth_obj_id_db_values, 'auth_type_db_values': auth_type_db_values,
+                   'auth_obj_id_db_values_onload': auth_obj_id_db_values_onload, 'inc_nav': True})
 
 
 def auth_grp(request):
@@ -284,25 +293,16 @@ def auth_grp(request):
 
     auth_group_db_values = list(
         FieldTypeDesc.objects.filter(field_name='auth_obj_grp', del_ind=False).values('field_type_id',
-                                                                                      'field_type_desc', 'used_flag'))
+                                                                                      'field_type_desc'))
     auth_type_db_values = list(
         FieldTypeDesc.objects.filter(field_name='auth_level', del_ind=False).values('field_type_id',
                                                                                     'field_type_desc', 'used_flag'))
 
-    auth_group_values = []
-    for data in auth_group_db_values:
-        data_dict = {
-            'field_type_id': data['field_type_id'],
-            'field_type_desc': data['field_type_desc'],
-            'used_flag': str(data['used_flag']),
-
-        }
-        auth_group_values.append(data_dict)
     master_data_settings = 'master_data_settings'
     return render(request, 'Organizational_Data/authorization_group.html',
                   {'auth_grp': upload_authgrp, 'upload_data_AuthorizationGroup': upload_data_AuthorizationGroup,
-                   'master_data_settings': master_data_settings, 'auth_group_values': auth_group_values,
-                   'auth_level_value':auth_type_db_values,
+                   'master_data_settings': master_data_settings, 'auth_group_values': auth_group_db_values,
+                   'auth_level_value': auth_type_db_values,
                    'inc_nav': True})
 
 
@@ -311,8 +311,8 @@ def roles(request):
     upload_roles = list(UserRoles.objects.filter(del_ind=False).values('role', 'role_desc'))
     dropdown_db_values = list(
         FieldTypeDesc.objects.filter(field_name='roles', del_ind=False, used_flag=0).values('field_type_id',
-                                                                                                    'field_type_desc'
-                                                                                                    ))
+                                                                                            'field_type_desc'
+                                                                                            ))
     master_data_settings = 'master_data_settings'
     return render(request, 'Organizational_Data/roles.html',
                   {'roles': upload_roles, 'master_data_settings': master_data_settings, 'inc_nav': True,
@@ -322,14 +322,16 @@ def roles(request):
 def auth(request):
     update_user_info(request)
     upload_auth = list(
-        Authorization.objects.filter(client=global_variables.GLOBAL_CLIENT, del_ind=False).values('auth_guid', 'auth_obj_grp', 'auth_type',
-                                                                         'role'))
+        Authorization.objects.filter(client=global_variables.GLOBAL_CLIENT, del_ind=False).values('auth_guid',
+                                                                                                  'auth_obj_grp',
+                                                                                                  'auth_type',
+                                                                                                  'role'))
     upload_data_roles = list(UserRoles.objects.filter(del_ind=False).values('role'))
     #upload_data_auth_grp_obj = list(AuthorizationGroup.objects.filter(del_ind=False).values('auth_obj_grp'))
-    upload_data_auth_grp_obj = list( FieldTypeDesc.objects.filter(field_name='auth_obj_grp',used_flag=0, del_ind=False,).values('field_type_id',
+    upload_data_auth_grp_obj = list(FieldTypeDesc.objects.filter(field_name='auth_obj_grp',used_flag=0, del_ind=False).values('field_type_id',
                                                                                       'field_type_desc'))
     auth_type_values = list(
-        FieldTypeDesc.objects.filter(field_name='auth_type', del_ind=False,used_flag=0,).values('field_type_id',
+        FieldTypeDesc.objects.filter(field_name='auth_type', del_ind=False,used_flag=0).values('field_type_id',
                                                                                                'field_type_desc'))
 
     master_data_settings = 'master_data_settings'
@@ -342,41 +344,63 @@ def auth(request):
 
 def transaction_type(request):
     client = getClients(request)
-    document_type_render = list(DocumentType.objects.filter(del_ind=False,document_type="DOC04").values('document_type'))
+    number_range_sequence = []
+    document_type_render = list(
+        DocumentType.objects.filter(del_ind=False, document_type="DOC04").values('document_type'))
     upload_numberrange = list(
-        NumberRanges.objects.filter(client=client, document_type="DOC04", del_ind=False).values('sequence'))
+        NumberRanges.objects.filter(client=client, document_type=CONST_DOC_TYPE_SC, del_ind=False).values('sequence'))
+    for number_range in upload_numberrange:
+        if not django_query_instance.django_existence_check(TransactionTypes,
+                                                            {'client': client,
+                                                             'sequence': number_range['sequence'],
+                                                             'document_type': CONST_DOC_TYPE_SC,
+                                                             'del_ind': False}):
+            number_range_sequence.append(number_range)
     upload_transactiontype = list(
         TransactionTypes.objects.filter(client=client, document_type="DOC04", del_ind=False).values('guid',
-                                                                                                    'document_type',
                                                                                                     'transaction_type',
                                                                                                     'description',
+                                                                                                    'document_type',
                                                                                                     'sequence',
                                                                                                     'active_inactive'))
-    rendered_active_inactive =list(FieldTypeDesc.objects.filter(field_name='active_inactive', del_ind=False).values('field_type_id',
-                                                                                               'field_type_desc'))
+    rendered_active_inactive = list(
+        FieldTypeDesc.objects.filter(field_name='active_inactive', del_ind=False).values('field_type_id',
+                                                                                         'field_type_desc'))
 
-
-
+    rendered_active_inactive_onload = list(
+        FieldTypeDesc.objects.filter(field_name='active_inactive', del_ind=False).values('field_type_id',
+                                                                                         'field_type_desc'))
 
     application_settings = 'application_settings'
     return render(request,
                   'Transaction_type/Favourite_cart/transaction_type.html',
                   {'transaction_type': upload_transactiontype, 'application_settings': application_settings,
-                   'document_type': document_type_render, 'upload_numberrange': upload_numberrange,
+                   'document_type': document_type_render, 'upload_numberrange': number_range_sequence,
                    'rendered_active_inactive': rendered_active_inactive,
+                   'rendered_active_inactive_onload':rendered_active_inactive_onload,
                    'inc_nav': True})
 
 
 def transaction_type_sc(request):
     client = getClients(request)
-    document_type_render = list(DocumentType.objects.filter(del_ind=False,document_type="DOC01").values('document_type'))
+    number_range_sequence = []
+    document_type_render = list(
+        DocumentType.objects.filter(del_ind=False, document_type="DOC01").values('document_type'))
     upload_numberrange = list(
-        NumberRanges.objects.filter(client=client, document_type="DOC01", del_ind=False).values('sequence'))
+        NumberRanges.objects.filter(client=client, document_type=CONST_DOC_TYPE_SC, del_ind=False).values('sequence'))
+    for number_range in upload_numberrange:
+        if not django_query_instance.django_existence_check(TransactionTypes,
+                                                            {'client': client,
+                                                             'sequence': number_range['sequence'],
+                                                             'document_type': CONST_DOC_TYPE_SC,
+                                                             'del_ind': False}):
+            number_range_sequence.append(number_range)
+
     upload_transactiontype = list(
         TransactionTypes.objects.filter(client=client, document_type="DOC01", del_ind=False).values('guid',
-                                                                                                    'document_type',
                                                                                                     'transaction_type',
                                                                                                     'description',
+                                                                                                    'document_type',
                                                                                                     'sequence',
                                                                                                     'active_inactive'))
     rendered_active_inactive = list(
@@ -387,21 +411,32 @@ def transaction_type_sc(request):
     return render(request,
                   'Transaction_type/Shopping_cart/transaction_type.html',
                   {'transaction_type': upload_transactiontype, 'application_settings': application_settings,
-                   'document_type': document_type_render, 'upload_numberrange': upload_numberrange,
+                   'document_type': document_type_render, 'upload_numberrange': number_range_sequence,
                    'rendered_active_inactive': rendered_active_inactive,
                    'inc_nav': True})
 
 
 def transaction_type_po(request):
     client = getClients(request)
-    document_type_render = list(DocumentType.objects.filter(del_ind=False,document_type="DOC02").values('document_type'))
+    number_range_sequence = []
+    document_type_render = list(
+        DocumentType.objects.filter(del_ind=False, document_type="DOC02").values('document_type'))
     upload_numberrange = list(
-        NumberRanges.objects.filter(client=client, document_type="DOC02", del_ind=False).values('sequence'))
+        NumberRanges.objects.filter(client=client, document_type=CONST_DOC_TYPE_SC, del_ind=False).values('sequence'))
+
+    for number_range in upload_numberrange:
+        if not django_query_instance.django_existence_check(TransactionTypes,
+                                                            {'client': client,
+                                                             'sequence': number_range['sequence'],
+                                                             'document_type': CONST_DOC_TYPE_SC,
+                                                             'del_ind': False}):
+            number_range_sequence.append(number_range)
+
     upload_transactiontype = list(
         TransactionTypes.objects.filter(client=client, document_type="DOC02", del_ind=False).values('guid',
-                                                                                                    'document_type',
                                                                                                     'transaction_type',
                                                                                                     'description',
+                                                                                                    'document_type',
                                                                                                     'sequence',
                                                                                                     'active_inactive'))
     rendered_active_inactive = list(
@@ -412,21 +447,31 @@ def transaction_type_po(request):
     return render(request,
                   'Transaction_type/Purchase_order/transaction_type.html',
                   {'transaction_type': upload_transactiontype, 'application_settings': application_settings,
-                   'document_type': document_type_render, 'upload_numberrange': upload_numberrange,
+                   'document_type': document_type_render, 'upload_numberrange': number_range_sequence,
                    'rendered_active_inactive': rendered_active_inactive,
                    'inc_nav': True})
 
 
 def transaction_type_gv(request):
     client = getClients(request)
-    document_type_render = list(DocumentType.objects.filter(del_ind=False,document_type="DOC03").values('document_type'))
+    number_range_sequence = []
+    document_type_render = list(
+        DocumentType.objects.filter(del_ind=False, document_type="DOC03").values('document_type'))
     upload_numberrange = list(
-        NumberRanges.objects.filter(client=client, document_type="DOC03", del_ind=False).values('sequence'))
+        NumberRanges.objects.filter(client=client, document_type=CONST_DOC_TYPE_SC, del_ind=False).values('sequence'))
+    for number_range in upload_numberrange:
+        if not django_query_instance.django_existence_check(TransactionTypes,
+                                                            {'client': client,
+                                                             'sequence': number_range['sequence'],
+                                                             'document_type': CONST_DOC_TYPE_SC,
+                                                             'del_ind': False}):
+            number_range_sequence.append(number_range)
+
     upload_transactiontype = list(
         TransactionTypes.objects.filter(client=client, document_type="DOC03", del_ind=False).values('guid',
-                                                                                                    'document_type',
                                                                                                     'transaction_type',
                                                                                                     'description',
+                                                                                                    'document_type',
                                                                                                     'sequence',
                                                                                                     'active_inactive'))
     rendered_active_inactive = list(
@@ -437,6 +482,6 @@ def transaction_type_gv(request):
     return render(request,
                   'Transaction_type/Goods_verfication/transaction_type.html',
                   {'transaction_type': upload_transactiontype, 'application_settings': application_settings,
-                   'document_type': document_type_render, 'upload_numberrange': upload_numberrange,
+                   'document_type': document_type_render, 'upload_numberrange': number_range_sequence,
                    'rendered_active_inactive': rendered_active_inactive,
                    'inc_nav': True})

@@ -197,7 +197,11 @@ function add_popup_row() {
     $(".modal").on("hidden.bs.modal", function () {
         $("#id_error_msg").html("");
     });
-    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="form-control"  type="text" pattern="[A-Z]" maxlength="40" onkeypress="return /[a-z ]/i.test(event.key)" name="role" style="text-transform:uppercase;" required></td><td><input class="form-control" type="text" maxlength="60" onkeypress="return /[a-z ]/i.test(event.key)" name="role_name"  pattern="[A-Z]" style="text-transform:uppercase;" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
+         '<td><select type="text" class="input form-control roles" id="roles-"  name="roles" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ roles_type_dropdown +'</select></td>'+
+        '<td><input class="form-control description" type="text"  name="description"  id="description-" disabled></td>'+
+        '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+   // basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="form-control"  type="text" pattern="[A-Z]" maxlength="40" onkeypress="return /[a-z ]/i.test(event.key)" name="role" style="text-transform:uppercase;" required></td><td><input class="form-control" type="text" maxlength="60" onkeypress="return /[a-z ]/i.test(event.key)" name="role_name"  pattern="[A-Z]" style="text-transform:uppercase;" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     if (GLOBAL_ACTION == "roles_upload") {
         $(".class_del_checkbox").prop("hidden", false);

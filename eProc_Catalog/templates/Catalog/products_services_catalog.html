@@ -1,7 +1,7 @@
 {% extends 'root/base.html' %}
 {% load static %}
 
-{% block title %} Catalogs {% endblock %}
+{% block title %} Products and Services (Shop) {% endblock %}
 {% block maincontent %}
 
 {% load custom_template_tags %}
@@ -22,22 +22,23 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
 </style>
 
 <!-- Start of Search Modal -->
-<div class="modal fade prod_service_search_modal" id="prod_service_search" tabindex="-1"
+<!-- <div class="modal fade prod_service_search_modal" id="prod_service_search" tabindex="-1"
      role="dialog" aria-labelledby="prod_service_search_title" aria-hidden="true" data-backdrop="false">
     <form method="post">
         {% csrf_token %}
 
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header bg-light">
-                    <div id="hg_filter_select"></div>
+                <div class="modal-header bg-light"> -->
+                    <!-- <div id="hg_filter_select"></div> -->
 
-                    <div class="input-group">
-                        <input type="text" id="hg_cat_search_txt" name="hg_cat_search_txt" class="form-control" placeholder="Search">
-                        <div class="input-group-append">
+                    <!-- <div class="input-group"> -->
+                        <!-- <input type="text" id="hg_cat_search_txt" name="hg_cat_search_txt" class="form-control" placeholder="Search"> -->
+                        <!-- <div class="input-group-append">
                             <button class="btn btn-primary" id="catalog-search-submit" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
                         </div>
                     </div>
@@ -80,7 +81,7 @@ input::-webkit-inner-spin-button {
             </div>
         </div>
     </form>
-</div>
+</div> -->
 <!-- End of Search Modal -->
 
 
@@ -92,15 +93,42 @@ input::-webkit-inner-spin-button {
 
     </div>
     {% endif %}
-    <div class="jumbotron">
-        <div class="container">
-            <h1 class="products-catalog__header-text">Majjaka Shop</h1>
-            <form method="post" >
-                {% csrf_token %}
-                <div class="input-group">
-                    <input type="text" class="form-control" id="hg_cat_search_txt12" name="hg_cat_search_txt" onclick="open_search_modal();" placeholder="Search for products and services" >
-                </div>
-            </form>
+    <div class="products-catalog-header"> 
+        <div class="products-catalog-header__section">
+            <h3 class="products-catalog-header__text">Search For Products & Services</h3>
+
+            <div class="products-catalog-header__search-section">
+                <form method="post" >
+                    {% csrf_token %}
+                    <div class="products-catalog-header__search-input-group">
+                        <div id="catalog_filter_select"></div>
+                        <div class="input-group">
+                            <input type="text" id="hg_cat_search_txt" name="hg_cat_search_txt" class="form-control" placeholder="Search for products and services">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary sfps-button" type="button" id="button-addon2"><i class="material-icons-outlined">search</i></button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="catalog_filter_selection_btn_group">
+                        <br>
+                        <div class="row d-flex justify-content-center">
+                            <button type="button" id="search_product_btn" value="PRODUCTS" class="btn btn-outline-primary ml-3"
+                                    onclick="search_type(this)">products
+                            </button>
+                            <button type="button" id="search_freetext_btn" value="FREETEXT" class="btn btn-outline-primary ml-3"
+                                    onclick="search_type(this)">freetext
+                            </button>
+                            <button type="button" id="search_category_btn" value="CATEGORIES" class="btn btn-outline-primary ml-3"
+                                    onclick="search_type(this)">categories
+                            </button>
+                            <button type="button" id="search_supplier_btn" value="SUPPLIERS" class="btn btn-outline-primary ml-3"
+                                    onclick="search_type(this)">suppliers
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -282,7 +310,7 @@ input::-webkit-inner-spin-button {
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="col-md-2">
-                                                    <a href="{% url 'eProc_Catalog:get_product_service_product_details' i.product_id %}" target="_blank" >
+                                                    <a href="{% url 'eProc_Add_Item:get_product_service_product_details' i.product_id %}" target="_blank" >
                                                         <div class="product-results-catalog__img-container">
                                                             <img class="product-results-catalog__img" onerror='this.src="/static/images/no-image-cropped.png"' src="/media/{{i.image_url}}">
                                                         </div>
@@ -291,7 +319,7 @@ input::-webkit-inner-spin-button {
                                                 <div class="col-md-7">
                                                     <div class="product-results-details-section">
 
-                                                        <a id="product_click" href="{% url 'eProc_Catalog:get_product_service_product_details' i.product_id %}" target="_blank" onclick="add_recently_viewed({{i.product_id}}, {{i.prod_cat_id_id}})">
+                                                        <a id="product_click" href="{% url 'eProc_Add_Item:get_product_service_product_details' i.product_id %}" target="_blank" onclick="add_recently_viewed({{i.product_id}}, {{i.prod_cat_id_id}})">
                                                             <span class="h5 product-results-catalog__desc">{{ i.short_desc }}</span>
                                                         </a>
                                                         <div class="product-results-catalog__supplier">
@@ -623,10 +651,14 @@ const get_sobo_users = () => {
 function add_catalog(prd_id,eform_id) {
     var document_number_data = '{{document_number|safe}}';
     if(eform_id){
-        var url = "{% url 'eProc_Catalog:get_product_service_product_details' 123 %}";
-        var href_link = url.replace('123', prd_id)
-         window.open(href_link,'_blank');
-        //view_detail(prd_id, '');
+        if(document_number_data == 'create'){
+            var url = "{% url 'eProc_Add_Item:get_product_service_product_details' 123 %}";
+            var href_link = url.replace('123', prd_id)
+             window.open(href_link,'_blank');
+        }
+        else{
+            view_detail(prd_id, '');
+        }
     }
     else{
         let catalog_item = {};

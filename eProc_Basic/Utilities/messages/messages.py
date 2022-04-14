@@ -189,4 +189,6 @@ MSG186 = 'Duplicate Entry '
 MSG187 = 'Please attach valid file extension'
 MSG188 = 'Superior  accounting data is not maintained'
 MSG189 = 'Incorrect header fields. Please check your attached csv'
+MSG190 = 'Supplier ID Already Exists'
+MSG191 = 'Supplier Registration Number Already Exists'
 

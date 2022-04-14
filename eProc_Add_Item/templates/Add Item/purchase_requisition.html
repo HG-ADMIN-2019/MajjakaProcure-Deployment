@@ -1,6 +1,6 @@
 {% extends 'root/base.html' %}
 {% load static %}
-{% block title %} Majjaka eProcure - Requisition {% endblock %}
+{% block title %} Purchase Requisition (Shop) {% endblock %}
 {% block maincontent %}
 
 <!-- Requisition form start -->
@@ -37,21 +37,21 @@
 
             <div class="card mt-4 card-shadow-1">
                 <div class="card-body">
-                    <h5 class="card-title">Which Product/Service Are You Looking For?</h5>
+                    <h5 class="card-title">Which Product/Service are you looking for ?</h5>
 
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="id_prod_name">Product Name</label><span class="hg_required"></span>
+                            <label for="id_prod_name">Product/Service Name</label><span class="hg_required"></span>
                             <input type="text" id="id_prod_name" class="form-control" required>
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="id_prod_id">Product ID</label>
+                            <label for="id_prod_id">Product/Service ID</label>
                             <input type="number" id="id_prod_id" class="form-control">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="id_prod_desc">Product Description</label><span class="hg_required"></span>
+                            <label for="id_prod_desc"> Description</label><span class="hg_required"></span>
                             <textarea class="form-control" rows="5" id="id_prod_desc" required></textarea>
                         </div>
                     </div>
@@ -82,7 +82,7 @@
                                 <label for="id_currency">Currency<span class="hg_required"></span></label>
                                 <select class="form-control selectpicker" required data-live-search="true" id="id_currency"
                                     required>
-                                    <option value="">Please Select Currency</option>
+                                    <option value="">Please select currency</option>
                                     {% for currencies in currency %}
                                     <option value="{{currencies}}">{{currencies}} - {{currencies.description}} </option>
                                     {% endfor %}

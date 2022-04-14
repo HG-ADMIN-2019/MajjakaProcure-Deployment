@@ -1,6 +1,6 @@
 {% extends 'root/base.html' %}
 {% load static %}
-{% block title %} Majjaka eProcure - Workflows (Master Settings) {% endblock %}
+{% block title %} Workflows (Master Settings) {% endblock %}
 
 {% block maincontent %}
 
@@ -200,7 +200,7 @@
     var no_duplicate_entries = 'Y'
     var Tablename = uiConstants["CONST_TABLENAME_WFACCOUNTING"]
     var appname = uiConstants["CONST_APPNAME01"]
-    var db_header_data = uiConstants["CONST_HEADER_DATA_WFACCOUNTING"]
+    var db_header_data = uiConstants['ACC_VALUE', 'COMPANY_ID', 'APP_USERNAME','SUP_COMPANY_ID', 'SUP_ACC_VALUE', 'del_ind','ACCOUNT_ASSIGN_CAT', 'CURRENCY_ID', 'SUP_ACCOUNT_ASSIGN_CAT']
     var acc_ass_dropdwn = '';
     var user_dropdwn = '';
     var sup_acc_ass_dropdwn = '';
@@ -297,13 +297,13 @@ function display_basic_db_data() {
 
  //onclick of data Upload copy data to modal pop-up
         function onclick_display_csv_data() {
-            GLOBAL_ACTION = "country_upload";
+            GLOBAL_ACTION = "workflowacc_upload";
             $('#id_popup_table').DataTable().destroy();
             formdata = new FormData();
             formdata.append("file_attach", $('#id_file_data_upload').prop('files')[0]);
             formdata.append("Tablename", Tablename);
             formdata.append("appname", appname);
-            formdata.append("db_header_data", db_header_data);
+           // formdata.append("db_header_data", db_header_data);
            $('#id_data_upload').modal('hide');
            $('#id_popup_tbody').empty();
             $.ajax({
@@ -312,9 +312,10 @@ function display_basic_db_data() {
                 data: formdata,
                 contentType: "application/json; charset=utf-8",
                 success: function(response) {
-                    if (response == "Please check the uploaded csv file") {
+                    console.log(response);
+                    if (response.error_message) {
                         $("#id_error_msg_upload").prop("hidden", false)
-                        document.getElementById("id_error_msg_upload").innerHTML = response;
+                        document.getElementById("id_error_msg_upload").innerHTML = response.error_message;
                         document.getElementById("id_error_msg_upload").style.color = "Red";
                         $('#id_data_upload').modal('show')
                     } else {
@@ -322,12 +323,12 @@ function display_basic_db_data() {
                         var edit_basic_data = '';
                         var del_ind = '';
                         $("#id_popup_tbody").empty();
-                        $.each(response, function(i, value) {
-                            del_ind = '<td>' + value[9] + '</td>'
-                            if (value[9] == 1) {
-                                del_ind = ' <input type="checkbox" value="' + value[9] + '" checked>'
+                        $.each(response.data, function(i, value) {
+                            del_ind = '<td>' + value[6] + '</td>'
+                            if (value[6] == 1) {
+                                del_ind = ' <input type="checkbox" value="' + value[6] + '" checked>'
                             } else {
-                                del_ind = '<input type="checkbox" value="' + value[9] + '" required>'
+                                del_ind = '<input type="checkbox" value="' + value[6] + '" required>'
                             }
                             edit_basic_data += '<tr ><td class="class_select_checkbox"><input type="checkbox" required></td>'+
                             '<td><select type="text" class="form-control">'+ user_dropdwn +'</select></td>'+
@@ -338,20 +339,19 @@ function display_basic_db_data() {
                             '<td><input class="form-control" type="text" maxlength="8" onkeypress="return /[0-9]/i.test(event.key)" name="sup_acc_value"  value="' + value[4] + '"></td>'+
                             '<td><select type="text" class="form-control">'+ supcompany_dropdwn +'</select></td>'+
                             '<td><select type="text" class="form-control">'+ currency_dropdwn +'</select></td>'+
-                            '<td class="class_del_checkbox" hidden> <input type="checkbox" required> </td>'+
                             '<td>' + del_ind + '</td></tr>';
                         });
-                        $('#id_popup_tbody').append(edit_basic_data);
-                        $("#id_del_ind_checkbox").prop("hidden", false);
-						 $( "#header_select").prop( "hidden", false );
-                        $(".class_del_checkbox").prop("hidden", false);
-                        $('#myModal').modal('show');
-                        $('#id_data_upload').modal('hide');
-                        document.getElementById("id_del_add_button").style.display = "block";
-                        $('#id_check_data').show();
-                        $("#id_check_data").prop("hidden", false);
-                        $("#save_id").prop("hidden", true);
-                        table_sort_filter('id_popup_table')
+                      $('#id_popup_tbody').append(edit_basic_data);
+                    $( ".class_del_checkbox").prop( "hidden", false );
+                    $("#id_del_ind_checkbox").prop("hidden", false);
+                    $( "#header_select").prop( "hidden", false );
+                    $('#myModal').modal('show');
+                    $('#id_data_upload').modal('hide');
+                    document.getElementById("id_del_add_button").style.display = "block";
+                    $('#id_check_data').show();
+                    $("#id_check_data").prop("hidden", false);
+                    $("#save_id").prop("hidden", true);
+                  //  table_sort_filter('id_popup_table');
                     }
                },
                 cache: false,
@@ -554,6 +554,7 @@ function onclick_copy_update_button(data) {
             if (checkBoxes[i].checked) {
                 var row = checkBoxes[i].parentNode.parentNode;
 
+
                 if(GLOBAL_ACTION == "COPY"){
                     unique_input = '<select type="text" class="form-control">'+user_dropdwn+'</select>'
                     edit_basic_data += '<tr><td><input type="checkbox" required></td>'+
@@ -562,6 +563,8 @@ function onclick_copy_update_button(data) {
                     '<td><input class="form-control" type="text" value="' + row.cells[3].innerHTML + '" name="aac_value" onkeypress="return /[0-9]/i.test(event.key)" maxlength="40"  required></td>'+
                     '<td><select type="text" class="form-control">'+company_id_dropdown+'</select></td>'+
                     '<td><select type="text" class="form-control" >'+sup_acc_ass_dropdwn+'</select></td>'+
+
+
                     '<td><input class="form-control" type="text" value="' + row.cells[6].innerHTML + '" name="sup_aac_value" onkeypress="return /[0-9]/i.test(event.key)" maxlength="40" required></td>'+
                     '<td><select type="text" class="form-control">'+supcompany_dropdwn+'</select></td>'+
                     '<td><select type="text" class="form-control">'+currency_dropdwn+'</select></td>'+
@@ -609,7 +612,7 @@ function onclick_copy_update_button(data) {
       //check function restricting special char and diaplay the data count of csv file
 
         function check_data() {
-             $('#id_popup_table').DataTable().destroy();
+          //  $('#id_popup_table').DataTable().destroy();
 
             $("#id_check_success_messages").empty()
             $("#id_check_error_messages").empty()
@@ -630,7 +633,7 @@ function onclick_copy_update_button(data) {
                 var row = $(this);
 
                 //*************** reading data from the pop-up ***************
-                sup_acc_value = row.find("TD").eq(9).find('select[type="text"]').val();
+                sup_acc_value = row.find("TD").eq(6).find('select[type="text"]').val();
                 sup_currency_id = row.find("TD").eq(8).find('select[type="text"]').val();
                 sup_company_id = row.find("TD").eq(7).find('select[type="text"]').val();
                 company_id = row.find("TD").eq(4).find('select[type="text"]').val();
@@ -639,7 +642,7 @@ function onclick_copy_update_button(data) {
                 sup_acc_value = row.find("TD").eq(6).find('input[type="text"]').val();
                 acc_value = row.find("TD").eq(3).find('input[type="text"]').val();
                 app_username = row.find("TD").eq(1).find('select[type="text"]').val();
-                checked_box = row.find("TD").eq(11).find('input[type="checkbox"]').is(':checked')
+                checked_box = row.find("TD").eq(9).find('input[type="checkbox"]').is(':checked')
                 if (checked_box) {
                    del_ind = '1'
                 } else {
@@ -695,7 +698,7 @@ function onclick_copy_update_button(data) {
                 'data_list': wfacc_list,
                 'Tablename': Tablename,
                 'appname': appname,
-                'db_header_data': db_header_data
+                'db_header_data': ['ACC_VALUE', 'COMPANY_ID', 'APP_USERNAME','SUP_COMPANY_ID', 'SUP_ACC_VALUE', 'del_ind','ACCOUNT_ASSIGN_CAT', 'CURRENCY_ID', 'SUP_ACCOUNT_ASSIGN_CAT']
             }
             $.ajax({
                 type: 'POST',
@@ -703,7 +706,6 @@ function onclick_copy_update_button(data) {
                 data: JSON.stringify(popup_data_dict),
                 success: function(response) {
                     console.log(response);
-                    //table_sort_filter_popup_pagination('id_popup_table')
             		table_sort_filter('id_popup_table');
                     $("#id_check_special_character_messages").prop("hidden", false)
                     if (count == 0) {

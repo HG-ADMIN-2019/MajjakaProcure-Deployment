@@ -1,7 +1,7 @@
 {% extends 'root/base.html' %}
 {% load static %}
 
-{% block title %} Majjaka eProcure - Product and service Config {% endblock %}
+{% block title %} Product and service Config {% endblock %}
 {% block maincontent %}
 
 {% include 'root/loader.html' %}
@@ -77,12 +77,24 @@
 .toggle-off.active {color:red;}
 .toggle-on.active {color:blue;}
 
+     #catalog_main_table_id_wrapper .row:nth-child(1) {
+        margin-right: 1px;
+        margin-left: 1px;
+        margin-top: 15px;
+    }
+
+    #catalog_main_table_id_wrapper .row:nth-child(3) {
+        margin-right: 1px;
+        margin-left: 1px;
+        margin-bottom: 15px;
+    } 
+
 </style>
 <div class="container-fluid">
     <div class="mep-form_wrapper">
 
         <div class="d-flex justify-content-between">
-             <h3>Product And Service Configuration</h3>
+             <h3>Catalog Configuration And Mapping</h3>
 
             <div>
                 <button class="btn btn-primary" id="NONE-CREATE" onclick="update_catalog(this.id);"><i class="fas fa-user-plus"></i> add new catalog</button>
@@ -93,46 +105,46 @@
 
         <div class="card card-shadow-1">
              <div class="card-body">
-        <div>
-            <form method="POST">
-                {% csrf_token %}
-                <div class="row">
-                    <div class="col-md">
-                        <label for="">Catalog ID:</label>
-                        <input type="text" class="form-control" id="catalog_id" name="catalog_id">
-                    </div>
-                    <div class="col-md">
-                        <label for="">Catalog Description:</label>
-                        <input type="text" class="form-control" id="catalog_desc" name="catalog_desc">
-                    </div>
-                    <div class="col-md">
-                        <label for="">Catalog Name:</label>
-                        <input type="text" class="form-control" id="catalog_name" name="catalog_name">
-                    </div>
-                    <div class="col-md">
-                        <label for="">Product type:</label>
-                        <input type="text" class="form-control" id='product_type' name='product_type'>
-                    </div>
-                    <div class="col-md">
-                        <label for="">Search Count:</label>
-                        <input name="search_count" type = "number" value="10" id="search_count"  class="form-control">
-                    </div>
+                <div>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md">
+                                <label for="">Catalog ID</label>
+                                <input type="text" class="form-control" id="catalog_id" name="catalog_id">
+                            </div>
+                            <div class="col-md">
+                                <label for="">Catalog Description</label>
+                                <input type="text" class="form-control" id="catalog_desc" name="catalog_desc">
+                            </div>
+                            <div class="col-md">
+                                <label for="">Catalog Name</label>
+                                <input type="text" class="form-control" id="catalog_name" name="catalog_name">
+                            </div>
+                            <div class="col-md">
+                                <label for="">Product type</label>
+                                <input type="text" class="form-control" id='product_type' name='product_type'>
+                            </div>
+                            <div class="col-md">
+                                <label for="">Search Count</label>
+                                <input name="search_count" type = "number" value="10" id="search_count"  class="form-control">
+                            </div>
 
 
+                        </div>
+
+                        <div class="row">
+                            <div>
+                                <input type="reset" value="Clear filters" class="ip-form-clear-filters">
+                                <button class="button-search-users btn btn-primary" type="button"
+                                        title="Please click to get the search details!" id="submit_catalog"><i class="fas fa-search"></i> search
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-
-                <div class="row">
-                    <div>
-                        <input type="reset" value="Clear filters" class="ip-form-clear-filters">
-                        <button class="button-search-users btn btn-primary" type="button"
-                                title="Please click to get the search details!" id="submit_catalog"><i class="fas fa-search"></i> search
-                        </button>
-                    </div>
-                </div>
-            </form>
+           </div>
         </div>
-       </div>
-            </div>
 
         {% if catalog_query.count > 0 %}
         <div class="search_result_count_card card">
@@ -148,15 +160,15 @@
             </div>
         </div>
         {% endif %}
-    </div>
-
+    
     {% if catalog_query %}
-    <div class="hg_wrapper">
+    <div class="card mt-5">
 
         <div>
             <table id="catalog_main_table_id" class="table myclass">
                 <thead class="thead-light">
                 <tr>
+                    
                     <th >Catalog Id</th>
                     <th >Catalog Description</th>
                     <th >Catalog Name</th>
@@ -200,6 +212,7 @@
         </div>
     </div>
     {% endif %}
+    </div>
 </div>
 
 <!--modal popup for Add,copy,update and upload-->
@@ -265,7 +278,9 @@
             <!-- Modal body -->
             <div class="modal-body scrollbox">
 
-
+                <div class="alert alert-danger" role="alert" id="save_catlog_error"style="display:none">
+                   please fill all mandatory fields
+                </div>
                 <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
                 <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
                 <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden> </div>
@@ -279,16 +294,17 @@
                 </div>
                 <br>
                 <div class="form-group">
-                    <label for="add_update_catalog_description">Catalog Description</label>
-                    <input type="text" class="form-control" id="add_update_catalog_description" placeholder="Description of Catalog">
+                    <label for="add_update_catalog_description">Catalog Description</label><span class="hg_required"></span>
+
+                    <input type="text" class="form-control" id="add_update_catalog_description" placeholder="Description of Catalog" required>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-6">
-                        <label for="add_update_catalog_name">Catalog Name</label>
-                        <input type="text" class="form-control" id="add_update_catalog_name" placeholder="Name of Catalog">
+                        <label for="add_update_catalog_name">Catalog Name</label><span class="hg_required"></span>
+                        <input type="text" class="form-control" id="add_update_catalog_name" placeholder="Name of Catalog" required>
                     </div>
                     <div class="form-group col-md-6">
-                        <label for="add_update_catalog_prodtype">Product Type</label>
+                        <label for="add_update_catalog_prodtype">Product Type</label><span class="hg_required"></span>
                         <select id="add_update_catalog_prodtype" class="form-control">
                             <option value="" disabled selected>Select product type</option>
                             <option value="Products">Products</option>
@@ -300,8 +316,9 @@
 
             <!-- Modal footer -->
             <div class="modal-footer">
+                <button class="btn btn-outline-primary" type="button" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                 <button class="btn btn-primary" onclick="save_catalog()" ><i class="fas fa-save"></i> save</button>
-                <button class="btn btn-primary" type="button" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+
             </div>
         </div>
     </div>
@@ -321,16 +338,19 @@
             </div>
             <!-- Modal body -->
             <div class="modal-body scrollbox">
-                <div class="dp-prd-opt-wrapper">
-                    <span class="dp-prd-badge dp-prd-badge-country">
-                        <input type="radio" id="product_details_mapping" value="Product" name="catalog_mapping" >
-                        <label for="product_details_mapping">Product</label>
-                    </span>
-                    <span class="dp-prd-badge dp-prd-badge-currency">
-                        <input type="radio" id="freetext_mapping" value="FreeText" name="catalog_mapping" >
-                        <label for="freetext_mapping">FreeText</label>
-                    </span>
-                </div>
+                <ul class="sub-tabs">
+                    <li data-tab-target="#prod_detail_table_div" class="sub-tab active">
+                        <div class="sub-tab-link">
+                            <span> Product</span>
+                        </div>
+                    </li>
+                    <li data-tab-target="#freetext_table_div" class="sub-tab">
+                        <div class="sub-tab-link">
+                            <span> FreeText </span>
+                        </div>
+                    </li>
+                </ul>
+             
                 <div id="id_check_success_messages_product" class="alert alert-success check_success_message" hidden></div>
                 <div id="id_check_error_messages_product" class="alert alert-danger check_error_messages" hidden></div>
                 <div id="id_check_special_character_messages_product" class="alert alert-danger check_special_character_messages" hidden>
@@ -341,45 +361,49 @@
                 <div >
                     <p id="id_error_msg_product" class="alert alert-danger" hidden></p>
                 </div>
-                <div id="prod_detail_table_div">
-                    <h3>Product Details</h3>
-                    <table class="class_popup_table table table-bordered mt-2" id="id_product_list_popup_table" >
-                        <thead>
-                        <tr>
-                            <th id="select_th" hidden><input id="select_all" type="checkbox" name="hg_checkbox"></th>
-                            <th>Product ID</th>
-                            <th>Product Description ID</th>
-                            <th>Supplier ID</th>
-                            <th>Product Category</th>
-                        </tr>
-                        </thead>
-                        <tbody id=id_product_list_popup_tbody>
 
-                        </tbody>
-                    </table>
+                <div class="tab-content">    
+                    <div id="prod_detail_table_div"data-tab-content class="active mt-4 pl-3 pr-3" >
+                        <h4>Product Details</h4>
+                        <table class="class_popup_table table table-bordered mt-2" id="id_product_list_popup_table" >
+                            <thead>
+                            <tr>
+                                <th id="select_th" hidden><input id="select_all" type="checkbox" name="hg_checkbox"></th>
+                                <th>Product ID</th>
+                                <th>Product Description ID</th>
+                                <th>Supplier ID</th>
+                                <th>Product Category</th>
+                            </tr>
+                            </thead>
+                            <tbody id=id_product_list_popup_tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="freetext_table_div" data-tab-content class="mt-4 pl-3 pr-3" >
+                        <h4 class="mb-2">FreeText</h4>
+                        <table class="class_popup_table table table-bordered mt-2" id="id_freetext_popup_table" >
+                            <thead>
+                            <tr>
+                                <th id="select_th_freetext" hidden><input id="select_all_freetext" type="checkbox" name="hg_checkbox"></th>
+                                <th>FreeText ID</th>
+                                <th>FreeText Description</th>
+                                <th>Supplier ID</th>
+                                <th>Product Category</th>
+                            </tr>
+                            </thead>
+                            <tbody id=id_freetext_popup_tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <div id="freetext_table_div" hidden>
-                    <table class="class_popup_table table table-bordered mt-2" id="id_freetext_popup_table" >
-                        <thead>
-                        <tr>
-                            <th id="select_th_freetext" hidden><input id="select_all_freetext" type="checkbox" name="hg_checkbox"></th>
-                            <th>FreeText ID</th>
-                            <th>FreeText Description</th>
-                            <th>Supplier ID</th>
-                            <th>Product Category</th>
-                        </tr>
-                        </thead>
-                        <tbody id=id_freetext_popup_tbody>
 
-                        </tbody>
-                    </table>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button class="btn btn-primary dummy_assign_unassign_button" id="assign_button_id" onclick="assign_unassign_products_in_db()"><i class="fas fa-save"></i> assign</button>
+                    <button class="btn btn-primary dummy_assign_unassign_button" id="unassign_button_id" onclick="assign_unassign_products_in_db()"><i class="fas fa-save"></i> un assign</button>
                 </div>
-            </div>
-
-            <!-- Modal footer -->
-            <div class="modal-footer">
-                <button class="btn btn-primary dummy_assign_unassign_button" id="assign_button_id" onclick="assign_unassign_products_in_db()"><i class="fas fa-save"></i> assign</button>
-                <button class="btn btn-primary dummy_assign_unassign_button" id="unassign_button_id" onclick="assign_unassign_products_in_db()"><i class="fas fa-save"></i> un assign</button>
             </div>
         </div>
     </div>
@@ -432,6 +456,15 @@ var update_catalog = function(catalog_id) {
 };
 
 function save_catalog(){
+    $("#save_catlog_error").css("display", "none")
+    var catalog_data_description = document.getElementById('add_update_catalog_description').value;
+    var catalog_data_name=document.getElementById('add_update_catalog_name').value;
+    var catalog_data_product_type=document.getElementById('add_update_catalog_prodtype').value;
+    if((catalog_data_description==''||catalog_data_description==null) || (catalog_data_name==''||catalog_data_name==null) || (catalog_data_product_type==''||catalog_data_product_type==null))
+          {
+            $("#save_catlog_error").css("display", "block")
+          }
+          else{
     var catalog_data = new Array();
     var get_catalog_data = {};
     get_catalog_data.catalog_id= document.getElementById('add_update_catalog_id').innerHTML;
@@ -439,8 +472,9 @@ function save_catalog(){
     get_catalog_data.name = document.getElementById('add_update_catalog_name').value;
     get_catalog_data.product_type = document.getElementById('add_update_catalog_prodtype').value;
     catalog_data.push(get_catalog_data);
+     var catalog_info = {};
+       
 
-    var catalog_info = {};
     catalog_info['catalog_data'] = catalog_data
     catalog_info['catalog_action'] = GLOBAL_ACTION
     $.ajax({
@@ -460,8 +494,9 @@ function save_catalog(){
             }
         }
     });
-
+  }
 }
+
 
 $('#submit_catalog').click(function(e){
     e.preventDefault();
@@ -625,6 +660,8 @@ function assign_unassign_products_in_db(type){
    });
 }
 $(document).ready(function() {
+    NavigateTabs();
+    
     $('.toggle-input').change(function() {
 
      var data = {}

@@ -1,6 +1,6 @@
 {% extends 'root/base.html' %}
 {% load static %}
-{% block title %} Majjaka eProcure - Addresses (Master Settings) {% endblock %}
+{% block title %} Addresses (Master Settings) {% endblock %}
 {% block maincontent %}
 
 {% include 'root/loader.html' %}
@@ -12,11 +12,14 @@
         <div class="elements-space-between">
             <h3>Maintain Addresses</h3>
             <div>
+                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_address_data_Template' %}'"type="button">
+                    <i class="fas fa-download"></i> download Template
+                </button>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_address_data' %}'"type="button">
-                    <i class="fas fa-download"></i> EXTRACT
+                    <i class="fas fa-download"></i> Extract
                 </button>
                 <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_data" title="Upload Data" value="addresstype_upload"  onclick="onclick_upload_button()" type="button">
-                    <i class="fas fa-cloud-upload-alt"></i> UPLOAD DATA
+                    <i class="fas fa-cloud-upload-alt"></i> Upload Data
                 </button>
                 <button class="btn btn-primary  " type="button" id="id_add_data" value="ADD" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> Add address
@@ -631,11 +634,13 @@
 function onclick_display_csv_data() {
     $('#id_popup_table').DataTable().destroy();
     formdata = new FormData();
-    formdata.append("file_attach", $('#id_file_data_upload').prop('files')[0]);
-    formdata.append("Tablename",Tablename);
-    formdata.append("appname",appname);
-    db_header_data = db_header_data
-    formdata.append("db_header_data",db_header_data);
+         attached_file = $('#id_file_data_upload').prop('files')[0]
+    file_extension = (attached_file.name).split(".")[1]
+    file_extension = file_extension.toUpperCase();
+    if(file_extension == 'CSV'){
+        formdata.append("file_attach", attached_file);
+        formdata.append("Tablename",Tablename);
+        formdata.append("appname",appname);
     $('#id_data_upload').modal('hide');
     //$('#myModal').modal('show');$('#myModal').modal('show');
     $('#id_popup_tbody').empty();
@@ -645,11 +650,11 @@ function onclick_display_csv_data() {
         data: formdata,
         contentType: "application/json; charset=utf-8",
         success: function(response) {
-            if(response == "Please check the uploaded csv file") {
-                $("#id_error_msg_upload").prop("hidden",false)
-                document.getElementById("id_error_msg_upload").innerHTML = response;
-                document.getElementById("id_error_msg_upload").style.color = "Red";
-                $('#id_data_upload').modal('show');
+             if(response.error_message){
+                    $("#id_error_msg_upload").prop("hidden",false)
+                    document.getElementById("id_error_msg_upload").innerHTML = response.error_message;
+                    document.getElementById("id_error_msg_upload").style.color = "Red";
+                    $('#id_data_upload').modal('show');
             }
             else{
                 var address_data_array = response;
@@ -657,7 +662,7 @@ function onclick_display_csv_data() {
                 var del_ind = '';
                 var dropdown_array = [];
                 $("#id_popup_tbody").empty();
-                    $.each(response, function (i, value) {
+                    $.each(response.data, function (i, value) {
                         var guid = 'GUID'
 
                         var company_id = value[14]
@@ -679,7 +684,7 @@ function onclick_display_csv_data() {
                         del_ind= '<input type="checkbox" value="' + value[2] + '" required>'
                     }
                   edit_basic_data += '<tr ><td><input type="checkbox" required></td>' +
-                '<td><input class="form-control"  type="text"  value="' + value[0] + '"  name="address number"></td>' + +
+                '<td><input class="form-control"  type="text"  value="' + value[0] + '"  name="address number"></td>' +
                 '<td><input class="form-control"  type="text"  value="' + value[1] + '"  name="title"></td>' +
                 '<td><input class="form-control"  type="text" value="' + value[2] + '"  name="name1"></td>' +
                 '<td><input class="form-control"  type="text" value="' + value[3] + '"  name="name2"></td>' +
@@ -757,6 +762,13 @@ function onclick_display_csv_data() {
         processData: false,
         contentType: false,
     });
+}
+ else{
+        $("#id_error_msg_upload").prop("hidden",false)
+        document.getElementById("id_error_msg_upload").innerHTML = messageConstants["JMSG110"];
+        document.getElementById("id_error_msg_upload").style.color = "Red";
+        $('#id_data_upload').modal('show');
+    }
 }
 function onclick_copy_button() {
     GLOBAL_ACTION = "COPY"

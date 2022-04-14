@@ -1,6 +1,6 @@
 {% extends 'root/base.html' %}
 {% load static %}
-{% block title %} Majjaka eProcure - Authorizations (Application Settings) {% endblock %}
+{% block title %} Authorizations (Application Settings) {% endblock %}
 {% block maincontent %}
 
 {% include 'root/loader.html' %}
@@ -350,7 +350,7 @@
                 dataType: "json",
                 success: function(Response) {
                     rendered_auth_data = Response[0];
-                    rendered_auth_group_data = Response[2];
+                   // rendered_auth_group_data = Response[2];
                     display_basic_db_data();
                      dropdown_value()
                     $('#myModal').modal('hide');

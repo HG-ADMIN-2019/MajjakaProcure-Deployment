@@ -176,7 +176,7 @@ function compare_table_for_duplicate_entries(validate_add_attributes, timezone) 
     return [no_duplicate_value,error_message]
 }
 function display_error_message(error_message){
-
+        $("#error_msg_id").css("display", "none")
         $('#error_message').text(error_message);
         //$("p").css("color", "red");
         //document.getElementById("error_message").innerHTML = error_message;
@@ -192,6 +192,7 @@ function display_error_message(error_message){
 
 // on click add icon display the row in to add the new entries
 function add_popup_row() {
+    $("#error_msg_id").css("display", "none")
     basic_add_new_html = '';
     var display_db_data = '';
     $('#id_popup_table').DataTable().destroy();

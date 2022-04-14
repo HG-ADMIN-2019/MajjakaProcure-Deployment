@@ -1,6 +1,6 @@
 {% extends 'root/base.html' %}
 {% load static %}
-{% block title %} Majjaka eProcure - Purchase Order Transaction Types (Application Settings) {% endblock %}
+{% block title %} Purchase Order Transaction Types (Application Settings) {% endblock %}
 {% block maincontent %}
 
 
@@ -55,6 +55,7 @@
                             <th>Sequence</th>
                             <th>Active/Inactive</th>
                             <th hidden>guid</th>
+                            <th hidden>del_ind</th>
                         </tr>
                     </thead>
                     <tbody id="id_transaction_types_tbody">
@@ -65,8 +66,9 @@
                             <td>{{transaction_types.description}}</td>
                             <td>{{transaction_types.document_type}}</td>
                             <td>{{transaction_types.sequence}}</td>
-                            <td>{% if transaction_types.active_inactive %}Active{% else %}Inactive{% endif %}</td>
+                            <td>{{transaction_types.active_inactive}}</td>
                             <td hidden>{{transaction_types.guid}}</td>
+                            <td hidden>{{transaction_types.del_ind}}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -155,10 +157,10 @@
         </div>
     </div>
 
-{{ transaction_type|json_script:"transaction_type" }}
+{{ upload_transactiontype|json_script:"upload_transactiontype" }}
     <script>
        
-        var rendered_transaction_types_data = JSON.parse(document.getElementById('transaction_type').textContent);
+        var rendered_transaction_types_data = JSON.parse(document.getElementById('upload_transactiontype').textContent);
         var rendered_document_type = {{document_type|safe}};
         var rendered_active_inactive = {{rendered_active_inactive|safe}};
         var rendered_sequence = {{upload_numberrange|safe}};
@@ -442,6 +444,34 @@
                 }
             });
         }
+
+                //onclick of cancel display the table in display mode............
+function display_basic_db_data() {
+    $('#display_basic_table').DataTable().destroy();
+    $('#id_transaction_types_tbody').empty();
+    var edit_basic_data = '';
+    $.each(rendered_transaction_types_data, function (i, item) {
+        edit_basic_data += '<tr ><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.transaction_type + '</td><td>' + item.description + '</td><td>' + item.document_type + '</td><td>' + item.sequence + '</td><td>' + item.active_inactive + '</td><td hidden>' + item.guid + '</td><td hidden>' + item.del_ind + '</td></tr>';
+        sequence_remove_array.push(item.sequence)
+    });
+    $('#id_transaction_types_tbody').append(edit_basic_data);
+    $("#hg_select_checkbox").prop("hidden", true);
+    $(".class_select_checkbox").prop("hidden", true);
+    $('input:checkbox').removeAttr('checked');
+    $('#id_edit_data').show();
+    $('#id_cancel_data').hide();
+    //document.getElementById("id_upload_redirect_transaction_types").style.display = "none";
+    $("#id_delete_data").hide();
+    $("#id_copy_data").hide();
+    $("#id_update_data").hide();
+    $("#id_save_confirm_popup").hide();
+    $("#id_delete_confirm_popup").hide();
+    $('#id_check_all').hide();
+    table_sort_filter('display_basic_table');
+}
+
+//***************************
+//**********************************************
        
     </script>
     <script src="{% static 'scripts/transaction_type.js' %}"></script>

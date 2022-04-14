@@ -1,6 +1,6 @@
 {% extends 'root/base.html' %}
 {% load static %}
-{% block title %} Majjaka eProcure - Org Node Types (Application Settings) {% endblock %}
+{% block title %} Org Node Types (Application Settings) {% endblock %}
 {% block maincontent %}
 
 
@@ -281,9 +281,6 @@
                     rendered_org_node_type_data = Response[0];
                     rendered_dropdown_values = Response[2];
                     display_basic_db_data();
-                    dropdown_value();
-                    $('#myModal').modal('hide');
-                    $('#id_error_msg').text(messageConstants["JMSG001"])
                     $('#success_msg_id').text(Response[1])
                     $("#err_msg_app_settings_t").prop("hidden", false)
                     setTimeout(function() {

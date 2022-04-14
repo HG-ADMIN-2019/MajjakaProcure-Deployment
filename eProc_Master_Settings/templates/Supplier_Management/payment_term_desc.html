@@ -1,6 +1,6 @@
 {% extends 'root/base.html' %}
 {% load static %}
-{% block title %} Majjaka eProcure - Payment Term Descriptions (Master Settings) {% endblock %}
+{% block title %} Payment Term Descriptions (Master Settings) {% endblock %}
 {% block maincontent %}
 
 {% include 'root/loader.html' %}
@@ -14,6 +14,15 @@
         <div class="elements-space-between">
             <h3>Maintain Payment Term Descriptions</h3>
             <div>
+               <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_payterm_template' %}'"type="button">
+                    <i class="fas fa-download"></i> extract template
+                </button>
+                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_payterms_data' %}'" type="button">
+                    <i class="fas fa-download"></i> extract
+                </button>
+                <button class="btn btn-outline-primary modal_upload" title="Upload Data" id="id_upload_redirect_data" value="payterm_desc_upload" onclick="onclick_upload_button()" type="button">
+                    <i class="fas fa-cloud-upload-alt"></i> upload data
+                </button>
                 <button class="btn btn-primary" type="button" id="id_add_data" value="ADD"
                     data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add payment term description
@@ -148,8 +157,9 @@
                 <!-- Modal footer -->
                 <div class="modal-footer">
                     
-					 <button class="btn btn-outline-primary remove_upload_data" type="button" data-dismiss="modal"><i
-                            class="fas fa-times"></i> cancel</button>
+					 <button class="btn btn-outline-primary remove_upload_data" type="button" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                      <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
+                    <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
                     <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
                    
                 </div>
@@ -189,9 +199,9 @@
     var edit_basic_data = '';
     var GLOBAL_ACTION = '';
     var no_duplicate_entries = 'Y'
-    var Tablename = uiConstants["CONST_TABLENAME_COUNTRY"]
+    var Tablename = uiConstants["CONST_TABLENAME_PAYMENT_TERM_DESC"]
     var appname = uiConstants["CONST_APPNAME01"]
-    var db_header_data = uiConstants["CONST_HEADER_DATA_COUNTRY"]
+    var db_header_data = uiConstants['PAYMENT_TERM_KEY', 'DAY_LIMIT', 'DESCRIPTION', 'del_ind', 'LANGUAGE_ID']
 
     var payment_term_dropdown='';
     var language_dropdown= '';
@@ -433,6 +443,218 @@
         }
         table_sort_filter_popup_pagination('id_popup_table');
     }
+
+    //onclick of data Upload copy data to modal pop-up
+        function onclick_display_csv_data() {
+            $('#id_popup_table').DataTable().destroy();
+            formdata = new FormData();
+             attached_file = $('#id_file_data_upload').prop('files')[0]
+			file_extension = (attached_file.name).split(".")[1]
+    		file_extension = file_extension.toUpperCase();
+		    if(file_extension == 'CSV'){
+        	formdata.append("file_attach", attached_file);
+            formdata.append("Tablename", Tablename);
+            formdata.append("appname", appname);
+            $('#id_data_upload').modal('hide');
+        //$('#myModal').modal('show');$('#myModal').modal('show');
+        $('#id_popup_tbody').empty();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Basic_Settings:data_upload' %}",
+                data: formdata,
+                contentType: "application/json; charset=utf-8",
+                success: function(response) {
+                    console.log(response);
+                    if (response.error_message) {
+                        $("#id_error_msg_upload").prop("hidden", false)
+                        document.getElementById("id_error_msg_upload").innerHTML = response.error_message;
+                        document.getElementById("id_error_msg_upload").style.color = "Red";
+                        $('#id_data_upload').modal('show')
+                    } else {
+                        currency_data_array = response.data;
+                        var edit_basic_data = '';
+                        var del_ind = '';
+                        var inc_index=0;
+                        $("#id_popup_tbody").empty();
+                        $.each(response.data, function(i, value) {
+                            del_ind = '<td>' + value[3] + '</td>'
+                            if (value[3] == 1) {
+                                del_ind = '<input type="checkbox" value="' + value[3] + '" checked>'
+                            } else {
+                                del_ind = '<input type="checkbox" value="' + value[3] + '" required>'
+                            }
+
+                            edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
+                            '<td><input class="form-control" type="text" value="' + value[0] + '" maxlength="3" onkeypress="return /[a-z]/i.test(event.key)" required></td>'+
+                            '<td><input class="form-control" type="text" value="' + value[1] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
+                            '<td><input class="form-control" type="text" value="' + value[2] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
+                            '<td><input class="form-control" type="text" value="' + value[4] + '" ></td>'+
+                            '<td>' + del_ind + '</td></tr>';
+
+                        });
+                        $('#id_popup_tbody').append(edit_basic_data);
+                        $("#id_del_ind_checkbox").prop("hidden", false);
+						 $( "#header_select").prop( "hidden", false );
+                        $(".class_del_checkbox").prop("hidden", false);
+                        $('#myModal').modal('show');
+                        $('#id_data_upload').modal('hide');
+                        document.getElementById("id_del_add_button").style.display = "block";
+                        $('#id_check_data').modal('show');
+                        $("#id_check_data").prop("hidden", false);
+                        $("#save_id").prop("hidden", true);
+                        table_sort_filter('id_popup_table');
+                    }
+               },
+                cache: false,
+                processData: false,
+                contentType: false,
+
+            });
+        }
+		    else{
+        $("#id_error_msg_upload").prop("hidden",false)
+        document.getElementById("id_error_msg_upload").innerHTML = messageConstants["JMSG110"];
+        document.getElementById("id_error_msg_upload").style.color = "Red";
+        $('#id_data_upload').modal('show');
+    }
+}
+   //check function restricting special char and diaplay the data count of csv file
+
+        function check_data() {
+             $('#id_popup_table').DataTable().destroy();
+            $("#id_check_success_messages").empty()
+            $("#id_check_error_messages").empty()
+            $("#id_check_success_messages").prop("hidden", true)
+            $("#id_check_error_messages").prop("hidden", true)
+            $("#id_check_special_character_messages").prop("hidden", true)
+            document.getElementById("id_error_msg_incoterm_key").innerHTML = "";
+            document.getElementById("id_error_msg_description").innerHTML = "";
+            document.getElementById("id_error_msg_description_length").innerHTML = "";
+            count = 0;
+            //var currency_array = new Array
+            var DB_array = new Array
+            var incoterm_list = new Array
+            del_ind = ''
+            var incotem_key_check = new Array
+
+            $("#id_popup_table TBODY TR").each(function() {
+                var row = $(this);
+
+                //*************** reading data from the pop-up ***************
+                language_id = row.find("TD").eq(5).find('input[type="text"]').val();
+                description = row.find("TD").eq(3).find('input[type="text"]').val();
+                day_limit = row.find("TD").eq(2).find('input[type="text"]').val();
+                payment_term_key = row.find("TD").eq(1).find('input[type="text"]').val();
+                checked_box = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked')
+                if (checked_box) {
+                    del_ind = '1'
+                } else {
+                    del_ind = '0'
+                }
+                incoterm_list.push([payment_term_key,day_limit, description, del_ind, language_id])
+                var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+
+
+            //*************** checking for max length for country code (max length = 2) ***************
+            if(incoterm_key.length >5){
+                document.getElementById("id_error_msg_description_length").innerHTML = messageConstants["JMSG004"]  + "Incoterm Key";
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                count = count +1;
+            }
+
+            //*************** checking for special characters for country code ***************
+            else if(format.test(incoterm_key)){
+                document.getElementById("id_error_msg_incoterm_key").innerHTML = messageConstants["JMSG003"] + "Incoterm Key";
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                count = count +1;
+            }
+            else{
+            $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
+            }
+
+            //*************** checking for special characters for Description ***************
+            if(format.test(description)){
+                document.getElementById("id_error_msg_description").innerHTML = messageConstants["JMSG003"] + "Description";
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                count = count +1;
+           }
+           else{
+            $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+            }
+
+            if(incotem_key_check.includes(incoterm_key)){
+                $(row).css("border", "#f8d7da");
+                //$(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                //$(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
+
+            }
+            else{
+                //$(row).css("border", "");
+            }
+            incotem_key_check.push(incoterm_key);
+    });
+
+            //*************** shows save button if there are no errors(special characters and max length) ***************
+            if (count == 0) {
+                $("#id_check_special_character_messages").prop("hidden", true)
+                $("#save_id").prop("hidden", false);
+            }
+            popup_data_dict = {
+                'data_list': incoterm_list,
+                'Tablename': Tablename,
+                'appname': appname,
+                'db_header_data': ['PAYMENT_TERM_KEY', 'DAY_LIMIT', 'DESCRIPTION', 'del_ind', 'LANGUAGE_ID']
+            }
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Basic_Settings:check_data' %}",
+                data: JSON.stringify(popup_data_dict),
+                success: function(response) {
+                    //table_sort_filter_popup_pagination('id_popup_table')
+            		table_sort_filter('id_popup_table');
+                    $("#id_check_special_character_messages").prop("hidden", false)
+                    if (count == 0) {
+                        $("#id_check_special_character_messages").prop("hidden", true)
+                    }
+
+                    //*************** retrieving data counts from views ***************
+                    check_messages = response
+                    var newArrayDataOfOjbect = Object.values(check_messages)
+                    $("#id_check_success_messages").prop("hidden", false)
+
+                    //*************** if pop-up data count is greater than zero ***************
+                    if (newArrayDataOfOjbect[1] > 0) {
+                        $("#id_check_success_messages").append('<p>' + messageConstants["JMSG010"] + newArrayDataOfOjbect[0] + '</p>')
+                        $("#id_check_success_messages").append('<p>' + messageConstants["JMSG011"] + newArrayDataOfOjbect[1] + '</p>')
+                        $("#id_check_success_messages").append('<p>' + messageConstants["JMSG012"] + newArrayDataOfOjbect[3] + '</p>')
+                        $("#id_check_success_messages").append('<p>' + messageConstants["JMSG013"] + newArrayDataOfOjbect[4] + '</p>')
+                        $("#id_check_success_messages").append('<p>' + messageConstants["JMSG014"] + newArrayDataOfOjbect[5] + '</p>')
+	   				  $("#id_check_success_messages").append('<p>' + messageConstants["JMSG053"] + newArrayDataOfOjbect[6] + '</p>')
+                         //*************** if duplicate data data count is greater than zero ***************
+                        if(newArrayDataOfOjbect[2]>0){
+                            $("#id_check_error_messages").prop("hidden",false)
+                            $("#id_check_error_messages").append('<p>' + messageConstants["JMSG015"] + newArrayDataOfOjbect[2] + '</p>')
+                            $("#id_check_error_messages").append('<p style = "font-weight: bold;">' + messageConstants["JMSG001"] + ' </p>')
+                            $("#save_id").prop("hidden", true);
+                            $("#id_delete_duplicate").show()
+                        }
+                        else{
+                            $("#id_check_error_messages").prop("hidden",true)
+                            $("#id_delete_duplicate").hide()
+                        }
+                    }
+                    //*************** if pop-up data count is zero ***************
+                    else {
+                        $("#id_check_success_messages").hide()
+                        $("#id_check_error_messages").prop("hidden", false)
+                        $("#id_check_error_messages").append('<p>' + messageConstants["JMSG006"] + '</p>')
+                        $("#save_id").prop("hidden", true);
+                    }
+                }
+            });
+        }
+        //**********************************************
+
 
 </script>
 <script src="{% static 'scripts/supplier_managment/payment_term_desc.js' %}"></script>

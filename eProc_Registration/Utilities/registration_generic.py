@@ -1,10 +1,12 @@
 import datetime
 from eProc_Basic.Utilities.constants.constants import CONST_SUPPLIER_IMAGE_TYPE
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
+from eProc_Basic.Utilities.functions.encryption_util import encrypt
 from eProc_Basic.Utilities.functions.guid_generator import guid_generator
 from eProc_Basic.Utilities.functions.image_type_funtions import get_image_type
 from eProc_Basic.Utilities.global_defination import global_variables
-from eProc_Configuration.models import OrgClients, ImagesUpload
+from eProc_Basic.Utilities.messages.messages import MSG190, MSG191, MSG177
+from eProc_Configuration.models import OrgClients, ImagesUpload, SupplierMaster, Country, Currency, Languages
 
 django_query_instance = DjangoQueries()
 
@@ -24,7 +26,8 @@ def save_supplier_image(supplier_file, supplier_id, supplier_image_name):
             }, 'images_upload_guid')
 
             for image_guid in supplier_image_guid:
-                django_query_instance.django_get_query(ImagesUpload, {'images_upload_guid': image_guid}).image_url.delete(save=True)
+                django_query_instance.django_get_query(ImagesUpload,
+                                                       {'images_upload_guid': image_guid}).image_url.delete(save=True)
                 django_query_instance.django_get_query(ImagesUpload, {'images_upload_guid': image_guid}).delete()
 
     django_query_instance.django_create_query(ImagesUpload, {
@@ -38,3 +41,76 @@ def save_supplier_image(supplier_file, supplier_id, supplier_image_name):
         'created_at': datetime.date.today(),
         'created_by': global_variables.GLOBAL_LOGIN_USERNAME
     })
+
+
+def save_supplier_data(request):
+    """
+
+    """
+    message = {}
+    update_supplier_guid = ''
+    supplier_details = {}
+    status = request.POST.get('status')
+    supplier_details['supplier_id'] = request.POST.get('supplier_id')
+    supplier_details['registration_number'] = request.POST.get('registration_number')
+    supplier_details['name1'] = request.POST.get('name1')
+    supplier_details['name2'] = request.POST.get('name2')
+    supplier_details['language_id'] = request.POST.get('language_id')
+    supplier_details['city'] = request.POST.get('city_id')
+    supplier_details['postal_code'] = request.POST.get('postal_code_id')
+    supplier_details['street'] = request.POST.get('street_id')
+    supplier_details['country_code'] = request.POST.get('country_code_id')
+    supplier_details['currency_id'] = request.POST.get('currency_id')
+    supplier_details['landline'] = request.POST.get('landline_id')
+    supplier_details['mobile_num'] = request.POST.get('mobile_num_id')
+    supplier_details['fax'] = request.POST.get('fax_id')
+    supplier_details['email'] = request.POST.get('email_id')
+    supplier_details['search_term1'] = request.POST.get('search_term1_id')
+    supplier_details['search_term2'] = request.POST.get('search_term2_id')
+    supplier_details['working_days'] = request.POST.get('working_days_id')
+    supplier_details['duns_number'] = request.POST.get('duns_number_id')
+    supplier_details['email1'] = request.POST.get('email1_id')
+    supplier_details['email2'] = request.POST.get('email2_id')
+    supplier_details['email3'] = request.POST.get('email3_id')
+    supplier_details['email4'] = request.POST.get('email4_id')
+    supplier_details['email5'] = request.POST.get('email5_id')
+    supplier_details['output_medium'] = request.POST.get('output_medium_id')
+    encrypted_supp = encrypt(supplier_details['supplier_id'])
+    if status == 'UPDATE':
+        if django_query_instance.django_existence_check(SupplierMaster,
+                                                        {'supplier_id': supplier_details['supplier_id'],
+                                                         'client': global_variables.GLOBAL_CLIENT,
+                                                         'del_ind': False}):
+            django_query_instance.django_update_query(SupplierMaster,
+                                                      {'supplier_id': supplier_details['supplier_id'],
+                                                       'client': global_variables.GLOBAL_CLIENT,
+                                                       'del_ind': False}, supplier_details)
+
+            message['success'] = MSG177
+            return message,encrypted_supp
+    else:
+        if django_query_instance.django_existence_check(SupplierMaster,
+                                                        {'client': global_variables.GLOBAL_CLIENT,
+                                                         'supplier_id': supplier_details['supplier_id'],
+                                                         'del_ind': False}):
+
+            message['error'] = MSG190
+            return message, encrypted_supp
+        elif django_query_instance.django_existence_check(SupplierMaster,
+                                                          {'client': global_variables.GLOBAL_CLIENT,
+                                                           'registration_number': supplier_details[
+                                                               'registration_number'],
+                                                           'del_ind': False}):
+            message['error'] = MSG191
+            return message, encrypted_supp
+        else:
+            supplier_details['supp_guid'] = guid_generator()
+            supplier_details['client'] = global_variables.GLOBAL_CLIENT
+            supplier_details['country_code'] = django_query_instance.django_get_query(Country, {'country_code': supplier_details['country_code']})
+            supplier_details['currency_id'] = django_query_instance.django_get_query(Currency, {
+                'currency_id': supplier_details['currency_id']})
+            supplier_details['language_id'] = django_query_instance.django_get_query(Languages, {'language_id': supplier_details['language_id']})
+            django_query_instance.django_create_query(SupplierMaster,
+                                                      supplier_details)
+    message['success'] = MSG177
+    return message, encrypted_supp

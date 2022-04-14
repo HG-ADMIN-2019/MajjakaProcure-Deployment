@@ -12,6 +12,7 @@ urlpatterns = [
     path('export_currency', extract_currency_data, name='extract_currency_data'),
     path('export_timezone_data', extract_timezone_data, name='extract_timezone_data'),
     path('extract_timezone_template', extract_timezone_template, name='extract_timezone_template'),
+    path('extract_currency_template', extract_currency_template, name='extract_currency_template'),
     path('export_unitofmeasure', extract_unitofmeasure_data, name='extract_unitofmeasure_data'),
     path('extract_unitofmeasure_template', extract_unitofmeasure_template, name='extract_unitofmeasure_template'),
     path('export_product_details', extract_product_details, name='extract_product_details'),

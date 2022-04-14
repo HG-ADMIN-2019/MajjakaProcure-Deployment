@@ -4,6 +4,7 @@ import io
 
 from eProc_Basic.Utilities.constants.constants import CONST_ACTION_ADD, CONST_ACTION_COPY, CONST_ACTION_UPDATE, \
     CONST_ACTION_DELETE
+from eProc_Basic.Utilities.functions.camel_case import convert_to_camel_case
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries, bulk_create_entry_db
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Basic.Utilities.messages.messages import MSG112, MSG113
@@ -88,7 +89,8 @@ def csv_preview_data(db_header, data_set_val):
         for upload_csv_header in range(len(upload_csv_header_data)):
             pair = []
             if db_header['field_name'] == upload_csv_header_data[upload_csv_header]:
-                pair_list.append({'field_name':db_header['field_name'],'field_length':db_header['field_length'],'field_position':upload_csv_header})
+                pair_list.append({'field_name': db_header['field_name'], 'field_length': db_header['field_length'],
+                                  'field_position': upload_csv_header})
 
     print(pair_list)
     correct_order_list = []
@@ -329,8 +331,8 @@ def save_country_data_into_db(country_data):
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(Country,
                                                                 {'country_code': country_detail['country_code']}):
-                country_db_dictionary = {'country_code': country_detail['country_code'],
-                                         'country_name': country_detail['country_name'],
+                country_db_dictionary = {'country_code': (country_detail['country_code']).upper(),
+                                         'country_name': convert_to_camel_case(country_detail['country_name']),
                                          'country_created_at': datetime.datetime.now(),
                                          'country_created_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                          'country_changed_at': datetime.datetime.now(),
@@ -341,7 +343,7 @@ def save_country_data_into_db(country_data):
                 django_query_instance.django_update_query(Country,
                                                           {'country_code': country_detail['country_code']},
                                                           {'country_code': country_detail['country_code'],
-                                                           'country_name': country_detail['country_name'],
+                                                           'country_name': convert_to_camel_case(country_detail['country_name']),
                                                            'country_changed_at': datetime.datetime.now(),
                                                            'country_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                                            'del_ind': country_detail['del_ind']})
@@ -367,8 +369,8 @@ def save_language_data_into_db(language_data):
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(Languages,
                                                                 {'language_id': language_detail['language_id']}):
-                language_db_dictionary = {'language_id': language_detail['language_id'],
-                                          'description': language_detail['description'],
+                language_db_dictionary = {'language_id': (language_detail['language_id']).upper(),
+                                          'description': convert_to_camel_case(language_detail['description']),
                                           'languages_created_at': datetime.datetime.now(),
                                           'languages_created_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                           'languages_changed_at': datetime.datetime.now(),
@@ -379,10 +381,10 @@ def save_language_data_into_db(language_data):
                 django_query_instance.django_update_query(Languages,
                                                           {'language_id': language_detail['language_id']},
                                                           {'language_id': language_detail['language_id'],
-                                                           'description': language_detail['description'],
+                                                           'description': convert_to_camel_case(language_detail['description']),
                                                            'languages_changed_at': datetime.datetime.now(),
                                                            'languages_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
-                                                           'del_ind':language_detail['del_ind']})
+                                                           'del_ind': language_detail['del_ind']})
         bulk_create_entry_db(Languages, language_db_list)
         message = MSG112
     upload_response = get_configuration_data(Languages, {'del_ind': False}, ['language_id', 'description'])
@@ -405,9 +407,9 @@ def save_unitofmeasures_data_into_db(unitofmeasures_data):
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(UnitOfMeasures,
                                                                 {'uom_id': unitofmeasures_detail['uom_id']}):
-                unitofmeasures_db_dictionary = {'uom_id': unitofmeasures_detail['uom_id'],
-                                                'uom_description': unitofmeasures_detail['uom_description'],
-                                                'iso_code_id': unitofmeasures_detail['iso_code_id'],
+                unitofmeasures_db_dictionary = {'uom_id': (unitofmeasures_detail['uom_id']).upper(),
+                                                'uom_description': convert_to_camel_case(unitofmeasures_detail['uom_description']),
+                                                'iso_code_id': (unitofmeasures_detail['iso_code_id']).upper(),
                                                 'unit_of_measures_created_at': datetime.datetime.now(),
                                                 'unit_of_measures_created_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                                 'unit_of_measures_changed_at': datetime.datetime.now(),
@@ -417,11 +419,11 @@ def save_unitofmeasures_data_into_db(unitofmeasures_data):
                 django_query_instance.django_update_query(UnitOfMeasures,
                                                           {'uom_id': unitofmeasures_detail['uom_id']},
                                                           {'uom_id': unitofmeasures_detail['uom_id'],
-                                                           'uom_description': unitofmeasures_detail['uom_description'],
-                                                           'iso_code_id': unitofmeasures_detail['iso_code_id'],
+                                                           'uom_description':convert_to_camel_case(unitofmeasures_detail['uom_description']),
+                                                           'iso_code_id': (unitofmeasures_detail['iso_code_id']).upper(),
                                                            'unit_of_measures_changed_at': datetime.datetime.now(),
                                                            'unit_of_measures_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
-                                                           'del_ind':unitofmeasures_detail['del_ind']})
+                                                           'del_ind': unitofmeasures_detail['del_ind']})
         bulk_create_entry_db(UnitOfMeasures, unitofmeasures_db_list)
         message = MSG112
     upload_response = get_configuration_data(UnitOfMeasures, {'del_ind': False},
@@ -448,19 +450,20 @@ def save_currency_data_into_db(currency_data):
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(Currency,
                                                                 {'currency_id': currency_detail['currency_id']}):
-                currency_db_dictionary = {'currency_id': currency_detail['currency_id'],
-                                          'description': currency_detail['description'],
+                currency_db_dictionary = {'currency_id': (currency_detail['currency_id']).upper(),
+                                          'description': convert_to_camel_case(currency_detail['description']),
                                           'currency_created_at': datetime.datetime.now(),
                                           'currency_created_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                           'currency_changed_at': datetime.datetime.now(),
-                                          'currency_changed_by': global_variables.GLOBAL_LOGIN_USERNAME
+                                          'currency_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
+                                          'del_ind': currency_detail['del_ind']
                                           }
                 currency_db_list.append(currency_db_dictionary)
             else:
                 django_query_instance.django_update_query(Currency,
                                                           {'currency_id': currency_detail['currency_id']},
                                                           {'currency_id': currency_detail['currency_id'],
-                                                           'description': currency_detail['description'],
+                                                           'description': convert_to_camel_case(currency_detail['description']),
                                                            'currency_changed_at': datetime.datetime.now(),
                                                            'currency_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                                            'del_ind': currency_detail['del_ind']})
@@ -489,8 +492,8 @@ def save_timezone_data_into_db(timezone_data):
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(TimeZone,
                                                                 {'time_zone': timezone_detail['time_zone']}):
-                timezone_db_dictionary = {'time_zone': timezone_detail['time_zone'],
-                                          'description': timezone_detail['description'],
+                timezone_db_dictionary = {'time_zone': (timezone_detail['time_zone']).upper(),
+                                          'description': convert_to_camel_case(timezone_detail['description']),
                                           'utc_difference': timezone_detail[
                                               'utc_difference'],
                                           'daylight_save_rule': timezone_detail[
@@ -498,27 +501,29 @@ def save_timezone_data_into_db(timezone_data):
                                           'time_zone_created_at': datetime.datetime.now(),
                                           'time_zone_created_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                           'time_zone_changed_at': datetime.datetime.now(),
-                                          'time_zone_changed_by': global_variables.GLOBAL_LOGIN_USERNAME
+                                          'time_zone_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
+                                          'del_ind': timezone_detail['del_ind'],
                                           }
                 timezone_db_list.append(timezone_db_dictionary)
             else:
                 django_query_instance.django_update_query(TimeZone,
                                                           {'time_zone': timezone_detail['time_zone']},
                                                           {'time_zone': timezone_detail['time_zone'],
-                                                           'description': timezone_detail['description'],
+                                                           'description': convert_to_camel_case(timezone_detail['description']),
                                                            'utc_difference': timezone_detail[
                                                                'utc_difference'],
                                                            'daylight_save_rule': timezone_detail[
                                                                'daylight_save_rule'],
                                                            'time_zone_changed_at': datetime.datetime.now(),
                                                            'time_zone_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
-                                                           'del_ind': False})
+                                                           'del_ind': timezone_detail['del_ind']})
         bulk_create_entry_db(TimeZone, timezone_db_list)
         message = MSG112
     upload_response = get_configuration_data(TimeZone, {'del_ind': False},
                                              ['time_zone', 'description', 'utc_difference', 'daylight_save_rule'])
 
     return upload_response, message
+
 
 def save_prodcat_data_into_db(Prodcat_data):
     """
@@ -529,7 +534,7 @@ def save_prodcat_data_into_db(Prodcat_data):
         for Prodcat_detail in Prodcat_data['data']:
             django_query_instance.django_update_query(UnspscCategories,
                                                       {'prod_cat_id': Prodcat_detail['prod_cat_id']},
-                                                      {'del_ind':True,
+                                                      {'del_ind': True,
                                                        'unspsc_categories_changed_at': datetime.datetime.now(),
                                                        'unspsc_categories_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
         message = MSG113
@@ -537,24 +542,23 @@ def save_prodcat_data_into_db(Prodcat_data):
         for Prodcat_detail in Prodcat_data['data']:
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(UnspscCategories,
-                                                            {'prod_cat_id': Prodcat_detail['prod_cat_id']}):
-              prodcat_db_dictionary = {'prod_cat_id': Prodcat_detail['prod_cat_id'],
-                                         'prod_cat_desc': Prodcat_detail['prod_cat_desc'],
+                                                                {'prod_cat_id': Prodcat_detail['prod_cat_id']}):
+                prodcat_db_dictionary = {'prod_cat_id': Prodcat_detail['prod_cat_id'],
+                                         'prod_cat_desc':convert_to_camel_case(Prodcat_detail['prod_cat_desc']),
                                          'unspsc_categories_created_at': datetime.datetime.now(),
                                          'unspsc_categories_created_by': global_variables.GLOBAL_LOGIN_USERNAME,
-                                        }
-              prodcat_db_list.append(prodcat_db_dictionary)
+                                         }
+                prodcat_db_list.append(prodcat_db_dictionary)
             else:
                 django_query_instance.django_update_query(UnspscCategories,
                                                           {'prod_cat_id': Prodcat_detail['prod_cat_id']},
                                                           {'prod_cat_id': Prodcat_detail['prod_cat_id'],
-                                                           'prod_cat_desc': Prodcat_detail['prod_cat_desc'],
+                                                           'prod_cat_desc':convert_to_camel_case( Prodcat_detail['prod_cat_desc']),
                                                            'unspsc_categories_changed_at': datetime.datetime.now(),
                                                            'unspsc_categories_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                                            'del_ind': Prodcat_detail['del_ind']})
         bulk_create_entry_db(UnspscCategories, prodcat_db_list)
         message = MSG112
-    upload_response = get_configuration_data(UnspscCategories,{'del_ind':False},['prod_cat_id', 'prod_cat_desc'])
+    upload_response = get_configuration_data(UnspscCategories, {'del_ind': False}, ['prod_cat_id', 'prod_cat_desc'])
 
     return upload_response, message
-

@@ -1,6 +1,6 @@
 {% extends 'root/base.html' %}
 {% load static %}
-{% block title %} Majjaka eProcure - Account Assignment Values (Master Settings) {% endblock %}
+{% block title %} Account Assignment Values (Master Settings) {% endblock %}
 {% block maincontent %}
 
 <div class="container-fluid">
@@ -9,6 +9,9 @@
         <div class="elements-space-between">
             <h3>Maintain Account Assignment Values</h3>
             <div>
+                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_aav_data_template' %}'"type="button">
+                    <i class="fas fa-download"></i> download Template
+                </button>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_aav_data' %}'"type="button">
                     <i class="fas fa-download"></i> extract
                 </button>
@@ -355,31 +358,35 @@ function main_table_delete(){
 
   //onclick of data Upload copy data to modal pop-up
         function onclick_display_csv_data() {
-            formdata = new FormData();
-            formdata.append("file_attach", $('#id_file_data_upload').prop('files')[0]);
-            formdata.append("Tablename", Tablename);
-            formdata.append("appname", appname);
-
-            formdata.append("db_header_data", db_header_data);
+         formdata = new FormData();
+         attached_file = $('#id_file_data_upload').prop('files')[0]
+         file_extension = (attached_file.name).split(".")[1]
+         file_extension = file_extension.toUpperCase();
+         if(file_extension == 'CSV'){
+        formdata.append("file_attach", attached_file);
+        formdata.append("Tablename",Tablename);
+        formdata.append("appname",appname);
             $('#id_data_upload').modal('hide');
+            $('#id_popup_tbody').empty();
+
             $.ajax({
                 type: 'POST',
-                url: "{% url 'eProc_Configuration:data_upload_fk' %}",
+                url: "{% url 'eProc_Basic_Settings:data_upload' %}",
                 data: formdata,
                 contentType: "application/json; charset=utf-8",
                 success: function(response) {
-                    if (response == "Please check the uploaded csv file") {
-                        $("#id_error_msg_upload").prop("hidden", false)
-                        document.getElementById("id_error_msg_upload").innerHTML = response;
-                        document.getElementById("id_error_msg_upload").style.color = "Red";
-                        $('#id_data_upload').modal('show');
+                    if(response.error_message){
+                    $("#id_error_msg_upload").prop("hidden",false)
+                    document.getElementById("id_error_msg_upload").innerHTML = response.error_message;
+                    document.getElementById("id_error_msg_upload").style.color = "Red";
+                    $('#id_data_upload').modal('show');
                     } else {
                         aav_data_array = response;
                         var dropdown_select_array =[];
                         var edit_basic_data = '';
                         var del_ind = '';
                         $("#id_popup_tbody").empty();
-                        $.each(response, function(i, value) {
+                        $.each(response.data, function(i, value) {
                             var account_assign_cat = value[1]
                             var company_id = value[2]
                             dropdown_select_array.push([account_assign_cat, company_id])
@@ -419,6 +426,13 @@ function main_table_delete(){
 
             });
         }
+         else{
+        $("#id_error_msg_upload").prop("hidden",false)
+        document.getElementById("id_error_msg_upload").innerHTML = messageConstants["JMSG110"];
+        document.getElementById("id_error_msg_upload").style.color = "Red";
+        $('#id_data_upload').modal('show');
+    }
+}
 
         //check function restricting special char and display the data count of csv file
         function check_data() {

@@ -38,7 +38,11 @@
 
         <div class="elements-space-between sc-button-group">
             <div class="sc_name_style">
-                <span class="h6" style="margin-bottom: 1rem;">Shopping Cart Name:</span> <span id="sc_name_id">{{ cart_name }}</span> &nbsp; <span> <button id="edit_shopping_cart_name" type="button" onclick="edit_sc_name()" class="btn btn-primary btn-sm" title="Edit shopping cart name" style="margin-bottom: 1rem;"><i class="far fa-edit"></i></button></span>
+                <span class="h6" style="margin-bottom: 1rem;">Shopping Cart Name:</span> <span id="sc_name_id">{{ cart_name }}</span> &nbsp; 
+                <!-- <span> 
+                    <button id="edit_shopping_cart_name" type="button" onclick="edit_sc_name()" class="btn btn-primary btn-sm" title="Edit shopping cart name" style="margin-bottom: 1rem;"><i class="far fa-edit"></i></button>
+                </span> -->
+                <span class="badge badge-primary" id="edit_shopping_cart_name" type="button" onclick="edit_sc_name()" title="Edit shopping cart name"><i class="far fa-edit"></i></span>
             </div>
             <div id="shopping_cart_button_div">
                 <button class="btn btn-primary" id="add_approver_note_btn" data-toggle="modal" data-target="#add_approver_note"><i class="fa fa-plus" aria-hidden="true"></i> approver note</button>
@@ -49,11 +53,11 @@
                 <button class="btn btn-primary" onclick="order_shopping_cart()"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> send to purchasing team</button>
                 {% endif %}
 
-                {% if manager_details.0 == 'AUTO' and not completion_work_flow %}
+                {% if manager_details.0 == 'Auto' and not completion_work_flow %}
                 <button class="btn btn-primary" onclick="order_shopping_cart()"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> place order</button>
                 {% endif %}
                 
-                {% if manager_details.0 != 'AUTO' and not completion_work_flow %}
+                {% if manager_details.0 != 'Auto' and not completion_work_flow %}
                 <button class="btn btn-primary" onclick="order_shopping_cart()"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> submit for approval</button>
                 {% endif %}
 
@@ -112,7 +116,7 @@
                             <i class="fas fa-angle-double-right fa-3x"></i>
                         </div>
                         <div class="approval-overview__user-icon-container ao-workflow-user">
-                            {% if completion_work_flow.0 == 'MULTIPLE' %}
+                            {% if completion_work_flow.0 == 'Multiple' %}
                             <div class="workflow-user-bg">
                                 <i class="fas fa-users fa-3x" aria-hidden="true"> </i>
                             </div> 
@@ -133,7 +137,7 @@
                             <div class="approval-overview__next-icon-container">
                                 <i class="fas fa-angle-double-right fa-3x"></i>
                             </div>
-                            {% if manager_detail == 'AUTO' %}
+                            {% if manager_detail == 'Auto' %}
 
                             <div class="approval-overview__user-icon-container ao-workflow-user">
                                 <div class="workflow-user-bg">
@@ -168,11 +172,11 @@
                 <button class="btn btn-primary" onclick="order_shopping_cart()"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> send to purchasing team</button>
                 {% endif %}
 
-                {% if manager_details.0 == 'AUTO' and not completion_work_flow %}
+                {% if manager_details.0 == 'Auto' and not completion_work_flow %}
                 <button class="btn btn-primary" onclick="order_shopping_cart()"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> place order</button>
                 {% endif %}
 
-                {% if manager_details.0 != 'AUTO' and not completion_work_flow %}
+                {% if manager_details.0 != 'Auto' and not completion_work_flow %}
                 <button class="btn btn-primary" onclick="order_shopping_cart()"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> submit for approval</button>
                 {% endif %}
             </div>
@@ -228,7 +232,7 @@
 
             <!-- Modal Header -->
             <div class="modal-header">
-                <h4 class="modal-title">Add a note to Approver</h4>
+                <h4 class="modal-title">Approver Note</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
 
@@ -254,7 +258,7 @@
 
             <!-- Modal Header -->
             <div class="modal-header">
-                <h4 class="modal-title">Change Good Receiver</h4>
+                <h4 class="modal-title">Change Goods Receiver</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
 

@@ -1,10 +1,6 @@
-$(document).ready(function(){
-    $('#nav_menu_items').remove();
-    $("body").css("padding-top", "4rem");
-
-});
 
 
+var encrypted_supplier
 
 // Global variable - supplier id
 var global_supplier_id = document.getElementById('supplier_id').value
@@ -38,6 +34,9 @@ $("#supp_org_details_table TBODY TR").each(function() {
 function edit_basic_supp_data(){
     $('#supplier_basic_update_success').hide();
     $(".hg_edit_display_mode").prop( "disabled", false );
+    if(GLOBAL_ACTION != 'CREATE'){
+            $("#supplier_id").prop( "disabled", true );
+    }
     $("#currency_id").append(currency_opt)
     $("#country_code_id").append(country_opt)
     $("#language_id").append(language_opt)
@@ -216,6 +215,7 @@ function save_basic_details() {
     formdata.append("supplier_image",  $('#supplier_image_id').prop('files')[0]);
     formdata.append("supplier_guid",   $('#supplier_guid').val());
     formdata.append("supplier_id",   $('#supplier_id').val());
+    formdata.append("registration_number",   $('#supplier_regnum').val());
     formdata.append("name1",$('#name1').val());
     formdata.append("name2",$('#name2').val());
     formdata.append("city_id",   $('#city_id').val());
@@ -238,17 +238,28 @@ function save_basic_details() {
     formdata.append("email4_id",   $('#email4_id').val());
     formdata.append("email5_id",   $('#email5_id').val());
     formdata.append("output_medium_id",   $('#output_medium_id').val());
-
-    ajax_update_supplier_basic_details(formdata) 
-
+    formdata.append("status",   GLOBAL_ACTION);
+    response = ajax_update_supplier_basic_details(formdata)
+    encrypted_supplier = response.encrypted_supplier
+    message = response.message
     // ajax success response
-    document.getElementById('supplier_basic_update_success').innerHTML = response.message;
-      $('#save_error_div').hide()
-    $('#supplier_basic_update_success').show();
+    if(message.success){
+        document.getElementById('supplier_basic_update_success').innerHTML = message.success;
+        $('#supplier_basic_update_success').show();
+        $('#save_error_div').hide()
+    }
+    if(message.error){
+        document.getElementById('save_error_div').innerHTML = message.error;
+        $('#save_error_div').show();
+        $('#supplier_basic_update_success').hide()
+    }
+
     $('html, body').animate({ scrollTop: 0 }, 'slow');
     cancel_basic_details();
-
-
+    if(GLOBAL_ACTION == 'CREATE'){
+        var url = '/admin_tool/supplier_management/supplier_details/' + encrypted_supplier + '';
+        location.href = url
+    }
     return false;
 }
 
@@ -277,8 +288,7 @@ function supp_org_data_save(){
     })
     console.log(save_supplier_purch_details)
 
-    ajax_update_supplier_org_details(save_supplier_purch_details);
-
+    response = ajax_update_supplier_org_details(save_supplier_purch_details);
     document.getElementById('supplier_org_update_success').innerHTML = response.message;
     $('#supplier_org_update_success').show();
     if (save_supplier_purch_details.length==0){
@@ -314,3 +324,15 @@ function supp_org_data_save(){
         return is_valid, save_form_errors
     }
 
+function enable_disable(action){
+    $(".dummy_ft_button_class").hide();
+    if(action == 'EDIT'){
+        $("#ft_save").show();
+        $("#ft_cancel").show();
+        $('.toggle_mode').prop('disabled', false)
+    }
+    else{
+        $("#ft_edit").show();
+        $('.toggle_mode').prop('disabled', true)
+    }
+}

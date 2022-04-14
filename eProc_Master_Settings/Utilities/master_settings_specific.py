@@ -1,3 +1,4 @@
+from eProc_Basic.Utilities.functions.camel_case import convert_to_camel_case
 from eProc_Basic.Utilities.functions.image_type_funtions import get_image_type
 from eProc_Basic.Utilities.functions.log_function import update_log_info
 
@@ -37,9 +38,9 @@ def save_auth_group_data_into_db(auth_group_data):
                                                                 ['auth_grp_guid']}):
                 guid = guid_generator()
                 auth_group_db_dictionary = {'auth_grp_guid': guid,
-                                            'auth_obj_grp': auth_group_detail['auth_obj_grp'],
-                                            'auth_grp_desc': auth_group_detail['auth_grp_desc'],
-                                            'auth_level': auth_group_detail['auth_level'],
+                                            'auth_obj_grp': auth_group_detail['auth_obj_grp'].upper(),
+                                            'auth_grp_desc':convert_to_camel_case(auth_group_detail['auth_grp_desc']),
+                                            'auth_level': auth_group_detail['auth_level'].upper(),
                                             'auth_obj_id': AuthorizationObject.objects.get(
                                                 auth_obj_id=auth_group_detail['auth_obj_id']),
                                             'del_ind': False,
@@ -58,7 +59,7 @@ def save_auth_group_data_into_db(auth_group_data):
                                                            'auth_obj_id': auth_group_detail['auth_obj_id']},
                                                           {
                                                               'auth_obj_grp': auth_group_detail['auth_obj_grp'],
-                                                              'auth_grp_desc': auth_group_detail['auth_grp_desc'],
+                                                              'auth_grp_desc':convert_to_camel_case( auth_group_detail['auth_grp_desc']),
                                                               'auth_level': auth_group_detail['auth_level'],
                                                               'auth_obj_id': AuthorizationObject.objects.get(
                                                                   auth_obj_id=auth_group_detail['auth_obj_id']),
@@ -98,8 +99,8 @@ def save_roles_data_into_db(roles_data):
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(UserRoles,
                                                                 {'role': roles_detail['role']}):
-                roles_db_dictionary = {'role': roles_detail['role'],
-                                       'role_desc': roles_detail['role_desc'],
+                roles_db_dictionary = {'role': roles_detail['role'].upper(),
+                                       'role_desc':convert_to_camel_case(roles_detail['role_desc']),
                                        'user_roles_created_at': datetime.today(),
                                        'user_roles_created_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                        'user_roles_changed_at': datetime.today(),
@@ -109,7 +110,7 @@ def save_roles_data_into_db(roles_data):
             else:
                 django_query_instance.django_update_query(UserRoles,
                                                           {'role': roles_detail['role']},
-                                                          {'role': roles_detail['role'],
+                                                          {'role':convert_to_camel_case( roles_detail['role']),
                                                            'role_desc': roles_detail['role_desc'],
                                                            'user_roles_changed_at': datetime.today(),
                                                            'user_roles_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
@@ -146,16 +147,16 @@ def save_address_data_into_db(address_data):
                                                                 ['address_number']}):
                 guid = guid_generator()
                 address_db_dictionary = {'address_guid': guid,
-                                         'address_number': address_detail['address_number'],
-                                         'title': address_detail['title'],
-                                         'name1': address_detail['name1'],
-                                         'name2': address_detail['name2'],
-                                         'street': address_detail['street'],
-                                         'area': address_detail['area'],
-                                         'landmark': address_detail['landmark'],
-                                         'city': address_detail['city'],
+                                         'address_number':address_detail['address_number'],
+                                         'title':convert_to_camel_case( address_detail['title']),
+                                         'name1':convert_to_camel_case(address_detail['name1']),
+                                         'name2':convert_to_camel_case( address_detail['name2']),
+                                         'street':convert_to_camel_case(address_detail['street']),
+                                         'area':convert_to_camel_case(address_detail['area']),
+                                         'landmark':convert_to_camel_case(address_detail['landmark']),
+                                         'city':convert_to_camel_case(address_detail['city']),
                                          'postal_code': address_detail['postal_code'],
-                                         'region': address_detail['region'],
+                                         'region':convert_to_camel_case(address_detail['region']),
                                          'mobile_number': address_detail['mobile_number'],
                                          'telephone_number': address_detail['telephone_number'],
                                          'fax_number': address_detail['fax_number'],
@@ -180,15 +181,15 @@ def save_address_data_into_db(address_data):
                 django_query_instance.django_update_query(OrgAddress,
                                                           {'address_number': address_detail['address_number']},
                                                           {'address_number': address_detail['address_number'],
-                                                           'title': address_detail['title'],
-                                                           'name1': address_detail['name1'],
-                                                           'name2': address_detail['name2'],
-                                                           'street': address_detail['street'],
-                                                           'area': address_detail['area'],
-                                                           'landmark': address_detail['landmark'],
-                                                           'city': address_detail['city'],
+                                                           'title':convert_to_camel_case(address_detail['title']),
+                                                           'name1':convert_to_camel_case( address_detail['name1']),
+                                                           'name2':convert_to_camel_case( address_detail['name2']),
+                                                           'street':convert_to_camel_case( address_detail['street']),
+                                                           'area':convert_to_camel_case( address_detail['area']),
+                                                           'landmark':convert_to_camel_case( address_detail['landmark']),
+                                                           'city':convert_to_camel_case(address_detail['city']),
                                                            'postal_code': address_detail['postal_code'],
-                                                           'region': address_detail['region'],
+                                                           'region':convert_to_camel_case( address_detail['region']),
                                                            'mobile_number': address_detail['mobile_number'],
                                                            'telephone_number': address_detail['telephone_number'],
                                                            'fax_number': address_detail['fax_number'],
@@ -366,8 +367,8 @@ def save_approval_data_into_db(approval_data):
             if not django_query_instance.django_existence_check(ApproverType,
                                                                 {'app_types': approval_detail[
                                                                     'app_types']}):
-                approval_db_dictionary = {'app_types': approval_detail['app_types'],
-                                          'appr_type_desc': approval_detail['appr_type_desc'],
+                approval_db_dictionary = {'app_types': (approval_detail['app_types']).upper(),
+                                          'appr_type_desc': convert_to_camel_case(approval_detail['appr_type_desc']),
                                           'del_ind': False,
                                           'approver_type_created_at': datetime.today(),
                                           'approver_type_created_by': global_variables.GLOBAL_LOGIN_USERNAME,
@@ -381,7 +382,7 @@ def save_approval_data_into_db(approval_data):
                                                               'app_types']},
                                                           {'app_types': approval_detail[
                                                               'app_types'],
-                                                           'appr_type_desc': approval_detail['appr_type_desc'],
+                                                           'appr_type_desc': convert_to_camel_case(approval_detail['appr_type_desc']),
                                                            'approver_type_changed_at': datetime.today(),
                                                            'approver_type_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                                            'del_ind': False
@@ -567,7 +568,7 @@ def save_aad_data_into_db(aad_data):
                 guid = guid_generator()
                 aad_db_dictionary = {'acc_desc_guid': guid,
                                      'account_assign_value': aad_detail['account_assign_value'],
-                                     'description': aad_detail['description'],
+                                     'description': convert_to_camel_case(aad_detail['description']),
                                      'account_assign_cat': AccountAssignmentCategory.objects.get(
                                          account_assign_cat=aad_detail['account_assign_cat']),
                                      'company_id': aad_detail['company_id'],
@@ -590,10 +591,10 @@ def save_aad_data_into_db(aad_data):
                                                            'company_id': aad_detail['company_id'],
                                                            'language_id': aad_detail['language_id']},
                                                           {'account_assign_value': aad_detail['account_assign_value'],
-                                                           'description': aad_detail['description'],
+                                                           'description':convert_to_camel_case( aad_detail['description']),
                                                            'account_assign_cat': aad_detail['account_assign_cat'],
                                                            'company_id': aad_detail['company_id'],
-                                                           'language_id': aad_detail['language_id'],
+                                                           'language_id': aad_detail['language_id'].upper(),
                                                            'accounting_data_desc_changed_at': datetime.today(),
                                                            'accounting_data_desc_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                                            'client': client,
@@ -710,7 +711,7 @@ def save_payment_desc_data_into_db(payment_desc_data):
                 payment_desc_db_dictionary = {'payment_term_guid': guid,
                                               'payment_term_key': payment_desc_detail['payment_term_key'],
                                               'day_limit': payment_desc_detail['day_limit'],
-                                              'description': payment_desc_detail['description'],
+                                              'description': convert_to_camel_case(payment_desc_detail['description']),
                                               'language_id': Languages.objects.get(
                                                   language_id=payment_desc_detail['language_id']),
                                               'del_ind': False,
@@ -729,7 +730,7 @@ def save_payment_desc_data_into_db(payment_desc_data):
                                                               'payment_term_guid'],
                                                            'payment_term_key': payment_desc_detail['payment_term_key'],
                                                            'day_limit': payment_desc_detail['day_limit'],
-                                                           'description': payment_desc_detail['description'],
+                                                           'description': convert_to_camel_case(payment_desc_detail['description']),
                                                            'language_id': payment_desc_detail['language_id'],
                                                            'payterms_desc_changed_at': datetime.today(),
                                                            'payterms_desc_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
@@ -763,8 +764,8 @@ def save_incoterms_data_into_db(incoterms_data):
             if not django_query_instance.django_existence_check(Incoterms,
                                                                 {'incoterm_key': incoterms_detail[
                                                                     'incoterm_key']}):
-                incoterms_db_dictionary = {'incoterm_key': incoterms_detail['incoterm_key'],
-                                           'description': incoterms_detail['description'],
+                incoterms_db_dictionary = {'incoterm_key': (incoterms_detail['incoterm_key']).upper(),
+                                           'description': convert_to_camel_case(incoterms_detail['description']),
                                            'del_ind': False,
                                            'incoterms_created_at': datetime.today(),
                                            'incoterms_created_by': global_variables.GLOBAL_LOGIN_USERNAME,
@@ -778,7 +779,7 @@ def save_incoterms_data_into_db(incoterms_data):
                                                               'incoterm_key']},
                                                           {'incoterm_key': incoterms_detail[
                                                               'incoterm_key'],
-                                                           'description': incoterms_detail['description'],
+                                                           'description': convert_to_camel_case(incoterms_detail['description']),
                                                            'incoterms_changed_at': datetime.today(),
                                                            'incoterms_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                                            'del_ind': False
@@ -879,9 +880,9 @@ def save_purgrp_data_into_db(pggrp_data):
                                                                  }):
                 guid = guid_generator()
                 pggrp_db_dictionary = {'pgroup_guid': guid,
-                                       'pgroup_id': pggrp_detail['pgroup_id'],
-                                       'description': pggrp_detail['description'],
-                                       'porg_id': pggrp_detail['porg_id'],
+                                       'pgroup_id': (pggrp_detail['pgroup_id']).upper(),
+                                       'description': convert_to_camel_case(pggrp_detail['description']),
+                                       'porg_id': (pggrp_detail['porg_id']).upper(),
                                        'object_id': OrgModel.objects.get(
                                            object_id=pggrp_detail['object_id']),
                                        'del_ind': False,
@@ -899,7 +900,7 @@ def save_purgrp_data_into_db(pggrp_data):
                 django_query_instance.django_update_query(OrgPGroup,
                                                           {'pgroup_id': pggrp_detail['pgroup_id']},
                                                           {'pgroup_id': pggrp_detail['pgroup_id'],
-                                                           'description': pggrp_detail['description'],
+                                                           'description':convert_to_camel_case(pggrp_detail['description']),
                                                            'porg_id': pggrp_detail['porg_id'],
                                                            'object_id': OrgModel.objects.get(
                                                                object_id=pggrp_detail['object_id']),
@@ -938,8 +939,8 @@ def save_purorg_data_into_db(pgorg_data):
                                                                  'company_id': pgorg_detail['company_id']}):
                 guid = guid_generator()
                 pgorg_db_dictionary = {'porg_guid': guid,
-                                       'porg_id': pgorg_detail['porg_id'],
-                                       'description': pgorg_detail['description'],
+                                       'porg_id': (pgorg_detail['porg_id']).upper(),
+                                       'description':convert_to_camel_case(pgorg_detail['description']),
                                        'company_id': pgorg_detail['company_id'],
                                        'object_id': OrgModel.objects.get(
                                            object_id=pgorg_detail['object_id']),
@@ -959,7 +960,7 @@ def save_purorg_data_into_db(pgorg_data):
                                                           {'porg_id': pgorg_detail['porg_id'],
                                                            'company_id': pgorg_detail['company_id']},
                                                           {'porg_id': pgorg_detail['porg_id'],
-                                                           'description': pgorg_detail['description'],
+                                                           'description': convert_to_camel_case(pgorg_detail['description']),
                                                            'company_id': pgorg_detail['company_id'],
                                                            'object_id': OrgModel.objects.get(
                                                                object_id=pgorg_detail['object_id']),
@@ -1003,8 +1004,8 @@ def save_orgnode_types_data_into_db(orgnode_data):
                                                                  'client': global_variables.GLOBAL_CLIENT}):
                 guid = guid_generator()
                 orgnode_db_dictionary = {'node_type_guid': guid,
-                                         'node_type': orgnode_detail['node_type'],
-                                         'description': orgnode_detail['description'],
+                                         'node_type': (orgnode_detail['node_type']).upper(),
+                                         'description': convert_to_camel_case(orgnode_detail['description']),
                                          'del_ind': False,
                                          'client': client,
                                          'org_node_types_changed_at': datetime.today(),
@@ -1022,7 +1023,7 @@ def save_orgnode_types_data_into_db(orgnode_data):
                                                            'client': global_variables.GLOBAL_CLIENT},
                                                           {'node_type_guid': orgnode_detail['node_type_guid'],
                                                            'node_type': orgnode_detail['node_type'],
-                                                           'description': orgnode_detail['description'],
+                                                           'description': convert_to_camel_case(orgnode_detail['description']),
                                                            'org_node_types_changed_at': datetime.today(),
                                                            'org_node_types_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                                            'client': client,
@@ -1068,8 +1069,8 @@ def save_orgattributes_data_into_db(attr_data):
             if not django_query_instance.django_existence_check(OrgAttributes,
                                                                 {'attribute_id': attr_detail['attribute_id']}):
 
-                attr_db_dictionary = {'attribute_id': attr_detail['attribute_id'],
-                                      'attribute_name': attr_detail['attribute_name'],
+                attr_db_dictionary = {'attribute_id': (attr_detail['attribute_id']).upper(),
+                                      'attribute_name': convert_to_camel_case(attr_detail['attribute_name']),
                                       'range_indicator': attr_detail['range_indicator'],
                                       'multiple_value': attr_detail['multiple_value'],
                                       'allow_defaults': attr_detail['allow_defaults'],
@@ -1088,7 +1089,7 @@ def save_orgattributes_data_into_db(attr_data):
                 django_query_instance.django_update_query(OrgAttributes,
                                                           {'attribute_id': attr_detail['attribute_id']},
                                                           {'attribute_id': attr_detail['attribute_id'],
-                                                           'attribute_name': attr_detail['attribute_name'],
+                                                           'attribute_name': convert_to_camel_case(attr_detail['attribute_name']),
                                                            'range_indicator': attr_detail['range_indicator'],
                                                            'multiple_value': attr_detail['multiple_value'],
                                                            'allow_defaults': attr_detail['allow_defaults'],
@@ -1122,9 +1123,9 @@ def save_authorobject_data_into_db(authobj_data):
     auth_type_field = ''
     if authobj_data['action'] == CONST_ACTION_DELETE:
         for authobj_detail in authobj_data['data']:
-            auth_obj_field = authobj_data['auth_obj_id']
+            auth_obj_field = authobj_detail['auth_obj_id']
+            auth_type_field = authobj_detail['auth_level']
 
-            auth_type_field = authobj_data['auth_level']
 
             django_query_instance.django_update_query(AuthorizationObject,
                                                       {'auth_obj_id': authobj_detail['auth_obj_id'],
@@ -1144,9 +1145,9 @@ def save_authorobject_data_into_db(authobj_data):
             if not django_query_instance.django_existence_check(AuthorizationObject,
                                                                 {'auth_obj_id': authobj_detail['auth_obj_id']}):
 
-                authobj_db_dictionary = {'auth_obj_id': authobj_detail['auth_obj_id'],
-                                         'auth_level_ID': authobj_detail['auth_level_ID'],
-                                         'auth_level': authobj_detail['auth_level'],
+                authobj_db_dictionary = {'auth_obj_id': (authobj_detail['auth_obj_id']).upper(),
+                                         'auth_level_ID': (authobj_detail['auth_level_ID']).upper(),
+                                         'auth_level': (authobj_detail['auth_level']).upper(),
                                          'del_ind': False,
                                          'authorization_object_changed_at': datetime.today(),
                                          'authorization_object_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
@@ -1162,7 +1163,7 @@ def save_authorobject_data_into_db(authobj_data):
                                                           {'auth_obj_id': authobj_detail['auth_obj_id']},
                                                           {'auth_obj_id': authobj_detail['auth_obj_id'],
                                                            'auth_level_ID': authobj_detail['auth_level_ID'],
-                                                           'auth_level': authobj_detail['auth_level'],
+                                                           'auth_level': (authobj_detail['auth_level']).upper(),
                                                            'authorization_object_changed_at': datetime.today(),
                                                            'authorization_object_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                                            'del_ind': False})
@@ -3177,7 +3178,7 @@ def save_product_cat_cust_desc_data_into_db(prodcatdesc_data):
                 prodcatdesc_db_dictionary = {'prod_cat_desc_guid': guid,
                                              'prod_cat_id': UnspscCategories.objects.get(
                                                  prod_cat_id=prodcatdesc_detail['prod_cat_id']),
-                                             'category_desc': prodcatdesc_detail['description'],
+                                             'category_desc': convert_to_camel_case(prodcatdesc_detail['description']),
                                              'language_id': Languages.objects.get(
                                                  language_id=prodcatdesc_detail['language_id']),
                                              'unspsc_categories_cust_desc_created_at': datetime.today(),
@@ -3192,8 +3193,8 @@ def save_product_cat_cust_desc_data_into_db(prodcatdesc_data):
                 django_query_instance.django_update_query(UnspscCategoriesCustDesc,
                                                           {'prod_cat_id': prodcatdesc_detail['prod_cat_id'],
                                                            'language_id': prodcatdesc_detail['language_id'],
-                                                           'prod_cat_desc_guid':prodcatdesc_detail ['prod_cat_desc_guid']},
-                                                          {'category_desc': prodcatdesc_detail['description'],
+                                                           'prod_cat_desc_guid':prodcatdesc_detail['prod_cat_desc_guid']},
+                                                          {'category_desc':convert_to_camel_case(prodcatdesc_detail['description']),
                                                            'prod_cat_id': UnspscCategories.objects.get(
                                                                prod_cat_id=prodcatdesc_detail['prod_cat_id']),
                                                            'language_id': Languages.objects.get(
@@ -3230,12 +3231,13 @@ def save_work_flow_schema_data_into_db(workflowschema_data):
             # if entry is not exists in db
 
             if not django_query_instance.django_existence_check(WorkflowSchema,
-                                                                {'workflow_schema': workflowschema_detail['workflow_schema'],
+                                                                {'workflow_schema_guid':workflowschema_detail['workflow_schema_guid'],
+                                                                 'workflow_schema': workflowschema_detail['workflow_schema'],
                                                                  'company_id': workflowschema_detail['company_id']
                                                                  }):
                 guid = guid_generator()
                 workflowschema_db_dictionary = {'workflow_schema_guid': guid,
-                                                'workflow_schema': workflowschema_detail['workflow_schema'],
+                                                'workflow_schema': (workflowschema_detail['workflow_schema']).upper(),
                                                 'app_types': ApproverType.objects.get(
                                                     app_types=workflowschema_detail['app_types']),
                                                 'company_id': workflowschema_detail['company_id'],
@@ -3250,7 +3252,7 @@ def save_work_flow_schema_data_into_db(workflowschema_data):
                                                           {'workflow_schema': workflowschema_detail[
                                                               'workflow_schema'],
                                                            'workflow_schema_guid':workflowschema_detail['workflow_schema_guid']},
-                                                          {'workflow_schema': workflowschema_detail['workflow_schema'],
+                                                          {'workflow_schema': (workflowschema_detail['workflow_schema']).upper(),
                                                            'app_types': ApproverType.objects.get(
                                                                app_types=workflowschema_detail['app_types']),
                                                            'company_id': workflowschema_detail['company_id'],
@@ -3288,14 +3290,11 @@ def save_spend_limit_data_into_db(spendlimit_data):
         for spendlimit_detail in spendlimit_data['data']:
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(SpendLimitId,
-                                                                {'spender_username': spendlimit_detail[
-                                                                    'spender_username'],
-                                                                 'company_id': spendlimit_detail['company_id'],
-                                                                 'spend_guid':spendlimit_detail ['spend_guid']}):
+                                                                {'spend_guid':spendlimit_detail ['spend_guid']}):
                 guid = guid_generator()
                 spendlimit_db_dictionary = {'spend_guid': guid,
                                             'spend_code_id': spendlimit_detail['spend_code_id'],
-                                            'spender_username': spendlimit_detail['spender_username'],
+                                            'spender_username': (spendlimit_detail['spender_username']).upper(),
                                             'company_id': spendlimit_detail['company_id'],
                                             'spend_limit_id_created_at': datetime.today(),
                                             'spend_limit_id_created_by': global_variables.GLOBAL_LOGIN_USERNAME,
@@ -3306,12 +3305,9 @@ def save_spend_limit_data_into_db(spendlimit_data):
                 spendlimit_db_list.append(spendlimit_db_dictionary)
             else:
                 django_query_instance.django_update_query(SpendLimitId,
-                                                          {'spender_username': spendlimit_detail[
-                                                              'spender_username'],
-                                                           'company_id': spendlimit_detail['company_id'],
-                                                           'spend_guid':spendlimit_detail ['spend_guid']},
+                                                          {'spend_guid':spendlimit_detail ['spend_guid']},
                                                           {'spend_code_id': spendlimit_detail['spend_code_id'],
-                                                           'spender_username': spendlimit_detail['spender_username'],
+                                                           'spender_username': (spendlimit_detail['spender_username']).upper(),
                                                            'company_id': spendlimit_detail['company_id'],
                                                            'spend_limit_id_changed_at': datetime.today(),
                                                            'spend_limit_id_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
@@ -3345,12 +3341,12 @@ def save_address_type_data_into_db(addresstype_data):
             address_type_field = addresstype_detail['address_type']
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(OrgAddressMap,
-                                                                {'address_guid': addresstype_detail[
-                                                                    'address_guid']}):
+                                                                {'address_number': addresstype_detail['address_number'],
+                                                                 'address_type': addresstype_detail['address_type']}):
                 guid = guid_generator()
                 addresstype_db_dictionary = {'address_guid': guid,
                                              'address_number': addresstype_detail['address_number'],
-                                             'address_type': addresstype_detail['address_type'],
+                                             'address_type': (addresstype_detail['address_type']).upper(),
                                              'company_id': addresstype_detail['company_id'],
                                              'org_address_map_created_at': datetime.today(),
                                              'org_address_map_created_by': global_variables.GLOBAL_LOGIN_USERNAME,
@@ -3366,7 +3362,7 @@ def save_address_type_data_into_db(addresstype_data):
                                                           {'address_guid': addresstype_detail[
                                                               'address_guid'],
                                                            'address_number': addresstype_detail['address_number'],
-                                                           'address_type': addresstype_detail['address_type'],
+                                                           'address_type': (addresstype_detail['address_type']).upper(),
                                                            'company_id': addresstype_detail['company_id'],
                                                            'org_address_map_changed_at': datetime.today(),
                                                            'org_address_map_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
@@ -3518,8 +3514,8 @@ def save_company_data_into_db(company_data):
                 guid = guid_generator()
                 company_db_dictionary = {'company_guid': guid,
                                          'object_id':company_detail ['object_id'],
-                                         'name1': company_detail['name1'],
-                                         'name2': company_detail['name2'],
+                                         'name1':convert_to_camel_case(company_detail['name1']),
+                                         'name2':convert_to_camel_case(company_detail['name2']),
                                          'company_id': company_detail['company_id'],
 
                                          'del_ind': False,
@@ -3537,8 +3533,8 @@ def save_company_data_into_db(company_data):
                                                           {'company_id': company_detail['company_id']},
                                                           {
                                                               'object_id': company_detail['object_id'],
-                                                              'name1': company_detail['name1'],
-                                                              'name2': company_detail['name2'],
+                                                              'name1': convert_to_camel_case(company_detail['name1']),
+                                                              'name2': convert_to_camel_case(company_detail['name2']),
                                                               'company_id': company_detail['company_id'],
                                                               'org_companies_changed_at': datetime.today(),
                                                               'org_companies_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,

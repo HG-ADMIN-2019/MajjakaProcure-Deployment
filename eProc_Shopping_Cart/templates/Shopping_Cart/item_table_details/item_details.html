@@ -12,12 +12,12 @@
             <thead class="thead-light sc-item-table__header">
             <tr>
                 <!-- <th></th> -->
-                <th>No.</th>
+                <th>No</th>
                 <th>Item</th>
                 <th style="width: 20%;">Description</th>
-                <th>Supplier Article No</th>
+                <th>Call-Off</th>
                 <th>Delivery Date</th>
-                <th>Lot Size</th>
+                <th>Price Unit</th>
                 <th>Unit</th>
                 <th>Price Per Unit</th>
                 <th hidden>Lead Time</th>
@@ -123,7 +123,7 @@
                     <!-- hideable content to display freetext eform data -->
                     <div id="displayEform{{forloop.counter}}" class="item{{ forloop.counter }} dummy_more_div_class card display-none">
                         <div class="card-header item-table-action__header">
-                            <span>Eform Details</span>
+                            <span>Additional eForm Data</span>
                             <span onclick="closeSelectSection(this, 'displayEform{{ forloop.counter }}')">
                                 <i class="fas fa-times"></i>
                             </span>
@@ -152,8 +152,8 @@
                         </div>
                         <div>
                             <div class="action-item-notes__buttons-section">
-                                <button id="internalbutton{{ forloop.counter }}" class="notes_button{{ forloop.counter }} intbtn{{ forloop.counter }} add-note-internal" onclick="selectNoteType(this)">for internal use</button>
-                                <button id="supplierbutton{{ forloop.counter }}" class="notes_button{{ forloop.counter }} supbtn{{ forloop.counter }} add-note-external" onclick="selectNoteType(this)">for supplier</button>
+                                <button id="internalbutton{{ forloop.counter }}" class="notes_button{{ forloop.counter }} intbtn{{ forloop.counter }} add-note-internal btn btn-outline-primary" onclick="selectNoteType(this)">For internal use</button>
+                                <button id="supplierbutton{{ forloop.counter }}" class="notes_button{{ forloop.counter }} supbtn{{ forloop.counter }} add-note-external btn btn-outline-primary" onclick="selectNoteType(this)">For supplier use</button>
                             </div>
 
                             <div id="intbtn{{ forloop.counter }}" class="tabContent{{ forloop.counter }} action-item-notes__textarea">
@@ -190,9 +190,9 @@
                                         <input class="form-check-input" name="toogle_me" type="radio" id="external{{ forloop.counter }}">
                                         <label>For external use</label><br>
 
-                                        <label><b>File:</b></label><br>
+                                        <label><b>File</b></label><br>
                                         <input id="attachment_data{{forloop.counter}}" type="file" class="form-control-file File" multiple required><br>
-                                        <label><b>Name:</b></label><br>
+                                        <label><b>Name</b></label><br>
                                         <input id="attachment_name{{ forloop.counter }}" type="text" maxlength="20" class="form-control attachment-input-name" placeholder="Name" aria-label="Name" aria-describedby="basic-addon1">
                                         <br>
                                         <button class="btn btn-primary" type="button" id="upload-attachment_data{{forloop.counter}}" onclick="upload_attachments(this.id)"><i class="fas fa-upload"></i> upload</button>
@@ -246,14 +246,14 @@
                             {% endfor %}
 
                             {% if shipping_address_flag == '1'  %}
-                            <button onclick="change_item_address(this.id)" class="btn btn-primary hg_display mt-2"  id="change_address_{{forloop.counter}}" ><i class="far fa-edit"></i> change shipping address</button>
+                            <button onclick="change_item_address(this.id)" class="btn btn-primary hg_display mt-2"  id="change_address_{{forloop.counter}}" ><i class="far fa-edit"></i> Change Address</button>
                             {% elif shipping_address_flag == '0' %}
-                            <button onclick="change_item_address(this.id)" class="btn btn-secondary hg_display mt-2"  id="change_address_{{forloop.counter}}" disabled><i class="far fa-edit"></i> change shipping address</button>
+                            <button onclick="change_item_address(this.id)" class="btn btn-secondary hg_display mt-2"  id="change_address_{{forloop.counter}}" disabled><i class="far fa-edit"></i> Change Address</button>
                             {% endif %}
                             {% if edit_address_flag == '1'  %}
-                            <button onclick="edit_item_address(this.id)" class="btn btn-primary hg_display mt-2" id="edit_address_{{forloop.counter}}"><i class="far fa-edit"></i> edit current address</button>
+                            <button onclick="edit_item_address(this.id)" class="btn btn-primary hg_display mt-2" id="edit_address_{{forloop.counter}}"><i class="far fa-edit"></i> Edit  Address</button>
                             {% elif edit_address_flag == '0' %}
-                            <button  class="btn btn-primary display-none mt-2" id="edit_address_{{forloop.counter}}"><i class="far fa-edit"></i> edit current address</button>
+                            <button  class="btn btn-primary display-none mt-2" id="edit_address_{{forloop.counter}}"><i class="far fa-edit"></i> Edit Current Shipping Address</button>
                             {% endif %}
                         </div>
                     </div>
@@ -270,9 +270,9 @@
                         <div class="card-body">
                             {% if acc_default %}
                             <div>
-                                <span class="h6">Account Assignment Category:</span> <span id="change_acc_type_{{ forloop.counter }}" class="change_account_type">{{ acc_default }}</span><br>
-                                <span class="h6">Value:</span> <span id="change_acc_value_{{ forloop.counter }}" class="check_account_assignment_values">{{acc_value.0}}</span><br>
-                                <span class="h6"> GL Account Number:</span>
+                                <span class="h6">Account Assignment Category :</span> <span id="change_acc_type_{{ forloop.counter }}" class="change_account_type">{{ acc_default }}</span><br>
+                                <span class="h6">Value :</span> <span id="change_acc_value_{{ forloop.counter }}" class="check_account_assignment_values">{{acc_value.0}}</span><br>
+                                <span class="h6"> GL Account Number :</span>
                                 <span id="gl_acc_val_{{ forloop.counter }}">
                                 {% for gl_acc_default in gl_acc_item_level_default%}
                                 {% if gl_acc_default.cart_item_guid == items.guid %}
@@ -370,7 +370,7 @@
 
             <!-- Modal footer -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                 <button type="button" value="DELETE" name="delete" class="btn btn-primary delete_item" onclick="delete_cart_item()"><i class="fas fa-trash-alt"></i> &nbsp;delete</button>
             </div>
 
@@ -396,7 +396,7 @@
 
             <!-- Modal footer -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                 <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="window.location.href='{% url 'eProc_Shopping_Cart:empty' %}'"><i class="fas fa-trash-alt"></i> delete</button>
             </div>
         </div>
@@ -647,7 +647,7 @@ const display_fields_from_array = (eform_configured) => {
     $('#eform_card_details').empty()
     var div_content = '';
     var user_data = '';
-    $('#eform_card_details').append('Additional Information')
+    //$('#eform_card_details').append('Additional Information')
     $.each(eform_configured, function (index, value) {
         field_data_type = value['field_data_type'];
         field_name = value['field_name'];

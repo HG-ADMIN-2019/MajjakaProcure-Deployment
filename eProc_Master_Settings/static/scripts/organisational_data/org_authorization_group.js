@@ -3,14 +3,19 @@ var validate_add_attributes = [];
 var auth_group={};
 //onclick of add button display myModal popup and set GLOBAL_ACTION button value
 function onclick_add_button(button) {
-
+    dropdown_value();
     $("#error_msg_id").css("display", "none")
     $("#header_select").prop( "hidden", false );
     GLOBAL_ACTION = button.value
     $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
     $('#myModal').modal('show');
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control">'+auth_group_id_dropdown+'</select></td><td><select class="form-control">'+auth_obj_id_dropdown+'</select></td><td><select class="form-control">'+auth_group_desc_dropdown+'</select></td><td><select class="form-control">'+auth_level_dropdown+'</select></td><td hidden><input type="text" value="GUID"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
+    '<td><select type="text" class="input form-control authgroup"  id="authgroup-1" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ auth_group_id_dropdown+'</select></td>'+
+    '<td><select class="form-control">'+auth_obj_id_dropdown+'</select></td>'+
+    '<td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td>'+
+    '<td><select class="form-control">'+auth_level_dropdown+'</select></td>'+
+    '<td hidden><input type="text" value="GUID"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
     $("#id_del_ind_checkbox").prop("hidden", true);
@@ -149,11 +154,6 @@ function compare_table_for_duplicate_entries(validate_add_attributes, auth_group
                 no_duplicate_value = 'N'
                 return [no_duplicate_value,error_message]
             }
-    if (item.auth_grp_desc.length == 0) {
-       error_message = messageConstants["JMSG002"] + "Discription";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
      });
     }
 
@@ -166,11 +166,20 @@ function add_popup_row() {
     $("#error_msg_id").css("display", "none")
     basic_add_new_html = '';
     var display_db_data = '';
+    var getid = $(".authgroup:last").attr("id");
+    var getindex = getid.split("-")[1]
+    var inc_index = Number(getindex)+1
     $('#id_popup_table').DataTable().destroy();
     $(".modal").on("hidden.bs.modal", function() {
         $("#id_error_msg").html("");
     });
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control">'+auth_group_id_dropdown+'</select></td><td><select class="form-control">'+auth_obj_id_dropdown+'</select></td><td><select class="form-control">'+auth_group_desc_dropdown+'</select></td><td><select class="form-control">'+auth_level_dropdown+'</select></td><td hidden><input type="text" value="GUID"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+//    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control authgroup"  id="authgroup-1" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ auth_group_id_dropdown+'</select></td><td><select class="form-control">'+auth_obj_id_dropdown+'</select></td><td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td><td><select class="form-control">'+auth_level_dropdown+'</select></td><td hidden><input type="text" value="GUID"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+     basic_add_new_html = '<tr ><td><input type="checkbox" required></td>'+
+     '<td><select type="text" class="input form-control authgroup" id="authgroup-'+inc_index+'"  onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ auth_group_id_dropdown +'</select></td>'+
+     '<td><select class="form-control">'+auth_obj_id_dropdown+'</select></td>'+
+     '<td><input class="form-control description" type="text" id="description-'+inc_index+'" disabled></td>'+
+     '<td><select class="form-control">'+auth_level_dropdown+'</select></td>'+
+     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     if (GLOBAL_ACTION == "auth_group_upload") {
         $(".class_del_checkbox").prop("hidden", false);
@@ -241,15 +250,14 @@ $('#save_id').click(function () {
     $('#myModal').modal('hide');
     var auth_group = {};
    validate_add_attributes = [];
-
-      $("#id_popup_table TBODY TR").each(function () {
+     $("#id_popup_table TBODY TR").each(function () {
      var row = $(this);
             var row = $(this);
             auth_group = {};
             auth_group.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
-            auth_group.auth_obj_grp = row.find("TD").eq(1).find("select option:selected").val();
+            auth_group.auth_obj_grp = row.find("TD").eq(1).find('select[type="text"]').val();
             auth_group.auth_obj_id = row.find("TD").eq(2).find("select option:selected").val();
-            auth_group.auth_grp_desc = row.find("TD").eq(3).find("select option:selected").val();
+            auth_group.auth_grp_desc = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
             auth_group.auth_level = row.find("TD").eq(4).find("select option:selected").val();
             auth_group.auth_grp_guid = row.find("TD").eq(5).find('input[type="text"]').val().toUpperCase();
             if (auth_group == undefined) {
@@ -258,9 +266,21 @@ $('#save_id').click(function () {
             if (auth_group.auth_grp_guid == undefined) {
                 auth_group.auth_grp_guid = ''
             }
-            var compare = auth_group.auth_obj_grp + ' - ' + auth_group.auth_obj_id + ' - ' + auth_group.auth_grp_desc+ ' - ' +auth_group.auth_level+
+            var compare = auth_group.auth_obj_grp + ' - ' + auth_group.auth_obj_id + ' - ' + auth_group.auth_grp_desc+ ' - ' +auth_group.auth_level
             validate_add_attributes.push(compare);
             auth_group_data.push(auth_group);
         });
     $('#id_save_confirm_popup').modal('show');
 });
+ function GetSelectedTextValue(authgroup) {
+        var selectedText = authgroup.options[authgroup.selectedIndex].innerHTML;
+        var selectedValue = authgroup.value;
+        var selectedId = (authgroup.id).split('-')[1];
+         $.each(rendered_auth_group_field_data, function(i, item){
+            if(selectedValue == item.field_type_id){
+                $('#description-'+selectedId).val(item.field_type_desc);
+
+            }
+        });
+
+    }

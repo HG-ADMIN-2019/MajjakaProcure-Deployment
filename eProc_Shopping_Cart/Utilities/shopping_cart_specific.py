@@ -567,7 +567,7 @@ def get_manger_detail(client, login_username, acc_default, total_value, default_
                             for app_datails in approver_detail:
                                 app_id.append(app_datails[0])
                             if len(app_id) > 1:
-                                app_id_value = 'MULTIPLE'
+                                app_id_value = CONST_MULTIPLE
                                 app_id_detail = ",".join(app_id)
                             else:
                                 app_id_value = app_id[0]
@@ -636,7 +636,7 @@ def get_manger_detail(client, login_username, acc_default, total_value, default_
                                         for app_datails in approver_detail:
                                             app_id.append(app_datails[0])
                                         if len(app_id) > 1:
-                                            app_id_value = 'MULTIPLE'
+                                            app_id_value = CONST_MULTIPLE
                                             app_id_detail = ",".join(app_id)
                                         else:
                                             app_id_value = app_id[0]
@@ -715,7 +715,7 @@ def get_users_first_name_old(manager_details):
                 'username',
                 'first_name')[0]
             user_data_dictionary = user_data
-        elif manager_detail == "AUTO":
+        elif manager_detail == CONST_AUTO:
             user_data_dictionary = {'username': manager_detail, 'first_name': manager_detail}
         else:
             user_data_dictionary = {'username': manager_detail, 'first_name': ''}
@@ -733,7 +733,7 @@ def get_users_first_name(manager_details):
     user_data_list = []
     for manager_detail in manager_details:
         user_data_dictionary = manager_detail
-        if manager_detail['app_id_value'] in ["AUTO", "MULTIPLE"]:
+        if manager_detail['app_id_value'] in [CONST_AUTO, CONST_MULTIPLE]:
             user_data_dictionary['first_name'] = manager_detail['app_id_value']
         elif django_query_instance.django_existence_check(UserData, {'username': manager_detail['app_id_value'],
                                                                      'client': global_variables.GLOBAL_CLIENT}):
@@ -794,7 +794,7 @@ def get_completion_work_flow(client, prod_cat_list, default_cmp_code):
                     list_user.append(pgrp.pgroup_id)
 
     if len(list_user) > 1:
-        list_user[0] = 'MULTIPLE'
+        list_user[0] = CONST_MULTIPLE
     return list_user
 
 

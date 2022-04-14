@@ -17,67 +17,53 @@ function onclick_update_button() {
     document.getElementById("id_del_add_button").style.display = "none";
 }
 
-//function onclick_copy_update_button() {
-//    $("#id_popup_tbody").empty();
-//    $('#display_basic_table').DataTable().destroy();
-//    //Reference the Table.
-//    var grid = document.getElementById("display_basic_table");
-//
-//    //Reference the CheckBoxes in Table.
-//    var checkBoxes = grid.getElementsByTagName("INPUT");
-//    var edit_basic_data = "";
-//    var unique_input = '';
-//    var dropdown_values = [];
-//    //Loop through the CheckBoxes.
-//    for (var i = 1; i < checkBoxes.length; i++) {
-//        if (checkBoxes[i].checked) {
-//            var row = checkBoxes[i].parentNode.parentNode;
-////            if(GLOBAL_ACTION == "UPDATE"){
-////
-////
-////                edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td><select type="text" class="input form-control" id="attribute" name="attribute" disabled>'+ attribute_id_dropdown_onload +'</select></td><td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="text" onkeypress="return /[a-z ]/i.test(event.key)" name="description"  maxlength="30" style="text-transform:uppercase" required></td>'<td class="class_del_checkbox"><input type="checkbox" value="' + row.cells[3].innerHTML + '" required></td><td class="class_del_checkbox"><input type="checkbox" value="' + row.cells[4].innerHTML + '" required></td><td class="class_del_checkbox"><input type="checkbox" value="' + row.cells[5].innerHTML + '" required></td><td class="class_del_checkbox"><input type="checkbox" value="' + row.cells[6].innerHTML + '" required></td><td><input type="number"  value="' + row.cells[7].innerHTML + '" name="maxlength"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-////                $("#header_select").prop("hidden", true);
-////            }
-////            else{
-////
-////                unique_input = '<input class="input"  type="text" maxlength="30" onkeypress="return /[a-z_]/i.test(event.key)"   value="' + row.cells[1].innerHTML + '" name="attr_id" style="text-transform:uppercase;" required>'
-////                edit_basic_data += '<tr><td><input type="checkbox" required></td><td>'+ unique_input +'</td><td><input class="input" type="text" maxlength="70"  value="' + row.cells[2].innerHTML + '"  onkeypress="return /[a-z ]/i.test(event.key)" name="attr_name"  pattern="[A-Z]" style="text-transform:uppercase;" required></td><td><select class="form-control">' + yes_no_dropdown + '</select></td><td><select class="form-control">' + yes_no_dropdown + '</select></td><td><select class="form-control">' + yes_no_dropdown + '</select></td><td><select class="form-control">' + yes_no_dropdown + '</select></td><td><input type="number" value="' + row.cells[7].innerHTML + '" name="maxlength"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-////                $("#header_select").prop("hidden", false);
-////            }
-//////            var attribute = row.cells[1].innerHTML
-//////            var description = row.cells[2].innerHTML
-//////            var range_indicator = row.cells[3].innerHTML
-//////            var multiple_value = row.cells[4].innerHTML
-//////            var allow_defaults = row.cells[5].innerHTML
-//////            var inherit_values = row.cells[6].innerHTML
-//////            dropdown_values.push([ attribute,description,range_indicator, multiple_value, allow_defaults, inherit_values])
-////      }
-//    }
-//    $('#id_popup_table').append(edit_basic_data);
-//    var i = 0;
-//    $("#id_popup_table TBODY TR").each(function () {
-//        var row = $(this);
-////        var attribute = dropdown_values[i][0]
-////        var attribute = dropdown_values[i][1]
-////        var range_indicator = dropdown_values[i][0]
-////        var multiple_value = dropdown_values[i][1]
-////        var allow_defaults = dropdown_values[i][0]
-////        var inherit_values = dropdown_values[i][1]
-////
-////         $(row.find("TD").eq(3).find("select option[value=" + attribute + "]")).attr('selected', 'selected');
-////        $(row.find("TD").eq(4).find("select option[value=" + description + "]")).attr('selected', 'selected');
-////        $(row.find("TD").eq(3).find("select option[value=" + range_indicator + "]")).attr('selected', 'selected');
-////        $(row.find("TD").eq(4).find("select option[value=" + multiple_value + "]")).attr('selected', 'selected');
-////        $(row.find("TD").eq(5).find("select option[value=" + allow_defaults + "]")).attr('selected', 'selected');
-////        $(row.find("TD").eq(6).find("select option[value=" + inherit_values + "]")).attr('selected', 'selected');
-//        i++;
-//    });
-//    $("#id_del_ind_checkbox").prop("hidden", true);
-//
-//    $('#myModal').modal('show');
-//    table_sort_filter('display_basic_table');
-//    table_sort_filter('id_popup_table');
-//}
+function onclick_copy_update_button() {
+    $("#id_popup_tbody").empty();
+    $('#display_basic_table').DataTable().destroy();
+    //Reference the Table.
+    var grid = document.getElementById("display_basic_table");
+
+    //Reference the CheckBoxes in Table.
+    var checkBoxes = grid.getElementsByTagName("INPUT");
+    var edit_basic_data = "";
+
+    var dropdown_values = [];
+    //Loop through the CheckBoxes.
+    for (var i = 1; i < checkBoxes.length; i++) {
+        if (checkBoxes[i].checked) {
+            var row = checkBoxes[i].parentNode.parentNode;
+            if(GLOBAL_ACTION == "UPDATE"){
+
+                edit_basic_data +=  '<tr><td hidden><input type="checkbox" required></td><td><select type="text" class="input form-control" id="attributeid"  name="attributeid" disabled>'+ attribute_id_dropdown_onload +'</select></td></td><td><input class="form-control attribute_name" type="text" value="' + row.cells[2].innerHTML + '" name="attribute_name" id="attribute_name-1" disabled></td><td><input type="checkbox" value="' + row.cells[3].innerHTML + '"  name="range indicator " required></td><td><input type="checkbox" value="' + row.cells[4].innerHTML + '" name="multiple values" required></td><td><input type="checkbox" value="' + row.cells[5].innerHTML + '" name="allow defaults" required></td><td><input type="checkbox" value="' + row.cells[6].innerHTML + '"  name="inherit values" required></td><td><input type="number" value="' + row.cells[7].innerHTML + '" name="maxlength"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+	             $("#header_select").prop("hidden", true);
+
+            }
+            else{
+
+               edit_basic_data +=  '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control attribute" id="attribute-1"  name="attribute" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ attribute_id_dropdown +'</select></td><td><input class="form-control attribute_name" type="text" value="' + row.cells[2].innerHTML + '" name="attribute_name" id="attribute_name-1" disabled></td><td><input type="checkbox" value="' + row.cells[3].innerHTML + '"  name="range indicator " required></td><td><input type="checkbox" value="' + row.cells[4].innerHTML + '" name="multiple values" required></td><td><input type="checkbox" value="' + row.cells[5].innerHTML + '" name="allow defaults" required></td><td><input type="checkbox" value="' + row.cells[6].innerHTML + '"  name="inherit values" required></td><td><input type="number" value="' + row.cells[7].innerHTML + '" name="maxlength"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+	           $("#header_select").prop("hidden", false);
+            }
+           var attribute = row.cells[1].innerHTML
+            dropdown_values.push([ attribute])
+      }
+    }
+    $('#id_popup_table').append(edit_basic_data);
+    var i = 0;
+    $("#id_popup_table TBODY TR").each(function () {
+        var row = $(this);
+        var attribute = dropdown_values[i][0]
+
+        $(row.find("TD").eq(1).find("select option[value=" + attribute + "]")).attr('selected', 'selected');
+        i++;
+    });
+    $("#id_del_ind_checkbox").prop("hidden", true);
+
+    $('#myModal').modal('show');
+    table_sort_filter('display_basic_table');
+    table_sort_filter('id_popup_table');
+}
+
+
 
 //onclick of cancel empty the popup table body and error messages
 $(".remove_upload_data").click(() => {

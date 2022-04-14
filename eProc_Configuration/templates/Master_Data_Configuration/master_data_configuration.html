@@ -1,7 +1,7 @@
 {% extends 'root/base.html' %}
 {% load static %}
 
-{% block title %} Majjaka eProcure - Master Settings {% endblock %}
+{% block title %} Master Settings {% endblock %}
 {% block maincontent %}
 
 <div class="container-fluid">
@@ -167,55 +167,59 @@
                 <p></p>
 
             </div>
-            <div class="col-md-2">
-                <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:account_ass_values' %}', '_blank');">
-                    <div class="card-body text-center">
-                        <div class="sub-menu-icon-wrapper blue" >
-                            <i class="material-icons-outlined small">
-                                content_paste
-                            </i>
-                        </div>
-                        <a onclick="">
-                            <div class="mt-3">
-                                <span class="upload-data-label">Account Assignment Values</span>
+                <div class="col-md-9">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:account_ass_values' %}', '_blank');">
+                                <div class="card-body text-center">
+                                    <div class="sub-menu-icon-wrapper blue" >
+                                        <i class="material-icons-outlined small">
+                                            content_paste
+                                        </i>
+                                    </div>
+                                    <a onclick="">
+                                        <div class="mt-3">
+                                            <span class="upload-data-label">Account Assignment Values</span>
+                                        </div>
+                                    </a>
+                                </div>
                             </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:account_assignment' %}', '_blank');">
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:account_assignment' %}', '_blank');">
 
-                    <div class="card-body text-center">
-                        <div class="sub-menu-icon-wrapper orange" >
-                            <i class="material-icons-outlined small">
-                                grade
-                            </i>
-                        </div>
-                        <a onclick="">
-                            <div class="mt-3">
-                                <span class="upload-data-label">Account Assignment Value Descriptions</span>
+                                <div class="card-body text-center">
+                                    <div class="sub-menu-icon-wrapper orange" >
+                                        <i class="material-icons-outlined small">
+                                            grade
+                                        </i>
+                                    </div>
+                                    <a onclick="">
+                                        <div class="mt-3">
+                                            <span class="upload-data-label">Account Assignment Value Descriptions</span>
+                                        </div>
+                                    </a>
+                                </div>
                             </div>
-                        </a>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:det_gl_acc' %}', '_blank');">
+                                <div class="card-body text-center">
+                                    <div class="sub-menu-icon-wrapper blue" >
+                                        <i class="material-icons-outlined">
+                                            switch_account
+                                        </i>
+                                    </div>
+                                    <a onclick="">
+                                        <div class="mt-3">
+                                            <span class="upload-data-label">General Ledger Accounts</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-2">
-                <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:det_gl_acc' %}', '_blank');">
-                    <div class="card-body text-center">
-                        <div class="sub-menu-icon-wrapper blue" >
-                            <i class="material-icons-outlined">
-                                switch_account
-                            </i>
-                        </div>
-                        <a onclick="">
-                            <div class="mt-3">
-                                <span class="upload-data-label">General Ledger Accounts</span>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </div>
@@ -247,38 +251,42 @@
                 <p></p>
 
             </div>
-            <div class="col-md-2">
-                <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:upload_cust_prod_cat' %}', '_blank');">
-                    <div class="card-body text-center">
-                        <div class="sub-menu-icon-wrapper blue" >
-                            <i class="material-icons-outlined small">
-                                category
-                            </i>
-                        </div>
-                        <a onclick="">
-                            <div class="mt-3">
-                                <span class="upload-data-label">UNSPSC Codes</span>
+             <div class="col-md-9">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:upload_cust_prod_cat' %}', '_blank');">
+                            <div class="card-body text-center">
+                                <div class="sub-menu-icon-wrapper blue" >
+                                    <i class="material-icons-outlined small">
+                                        category
+                                    </i>
+                                </div>
+                                <a onclick="">
+                                    <div class="mt-3">
+                                        <span class="upload-data-label">UNSPSC Codes</span>
+                                    </div>
+                                </a>
                             </div>
-                        </a>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:upload_cust_prod_cat_desc' %}', '_blank');">
+                            <div class="card-body text-center">
+                                <div class="sub-menu-icon-wrapper blue" >
+                                    <i class="material-icons-outlined small">
+                                        category
+                                    </i>
+                                </div>
+                                <a onclick="">
+                                    <div class="mt-3">
+                                        <span class="upload-data-label">UNSPSC Code Descriptions</span>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-2">
-                <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:upload_cust_prod_cat_desc' %}', '_blank');">
-                    <div class="card-body text-center">
-                        <div class="sub-menu-icon-wrapper blue" >
-                            <i class="material-icons-outlined small">
-                                category
-                            </i>
-                        </div>
-                        <a onclick="">
-                            <div class="mt-3">
-                                <span class="upload-data-label">UNSPSC Code Descriptions</span>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
+             </div>
         </div>
     </div>
 </div>
@@ -307,98 +315,101 @@
                         </a>
                     </div>
                 </div>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsum, consectetur quia. Exercitationem consequuntur fugiat velit facilis atque architecto, dolorem, quam veniam, vel officiis sunt culpa aliquam recusandae voluptatibus nobis aliquid.</p>
 
             </div>
-            <div class="col-md-2">
-                <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:spend_limit_value' %}', '_blank');">
+            <div class="col-md-9">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:spend_limit_value' %}', '_blank');">
 
-                    <div class="card-body text-center">
-                        <div class="sub-menu-icon-wrapper orange" >
-                            <i class="material-icons-outlined small">
-                                payments
-                            </i>
-                        </div>
-                        <a onclick="">
-                            <div class="mt-3">
-                                <span class="upload-data-label">Spend Limit Values</span>
+                            <div class="card-body text-center">
+                                <div class="sub-menu-icon-wrapper orange" >
+                                    <i class="material-icons-outlined small">
+                                        payments
+                                    </i>
+                                </div>
+                                <a onclick="">
+                                    <div class="mt-3">
+                                        <span class="upload-data-label">Spend Limit Values</span>
+                                    </div>
+                                </a>
                             </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:spend_limit_id' %}', '_blank');">
-                    <div class="card-body text-center">
-                        <div class="sub-menu-icon-wrapper blue" >
-                            <i class="material-icons-outlined small">
-                                system_security_update_warning
-                            </i>
                         </div>
-                        <a onclick="">
-                            <div class="mt-3">
-                                <span class="upload-data-label">Spend Limits</span>
-                            </div>
-                        </a>
                     </div>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:approval_limit_value' %}', '_blank');">
-
-                    <div class="card-body text-center">
-                        <div class="sub-menu-icon-wrapper green" >
-                            <i class="material-icons-outlined small">
-                                approval
-                            </i>
+                    <div class="col-md-3">
+                        <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:spend_limit_id' %}', '_blank');">
+                            <div class="card-body text-center">
+                                <div class="sub-menu-icon-wrapper blue" >
+                                    <i class="material-icons-outlined small">
+                                        system_security_update_warning
+                                    </i>
+                                </div>
+                                <a onclick="">
+                                    <div class="mt-3">
+                                        <span class="upload-data-label">Spend Limits</span>
+                                    </div>
+                                </a>
+                            </div>
                         </div>
-
-                        <a onclick="">
-                            <div class="mt-3">
-                                <span class="upload-data-label small-font" >Approval Limit Values</span>
-                            </div>
-
-                        </a>
                     </div>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:approval_limit' %}', '_blank');">
+                    <div class="col-md-3">
+                        <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:approval_limit_value' %}', '_blank');">
 
-                    <div class="card-body text-center">
-                        <div class="sub-menu-icon-wrapper orange" >
-                            <i class="material-icons-outlined small">
-                                remove_done
-                            </i>
+                            <div class="card-body text-center">
+                                <div class="sub-menu-icon-wrapper green" >
+                                    <i class="material-icons-outlined small">
+                                        approval
+                                    </i>
+                                </div>
+
+                                <a onclick="">
+                                    <div class="mt-3">
+                                        <span class="upload-data-label small-font" >Approval Limit Values</span>
+                                    </div>
+
+                                </a>
+                            </div>
                         </div>
-                        <a onclick="">
-                            <div class="mt-3">
-                                <span class="upload-data-label">Approval Limits</span>
-                            </div>
-                        </a>
                     </div>
+                    <div class="col-md-3">
+                        <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:approval_limit' %}', '_blank');">
+
+                            <div class="card-body text-center">
+                                <div class="sub-menu-icon-wrapper orange" >
+                                    <i class="material-icons-outlined small">
+                                        remove_done
+                                    </i>
+                                </div>
+                                <a onclick="">
+                                    <div class="mt-3">
+                                        <span class="upload-data-label">Approval Limits</span>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:work_flow_accounting' %}', '_blank');">
+
+                            <div class="card-body text-center">
+                                <div class="sub-menu-icon-wrapper orange" >
+                                    <i class="material-icons-outlined small">
+                                        account_box
+                                    </i>
+                                </div>
+                                <a onclick="">
+                                    <div class="mt-3">
+                                        <span class="upload-data-label small-font">Workflows</span>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
-<!--        <div class="row mt-4">-->
-            <div class="col-md-2">
-                <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:work_flow_accounting' %}', '_blank');">
 
-                    <div class="card-body text-center">
-                        <div class="sub-menu-icon-wrapper orange" >
-                            <i class="material-icons-outlined small">
-                                account_box
-                            </i>
-                        </div>
-                        <a onclick="">
-                            <div class="mt-3">
-                                <span class="upload-data-label small-font">Workflows</span>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-<!--            </div>-->
-        </div>
     </div>
 </div>
 
@@ -426,7 +437,6 @@
                         </a>
                     </div>
                 </div>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsum, consectetur quia. Exercitationem consequuntur fugiat velit facilis atque architecto, dolorem, quam veniam, vel officiis sunt culpa aliquam recusandae voluptatibus nobis aliquid.</p>
 
             </div>
 
@@ -461,41 +471,45 @@
                 <p></p>
 
             </div>
-            <div class="col-md-2">
-                <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:approval_type' %}', '_blank');">
-                    <div class="card-body text-center">
-                        <div class="sub-menu-icon-wrapper blue" >
-                            <i class="material-icons-outlined small">
-                                playlist_add_check
-                            </i>
-                        </div>
-                        <a onclick="">
-                            <div class="mt-3">
-                                <span class="upload-data-label">Approval Types</span>
+             <div class="col-md-9">
+                <div class="row">
+                     <div class="col-md-3">
+                            <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:approval_type' %}', '_blank');">
+                                <div class="card-body text-center">
+                                    <div class="sub-menu-icon-wrapper blue" >
+                                        <i class="material-icons-outlined small">
+                                            playlist_add_check
+                                        </i>
+                                    </div>
+                                    <a onclick="">
+                                        <div class="mt-3">
+                                            <span class="upload-data-label">Approval Types</span>
+                                        </div>
+                                    </a>
+                                </div>
                             </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:work_flow_schema' %}', '_blank');">
-                    <div class="card-body text-center">
-                        <div class="sub-menu-icon-wrapper blue" >
-                            <i class="material-icons-outlined small">
-                                schema
-                            </i>
                         </div>
-                        <a onclick="">
-                            <div class="mt-3">
-                                <span class="upload-data-label">Work Flow Schema</span>
+                        <div class="col-md-3">
+                            <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:work_flow_schema' %}', '_blank');">
+                                <div class="card-body text-center">
+                                    <div class="sub-menu-icon-wrapper blue" >
+                                        <i class="material-icons-outlined small">
+                                            schema
+                                        </i>
+                                    </div>
+                                    <a onclick="">
+                                        <div class="mt-3">
+                                            <span class="upload-data-label">Work Flow Schema</span>
+                                        </div>
+                                    </a>
+                                </div>
                             </div>
-                        </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 <!-- sub menu for supplier -->
 <div class="container-fluid">
@@ -524,58 +538,63 @@
                 <p></p>
 
             </div>
-            <div class="col-md-2">
-                <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:display_incoterms' %}', '_blank');">
-                    <div class="card-body text-center">
-                        <div class="sub-menu-icon-wrapper blue" >
-                            <i class="material-icons-outlined small">
-                                rule
-                            </i>
-                        </div>
-                        <a onclick="">
-                            <div class="mt-3">
-                                <span class="upload-data-label">INCO Terms</span>
+             <div class="col-md-9">
+                <div class="row">
+                        <div class="col-md-3">
+                                <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:display_incoterms' %}', '_blank');">
+                                    <div class="card-body text-center">
+                                        <div class="sub-menu-icon-wrapper blue" >
+                                            <i class="material-icons-outlined small">
+                                                rule
+                                            </i>
+                                        </div>
+                                        <a onclick="">
+                                            <div class="mt-3">
+                                                <span class="upload-data-label">INCO Terms</span>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:payment_terms' %}', '_blank');">
+                            <div class="col-md-3">
+                                <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:payment_terms' %}', '_blank');">
 
-                    <div class="card-body text-center">
-                        <div class="sub-menu-icon-wrapper orange" >
-                            <i class="material-icons-outlined small">
-                                grade
-                            </i>
-                        </div>
-                        <a onclick="">
-                            <div class="mt-3">
-                                <span class="upload-data-label">Payment Terms</span>
+                                    <div class="card-body text-center">
+                                        <div class="sub-menu-icon-wrapper orange" >
+                                            <i class="material-icons-outlined small">
+                                                grade
+                                            </i>
+                                        </div>
+                                        <a onclick="">
+                                            <div class="mt-3">
+                                                <span class="upload-data-label">Payment Terms</span>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:payment_terms_desc' %}', '_blank');">
+                            <div class="col-md-3">
+                                <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:payment_terms_desc' %}', '_blank');">
 
-                    <div class="card-body text-center">
-                        <div class="sub-menu-icon-wrapper green" >
-                            <i class="material-icons-outlined small">
-                                price_check
-                            </i>
-                        </div>
+                                    <div class="card-body text-center">
+                                        <div class="sub-menu-icon-wrapper green" >
+                                            <i class="material-icons-outlined small">
+                                                price_check
+                                            </i>
+                                        </div>
 
-                        <a onclick="">
-                            <div class="mt-3">
-                                <span class="upload-data-label" style="font-size: smaller;">Payment Term Descriptions</span>
+                                        <a onclick="">
+                                            <div class="mt-3">
+                                                <span class="upload-data-label" style="font-size: smaller;">Payment Term Descriptions</span>
+                                            </div>
+
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
-
-                        </a>
                     </div>
-                </div>
-            </div>
+                 </div>
+
             <!--            <div class="col-md-2">-->
             <!--                <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:upload_supplier' %}', '_blank');">-->
             <!--                    -->
@@ -598,6 +617,7 @@
             <!--        </div>-->
         </div>
     </div>
+</div>
 
     <!-- sub menu for address -->
     <div class="container-fluid">
@@ -623,43 +643,45 @@
                             </a>
                         </div>
                     </div>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsum, consectetur quia. Exercitationem consequuntur fugiat velit facilis atque architecto, dolorem, quam veniam, vel officiis sunt culpa aliquam recusandae voluptatibus nobis aliquid.</p>
 
                 </div>
-                <div class="col-md-2">
-                    <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:address' %}', '_blank');">
+                 <div class="col-md-9">
+                <div class="row">
+                     <div class="col-md-3">
+                            <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:address' %}', '_blank');">
 
-                        <div class="card-body text-center">
-                            <div class="sub-menu-icon-wrapper orange" >
-                                <i class="material-icons-outlined small">
-                                    person_pin_circle
-                                </i>
-                            </div>
-                            <a onclick="">
-                                <div class="mt-3">
-                                    <span class="upload-data-label">Address Details</span>
+                                <div class="card-body text-center">
+                                    <div class="sub-menu-icon-wrapper orange" >
+                                        <i class="material-icons-outlined small">
+                                            person_pin_circle
+                                        </i>
+                                    </div>
+                                    <a onclick="">
+                                        <div class="mt-3">
+                                            <span class="upload-data-label">Address Details</span>
+                                        </div>
+                                    </a>
                                 </div>
-                            </a>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:address_type' %}', '_blank');">
+                                <div class="card-body text-center">
+                                    <div class="sub-menu-icon-wrapper blue" >
+                                        <i class="material-icons-outlined small">
+                                            dns
+                                        </i>
+                                    </div>
+                                    <a onclick="">
+                                        <div class="mt-3">
+                                            <span class="upload-data-label">Address Types</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="card config-card pointer" onclick="window.open('{% url 'eProc_Master_Settings:address_type' %}', '_blank');">
-                        <div class="card-body text-center">
-                            <div class="sub-menu-icon-wrapper blue" >
-                                <i class="material-icons-outlined small">
-                                    dns
-                                </i>
-                            </div>
-                            <a onclick="">
-                                <div class="mt-3">
-                                    <span class="upload-data-label">Address Types</span>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
+                 </div>
             </div>
         </div>
     </div>
@@ -748,6 +770,7 @@
             </div>
         </div>
     </div>
+</div>
     <script>
 $(document).ready(function(){
     nav_bar_configuration()

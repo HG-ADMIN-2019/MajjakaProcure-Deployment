@@ -1,7 +1,7 @@
 {% extends 'root/base.html' %}
 {% load static %}
 
-{% block title %} Majjaka eProcure - Available Freetext Form {% endblock %}
+{% block title %} Available Freetext Form {% endblock %}
 {% block maincontent %}
 
 
@@ -25,16 +25,16 @@
                 {% csrf_token %}
                 <div class="row">
                     <div class="col-md">
-                        <label for="">Form ID:</label>
+                        <label for="">Form ID</label>
                         <input type="text" class="form-control" id="ft_form_id" name="ft_form_id">
                     </div>
                     <div class="col-md">
-                        <label for="">Description:</label>
+                        <label for="">Description</label>
                         <input type="text" class="form-control" id="ft_description" name="ft_description">
                     </div>
 
                     <div class="col-md">
-                        <label for="">Supplier:</label>
+                        <label for="">Supplier</label>
                         <input type="text" class="form-control" id="ft_supplier_id" name="ft_supplier_id">
                     </div>
 
@@ -43,7 +43,7 @@
                         <input type="text" class="form-control" id="ft_prod_cat_id" name="ft_prod_cat_id">
                     </div>
                     <div class="col-md">
-                        <label for="">Search Count:</label>
+                        <label for="">Search Count</label>
                         <input name="search_count" type = "number" value="10" id="search_count"  class="form-control">
                     </div>
 
@@ -58,7 +58,7 @@
     </div>
     </div>
     <div id="err_msg_app_settings_t" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
-    <div class="hg_wrapper">
+    <div class="card mt-5">
         <button class="btn btn-primary  btn-sm"  title="Delete" id="id_delete_freetext" value="country_delete" data-toggle="modal" data-target="#id_delete_confirm_popup" style="display:none;">
             <i class="fa fa-trash"></i> Delete
         </button>
@@ -70,13 +70,13 @@
                 <thead class="thead-light">
                 <tr>
                     <th scope="col"> <input type="checkbox" onclick="checkAll(this)"></th>
-                    <th scope="col">FREETEXT ID</th>
-                    <th scope="col">SUPPLIER</th>
-                    <th scope="col">PRODUCT CATEGORY</th>
-                    <th scope="col" > DESCRIPTION</th>
-                    <th scope="col">SUPPLIER ARTICLE NUMBER</th>
-                    <th scope="col">LEADTIME</th>
-                    <th scope="col">ACTION</th>
+                    <th scope="col">FreeText Id</th>
+                    <th scope="col">Supplier</th>
+                    <th scope="col">Product Category</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Supplier Article Number</th>
+                    <th scope="col">Leadtime</th>
+                    <th scope="col">Action</th>
                 </tr>
                 </thead>
                 <tbody id="freetext_tbody">

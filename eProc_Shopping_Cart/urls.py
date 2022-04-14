@@ -6,7 +6,7 @@ from django.conf.urls.static import static
 app_name = 'eProc_Shopping_Cart'
 
 urlpatterns = [
-    path('cart_details/', views.sc_first_step, name='cart-details'),
+    path('create_shopping_cart/', views.sc_first_step, name='cart-details'),
     path('update_item/', views.update_item, name='update_item'),
     path('delete_item/', views.delete_item, name='delete_item'),
     path('eform_data/', views.display_eform_data, name='eform_data'),

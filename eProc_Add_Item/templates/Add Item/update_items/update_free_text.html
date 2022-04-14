@@ -9,32 +9,32 @@
 
     <div class="form-row">
         <div class="form-group col-md-6">
-            <label for="product_name">Product Name:<span class="hg_required"></span></label>
+            <label for="product_name">Product/Service Name<span class="hg_required"></span></label>
             <input type="text" max="40" id="product_name" value="" class="form-control" required>
         </div>
     
         <div class="form-group col-md-6">
-            <label for="free_text_desc">Description:<span class="hg_required"></span></label> 
+            <label for="free_text_desc">Product/Service Description<span class="hg_required"></span></label>
             <input  type="text" max="255" id="free_text_desc" class="form-control" required>
         </div>
     </div>
     
     <div class="form-row">
         <div class="form-group col-md-4">
-            <label for="id_price">Estimated Price :<span class="hg_required"></span></label> 
+            <label for="id_price">Estimated Price in ()<span class="hg_required"></span></label>
             <input  type="text" id="id_price" min="1" class="form-control" required>
         </div>
     
         <div class="form-group col-md-4">
-            <label for="price_per_unit">Estimated Price Per Unit:<span class="hg_required"></span></label> 
+            <label for="price_per_unit">Price Per Unit<span class="hg_required"></span></label>
             <input  type="text" id="price_per_unit" min="1" class="form-control" required>
         </div>
     
         <div class="form-group col-md-4">
-            <label for="unit_of_measure">Unit of Measure:<span class="hg_required"></span></label>
+            <label for="unit_of_measure">Unit of Measure<span class="hg_required"></span></label>
             <div><select class="form-control selectpicker" id="unit_of_measure"  required data-live-search="true">
                 {% for uom in unit %}
-                <option id="{{uom.uom_id}}" value="{{uom.uom_id}}">{{uom.uom_id}} - {{uom}}</option>
+                <option id="{{uom.uom_id}}" value="{{uom.uom_id}}">{{uom.uom_id}} - {{uom.uom_description}}</option>
                 {% endfor %}
             </select></div>
         </div>
@@ -42,12 +42,12 @@
     
     <div class="form-row">
         <div class="form-group col-md-6" id='datetimepicker5'>
-            <label for="delivery_date">Delivery Date:<span class="input-group date"></span></label>
+            <label for="delivery_date">Delivery Date<span class="input-group date"></span></label>
             <input id="delivery_date" type="date" class="form-control" min="{{date_today}}" required>
         </div>
     
         <div class="form-group col-md-6">
-            <label for="quantity">Quantity:<span class="hg_required" ></span></label>
+            <label for="quantity">Quantity<span class="hg_required" ></span></label>
             <input type="number" id="quantity" class="form-control" required>
         </div>
     </div>

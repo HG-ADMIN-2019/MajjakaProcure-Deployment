@@ -1,5 +1,6 @@
 import json
 from itertools import chain
+from re import sub
 
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Q
@@ -301,22 +302,22 @@ def render_aav_data(request):
 
 def extract_aav_data(request):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="ACCOUNT ASSIGNMENT VALUES.CSV"'
+    response['Content-Disposition'] = 'attachment; filename="Account Assingment Values.CSV"'
 
     writer = csv.writer(response)
 
-    writer.writerow(['ACC_ASSIGN_VALUE', 'VAILD_FROM', 'VAILD_TO', 'ACCOUNT_ASSIGN_CAT', 'COMPANY_ID', 'del_ind'])
+    writer.writerow(['ACC_ASSIGN_VALUE', 'ACCOUNT_ASSIGN_CAT', 'COMPANY_ID','VAILD_FROM', 'VAILD_TO', 'del_ind'])
 
     accounting = django_query_instance.django_filter_query(AccountingData,
                                                            {'del_ind': False}, None,
-                                                           ['account_assign_value', 'valid_from', 'valid_to',
-                                                            'account_assign_cat', 'company_id', 'del_ind'])
+                                                           ['account_assign_value',
+                                                            'account_assign_cat', 'company_id', 'valid_from', 'valid_to', 'del_ind'])
     accounting_data = query_update_del_ind(accounting)
 
     for accountingData in accounting_data:
-        accountingData_info = [accountingData['account_assign_value'], accountingData['valid_from'],
-                               accountingData['valid_to'], accountingData['account_assign_cat'],
-                               accountingData['company_id'], accountingData['del_ind']]
+        accountingData_info = [accountingData['account_assign_value'],  accountingData['account_assign_cat'],
+                               accountingData['company_id'], accountingData['valid_from'],
+                               accountingData['valid_to'],accountingData['del_ind']]
         writer.writerow(accountingData_info)
 
     return response
@@ -324,12 +325,12 @@ def extract_aav_data(request):
 
 def extract_accdesc_data(request):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="ACCOUNT ASSIGNMENT DESCRIPTION.CSV"'
+    response['Content-Disposition'] = 'attachment; filename="Account Assingment Description.CSV"'
 
     writer = csv.writer(response)
 
     writer.writerow(
-        ['ACCOUNT_ASSIGN_VALUE', 'DESCRIPTION', 'COMPANY_ID', 'LANGUAGE_ID', 'ACCOUNT_ASSIGN_CAT', 'del_ind'])
+        ['ACCOUNT_ASSIGN_VALUE', 'DESCRIPTION','ACCOUNT_ASSIGN_CAT', 'COMPANY_ID', 'LANGUAGE_ID', 'del_ind'])
 
     accountingdesc = django_query_instance.django_filter_query(AccountingDataDesc,
                                                                {'del_ind': False}, None,
@@ -348,7 +349,7 @@ def extract_accdesc_data(request):
 
 def extract_cusprodcat_data(request):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="Customer_Product_Category.CSV"'
+    response['Content-Disposition'] = 'attachment; filename="Customer Product Category.CSV"'
 
     writer = csv.writer(response)
 
@@ -368,10 +369,9 @@ def extract_cusprodcat_data(request):
     return response
 
 
-
 def extract_cusprodcat_template(request):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="Customer_Product_Category_Template.CSV"'
+    response['Content-Disposition'] = 'attachment; filename="Customer Product Category Template.CSV"'
 
     writer = csv.writer(response)
 
@@ -380,10 +380,9 @@ def extract_cusprodcat_template(request):
     return response
 
 
-
 def extract_cusprodcatdesc_data(request):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="Customer_Product_Category_Description.CSV"'
+    response['Content-Disposition'] = 'attachment; filename="Customer Product Category Description.CSV"'
 
     writer = csv.writer(response)
 
@@ -407,17 +406,15 @@ def extract_cusprodcatdesc_data(request):
     return response
 
 
-
 def extract_cusprodcatdesc_template(request):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="Customer_Product_Category_Description_Template.CSV"'
+    response['Content-Disposition'] = 'attachment; filename="Customer Product Category Description Template.CSV"'
 
     writer = csv.writer(response)
 
     writer.writerow(['PRODUCT CATEGORY', 'CATEGORY_DESC', 'LANGUAGE_ID', 'del_ind'])
 
     return response
-
 
 
 def extract_workflowschema_data(request):
@@ -447,7 +444,7 @@ def extract_workflowschema_data(request):
 
 def extract_workflowschema_template(request):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="Work_Flow_Schema_Template.CSV"'
+    response['Content-Disposition'] = 'attachment; filename="Work Flow Schema Template.CSV"'
 
     writer = csv.writer(response)
 
@@ -462,28 +459,22 @@ def extract_workflowaccount_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['ACC_VALUE', 'COMPANY_ID', 'APP_USERNAME', 'SUP_COMPANY_ID', 'SUP_ACC_VALUE',
-                     'WORKFLOW_ACC_SOURCE_SYSTEM', 'ACCOUNT_ASSIGN_CAT', 'CURRENCY_ID',
-                     'SUP_ACCOUNT_ASSIGN_CAT', 'del_ind'])
+    writer.writerow(['ACC_VALUE', 'COMPANY_ID', 'APP_USERNAME','SUP_COMPANY_ID', 'SUP_ACC_VALUE', 'WORKFLOW_ACC_SOURCE_SYSTEM', 'del_ind','ACCOUNT_ASSIGN_CAT', 'CURRENCY_ID', 'SUP_ACCOUNT_ASSIGN_CAT'])
 
     # get only active records
     workflow_acct = django_query_instance.django_filter_query(WorkflowACC,
                                                               {'del_ind': False}, None,
-                                                              ['acc_value', 'company_id', 'app_username',
-                                                               'sup_company_id',
-                                                               'sup_acc_value', 'workflow_acc_source_system',
-                                                               'account_assign_cat',
-                                                               'currency_id', 'sup_account_assign_cat',
-                                                               'del_ind'])
+                                                              ['acc_value', 'company_id', 'app_username','sup_company_id', 'sup_acc_value', 'workflow_acc_source_system', 'del_ind','account_assign_cat', 'currency_id', 'sup_account_assign_cat'])
     workflow_acct_data = query_update_del_ind(workflow_acct)
 
     for workflowacct in workflow_acct_data:
         workflowacct_info = [workflowacct['acc_value'], workflowacct['company_id'], workflowacct['app_username'],
                              workflowacct['sup_company_id'], workflowacct['sup_acc_value'],
-                             workflowacct['workflow_acc_source_system'], workflowacct['account_assign_cat'],
+                             workflowacct['workflow_acc_source_system'], workflowacct['del_ind'],
+                             workflowacct['account_assign_cat'],
                              workflowacct['currency_id'],
                              workflowacct['sup_account_assign_cat'],
-                             workflowacct['del_ind']]
+                             ]
         writer.writerow(workflowacct_info)
 
     return response
@@ -743,7 +734,7 @@ def address(request):
 
 def extract_approverlimit_data(request):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="APPROVAL LIMIT.CSV"'
+    response['Content-Disposition'] = 'attachment; filename="Approval Limit.CSV"'
 
     writer = csv.writer(response)
 
@@ -765,22 +756,22 @@ def extract_approverlimit_data(request):
 
 def extract_approverlimitval_data(request):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="APPROVAL LIMIT VALUE.CSV"'
+    response['Content-Disposition'] = 'attachment; filename="Approval Limit Value.CSV"'
 
     writer = csv.writer(response)
 
-    writer.writerow(['APP_CODE_ID', 'UPPER_LIMIT_VALUE', 'APP_TYPES', 'CURRENCY_ID', 'COMPANY_ID', 'del_ind'])
+    writer.writerow(['APP_CODE_ID','COMPANY_ID','APP_TYPES','UPPER_LIMIT_VALUE','CURRENCY_ID','del_ind'])
 
     approverlimitval = django_query_instance.django_filter_query(ApproverLimitValue,
                                                                  {'del_ind': False}, None,
-                                                                 ['app_code_id', 'upper_limit_value', 'app_types',
-                                                                  'currency_id', 'company_id', 'del_ind'])
+                                                                 ['app_code_id','company_id','app_types','upper_limit_value',
+                                                                  'currency_id','del_ind'])
     approverlim_data = query_update_del_ind(approverlimitval)
 
     for approverlimitvaldata in approverlim_data:
-        approverlimitvaldata_info = [approverlimitvaldata['app_code_id'], approverlimitvaldata['upper_limit_value'],
-                                     approverlimitvaldata['app_types'], approverlimitvaldata['currency_id'],
-                                     approverlimitvaldata['company_id'], approverlimitvaldata['del_ind']]
+        approverlimitvaldata_info = [approverlimitvaldata['app_code_id'], approverlimitvaldata['company_id'],
+                                     approverlimitvaldata['app_types'],approverlimitvaldata['upper_limit_value'], approverlimitvaldata['currency_id'],
+                                      approverlimitvaldata['del_ind']]
 
         writer.writerow(approverlimitvaldata_info)
 
@@ -812,11 +803,11 @@ def extract_spendlimit_data(request):
 
 def extract_spendlimitval_data(request):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="SPEND LIMIT VALUE.CSV"'
+    response['Content-Disposition'] = 'attachment; filename="Spend Limit Value.CSV"'
 
     writer = csv.writer(response)
 
-    writer.writerow(['SPEND_CODE_ID', 'UPPER_LIMIT_VALUE', 'COMPANY_ID', 'CURRENCY_ID', 'del_ind'])
+    writer.writerow(['SPEND_CODE_ID', 'UPPER_LIMIT_VALUE', 'CURRENCY_ID', 'COMPANY_ID', 'del_ind'])
 
     spendlimitvalues = django_query_instance.django_filter_query(SpendLimitValue, {'del_ind': False}, None,
                                                                  ['spend_code_id', 'upper_limit_value', 'company_id',
@@ -834,7 +825,7 @@ def extract_spendlimitval_data(request):
 
 def extract_spendlimit_template(request):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="Spend_Limit.CSV"'
+    response['Content-Disposition'] = 'attachment; filename="Spend Limit.CSV"'
 
     writer = csv.writer(response)
 
@@ -845,7 +836,7 @@ def extract_spendlimit_template(request):
 
 def extract_address_type_data(request):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="ADDRESS TYPES.CSV"'
+    response['Content-Disposition'] = 'attachment; filename="Address Types.CSV"'
 
     writer = csv.writer(response)
 
@@ -869,7 +860,7 @@ def extract_address_type_data(request):
 
 def extract_address_type_template(request):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="Address_Types_Template.CSV"'
+    response['Content-Disposition'] = 'attachment; filename="Address Types Template.CSV"'
 
     writer = csv.writer(response)
 
@@ -878,9 +869,42 @@ def extract_address_type_template(request):
     return response
 
 
+def extract_approvertype_template(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="Approver Type.CSV"'
+
+    writer = csv.writer(response)
+
+    writer.writerow(['APP_TYPES', 'APPR_TYPE_DESC', 'del_ind'])
+
+    return response
+
+
+def extract_approver_type_data(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="Approver Types.CSV"'
+
+    writer = csv.writer(response)
+
+    writer.writerow(['APP_TYPES', 'APPROVAL_TYPE_DESC', 'del_ind'])
+
+    approver_type = django_query_instance.django_filter_query(ApproverType,
+                                                              {'del_ind': False}, None,
+                                                              ['app_types', 'appr_type_desc', 'del_ind'])
+    approver_type_data = query_update_del_ind(approver_type)
+
+    for approvertypedata in approver_type_data:
+        approver_type_info = [approvertypedata['app_types'],
+                              approvertypedata['appr_type_desc'],
+                              approvertypedata['del_ind']]
+        writer.writerow(approver_type_info)
+
+    return response
+
+
 def extract_glaccount_data(request):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="DETERMINE_GL_ACCOUNT.CSV"'
+    response['Content-Disposition'] = 'attachment; filename="DETERMINE GL ACCOUNT.CSV"'
 
     writer = csv.writer(response)
 
@@ -891,7 +915,7 @@ def extract_glaccount_data(request):
                                                           {'del_ind': False}, None,
                                                           ['prod_cat_id', 'gl_acc_num',
                                                            'gl_acc_default', 'account_assign_cat', 'company_id',
-                                                           'item_to_value', 'item_from_value', 'currency_id',
+                                                           'item_from_value','item_to_value','currency_id',
                                                            'del_ind'])
 
     glaccount_data = query_update_del_ind(glaccount)
@@ -910,7 +934,7 @@ def extract_glaccount_data(request):
 
 def extract_glaccount_template(request):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="Determine_GL_Account_Template.CSV"'
+    response['Content-Disposition'] = 'attachment; filename="Determine GL Account Template.CSV"'
 
     writer = csv.writer(response)
 
@@ -922,7 +946,7 @@ def extract_glaccount_template(request):
 
 def extract_pgrp_data(request):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="Maintain_Purchasing_Group.CSV"'
+    response['Content-Disposition'] = 'attachment; filename="Maintain Purchasing Group.CSV"'
 
     writer = csv.writer(response)
 
@@ -946,7 +970,7 @@ def extract_pgrp_data(request):
 
 def extract_pgrp_template(request):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="Maintain_Purchasing_Group_Template.CSV"'
+    response['Content-Disposition'] = 'attachment; filename="Maintain Purchasing Group Template.CSV"'
 
     writer = csv.writer(response)
 
@@ -955,10 +979,9 @@ def extract_pgrp_template(request):
     return response
 
 
-
 def extract_porg_data(request):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="Maintain_Purchasing_Organisation.CSV"'
+    response['Content-Disposition'] = 'attachment; filename="Maintain Purchasing Organisation.CSV"'
 
     writer = csv.writer(response)
 
@@ -982,14 +1005,13 @@ def extract_porg_data(request):
 
 def extract_porg_template(request):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="Maintain_Purchasing_Organisation_Template.CSV"'
+    response['Content-Disposition'] = 'attachment; filename="Maintain Purchasing Organisation Template.CSV"'
 
     writer = csv.writer(response)
 
     writer.writerow(['PURCHASE ORGANISATION ID', 'DESCRIPTION', 'COMPANY ID', 'OBJECT ID', 'del_ind'])
 
     return response
-
 
 
 def upload_prod_cat_images(request):
@@ -1011,7 +1033,7 @@ def upload_prod_cat_images(request):
 
 def extract_orgcompany_data(request):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="ORGCOMPANY.CSV"'
+    response['Content-Disposition'] = 'attachment; filename="OrgCompany.CSV"'
 
     writer = csv.writer(response)
 
@@ -1033,12 +1055,12 @@ def extract_orgcompany_data(request):
 
 def extract_address_data(request):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="ADDRESS.CSV"'
+    response['Content-Disposition'] = 'attachment; filename="Address.CSV"'
 
     writer = csv.writer(response)
 
     writer.writerow(['ADDRESS_NUMBER', 'TITLE', 'NAME1', 'NAME2', 'STREET', 'AREA', 'LANDMARK', 'CITY',
-                     'postal_code', 'REGION', 'MOBILE_NUMBER', 'TELEPHONE_NUMBER', 'FAX_NUMBER', 'EMAIL',
+                     'POSTAL_CODE', 'REGION', 'MOBILE_NUMBER', 'TELEPHONE_NUMBER', 'FAX_NUMBER', 'EMAIL',
                      'COUNTRY_CODE',
                      'LANGUAGE_ID', 'TIME_ZONE', 'del_ind'])
 
@@ -1443,3 +1465,133 @@ def work_flow_accounting(request):
                    'upload_data_currency': upload_data_currency, 'upload_data_company': upload_data_company,
                    'upload_data_OrgCompanies': upload_data_OrgCompanies, 'master_data_settings': master_data_settings
                       , 'user_details': user_details, 'inc_nav': True})
+
+
+def extract_incoterms_data(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="Incoterms.CSV"'
+
+    writer = csv.writer(response)
+
+    writer.writerow(['INCOTERM_KEY', 'DESCRIPTION', 'del_ind'])
+
+    incoterm = django_query_instance.django_filter_query(Incoterms,
+                                                         {'del_ind': False}, None,
+                                                         ['incoterm_key', 'description', 'del_ind'])
+    incoterm_data = query_update_del_ind(incoterm)
+
+    for inco_data in incoterm_data:
+        incotermdata_info = [inco_data['incoterm_key'], inco_data['description'], inco_data['del_ind']]
+        writer.writerow(incotermdata_info)
+
+    return response
+
+
+def extract_incoterm_template(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="Incoterm_template.CSV"'
+
+    writer = csv.writer(response)
+
+    writer.writerow(['INCOTERM_KEY', 'DESCRIPTION', 'del_ind'])
+
+    return response
+
+
+def extract_payterms_data(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="Payment_terms_desc.CSV"'
+
+    writer = csv.writer(response)
+
+    writer.writerow(['PAYMENT_TERM_KEY', 'DAY_LIMIT', 'DESCRIPTION', 'del_ind', 'LANGUAGE_ID'])
+
+    payment_term = django_query_instance.django_filter_query(Payterms_desc,
+                                                             {'del_ind': False}, None,
+                                                             ['payment_term_key', 'day_limit', 'description',
+                                                              'del_ind', 'language_id',
+                                                              ])
+    payterm_data = query_update_del_ind(payment_term)
+
+    for paytem_desc_data in payterm_data:
+        paytermdata_info = [paytem_desc_data['payment_term_key'], paytem_desc_data['day_limit'],
+                            paytem_desc_data['description'], paytem_desc_data['del_ind'],
+                            paytem_desc_data['language_id']]
+        writer.writerow(paytermdata_info)
+
+    return response
+
+
+def extract_payterm_template(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="Payterm_desc_template.CSV"'
+
+    writer = csv.writer(response)
+
+    writer.writerow(['PAYMENT_TERM_KEY', 'DAY_LIMIT', 'DESCRIPTION', 'LANGUAGE_ID', 'DEL_IND'])
+
+    return response
+def extract_spendlimitval_data_template(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="Spend Limit Value Template.CSV"'
+
+    writer = csv.writer(response)
+
+    writer.writerow(['SPEND_CODE_ID', 'UPPER_LIMIT_VALUE', 'CURRENCY_ID','COMPANY_ID',  'del_ind'])
+    return response
+
+def extract_accdesc_data_template(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="Account Assingment Description Template.CSV"'
+
+    writer = csv.writer(response)
+
+    writer.writerow(['ACCOUNT_ASSIGN_VALUE', 'DESCRIPTION','ACCOUNT_ASSIGN_CAT', 'COMPANY_ID', 'LANGUAGE_ID', 'del_ind'])
+    return response
+
+def extract_aav_data_template(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="Account Assingment Values Template.CSV"'
+
+    writer = csv.writer(response)
+
+    writer.writerow(['ACC_ASSIGN_VALUE', 'ACCOUNT_ASSIGN_CAT', 'COMPANY_ID','VAILD_FROM', 'VAILD_TO', 'del_ind'])
+    return response
+
+def extract_address_data_Template(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="Address Template.CSV"'
+
+    writer = csv.writer(response)
+
+    writer.writerow(['ADDRESS_NUMBER', 'TITLE', 'NAME1', 'NAME2', 'STREET', 'AREA', 'LANDMARK', 'CITY',
+                     'POSTAL_CODE', 'REGION', 'MOBILE_NUMBER', 'TELEPHONE_NUMBER', 'FAX_NUMBER', 'EMAIL',
+                     'COUNTRY_CODE',
+                     'LANGUAGE_ID', 'TIME_ZONE', 'del_ind'])
+    return response
+
+def extract_approverlimit_data_template(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="Approval Limit Template.CSV"'
+
+    writer = csv.writer(response)
+
+    writer.writerow(['APPROVER_USERNAME', 'APP_CODE_ID', 'COMPANY_ID', 'del_ind'])
+    return response
+
+def extract_approverlimitval_data_template(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="Approval Limit Value Template.CSV"'
+
+    writer = csv.writer(response)
+
+    writer.writerow(['APP_CODE_ID','COMPANY_ID','APP_TYPES', 'UPPER_LIMIT_VALUE','CURRENCY_ID','del_ind'])
+    return response
+def extract_orgcompany_data_template(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="OrgCompany Template.CSV"'
+
+    writer = csv.writer(response)
+
+    writer.writerow(['OBJECT_ID', 'NAME1', 'NAME2', 'COMPANY_ID', 'del_ind'])
+    return response

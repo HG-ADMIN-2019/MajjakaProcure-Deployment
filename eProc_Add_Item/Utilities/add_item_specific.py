@@ -439,7 +439,7 @@ class CartItem:
             item_details['catalog_id'] = 'Majjaka_Catalog'
             item_details['item_del_date'] = datetime.datetime.now()
             item_details['price_unit'] = 1
-            item_details['supp_prod_num'] = CONST_CO03
+            item_details['supp_prod_num'] = item_details['ext_product_id']
             item_details['call_off'] = CONST_CO03
             item_details['del_ind'] = False
             item_details['created_at'] = datetime.datetime.now()
@@ -657,7 +657,7 @@ class CartItem:
             # if catalog  with eform exists
             if get_prd_ref.eform_id:
                 # check product already exist in ScItem table and EformFieldData
-                eform_existence_flag,item_detail,item_quantity = check_if_exist_update_sc_item(get_prd_ref.product_id, header_guid,
+                eform_existence_flag,item_detail,item_quantity = self.check_if_exist_update_sc_item(get_prd_ref.product_id, header_guid,
                                                               item_details['eform_detail'],quantity)
                 if eform_existence_flag:
                     is_success.append(True)
@@ -779,6 +779,60 @@ class CartItem:
             cart_count = display_cart_counter(global_variables.GLOBAL_LOGIN_USERNAME)
             return True, MSG016, cart_count
 
+    def check_if_exist_update_sc_item(self,product_id, header_guid, eform_detail, ui_quantity):
+        """"
+        """
+        existence_flag = False
+        cart_item_detail = {}
+        quantity = 1
+        # get scitem list for added item
+        if django_query_instance.django_existence_check(ScItem,
+                                                        {'client': global_variables.GLOBAL_CLIENT,
+                                                         'header_guid': header_guid, 'int_prod_id': product_id}):
+            item_details = django_query_instance.django_filter_query(ScItem,
+                                                                     {'client': global_variables.GLOBAL_CLIENT,
+                                                                      'header_guid': header_guid,
+                                                                      'int_prod_id': product_id}, None, None)
+
+            existence_flag, cart_item_detail = self.check_catalog_item_exists(item_details, eform_detail)
+            # if eform data for login user exist then increment the quantity in cart detail table
+            if existence_flag:
+                updated = exists_update_sc_item(header_guid, cart_item_detail, ui_quantity)
+
+        return existence_flag, cart_item_detail, quantity
+
+    def check_catalog_item_exists(self,user_cart_item_dic_list, eform_detail):
+        eform_data_existence_flag = True
+        user_cart_item_detail = []
+        cart_item_detail = None
+        for user_cart_item in user_cart_item_dic_list:
+            eform_data_existence_flag = True
+            queue_query = Q()
+            queue_query = Q(item_guid=user_cart_item['guid']) | Q(cart_guid=user_cart_item['guid'])
+            if django_query_instance.django_queue_existence_check(EformFieldData,
+                                                                  {'client': global_variables.GLOBAL_CLIENT},
+                                                                  queue_query):
+                # check if already eform data exist by cart guid
+                for eform_data in eform_detail:
+                    if django_query_instance.django_existence_check(ProductEformPricing,
+                                                                    {'product_eform_pricing_guid': eform_data[
+                                                                        'product_eform_pricing_guid'],
+                                                                     'client': global_variables.GLOBAL_CLIENT}):
+                        eform_field_name, eform_field_data = self.get_eform_field_data(eform_data)
+                        if not django_query_instance.django_existence_check(EformFieldData,
+                                                                            {'client': global_variables.GLOBAL_CLIENT,
+                                                                             'item_guid': user_cart_item['guid'],
+                                                                             'eform_field_name': eform_field_name,
+                                                                             'eform_field_data': eform_field_data}):
+                            eform_data_existence_flag = False
+                if eform_data_existence_flag:
+                    user_cart_item_detail.append(user_cart_item)
+
+        if len(user_cart_item_detail) == 1:
+            cart_item_detail = user_cart_item_detail[0]
+            eform_data_existence_flag = True
+
+        return eform_data_existence_flag, cart_item_detail
 
 def update_product_detail_eform(item_details, cart_guid,item_guid):
     """
@@ -841,62 +895,7 @@ def get_pricing_guid(eform_field_config_guid, pricing_data):
     return product_eform_pricing_guid
 
 
-def check_if_exist_update_sc_item(product_id, header_guid, eform_detail,ui_quantity):
-    """"
-    """
-    existence_flag = False
-    cart_item_detail ={}
-    quantity = 1
-    # get scitem list for added item
-    if django_query_instance.django_existence_check(ScItem,
-                                                    {'client': global_variables.GLOBAL_CLIENT,
-                                                     'header_guid': header_guid, 'int_prod_id': product_id}):
-        item_details = django_query_instance.django_filter_query(ScItem,
-                                                                 {'client': global_variables.GLOBAL_CLIENT,
-                                                                  'header_guid': header_guid,
-                                                                  'int_prod_id': product_id}, None, None)
-
-        existence_flag, cart_item_detail = check_catalog_item_exists(item_details, eform_detail)
-        # if eform data for login user exist then increment the quantity in cart detail table
-        if existence_flag:
-            updated = exists_update_sc_item(header_guid,cart_item_detail,ui_quantity)
-
-    return existence_flag,cart_item_detail,quantity
 
 
-def check_catalog_item_exists(user_cart_item_dic_list, eform_detail):
-    eform_data_existence_flag = True
-    user_cart_item_detail = []
-    cart_item_detail = None
-    for user_cart_item in user_cart_item_dic_list:
-        eform_data_existence_flag = True
-        queue_query = Q()
-        queue_query = Q(item_guid=user_cart_item['guid']) | Q(cart_guid=user_cart_item['guid'])
-        if django_query_instance.django_queue_existence_check(EformFieldData,
-                                                              {'client': global_variables.GLOBAL_CLIENT},
-                                                              queue_query):
-            # check if already eform data exist by cart guid
-            for eform_data in eform_detail:
-                if django_query_instance.django_existence_check(ProductEformPricing,
-                                                                {'product_eform_pricing_guid': eform_data[
-                                                                    'product_eform_pricing_guid'],
-                                                                 'client': global_variables.GLOBAL_CLIENT}):
-                    eform_field_data = django_query_instance.django_filter_query(ProductEformPricing,
-                                                                                 {'product_eform_pricing_guid':eform_data['product_eform_pricing_guid'],
-                                                                                  'client':global_variables.GLOBAL_CLIENT},None,None)[0]
-                    if not django_query_instance.django_existence_check(EformFieldData,
-                                                                        {'client': global_variables.GLOBAL_CLIENT,
-                                                                         'item_guid': user_cart_item['guid'],
-                                                                         'eform_field_name': eform_field_data[
-                                                                             'eform_field_name'],
-                                                                         'eform_field_data': eform_field_data[
-                                                                             'eform_field_data']}):
-                        eform_data_existence_flag = False
-            if eform_data_existence_flag:
-                user_cart_item_detail.append(user_cart_item)
 
-    if len(user_cart_item_detail) == 1:
-        cart_item_detail = user_cart_item_detail[0]
-        eform_data_existence_flag = True
 
-    return eform_data_existence_flag, cart_item_detail

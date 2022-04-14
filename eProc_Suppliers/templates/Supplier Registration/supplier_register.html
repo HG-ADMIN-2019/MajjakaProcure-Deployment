@@ -384,7 +384,7 @@ function purch_org_add_new_line() {
 }
 
 function ajax_save_supplier_org_details(data) {
-    let urlLink = "{% url 'eProc_Suppliers:supplier_reg_second_step' %}"
+    let urlLink = "{% url 'eProc_Suppliers:supplier_registration' %}"
     AjaxCallAPI(urlLink, data)
 }
 </script>

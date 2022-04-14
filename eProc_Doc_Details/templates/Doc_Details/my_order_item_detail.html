@@ -10,13 +10,13 @@
                 <!-- <th class="item_checkbox"></th> -->
                 <th hidden>item call _off1</th>
                 <th hidden>guid</td>
-                <th>No.</th>
+                <th>No</th>
                 <th>Item</th>
                 <th hidden>item call _off2</td>
                 <th>Description</th>
-                <th>Supplier Article No</th>
+                <th>Call-Off</th>
                 <th>Delivery Date</th>
-                <th>Lot Size</th>
+                <th>Price Unit</th>
                 <th>Unit</th>
                 <th>Price Per Unit</th>
                 <th>Total</th>
@@ -108,10 +108,10 @@
                 </td>
                 <td>
                     <div class="item-action-icon-section">
-                        <span title="Delete item" onclick="get_item1('{{items.guid}}')" class="editable_mode">
+                        <span title="Delete Item" onclick="get_item1('{{items.guid}}')" class="editable_mode">
                             <i class="material-icons item-action-icons">delete_outline</i>
                         </span>
-                        <span title="Update item" onclick="update('{{ forloop.counter }}', '{{ items.call_off }}', '{{items.guid}}')" class="editable_mode">
+                        <span title="Update Item" onclick="update('{{ forloop.counter }}', '{{ items.call_off }}', '{{items.guid}}')" class="editable_mode">
                             <i class="fas fa-edit item-action-icons"></i>
                         </span>
                         <div class="action_dropdown dropdown">
@@ -142,7 +142,7 @@
 
                     <div id="display_eform-{{items.guid}}" style="display:none;">
                         <div class="card-header item-table-action__header">
-                            <span>Eform Details</span>
+                            <span>Additional eForm Data</span>
                             <span onclick="display_eform('{{items.guid}}','{{forloop.counter}}');">
                                 <i class="fas fa-times"></i>
                             </span>
@@ -171,8 +171,8 @@
 
                         <div>
                             <div class="action-item-notes__buttons-section">
-                                <button id="internalbutton{{ forloop.counter }}" class="notes_button{{ forloop.counter }} intbtn{{ forloop.counter }} add-note-internal" onclick="selectNoteType(this)">FOR INTERNAL USE</button>
-                                <button id="supplierbutton{{ forloop.counter }}" class="notes_button{{ forloop.counter }} supbtn{{ forloop.counter }} add-note-external" onclick="selectNoteType(this)">FOR SUPPLIER</button>
+                                <button id="internalbutton{{ forloop.counter }}" class="notes_button{{ forloop.counter }} intbtn{{ forloop.counter }} add-note-internal " onclick="selectNoteType(this)">For Internal Use</button>
+                                <button id="supplierbutton{{ forloop.counter }}" class="notes_button{{ forloop.counter }} supbtn{{ forloop.counter }} add-note-external" onclick="selectNoteType(this)">For Supplier Use</button>
                             </div>
 
                             <div id="intbtn{{ forloop.counter }}" class="tabContent{{ forloop.counter }} action-item-notes__textarea">
@@ -219,9 +219,9 @@
 
                                         <label><b>Type:</b></label><br>
                                         <input class="form-check-input" type="radio" name="attachment_type" id="internal{{ forloop.counter }}">
-                                        <label for="internal{{ forloop.counter }}">For Internal Use </label>
+                                        <label for="internal{{ forloop.counter }}">For internal use </label>
                                         <input class="form-check-input" type="radio" name="attachment_type" id="external{{ forloop.counter }}">
-                                        <label for="external{{ forloop.counter }}">For External Use </label><br>
+                                        <label for="external{{ forloop.counter }}">For external use </label><br>
 
                                         <label for="attachment_data-{{forloop.counter}}">File:</label><br>
                                         <input type="file" class="form-control-file File" id="attachment_data-{{forloop.counter}}" multiple><br>
@@ -300,9 +300,9 @@
                             <button class="btn btn-secondary hg_is_hidden"  id="change_address-{{addr.guid}}"  disabled><i class="far fa-edit" ></i> Change Shipping Address</button>
                             {% endif %}
                             {% if edit_address_flag == '1'  %}
-                            <button class="btn btn-primary hg_is_hidden" onclick="edit_item_address(this.id, {{forloop.counter}})" id="edit_address_{{forloop.counter}}" hidden><i class="far fa-edit"></i> Edit Current Address</button>
+                            <button class="btn btn-primary hg_is_hidden" onclick="edit_item_address(this.id, {{forloop.counter}})" id="edit_address_{{forloop.counter}}" hidden><i class="far fa-edit"></i> Edit Current Shipping Address</button>
                             {% elif edit_address_flag == '0' %}
-                            <button class="display-none"  id="edit_address_{{forloop.counter}}" ><i class="far fa-edit"></i> Edit Current Address</button>
+                            <button class="display-none"  id="edit_address_{{forloop.counter}}" ><i class="far fa-edit"></i> Edit Current Shipping Address</button>
                             {% endif %}
 
                         </div>
@@ -328,7 +328,7 @@
 
                         <div class="card-body">
                             <div>
-                                <span class="h6">Account Assignment Category:</span>
+                                <span class="h6">Account Assignment Category :</span>
                                 <span id=ScAccounting-acc_cat-{{acc.guid}} class="change_account_type">
                                     {{acc.acc_desc}}
                                 </span><br>

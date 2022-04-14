@@ -1,7 +1,7 @@
 {% extends 'root/base.html' %}
 {% load static %}
 
-{% block title %} Majjaka eProcure - Product Detail {% endblock %}
+{% block title %} Product Detail {% endblock %}
 
 {% block maincontent %}
 
@@ -159,7 +159,7 @@ input::-webkit-inner-spin-button {
                                     <div class="col-sm-6">
                                         <h5>{{eform_data.eform_field_name}}</h5>
                                         <select class="form-control dummy_eform_class" >
-                                            <option value="">SELECT</option>
+                                            <option value="">Select</option>
                                             {% for eform_data_dropdown in eform_data.eform_field_data %}
                                             <option value="VARIANT_WITHOUT_PRICING-{{eform_data.eform_field_config_guid}}-{{eform_data_dropdown}}">{{eform_data_dropdown}}</option>
                                             {% endfor %}
@@ -203,7 +203,7 @@ input::-webkit-inner-spin-button {
                         </div>
                         {% endif %}
                         <div>
-                            <span class="h6">Lot Size </span> <span>{{prod_detail.lead_time}}</span>
+                            <span class="h6">Price Unit </span> <span>{{prod_detail.price_unit}}</span>
                         </div>
                         <div>
                             <span class="h6">Product Category </span> <span>{{prod_detail.prod_cat_id_id}} - {{prod_detail.prod_cat_desc}} </span>

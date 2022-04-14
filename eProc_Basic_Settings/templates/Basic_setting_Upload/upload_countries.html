@@ -1,6 +1,6 @@
 {% extends 'root/base.html' %}
 {% load static %}
-{% block title %} Majjaka eProcure - Countries (Basic Settings) {% endblock %}
+{% block title %} Countries (Basic Settings) {% endblock %}
 {% block maincontent %}
 
 
@@ -12,7 +12,7 @@
             <h3>Maintain Countries</h3>
             <div>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_country_template' %}'"type="button">
-                    <i class="fas fa-download"></i> Extract Template
+                    <i class="fas fa-download"></i> download Template
                 </button>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_country_data' %}'"type="button">
                     <i class="fas fa-download"></i> extract
@@ -22,6 +22,9 @@
                 </button>
                 <button class="btn btn-primary" id="id_add_data" value="ADD" title="Add Country" data-toggle="modal"  data-target="#myModal" onclick="onclick_add_button(this);">
                     <i class="fa fa-plus"></i> add country
+                </button>
+                <button class="btn btn-primary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                    <i class="fa fa-plus"></i> close
                 </button>
             </div>
         </div>
@@ -223,7 +226,10 @@ function onclick_display_csv_data() {
                         else {
                             del_ind= '<input type="checkbox" value="' + value[2] + '" required>'
                         }
-                        edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td><td><input class="form-control" type="text" value="' + value[0] + '" maxlength="2" onkeypress="return /[a-z]/i.test(event.key)" required></td><td><input class="form-control" type="text" value="' + value[1] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td>'+ del_ind +'</td></tr>';
+                        edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
+                        '<td><input class="form-control" type="text" value="' + value[0] + '" maxlength="2" onkeypress="return /[a-z]/i.test(event.key)" required></td>'+
+                        '<td><input class="form-control" type="text" value="' + value[1] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
+                        '<td>'+ del_ind +'</td></tr>';
                     });
                     $('#id_popup_tbody').append(edit_basic_data);
                     $( ".class_del_checkbox").prop( "hidden", false );
@@ -481,6 +487,18 @@ function check_data() {
         }
     });
 }
+       function GetReferrer() {
+             window.history.back();
+              var preUrl = document.referrer;
+              console.log(preUrl);
+              window.open('', '_self', '').close();
+<!--               var win = window.open(preUrl);-->
+<!--                win.focus();-->
+              if (preUrl == null)
+                     return "The previous page url is empty";
+               else
+                     return preUrl;
+       }
 
 </script>
 <script src="{% static 'scripts/upload-countries.js' %}"></script>

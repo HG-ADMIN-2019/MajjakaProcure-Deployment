@@ -37,8 +37,11 @@ function onclick_update_button() {
 }
 
 function onclick_copy_update_button() {
+    $("#error_msg_id").css("display", "none")
     $("#id_popup_tbody").empty();
     $('#display_basic_table').DataTable().destroy();
+    $('#id_popup_table').DataTable().destroy();
+    $("#id_popup_tbody").empty();
     //Reference the Table.
     var grid = document.getElementById("display_basic_table");
 
@@ -50,20 +53,17 @@ function onclick_copy_update_button() {
     for (var i = 1; i < checkBoxes.length; i++) {
         if (checkBoxes[i].checked) {
             var row = checkBoxes[i].parentNode.parentNode;
-            var auth_level = row.cells[2].innerHTML;
             var auth_obj_id = row.cells[1].innerHTML;
-            var auth_level_id = row.cells[3].innerHTML;
-            dropdown_values.push([auth_obj_id, auth_level, auth_level_id])
+            var auth_level= row.cells[3].innerHTML;
+            dropdown_values.push([auth_obj_id, auth_level])
             if (GLOBAL_ACTION == "UPDATE") {
-               
-                unique_input = '<select class="form-control">' + auth_obj_id_add_dropdown + '</select>'
-                edit_basic_data += '<tr ><td hidden><input type="checkbox" required></td><td><select class="form-control">' + auth_obj_id_dropdown + '</select></td><td><select class="form-control">' + auth_obj_level_dropdown + '</select></td><td><select class="form-control">' + auth_obj_level_id_dropdown + '</select></td><td><input class="form-control" type="text" value="' + row.cells[4].innerHTML + '" maxlength="60" onkeypress="return /[a-z _]/i.test(event.key)" name="level_desc" style="text-transform:uppercase;" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td><select type="text" class="input form-control" id="authobjectid"  name="authobjectid" disabled>'+ auth_obj_id_db_values_onload +'</select></td><td><input class="input form-control description" id="description-1" value="' + row.cells[2].innerHTML + '" type="text"  name="description" disabled></td><td><select id="authobject_type" name="authobject_type" class="input form-control"><option selected="true">' + row.cells[3].innerHTML + '</option>' + auth_type_dropdown + '</select></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                 $("#header_select").prop("hidden", true);
             }
             else{
                
                 unique_input = '<select class="form-control">' + auth_obj_id_add_dropdown + '</select>'
-                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class="form-control">' + auth_obj_id_dropdown + '</select></td><td><select class="form-control">' + auth_obj_level_dropdown + '</select></td><td><select class="form-control">' + auth_obj_level_id_dropdown + '</select></td><td><input class="form-control" type="text" value="' + row.cells[4].innerHTML + '" maxlength="60" onkeypress="return /[a-z _]/i.test(event.key)" name="level_desc" style="text-transform:uppercase;" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class="form-control">' + auth_obj_id_dropdown + '</select></td><td><select class="form-control">' + auth_obj_level_dropdown + '</select></td><td><select class="form-control">' + auth_obj_level_id_dropdown + '</select></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                 $("#header_select").prop("hidden", false);
             }
         }
@@ -72,13 +72,11 @@ function onclick_copy_update_button() {
     var i = 0;
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
-        var auth_level = dropdown_values[i][1]
         var auth_obj_id = dropdown_values[i][0]
-        var auth_level_id = dropdown_values[i][2]
+        var auth_level= dropdown_values[i][1]
 
-        $(row.find("TD").eq(2).find("select option[value=" + auth_level + "]")).attr('selected', 'selected');
+        $(row.find("TD").eq(3).find("select option[value=" + auth_level + "]")).attr('selected', 'selected');
         $(row.find("TD").eq(1).find("select option[value=" + auth_obj_id + "]")).attr('selected', 'selected');
-        $(row.find("TD").eq(3).find("select option[value=" + auth_level_id + "]")).attr('selected', 'selected');
         i++;
     });
     $("#id_del_ind_checkbox").prop("hidden", true);

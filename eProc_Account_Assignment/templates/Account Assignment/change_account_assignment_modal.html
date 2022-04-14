@@ -14,7 +14,7 @@
                     <div class="modal-body">
                         <div>
                             <div id="acc_cat_field_div">
-                                <div class="form-group">Select Account Assignment(Primary):<br>
+                                <div class="form-group">Select Account Assignment Category (Primary)<br>
                                     <select id="select_acc_type" onchange="select_acc();" class="form-control">
                                         {% for acc in acc_list %}
                                         <option value="{{acc}}">{{acc}}</option>
@@ -27,7 +27,7 @@
                                     <div class="col">
                                         {% if 'CC - Cost Center' in acc_list %}
                                         <div class="row mt-2">
-                                            <div class="col-4">Cost Center:</div>
+                                            <div class="col-4">Cost Center</div>
                                             <div class="col-8">
                                                 <div class="input-group">
                                                     <input type="text" class="form-control account_assignment_secondary" id="CC - Cost Center" value="" disabled>
@@ -41,7 +41,7 @@
 
                                         {% if 'AS - Asset' in acc_list %}
                                         <div class="row mt-2">
-                                            <div class="col-4">Asset:</div>
+                                            <div class="col-4">Asset</div>
                                             <div class="col-8">
                                                 <div class="input-group">
                                                     <input type="text" class="form-control account_assignment_secondary" id="AS - Asset" value="" disabled>
@@ -55,7 +55,7 @@
 
                                         {% if 'WBS - Project' in acc_list %}
                                         <div class="row mt-2">
-                                            <div class="col-4">WBS Element:</div>
+                                            <div class="col-4">WBS Element</div>
                                             <div class="col-8">
                                                 <div class="input-group">
                                                     <input type="text" class="form-control account_assignment_secondary" id="WBS - Project" value="" disabled>
@@ -69,7 +69,7 @@
 
                                         {% if 'OR - Internal Order' in acc_list %}
                                         <div class="row mt-2">
-                                            <div class="col-4">Internal Order:</div>
+                                            <div class="col-4">Internal Order</div>
                                             <div class="col-8">
                                                 <div class="input-group">
                                                     <input type="text" class="form-control account_assignment_secondary" id="OR - Internal Order" value="" disabled>
@@ -83,7 +83,7 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group mt-3" id="gl_acc_change_id">Please select GL Account:<br>
+                                <div class="form-group mt-3" id="gl_acc_change_id">Please Select GL Account<br>
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="select_gl_acc_num" value="{{ default_gl_account.0.default_gl_account_number }} - {{ default_gl_account.0.default_gl_account_description }}" disabled>
                                         <div class="input-group-append">
@@ -99,7 +99,7 @@
 
                             <!-- Change account assignment category values sub-modal popup -->
                             <div class="display-none" id="acc_table_div">
-                                <h5>Search for account assignment values</h5>
+                                <h5>Select Account Assignment values</h5>
                                 <div class="card">
                                     <div class="card-body">
                                         <table class="table acc_cat_datatable" id="acc_table">
@@ -118,21 +118,21 @@
                                 </div>
                                 <br>
                                 <div class="modal-footer">
-                                    <button class="btn btn-primary" onclick="document.getElementById('acc_table_div').style.display='none'; document.getElementById('acc_cat_field_div').style.display='block';"><i class="fas fa-angle-left"></i> GO BACK</button>
-                                    <button class="btn btn-primary" onclick="add_acc_value();"><i class="fa fa-check" aria-hidden="true"></i> ADD ACCOUNT ASSIGNMENT</button>
+                                    <button class="btn btn-primary" onclick="document.getElementById('acc_table_div').style.display='none'; document.getElementById('acc_cat_field_div').style.display='block';"><i class="fas fa-angle-left"></i> go back</button>
+                                    <button class="btn btn-primary" onclick="add_acc_value();"><i class="fa fa-check" aria-hidden="true"></i> add account assignment</button>
                                 </div>
                             </div>
 
                             <!-- Change GL account values sub-modal popup -->
                             <div class="display-none" id="gl_acc_table_div">
-                                <h5>Search for GL account values</h5>
+                                <h5>Search For GL Account Values</h5>
                                 <div class="card">
                                     <div class="card-body">
                                         <table class="table gl_acc_datatable" id="gl_acc_table">
                                             <thead class="thead-light">
                                             <tr>
                                                 <th>Select</th>
-                                                <th>GL Account values</th>
+                                                <th>GL Account Values</th>
                                             </tr>
 
                                             </thead>
@@ -144,8 +144,8 @@
                                 </div>
                                 <br>
                                 <div class="modal-footer">
-                                    <button class="btn btn-primary" onclick="document.getElementById('gl_acc_table_div').style.display='none'; document.getElementById('acc_cat_field_div').style.display='block';"><i class="fas fa-angle-left"></i> GO BACK</button>
-                                    <button class="btn btn-primary" onclick="add_gl_acc_value();"><i class="fa fa-check" aria-hidden="true"></i> ADD GL ACCOUNT</button>
+                                    <button class="btn btn-primary" onclick="document.getElementById('gl_acc_table_div').style.display='none'; document.getElementById('acc_cat_field_div').style.display='block';"><i class="fas fa-angle-left"></i> go back</button>
+                                    <button class="btn btn-primary" onclick="add_gl_acc_value();"><i class="fa fa-check" aria-hidden="true"></i> add gl account</button>
                                 </div>
                             </div>
                         </div>

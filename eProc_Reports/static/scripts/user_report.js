@@ -1,15 +1,3 @@
-$(document).ready(function () {
-
-    nav_bar_admin();
-
-    // Script to generate sort and filter feature for tables
-    table_sort_filter_export_excel();
-
-    // Loader implementation on search button
-    $('#hg_user_report_search').click(function () {
-        $('#hg_loader').modal('show');
-    });
-});
 
 var default_value = "";
 var substitute_type = "";
@@ -17,7 +5,7 @@ var substitute_type = "";
 // Function to store the data into the session
 window.onbeforeunload = function () {
     sessionStorage.setItem("USER_REP", $('#id_userrep_type').val());
-    sessionStorage.setItem("SUBSTITUTE_TYPE", $('#id_substitute_sub_type').val());
+   sessionStorage.setItem("SUBSTITUTE_TYPE", $('#id_substitute_sub_type').val());
     sessionStorage.setItem("COMPANY_CODE", $('#id_company_code').val());
     // sessionStorage.setItem("ACTIVE",   $('#id_active').val());
 }
@@ -34,14 +22,14 @@ window.onload = function () {
         // $('#id_active').val(active)
     }
     else {
-        $('#substitute_sub_type').show();
+       $('#substitute_sub_type').show();
         $('#company_code').hide();
         $('#username').hide();
         $('#acive').hide();
     }
 
-    if (substitute_type !== null)
-        $('#id_substitute_sub_type').val(substitute_type).attr('selected', 'selected')
+//    if (substitute_type !== null)
+//        $('#id_substitute_sub_type').val(substitute_type).attr('selected', 'selected')
 }
 
 // At the load of the page this script is executed to remove the Supplier related search fields and
@@ -52,15 +40,15 @@ substitute_type = sessionStorage.getItem("SUBSTITUTE_TYPE");
 
 if (default_value == 'Users_in_company' || default_value == "" || default_value == null) {
     //Hide the Substitute search fields
-    document.getElementById("substitute_sub_type").value = "";
-    $('#substitute_sub_type').hide();
+//  document.getElementById("substitute_sub_type").value = "";
+//    $('#substitute_sub_type').hide();
 }
 else {
     // Show only the Substitute related search fields
 
-    document.getElementById("substitute_sub_type").style.display = "block";
-    $('select option[value="Substitute"]').attr("selected", true);
-    $('#substitute_sub_type').show();
+//    document.getElementById("substitute_sub_type").style.display = "block";
+//    $('select option[value="Substitute"]').attr("selected", true);
+//    $('#substitute_sub_type').show();
 
     // Hide the Users_in_company related search fields
     $('#id_userrep_type').val(default_value).attr('selected', 'selected');
@@ -86,7 +74,7 @@ function getSubReport(value) {
         // $('#sup_tab').hide();
 
         // hide the Substitue search fields
-        // document.getElementById("substitute_sub_type").value="";
+         document.getElementById("substitute_sub_type").value="";
         $('#substitute_sub_type').hide();
 
         // Show the user fields

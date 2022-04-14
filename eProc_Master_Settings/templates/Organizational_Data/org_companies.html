@@ -1,6 +1,6 @@
 {% extends 'root/base.html' %}
 {% load static %}
-{% block title %} Majjaka eProcure - Companies (Master Settings) {% endblock %}
+{% block title %} Companies (Master Settings) {% endblock %}
 {% block maincontent %}
 {% include 'root/loader.html' %}
 
@@ -9,6 +9,9 @@
         <div class="elements-space-between">
             <h3>Maintain Companies</h3>
             <div>
+                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_orgcompany_data_template' %}'"type="button">
+                    <i class="fas fa-download"></i> download Template
+                </button>
                  <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_orgcompany_data' %}'"type="button">
                     <i class="fas fa-download"></i> extract</button>
                 <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_data" value="orgcompany_upload" onclick="onclick_upload_button()" type="button">
@@ -159,8 +162,8 @@
 
 <script>
     var basic_settings = '{{basic_settings|safe}}';
-    var rendered_orgcompany_data = {{ org_companies| safe}};
-    var rendered_orgmodel_data = {{ upload_data_Orgmodel| safe}};
+    var rendered_orgcompany_data = {{org_companies| safe}};
+    var rendered_orgmodel_data = {{upload_data_Orgmodel| safe}};
     var orgcompany_data_array = {}
     var main_table_orgcompany_value = [];
     var orgcompany = '';
@@ -204,6 +207,7 @@
 
     function popup_save_data() {
      $('#success_msg_id').empty()
+      $('#id_popup_table').DataTable().destroy();
       var main_table_low_value = [];
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
@@ -319,22 +323,27 @@ function onclick_upload_button() {
 }
 
     function onclick_display_csv_data() {
+         $('#id_popup_table').DataTable().destroy();
         formdata = new FormData();
-        formdata.append("file_attach", $('#id_file_data_upload').prop('files')[0]);
-        formdata.append("Tablename", Tablename);
-        formdata.append("appname", appname);
-        db_header_data = db_header_data
-        formdata.append("db_header_data", db_header_data);
+         attached_file = $('#id_file_data_upload').prop('files')[0]
+         file_extension = (attached_file.name).split(".")[1]
+         file_extension = file_extension.toUpperCase();
+        if(file_extension == 'CSV'){
+        formdata.append("file_attach", attached_file);
+        formdata.append("Tablename",Tablename);
+        formdata.append("appname",appname);
+
         $('#id_data_upload').modal('hide');
+        $('#id_popup_tbody').empty();
         $.ajax({
             type: 'POST',
             url: "{% url 'eProc_Configuration:data_upload_fk' %}",
             data: formdata,
             contentType: "application/json; charset=utf-8",
             success: function(response) {
-                if (response == "Please check the uploaded csv file") {
-                    $("#id_error_msg_upload").prop("hidden", false)
-                    document.getElementById("id_error_msg_upload").innerHTML = response;
+               if(response.error_message){
+                    $("#id_error_msg_upload").prop("hidden",false)
+                    document.getElementById("id_error_msg_upload").innerHTML = response.error_message;
                     document.getElementById("id_error_msg_upload").style.color = "Red";
                     $('#id_data_upload').modal('show');
                 } else {
@@ -343,7 +352,7 @@ function onclick_upload_button() {
                     var del_ind = '';
                     var dropdown_values = [];
                     $("#id_popup_tbody").empty();
-                    $.each(response, function(i, value) {
+                    $.each(response.data, function(i, value) {
                         var object_id = value[0]
                         var company_id=value[3]
                         dropdown_values.push([object_id])
@@ -382,6 +391,13 @@ function onclick_upload_button() {
 
         });
     }
+    else{
+        $("#id_error_msg_upload").prop("hidden",false)
+        document.getElementById("id_error_msg_upload").innerHTML = messageConstants["JMSG110"];
+        document.getElementById("id_error_msg_upload").style.color = "Red";
+        $('#id_data_upload').modal('show');
+    }
+}
 
 
 // on click update icon display the selected checkbox data to update

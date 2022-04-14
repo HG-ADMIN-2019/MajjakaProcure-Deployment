@@ -1,5 +1,4 @@
 import operator
-
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.db import models
 from eProc_Shopping_Cart.models import DBQueries

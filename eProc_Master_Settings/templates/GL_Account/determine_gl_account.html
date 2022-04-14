@@ -1,6 +1,6 @@
 {% extends 'root/base.html' %}
 {% load static %}
-{% block title %} Majjaka eProcure - General Ledger Accounts (Master Settings) {% endblock %}
+{% block title %} General Ledger Accounts (Master Settings) {% endblock %}
 {% block maincontent %}
 
 
@@ -11,7 +11,7 @@
             <h3>Maintain General Ledger Accounts</h3>
             <div>
                   <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_glaccount_template' %}'"type="button">
-                    <i class="fas fa-download"></i> Extract Template
+                    <i class="fas fa-download"></i> download Template
                 </button>
                 <button class="btn btn-outline-primary" title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_glaccount_data' %}'" type="button">
                     <i class="fas fa-download"></i> extract
@@ -196,7 +196,7 @@
     var no_duplicate_entries = 'Y'
     var Tablename = uiConstants["CONST_TABLENAME_DETGL"]
     var appname = uiConstants["CONST_APPNAME01"]
-    var db_header_data = uiConstants['PROD_CAT_ID','FROM_VALUE','TO_VALUE','GL_ACCOUNT','GL_ACC_DEFAULT','COMPANY_ID','ACCOUNT_ASSIGN_CAT','CURRENCY_ID','del_ind']
+    var db_header_data = uiConstants['PROD_CAT_ID','GL_ACCOUNT','GL_ACC_DEFAULT','ACCOUNT_ASSIGN_CAT','COMPANY_ID','FROM_VALUE','TO_VALUE','CURRENCY_ID','del_ind']
 
     var glacc_dropdown = '';
     var accasscat_dropdown = '';
@@ -353,7 +353,7 @@
             $('#id_popup_tbody').empty();
         $.ajax({
             type: 'POST',
-            url: "{% url 'eProc_Configuration:data_upload_fk' %}",
+            url: "{% url 'eProc_Basic_Settings:data_upload' %}",
             data: formdata,
             contentType: "application/json; charset=utf-8",
             success: function (response) {
@@ -432,6 +432,8 @@
         document.getElementById("id_error_msg_upload").innerHTML = messageConstants["JMSG110"];
         document.getElementById("id_error_msg_upload").style.color = "Red";
         $('#id_data_upload').modal('show');
+
+
     }
 }
 
@@ -535,7 +537,7 @@
         popup_data_dict = {
             'data_list': detgl_list, 'Tablename': Tablename,
             'appname': appname,
-            'db_header_data': ['PROD_CAT_ID','GL_ACCOUNT', 'GL_ACC_DEFAULT', 'ACCOUNT_ASSIGN_CAT','COMPANY_ID', 'del_ind','FROM_VALUE', 'TO_VALUE', 'CURRENCY_ID'],
+            'db_header_data':  ['PROD_CAT_ID','GL_ACCOUNT','GL_ACC_DEFAULT','ACCOUNT_ASSIGN_CAT','COMPANY_ID','FROM_VALUE','TO_VALUE','CURRENCY_ID','del_ind'],
         }
         $.ajax({
             type: 'POST',

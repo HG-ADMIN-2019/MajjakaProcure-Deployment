@@ -19,13 +19,13 @@
         <thead class="thead-light">
         <tr>
             <!-- <th></th> -->
-            <th>No.</th>
+            <th>No</th>
             <th>Item</th>
             <th>Description</th>
             <th>Call Off</th>
-            <th>Supplier Article No</th>
+            <th>Supplier Article Number</th>
             <th>Delivery Date</th>
-            <th>Lot Size</th>
+            <th>Price Unit</th>
             <th>Unit</th>
             <th>Price Per Unit</th>
             <th>Total</th>
@@ -183,7 +183,7 @@
                         <div class="row">
 
                             <div class="col">
-                                <h4>Identification:</h4>
+                                <h4>Identification</h4>
                                 <div class="form-group row">
                                     <label class="col-4 col-form-label">Description</label>
                                     <div class="col-8">
@@ -233,7 +233,7 @@
                                 <div class="mt-3">
                                     <h4>Further Properties</h4>
                                     <div class="form-group row">
-                                        <label class="col-4 col-form-label">Supplier Product ID</label>
+                                        <label class="col-4 col-form-label">Supplier Article Number</label>
                                         <div class="col-8">
                                             <input type="text" class="form-control" name="{{itm.supp_prod_num}}"
                                                 value="{{itm.supp_prod_num}}" id="ScItem-supp_prod_num-{{itm.guid}}" disabled>
@@ -819,7 +819,7 @@
                     {% for items in item_dictionary_list %}
                     <div id="display_eform-{{items.guid}}-{{ forloop.counter0 }}" class="hg_class_eform" style="display:none;">
                         <div class="card-header" style="background-color: white;">
-                            <span class="h5">Eform Details</span>
+                            <span class="h5">Additional eForm Data</span>
                             <span style="float: right;" onclick="display_eform('{{items.guid}}',{{forloop.counter}});"><i class="fas fa-times"></i></span>
                         </div>
                         <div class="card-body">

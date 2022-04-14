@@ -1,10 +1,18 @@
 {% extends 'root/base.html' %}
 {% load static %}
-{% block title %} Majjaka eProcure - Home {% endblock %}
+{% block title %} Home {% endblock %}
 
 {% block maincontent %}
 
 <!-- Home page start (SC-HP-US01: Upon successful logging in, user should be able to see the home page of the application) -->
+
+<style>
+    .flex-column {
+        display: flex;
+        flex-direction: column;
+    }
+
+</style>
 
 <div class="container-fluid">
     <div class="mep-form_wrapper">
@@ -61,59 +69,59 @@
                 {% for header_app,encrypted_guid in zipped_content %}
                 <div class="col-md-4">
                     <div class="card mb-4 box-shadow manager-approval-card">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col">
-                                    <a href="{% url 'eProc_Doc_Details:my_order_doc_details' sc_completion_flag inp_doc_type encrypted_guid 'display' 'approvals'  %}" class="approval-cart-number" target="_blank">{{header_app.3}}</a>
-                                   <!-- <span style="font-size: 2rem;">{{header_app.3}}</span> -->
-                                   <div class="text-muted"> <span class="font-italic">Created on: </span>{{header_app.1}}</div>
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col">
-                                    <span class="approval-card-label">Approve cart number <span class="imp-text">{{header_app.3}}</span> by<span class="font-italic text-capitalize imp-text"> {{header_app.7}}</span>
-                                </div>
-                            </div>
+                        <div class="card-body"> 
                             
-                            <div class="row no-gutters">
-                                <div class="col-sm-3">
-                                    <span class="text-muted approval-card-label">Cart Name: </span> 
-                                </div>
-                                <div class="col-sm-9">
-                                    <span class="approval-card-label">{{header_app.2}}</span>
-                                </div>
+                            <div style="text-align: right;">
+                                <span class="text-muted">Shopping Cart Number </span><span class="h4"><a href="{% url 'eProc_Doc_Details:my_order_doc_details' sc_completion_flag inp_doc_type encrypted_guid 'display' 'approvals'  %}" class="approval-cart-number" target="_blank">{{header_app.3}}</a></span>
                             </div>
-                            <div class="row no-gutters">
-                                <div class="col-sm-3">
-                                    <span class="text-muted approval-card-label">Status: </span> 
-                                </div>
-                                <div class="col-sm-9">
-                                    {% if header_app.6 == 'AWAITING_APPROVAL' %}
-                                    <span  class="approval-card-label">Awaiting Approval</span>
-                                    {% endif %}
-                                </div>
+                                   <!-- <span style="font-size: 2rem;">{{header_app.3}}</span> -->
+                                   <!-- <div class="text-muted"> <span class="font-italic">Created on: </span>{{header_app.1}}</div> -->
+                            
+                            <hr>
+                            <!-- cart name -->
+                            <div class="flex-column">
+                                <span class="text-muted">Cart Name</span>
+                                <span class="h6">{{header_app.2}}</span>
                             </div>
+
+                            <!-- Created On -->
+                            <div class="flex-column">
+                                <span class="text-muted">Created On</span>
+                                <span class="h6">{{header_app.1}}</span>
+                            </div>
+
+                            <!-- Created By -->
+                            <div class="flex-column">
+                                <span class="text-muted">Created By</span>
+                                <span class="h6">{{header_app.7}}</span>
+                            </div>
+
+                            <!-- Status -->
+                            <div class="flex-row">
+                                <span class="text-muted">Status</span>
+                                {% if header_app.6 == 'AWAITING_APPROVAL' %}
+                                <span class="badge badge-pill badge_status_await_approval">Awaiting Approval</span>
+                                {% endif %}
+                            </div>                             
                             <br>
-                        
                             <div>
-                                <button type="button" class="btn_approval btn" onclick="approver_note(this.id);" id="approver_note-{{header_app.0}}"><i class="far fa-sticky-note"></i> note </button>
-                                <button type="button"  class="btn_approval btn" onclick=" window.open('{% url 'eProc_Chat:room' 'initiate' 'INQUIRED' header_app.3 request.user.client %}','_blank')" ><i class="fas fa-info"></i> inquire </button>
+                                <button type="button" style="border: none;" class="badge badge-pill badge-secondary" onclick="approver_note(this.id);" id="approver_note-{{header_app.0}}"><i class="far fa-sticky-note"></i> note </button>
+                                <button type="button" style="border: none;" class="badge badge-pill badge-secondary" onclick=" window.open('{% url 'eProc_Chat:room' 'initiate' 'INQUIRED' header_app.3 request.user.client %}','_blank')" ><i class="fas fa-info"></i> inquire </button>
                             </div>
                             
                             <div  class="total-value-section">
                                 <div>
-                                    <span class="text-muted">Total Value. </span><span class="total-value-cost"> {{header_app.4}} {{header_app.5}}</span>
+                                    <span class="text-muted">Total Value </span><span class="h4">{{header_app.5}} {{header_app.4}} </span>
                                 </div>
-                                
                             </div>
                             <hr>
-                            <div class="row">
-                                <div class="col mb-1">
-                                    <button type="button" onclick="approve_status(this);" class="btn btn-success btn-lg btn-block" id="APPROVER_APPROVED-{{header_app.0}}-{{header_app.3}}" > Approve</button>
+                            <div class="row no-gutters">
+                                <div class="col ar-col-section ft-btn1" style=" padding: 0px 2px;">
+                                    <button type="button" onclick="approve_status(this);" class="btn btn-outline-danger btn-lg btn-block reject-btn" id="APPROVER_REJECTED-{{header_app.0}}-{{header_app.3}}"><i class="fas fa-times"></i> Reject</button>
+
                                 </div>
-                                <div class="col mb-1">
-                                    <button type="button" onclick="approve_status(this);" class="btn btn-danger btn-lg btn-block" id="APPROVER_REJECTED-{{header_app.0}}-{{header_app.3}}"> Reject</button>
+                                <div class="col ar-col-section ft-btn1" style=" padding: 0px 2px;">
+                                    <button type="button" onclick="approve_status(this);" class="btn btn-outline-success btn-lg btn-block approve-btn " id="APPROVER_APPROVED-{{header_app.0}}-{{header_app.3}}" ><i class="fas fa-check"></i> Approve</button>
                                 </div>   
                             </div>
                             

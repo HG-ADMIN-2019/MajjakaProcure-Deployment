@@ -27,13 +27,13 @@
                     <div class="col-5" >
 
                         <div class="product-image-section">
-                            <div class="product-image-section__showcase"> 
+                            <div class="product-image-section__showcase">
                                 <img id="image_featured" onerror='this.src="/static/images/no-image-cropped.png"' alt="product image1" class="image-featured" >
                             </div>
                             <div class="product-image-section__select-img">
                                 <img id="img_1" onerror='this.src="/static/images/no-image-cropped.png"' alt="product image1" class="image-thumbnail">
                                 <img id="img_2" onerror='this.src="/static/images/no-image-cropped.png"' alt="product image2" class="image-thumbnail">
-                                <img id="img_3" onerror='this.src="/static/images/no-image-cropped.png"' alt="product image3" class="image-thumbnail"> 
+                                <img id="img_3" onerror='this.src="/static/images/no-image-cropped.png"' alt="product image3" class="image-thumbnail">
                             </div>
                         </div>
                     </div>
@@ -46,12 +46,12 @@
                                 </div>
                                 <div class="product-detail-section__header-bottom">
                                     <div>
-                                        <span class="product-header-sub-text">by </span>
+                                        <span class="product-header-sub-text">By </span>
                                         <span class="product-header-sub-text" id="id_supp"></span>
                                     </div>
-                                    
+
                                     <div id="product_external_link">
-                                        
+
                                     </div>
                                 </div>
                             </div>
@@ -61,14 +61,14 @@
                                     <span class="text-muted" id="id_currency"> </span><span id="prod_price"></span> <span id="id_unit" class="product-pricing-text__unit"></span>
                                 </div>
                             </div>
- 
+
                             <div class="product-detail-section__product-description mt-3 mb-5">
-                                <h5 class="card-title">Product Description</h5>
-                                <p id="id_prod_desc"></p> 
+                                <h5 class="card-title">Product/Service Description</h5>
+                                <p id="id_prod_desc"></p>
                             </div>
 
                             <div class="product-detail-section__product-specification mt-3 mb-5" id="prod_spec_div_id" style="display:none">
-                                <h5 class="card-title">Product Specification</h5>
+                                <h5 class="card-title">Product/Service Specification</h5>
 
                                 <table class="table table-bordered mt-1" id="prod_spec_main_table" >
                                     <tbody id="product_spec_main_tbody"></tbody>
@@ -76,42 +76,42 @@
                             </div>
 
                             <div  class="product-detail-section__product-specification mt-3 mb-5" id="prod_eform_div_id" style="display:none">
-                                <h5 class="card-title">Product customization selected</h5>
+                                <h5 class="card-title">User Selected Type</h5>
 
                                 <table class="table table-bordered mt-1" id="prod_eform_main_table" >
                                     <tbody id="product_eform_main_tbody"></tbody>
                                 </table>
                             </div>
-                            
+
                             <div class="product-detail-section__product-add-data  mt-3 mb-4">
-                                <h5 class="card-title">Additional Information</h5> 
-                                
+                                <h5 class="card-title">More Information</h5>
+
                                 <div>
                                     <div>
-                                        <span class="h6">Lead Time (days): </span> <span id="id_lead_time"></span>
+                                        <span class="h6">Lead Time (days) </span> <span id="id_lead_time"></span>
                                     </div>
                                     <div>
-                                        <span class="h6">Lot Size: </span><span id="id_lot_size"></span>
+                                        <span class="h6">Price Unit </span><span id="id_lot_size"></span>
                                     </div>
                                     <div>
-                                        <span class="h6">Product Category: </span><span id="id_unspsc_cat"></span>
+                                        <span class="h6">Product Category </span><span id="id_unspsc_cat"></span>
                                     </div>
                                     <div>
-                                        <span class="h6">Available Quantity: </span> <span id="id_available_qty"></span>
+                                        <span class="h6">Available Quantity </span> <span id="id_available_qty"></span>
                                     </div>
                                     <div>
-                                        <span class="h6"> Manufacturer: </span> <span id="id_manufacturer"></span>
+                                        <span class="h6"> Manufacturer </span> <span id="id_manufacturer"></span>
                                     </div>
                                     <div>
-                                        <span class="h6"> Country of Origin: </span> <span id="id_country_of_origin"></span>
+                                        <span class="h6"> Country of Origin </span> <span id="id_country_of_origin"></span>
                                     </div>
                                     <div>
-                                        <span class="h6"> Brand: </span> <span id="id_brand"></span>
+                                        <span class="h6"> Brand </span> <span id="id_brand"></span>
                                     </div>
                                     <div>
-                                        <span class="h6"> Contract Number: </span> <span id="id_contract_num"></span>
+                                        <span class="h6"> Contract Number </span> <span id="id_contract_num"></span>
                                     </div>
-                                    
+
                                 </div>
                             </div>
                         </div>
@@ -177,8 +177,8 @@
                 $("#prod_price").text(prod_detail.price);
 
                 $("#id_quantity").val($("#quantity_"+item_guid).html());
-                $("#id_unit").text(prod_detail.unit_id);
-                $("#id_supp").text(prod_detail.supplier_id);
+                $("#id_unit").text(prod_detail.unit_desc);
+                $("#id_supp").text(prod_detail.supplier_desc);
                 $('#id_available_qty').text(prod_detail.quantity_avail);
                 $('#id_manufacturer').text(prod_detail.manufacturer);
                 $('#id_country_of_origin').text(prod_detail.country_of_origin_id);

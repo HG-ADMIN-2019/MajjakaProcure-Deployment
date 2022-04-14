@@ -1,79 +1,79 @@
 {% extends 'root/base.html' %}
 {% load static %}
 
-{% block title %} Majjaka eProcure - Employee Management (Admin Tool){% endblock %}
+{% block title %} Employee Management (Admin Tool){% endblock %}
 {% block maincontent %}
 <style>
-<!--.toggle {-->
-<!--  -webkit-box-sizing: border-box;-->
-<!--  -moz-box-sizing: border-box;-->
-<!--  box-sizing: border-box;-->
-<!--  display: block;-->
-<!--  height: auto;-->
-<!--  width: 7.5rem;-->
-<!--  margin: auto;-->
-<!--  cursor: pointer;-->
-<!--}-->
-<!--.toggle-input {-->
-<!--  display: none;-->
-<!--  margin: 0;-->
-<!--}-->
-<!--.toggle-off,-->
-<!--.toggle-on {-->
-<!--  height: 1.8125rem;-->
-<!--  width: 1.8125rem;-->
-<!--  color: rgba(46, 45, 44, 0.1);-->
-<!--  vertical-align: top;-->
-<!--  text-align: center;-->
-<!--  line-height: 1.8125rem !important;-->
-<!--}-->
-<!--.toggle-input:checked + .toggle-controller.default-success {-->
-<!--  border: 0.125rem solid rgba(108, 211, 61, 0.75);-->
-<!--  background: rgba(108, 211, 61, 0.375);-->
-<!--}-->
-<!--.toggle-input:checked + .toggle-controller.default-success:after {-->
-<!--  left: 1.5625rem;-->
-<!--}-->
-<!--.toggle-controller.default-success {-->
-<!--  position: relative;-->
-<!--  display: inline-block;-->
-<!--  height: 1.5625rem;-->
-<!--  width: 3.125rem;-->
-<!--  border: 0.125rem solid rgba(46, 45, 44, 0.05);-->
-<!--  -webkit-border-radius: 1.5625rem;-->
-<!--  -moz-border-radius: 1.5625rem;-->
-<!--  border-radius: 1.5625rem;-->
-<!--  -webkit-box-shadow: inset 0 0 0.1875rem rgba(46, 45, 44, 0.25);-->
-<!--  -moz-box-shadow: inset 0 0 0.1875rem rgba(46, 45, 44, 0.25);-->
-<!--  box-shadow: inset 0 0 0.1875rem rgba(46, 45, 44, 0.25);-->
-<!--  background: rgba(46, 45, 44, 0.025);-->
-<!--  -webkit-transition: all 0.25s ease;-->
-<!--  -moz-transition: all 0.25s ease;-->
-<!--  -o-transition: all 0.25s ease;-->
-<!--  transition: all 0.25s ease;-->
-<!--}-->
-<!--.toggle-controller.default-success:after {-->
-<!--  position: absolute;-->
-<!--  top: 0;-->
-<!--  left: 0;-->
-<!--  content: '';-->
-<!--  display: block;-->
-<!--  height: 1.5625rem;-->
-<!--  width: 1.5625rem;-->
-<!--  -webkit-border-radius: 1.5625rem;-->
-<!--  -moz-border-radius: 1.5625rem;-->
-<!--  border-radius: 1.5625rem;-->
-<!--  -webkit-box-shadow: 0 0.0625rem 0.125rem rgba(46, 45, 44, 0.2);-->
-<!--  -moz-box-shadow: 0 0.0625rem 0.125rem rgba(46, 45, 44, 0.2);-->
-<!--  box-shadow: 0 0.0625rem 0.125rem rgba(46, 45, 44, 0.2);-->
-<!--  background: white;-->
-<!--  -webkit-transition: all 0.25s ease;-->
-<!--  -moz-transition: all 0.25s ease;-->
-<!--  -o-transition: all 0.25s ease;-->
-<!--  transition: all 0.25s ease;-->
-<!--}-->
-<!--.toggle-off.active {color:red;}-->
-<!--.toggle-on.active {color:blue;}-->
+.toggle {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  display: block;
+  height: auto;
+  width: 7.5rem;
+  margin: auto;
+  cursor: pointer;
+}
+.toggle-input {
+  display: none;
+  margin: 0;
+}
+.toggle-off,
+.toggle-on {
+  height: 1.8125rem;
+  width: 1.8125rem;
+  color: rgba(46, 45, 44, 0.1);
+  vertical-align: top;
+  text-align: center;
+  line-height: 1.8125rem !important;
+}
+.toggle-input:checked + .toggle-controller.default-success {
+  border: 0.125rem solid rgba(108, 211, 61, 0.75);
+  background: rgba(108, 211, 61, 0.375);
+}
+.toggle-input:checked + .toggle-controller.default-success:after {
+  left: 1.5625rem;
+}
+.toggle-controller.default-success {
+  position: relative;
+  display: inline-block;
+  height: 1.5625rem;
+  width: 3.125rem;
+  border: 0.125rem solid rgba(46, 45, 44, 0.05);
+  -webkit-border-radius: 1.5625rem;
+  -moz-border-radius: 1.5625rem;
+  border-radius: 1.5625rem;
+  -webkit-box-shadow: inset 0 0 0.1875rem rgba(46, 45, 44, 0.25);
+  -moz-box-shadow: inset 0 0 0.1875rem rgba(46, 45, 44, 0.25);
+  box-shadow: inset 0 0 0.1875rem rgba(46, 45, 44, 0.25);
+  background: rgba(46, 45, 44, 0.025);
+  -webkit-transition: all 0.25s ease;
+  -moz-transition: all 0.25s ease;
+  -o-transition: all 0.25s ease;
+  transition: all 0.25s ease;
+}
+.toggle-controller.default-success:after {
+  position: absolute;
+  top: 0;
+  left: 0;
+  content: '';
+  display: block;
+  height: 1.5625rem;
+  width: 1.5625rem;
+  -webkit-border-radius: 1.5625rem;
+  -moz-border-radius: 1.5625rem;
+  border-radius: 1.5625rem;
+  -webkit-box-shadow: 0 0.0625rem 0.125rem rgba(46, 45, 44, 0.2);
+  -moz-box-shadow: 0 0.0625rem 0.125rem rgba(46, 45, 44, 0.2);
+  box-shadow: 0 0.0625rem 0.125rem rgba(46, 45, 44, 0.2);
+  background: white;
+  -webkit-transition: all 0.25s ease;
+  -moz-transition: all 0.25s ease;
+  -o-transition: all 0.25s ease;
+  transition: all 0.25s ease;
+}
+.toggle-off.active {color:red;}
+.toggle-on.active {color:blue;}
 
 </style>
 
@@ -83,13 +83,16 @@
         <div class="elements-space-between">
             <span class="hg_head1">Employee Management</span>
             <div>
+                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Admin_Tool:extract_employee_template' %}'"type="button">
+                    <i class="fas fa-download"></i> download template
+                </button>
+                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_employee_data' %}'"type="button">
+                    <i class="fas fa-download"></i> extract
+                </button>
+                <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_data"  title="Upload Data" value="employee_upload"  onclick="onclick_upload_button();" type="button">
+                    <i class="fas fa-cloud-upload-alt"></i> upload data
+                </button>
                 <button class="btn btn-primary" onclick="window.open(href = '{% url 'eProc_Users:register_page' %}')"><i class="fas fa-user-plus"></i> Create Employee</button>
-<!--                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_employee_data' %}'"type="button">-->
-<!--                    <i class="fas fa-download"></i> extract-->
-<!--                </button>-->
-<!--                <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_data"  title="Upload Data" value="employee_upload"  onclick="onclick_upload_button();" type="button">-->
-<!--                    <i class="fas fa-cloud-upload-alt"></i> upload data-->
-<!--                </button>-->
             </div>
         </div>
 
@@ -224,7 +227,13 @@
                 <td>{{results.first_name}}</td>
                 <td>{{results.last_name}}</td>
                 <td>{{results.email}}</td>
-                <td>{{results.is_active}}</td>
+                <td>
+                    {% if results.is_active %}
+                      <label>Active</label>
+                    {% else %}
+                      <label>In Active</label>
+                    {% endif %}
+                </td>
                 <td>
                     <label class="switch">
                             <label class="toggle">
@@ -399,13 +408,87 @@
 
     <!--end of modal popup for Add,copy,update and upload-->
 
+<!--modal popup to upload the csv file-->
+    <div class="modal fade" id="id_data_upload">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title">Data Upload</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div>
+                        <p id="id_error_msg_upload" class="alert alert-danger error" hidden></p>
+                    </div>
+                    <div><label> Upload a file</label></div>
+                    <input type="file" id="id_file_data_upload" name="file">
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button id="popup_save"  class="btn btn-primary" onclick="onclick_display_csv_data()"><i class="fas fa-save"></i> save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end of modal popup to upload the csv file-->
+
+    <!--save confirmation popup-->
+    <div class="modal fade" id="id_save_confirm_popup">
+        <div class="modal-dialog modal-dialog-centered ">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Please Confirm</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to save?.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button type="button" id="id_popup_save" onclick="popup_save_data()" class="btn btn-primary"><i class="fas fa-save"></i> yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end of save confirmation popup-->
+
+<!--change confirmation popup-->
+    <div class="modal fade" id="id_confirm_popup">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" >
+                    <h5 class="modal-title">Please Confirm</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to Change?.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button type="button" onclick="lock_active_change()" class="btn btn-primary"><i class="fas fa-check"></i> yes </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end of delete confirmation popup-->
 
 <script src="{% static 'scripts/user-search.js' %}"></script>
 <script>
 var emp_data_array = {}
 var Tablename = uiConstants["CONST_TABLENAME_EMPLOYEE"]
 var appname = uiConstants["CONST_APPNAME03"]
-var db_header_data = uiConstants["CONST_HEADER_DATA_EMP_DETAIL"]
+var db_header_data = uiConstants['EMAIL','USERNAME','PERSON_NO','FORM_OF_ADDRESS','FIRST_NAME','LAST_NAME','PHONE_NUM','PASSWORD','DATE_JOINED','FIRST_LOGIN','LAST_LOGIN','IS_ACTIVE','IS_SUPERUSER','IS_STAFF','DATE_FORMAT','EMPLOYEE_ID','DECIMAL_NOTATION','USER_TYPE','LOGIN_ATTEMPTS','USER_LOCKED','PWD_LOCKED','SSO_USER','VALID_FROM','VALID_TO','del_ind','CURRENCY_ID','LANGUAGE_ID','OBJECT_ID', 'TIME_ZONE']
 var data_delete = '';
 function reload()
 {
@@ -536,46 +619,17 @@ function main_table_delete(){
         }
     });
 }
-<!-- toggle button for User lock-->
-<!--$(document).ready(function() {-->
-<!--    $('.toggle-input').change(function() {-->
-
-<!--     var data = {}-->
-<!--        if($(this).is(':checked')) {-->
-<!--            console.log('This is firing');-->
-<!--            $('.toggle-off').removeClass('active');-->
-<!--            $('.toggle-on').addClass('active');-->
-<!--            data.flag = true-->
-<!--        } else {-->
-<!--            $('.toggle-off').addClass('active');-->
-<!--            $('.toggle-on').removeClass('active');-->
-<!--            data.flag = false-->
-<!--        }-->
-<!--        var id = this.id-->
-<!--        data.employee_id = id-->
-<!--        jQuery.ajax({-->
-<!--       type: 'POST',-->
-<!--       url: "{% url 'eProc_Admin_Tool:lock_unlock_emp' %}",-->
-<!--       dataType :'json',-->
-<!--       data: JSON.stringify(data),-->
-<!--       success: function(result){-->
-
-<!--       },-->
-<!--       error: function(xhr, resp, text) {-->
-<!--       },-->
-<!--       cache: false,-->
-<!--       processData: false,-->
-<!--       contentType: false,-->
-<!--   });-->
-<!--    });-->
-<!--});-->
 
 //onclick of data Upload copy data to modal pop-up
 
 function onclick_display_csv_data() {
     $('#id_popup_table').DataTable().destroy();
     formdata = new FormData();
-    formdata.append("file_attach", $('#id_file_data_upload').prop('files')[0]);
+    attached_file = $('#id_file_data_upload').prop('files')[0]
+    file_extension = (attached_file.name).split(".")[1]
+    file_extension = file_extension.toUpperCase();
+    if(file_extension == 'CSV'){
+    formdata.append("file_attach", attached_file);
     formdata.append("Tablename",Tablename);
     formdata.append("appname",appname);
     $('#id_data_upload').modal('hide');
@@ -587,9 +641,9 @@ function onclick_display_csv_data() {
         data: formdata,
         contentType: "application/json; charset=utf-8",
         success: function(response) {
-            if(response == "Please check the uploaded csv file") {
+            if(response.error_message) {
                 $("#id_error_msg_upload").prop("hidden",false)
-                document.getElementById("id_error_msg_upload").innerHTML = response;
+                document.getElementById("id_error_msg_upload").innerHTML = response.error_message;
                 document.getElementById("id_error_msg_upload").style.color = "Red";
                 $('#id_data_upload').modal('show');
             }
@@ -597,8 +651,9 @@ function onclick_display_csv_data() {
                 emp_data_array = response;
                 var edit_basic_data = '';
                 var del_ind = '';
+                console.log(response.data);
                 $("#id_popup_tbody").empty();
-                    $.each(response, function (i, value) {
+                    $.each(response.data, function (i, value) {
                     del_ind = '<td>' + value[24] + '</td>'
                     if (value[24] == 1) {
                         del_ind=' <input type="checkbox" value="' + value[24] + '" checked>'
@@ -656,6 +711,13 @@ function onclick_display_csv_data() {
         processData: false,
         contentType: false,
     });
+    }
+    else{
+        $("#id_error_msg_upload").prop("hidden",false)
+        document.getElementById("id_error_msg_upload").innerHTML = messageConstants["JMSG110"];
+        document.getElementById("id_error_msg_upload").style.color = "Red";
+        $('#id_data_upload').modal('show');
+    }
 }
 //check function restricting special char and diaplay the data count of csv file
 function check_data() {
@@ -737,7 +799,8 @@ function check_data() {
             $("#id_check_special_character_messages").prop("hidden",true)
              $("#save_id").prop("hidden", false);
     }
-    popup_data_dict ={'data_list' : country_list, 'Tablename' : Tablename, 'appname' : appname, 'db_header_data' : ["COUNTRY_CODE", "COUNTRY_NAME", "del_ind"]}
+    popup_data_dict ={'data_list' : country_list, 'Tablename' : Tablename, 'appname' : appname,
+    'db_header_data' : ['EMAIL','USERNAME','PERSON_NO','FORM_OF_ADDRESS','FIRST_NAME','LAST_NAME','PHONE_NUM','PASSWORD','DATE_JOINED','FIRST_LOGIN','LAST_LOGIN','IS_ACTIVE','IS_SUPERUSER','IS_STAFF','DATE_FORMAT','EMPLOYEE_ID','DECIMAL_NOTATION','USER_TYPE','LOGIN_ATTEMPTS','USER_LOCKED','PWD_LOCKED','SSO_USER','VALID_FROM','VALID_TO','del_ind','CURRENCY_ID','LANGUAGE_ID','OBJECT_ID', 'TIME_ZONE']}
     $.ajax({
         type: 'POST',
         url: "{% url 'eProc_Basic_Settings:check_data' %}",
@@ -786,6 +849,44 @@ function check_data() {
         }
     });
 }
+var data = {};
+ $('.toggle-input').change(function() {
+    console.log(this.id);
+  //  data = (this.id).split('-')[0];
+    // document.getElementById("form_id_del").innerHTML = data;
+        $('#id_confirm_popup').modal('show')
+        if($(this).is(':checked')) {
+            console.log('This is firing');
+            $('.toggle-off').removeClass('active');
+            $('.toggle-on').addClass('active');
+            data.flag = true
+        } else {
+            $('.toggle-off').addClass('active');
+            $('.toggle-on').removeClass('active');
+            data.flag = false
+        }
+        var id = this.id;
+        data.employee_id = id;
+  });
+function lock_active_change(){
+        jQuery.ajax({
+       type: 'POST',
+       url: "{% url 'eProc_Admin_Tool:lock_unlock_emp' %}",
+       dataType :'json',
+       data: JSON.stringify(data),
+       success: function(result){
+             $('#id_confirm_popup').modal('hide');
+              $('#success_msg_id').text("Changed Successfully");
+            $("#error_msg_div").prop("hidden",false)
+            setTimeout(function(){$("#error_msg_div").prop("hidden",true);},5000);
+       },
+       error: function(xhr, resp, text) {
+       },
+       cache: false,
+       processData: false,
+       contentType: false,
+   });
 
+    }
 </script>
 {% endblock %}

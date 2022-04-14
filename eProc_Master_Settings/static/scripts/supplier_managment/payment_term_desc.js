@@ -18,7 +18,13 @@ function onclick_update_button() {
     onclick_copy_update_button("update")
     document.getElementById("id_del_add_button").style.display = "none";
 }
-
+//onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
+function onclick_upload_button() {
+    GLOBAL_ACTION = "payterm_desc_upload"
+    $("#id_popup_tbody").empty();
+    $('#id_data_upload').modal('show');
+    //document.getElementById('id_file_data_upload').value = "";
+}
 
 
 //onclick of cancel empty the popup table body and error messages

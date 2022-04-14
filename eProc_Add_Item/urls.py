@@ -9,5 +9,7 @@ urlpatterns = [
     path('free_text/<str:encrypted_freetext_id>/<str:document_number>', views.free_text_form,
          name='freetext'),
     path('add_free_text/', views.add_free_text, name='add_free_text'),
-    path('update_or_create_item/<str:document_number>', views.update_or_create_item, name='update_or_create_item')
+    path('update_or_create_item/<str:document_number>', views.update_or_create_item, name='update_or_create_item'),
+    path('product_service/<str:product_id>/', views.get_product_service_product_details, name='get_product_service_product_details'),
+
 ]

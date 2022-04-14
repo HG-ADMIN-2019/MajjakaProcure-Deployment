@@ -6,7 +6,7 @@
         <div class="card-body">
             {% for sc_app in sc_appr %}
             {% if sc_app.header_guid_id in sc_head.guid and sc_app.step_num == '1'  %}
-            {% if sc_app.app_id != 'AUTO'  %}
+            {% if sc_app.app_id != 'Auto'  %}
             {% if sc_head.status == 'AWAITING_APPROVAL'%}
             <span class="h3">Approval Process Overview</span> by <span class="badge badge-secondary">{{sc_app.app_desc}}</span> 
             {% elif sc_head.status == 'SAVED' %}
@@ -23,7 +23,7 @@
             <span class="h3">Approval Process Overview</span>
             <!-- <span class="hg_search_createdOn hg_status_WFA">REJECTED</span> -->
             {% endif %}
-            {% elif sc_app.app_id == 'AUTO' %}
+            {% elif sc_app.app_id == 'Auto' %}
             {% if sc_head.status == 'PURCHASER_WORKLIST' %}
             <span class="h3">Approval Process Overview</span> <span class="badge badge-secondary">Shopper Assist</span>
             {% elif sc_head.status == 'SAVED' %}
@@ -57,7 +57,7 @@
 
         <div class="workflow-overview__user-icon-container">
             {% if sc_head.status == 'PURCHASER_WORKLIST' %}
-            {% if workflow.1 == 'MULTIPLE' %}
+            {% if workflow.1 == 'Multiple' %}
             <div class="workflow-user-bg workflow-active">
                 <i class="fas fa-users fa-3x" aria-hidden="true"></i>
             </div>
@@ -69,7 +69,7 @@
             <button id="{{workflow.1}}" onclick="get_pgrp_user(this)" type="button" class="button-workflow-user">Purchasing Group: {{workflow.1}}</button>
             {% endif %}
             {% elif sc_head.status == 'SAVED' %}
-            {% if workflow.1 == 'MULTIPLE' %}
+            {% if workflow.1 == 'Multiple' %}
             <div class="workflow-user-bg workflow-inactive">
                 <i class="fas fa-users fa-3x" aria-hidden="true"></i>
             </div>
@@ -81,7 +81,7 @@
             <button id="{{workflow.1}}" onclick="get_pgrp_user(this)" type="button" class="button-workflow-user">Purchasing Group: {{workflow.1}}</button>
             {% endif %}
             {% else %}
-            {% if workflow.1 == 'MULTIPLE' %}
+            {% if workflow.1 == 'Multiple' %}
             <div class="workflow-user-bg workflow-completed">
                 <i class="fas fa-users fa-3x" aria-hidden="true"></i>
             </div>
@@ -173,7 +173,7 @@
 
         <div class="workflow-overview__user-icon-container">
             {% if sc_head.status == 'PURCHASER_WORKLIST' %}
-            {% if workflow.1 == 'MULTIPLE' %}
+            {% if workflow.1 == 'Multiple' %}
             <div class="workflow-user-bg workflow-active">
                 <i class="fas fa-users fa-3x" aria-hidden="true"></i>
             </div>
@@ -185,7 +185,7 @@
             <button id="{{workflow.1}}" onclick="get_pgrp_user(this)" type="button" class="button-workflow-user">Purchasing Group: {{workflow.1}}</button>
             {% endif %}
             {% elif sc_head.status == 'SAVED' %}
-            {% if workflow.1 == 'MULTIPLE' %}
+            {% if workflow.1 == 'Multiple' %}
             <div class="workflow-user-bg workflow-inactive">
                 <i class="fas fa-users fa-3x" aria-hidden="true"></i>
             </div>
@@ -197,7 +197,7 @@
             <button id="{{workflow.1}}" onclick="get_pgrp_user(this)" type="button" class="button-workflow-user">Purchasing Group: {{workflow.1}}</button>
             {% endif %}
             {% else %}
-            {% if workflow.1 == 'MULTIPLE' %}
+            {% if workflow.1 == 'Multiple' %}
             <div class="workflow-user-bg workflow-completed">
                 <i class="fas fa-users fa-3x" aria-hidden="true"></i>
             </div>

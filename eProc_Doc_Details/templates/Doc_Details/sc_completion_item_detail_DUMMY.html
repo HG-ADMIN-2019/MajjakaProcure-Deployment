@@ -34,7 +34,7 @@
         <div class="row">
 
             <div class="col m-3">
-                <h4>Identification:</h4>
+                <h4>Identification</h4>
                 <div class="form-group row">
                     <label class="col-4 col-form-label">Description</label>
                     <div class="col-8">
@@ -242,7 +242,7 @@
     {% for items in item_dictionary_list %}
     <div id="display_eform-{{items.guid}}-{{ forloop.counter0 }}" class="hg_class_eform" style="display:none;">
         <div class="card-header" style="background-color: white;">
-            <span class="h5">Eform Details</span>
+            <span class="h5">Additional eForm Data</span>
             <span style="float: right;" onclick="display_eform('{{items.guid}}',{{forloop.counter}});"><i class="fas fa-times"></i></span>
         </div>
         <div class="card-body">
@@ -377,7 +377,7 @@
                     </div>
 
                     <div class="form-group row">
-                        <label class="col-4 col-form-label">Account Assignment Category: </label>
+                        <label class="col-4 col-form-label">Account Assignment Category : </label>
                         <div class="col-8">
                             <select class="form-control check_multiple_account_asign_type" id="ScAccounting-acc_cat-{{ sc_acc.guid }}"
                                     onchange="display_acc_val(this)" class="hg_modal_select_field" disabled>
@@ -783,4 +783,177 @@
         </div>
     </div>
     {% endfor %}
+</div>
+
+<!-- ########################### -->
+<div class="container-fluid">
+    <div class="mep-form_wrapper">
+
+        <div class="d-flex justify-content-between">
+            <h3>Product And Service Configuration</h3>
+            <div>
+                <button class="btn btn-outline-primary" title="Extract" data-toggle="modal" data-target="#extrct_popup"
+                    onclick="" type="button">
+                    <i class="fas fa-download"></i> extract
+                </button>
+                <button class="btn btn-outline-primary" id="basic_save_upld_redirect" data-toggle="modal"
+                    data-target="#upload_product_detail_popup" type="button">
+                    <i class="fas fa-cloud-upload-alt"></i> data upload
+                </button>
+                <button class="btn btn-primary"
+                    onclick="window.open(href = '{% url 'eProc_Manage_Content:get_product_details' None %}')">
+                    <i class="fa fa-plus"></i> add new product
+                </button>
+
+                <button onclick="SaveToDisk('myfilename.txt')" hidden>Create file</button>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="card card-shadow-1">
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div>
+                        <div class="form-row">
+                            <div class="col-md">
+                                <label for="">Product ID:</label>
+                                <input type="text" class="form-control" id="product_id" name="product_id">
+                            </div>
+                            <div class="col-md">
+                                <label for="">Product Description:</label>
+                                <input type="text" class="form-control" id="product_desc" name="product_desc">
+                            </div>
+                            <div class="col-md">
+                                <label for="">Supplier Name:</label>
+                                <input type="text" class="form-control" id="supplier_name" name="supplier_name">
+                            </div>
+                            <div class="col-md">
+                                <label for="">Product Category:</label>
+                                <input type="text" class="form-control" id='product_category' name='product_category'>
+                            </div>
+                            <div class="col-md">
+                                <label for="">Search Count:</label>
+                                <input name="search_count" type="number" value="10" id="search_count"
+                                    class="form-control">
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="elements-space-between" data-toggle="collapse"
+                            data-target="#product_detail_adv_search">
+                            <span class="h5">Advanced Search</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+
+                    <div id="product_detail_adv_search" class="advanced-search-collapse collapse">
+                        <div class="row">
+                            <div class="col-md">
+                                <label for="">Search Term1:</label>
+                                <input type="text" class="form-control" id='search_term1' name='search_term1'>
+                            </div>
+                            <div class="col-md">
+                                <label for="">Search Term2:</label>
+                                <input type="text" class="form-control" id='search_term2' name='search_term2'>
+                            </div>
+                            <div class="col-md">
+                                <label for="">Source System:</label>
+                                <input type="text" class="form-control" id='source_system' name='source_system'>
+                            </div>
+                        </div>
+                    </div>
+
+                    <br>
+
+                    <div>
+                        <div>
+                            <input type="reset" value="Clear filters" class="ip-form-clear-filters">
+                            <button class="button-search-users btn btn-primary" type="button"
+                                title="Please click to get the search details!" id="submit_product_detail"><i
+                                    class="fas fa-search"></i> search
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {% if product_details_query.count > 0 %}
+        <div class="search_result_count_card card">
+            <div class="card-body">
+                <h6 class="card-title">Total number of results found
+                    :{{product_details_query.count}}</h6>
+            </div>
+        </div>
+        {% elif product_details_query.count == 0 %}
+        <div class="search_result_count_card card">
+            <div class="card-body">
+                <h6 class="card-title">No Results Found</h6>
+            </div>
+        </div>
+        {% endif %}
+    
+        <div id="error_msg_div" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
+
+        {% if product_details_query %}
+        <div class="card">
+            <div class="card-body">
+                <button class="btn btn-primary  btn-sm" title="Delete" id="id_delete_product" value="product_delete"
+                    data-toggle="modal" data-target="#id_delete_confirm_popup" style="display:none;">
+                    <i class="fa fa-trash"></i> Delete
+                </button>
+                <div>
+                    <table id="product_detail_tab" class="table">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col"> <input type="checkbox" onclick="checkAll(this)"></th>
+                                <th style="width: 30%;">Product Description</th>
+                                <th>Product Id</th>
+                                <th>Supplier Id</th>
+                                <th>Lead Time</th>
+                                <th>Unit</th>
+                                <th>Price</th>
+                                <th>Currency</th>
+                                <th>Product Category</th>
+                                <th>ACTION</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="product_detail_tbody">
+                            {% for product_detail in product_details_query %}
+                            <tr id="{{product_detail.product_id}}">
+                                <td>
+                                    <input type="checkbox" class="product_checkbox" onclick="valueChanged();" {% if product_detail.product_transaction %} disabled {% endif %}></td>
+                                <td>
+                                    <a href="{% url 'eProc_Manage_Content:get_product_details' product_detail.encrypted_product_id %}"
+                                        target="_blank">
+                                        <div style="display: flex; flex-direction: row;">
+                                            <div> <img src="/media/{{product_detail.image_url}}"
+                                                    onerror='this.src="/static/images/no-image-cropped.png"'
+                                                    class="mr-3 catalog_img product-config-img"></div>
+                                            <span>{{product_detail.short_desc}} </span>
+                                        </div>
+                                    </a>
+                                </td>
+                                <td>{{product_detail.product_id}}</td>
+                                <td>{{product_detail.supplier_id}}</td>
+                                <td>{{product_detail.lead_time}}</td>
+                                <td>{{product_detail.unit}}</td>
+                                <td>{{product_detail.price}}</td>
+                                <td>{{product_detail.currency}}</td>
+                                <td>{{product_detail.prod_cat_id}}</td>
+                                <td><i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete Form"
+                                        id="{{product_detail.product_id}}-{{product_detail.product_transaction}}"
+                                        onclick="get_form_id_to_delete(this.id)"></i></td>
+
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
 </div>

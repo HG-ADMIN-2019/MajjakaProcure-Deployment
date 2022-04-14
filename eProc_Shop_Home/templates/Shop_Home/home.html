@@ -27,7 +27,7 @@
                             <!-- product 1 -->
                             <div class="popular_products_card">
                                 <div class="popular_products_img">
-                                    <a href="{% url 'eProc_Catalog:get_product_service_product_details' product_data.product_id  %}" target="_blank">
+                                    <a href="{% url 'eProc_Add_Item:get_product_service_product_details' product_data.product_id  %}" target="_blank">
                                         <img onerror='this.src="/static/images/no-image-cropped.png"' src="/media/{{product_data.image_url}}" alt="">
                                     </a>
                                 </div>
@@ -61,7 +61,7 @@
         {% if fav_cart_num_list %}
         <section>
             <div class="home_section_heading">
-                <p class="h4">Favourite shopping carts</p>
+                <p class="h4">Favourite Shopping Carts</p>
                 <hr>
             </div>
 
@@ -73,11 +73,11 @@
                             <div class="card fav_sc_card" id="fav_sc_card_{{fav_cart_data.favourite_cart_number}}">
                                 <div class="card-body">
                                     <div class="fav_sc_header">
-                                        <span class="text-muted">Favourite cart number </span><span class="h4">{{fav_cart_data.favourite_cart_number}}</span>
+                                        <span class="text-muted">Favourite Cart Number </span><span class="h4">{{fav_cart_data.favourite_cart_number}}</span>
                                     </div>
                                     <hr>
                                     <div class="fav_sc_name_section">
-                                        <span class="text-muted">Cart name</span><br>
+                                        <span class="text-muted">Cart Name</span><br>
                                         <span class="h6 fav_sc_name">{{fav_cart_data.favourite_cart_name}}</span>
                                     </div>
 
@@ -131,7 +131,7 @@
 
         <section>
             <div class="home_section_heading">
-                <p class="h4" >Recently viewed products</p>
+                <p class="h4" >Recently Viewed Products</p>
                 <hr>
             </div>
 
@@ -144,7 +144,7 @@
                             <div class="popular_products_card" id="rvi_card_{{viewed_data.product_id}}">
                                 <button type="button" class="btn btn-round btn-sm" onclick="RviDelete({{ viewed_data.product_id}})"><i class="far fa-trash-alt"></i></button>
                                 <div class="popular_products_img">
-                                    <a href="{% url 'eProc_Catalog:get_product_service_product_details' viewed_data.product_id  %}" target="_blank">
+                                    <a href="{% url 'eProc_Add_Item:get_product_service_product_details' viewed_data.product_id  %}" target="_blank">
                                         <img onerror='this.src="/static/images/no-image-cropped.png"' src="/media/{{viewed_data.image_url}}" alt="">
                                     </a>
                                 </div>
@@ -218,19 +218,19 @@
                             <h5 class="card-title">Support</h5>
                             <div class="support-card support-card-success">
                                 <i class="material-icons">help_outline</i>
-                                <span><a href="#" class="support-desc">Have a query about product and services?</a></span>
+                                <span><a href="#" class="support-desc">Have A Query About Product/Service ?</a></span>
                             </div>
                             <div class="support-card support-card-info">
                                 <i class="material-icons">question_answer</i>
-                                <span><a href="javascript:CustomeSupport();" class="support-desc">Customer support {{support_chat}}</a> </span>
+                                <span><a href="javascript:CustomeSupport();" class="support-desc">Customer Support {{support_chat}}</a> </span>
                             </div>
                             <div class="support-card support-card-warning">
                                 <i class="material-icons">mail_outline</i>
-                                <span><a href="javascript:TriggerOutlook();" class="support-desc">Write us an E-mail - {{support_email}}</a> </span>
+                                <span><a href="javascript:TriggerOutlook();" class="support-desc">Write Us An E-mail - {{support_email}}</a> </span>
                             </div>
                             <div class="support-card support-card-primary">
                                 <i class="material-icons">support_agent</i>
-                                <span><a href="#" class="support-desc">Call us {{support_phone}}</a> </span>
+                                <span><a href="#" class="support-desc">Call Us {{support_phone}}</a> </span>
                             </div>
                         </div>
                     </div>
@@ -303,7 +303,7 @@ function add_catalog(prd_id,button_id) {
 //    let document_number = 'create';
 //    let is_edit = true;
    if(button_id){
-        var url = "{% url 'eProc_Catalog:get_product_service_product_details' 123 %}";
+        var url = "{% url 'eProc_Add_Item:get_product_service_product_details' 123 %}";
         var href_link = url.replace('123', prd_id)
          window.open(href_link,'_blank');
         //view_detail(prd_id, 0)
