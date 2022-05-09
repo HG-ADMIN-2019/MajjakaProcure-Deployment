@@ -177,6 +177,12 @@ def my_order_doc_details(req, flag, type, guid, mode, access_type):
     sys_attributes_instance = sys_attributes(client)
     acc_list = org_config_acc_desc['acc_desc_list']
     doc_number_encrypted = encrypt(sc_header_instance['doc_number'])
+
+    if access_type == 'approvals':
+        is_approval_preview = True
+    else:
+        is_approval_preview = False
+
     context = {'type': type, 'guid': header_guid,
                'currency': django_query_instance.django_filter_only_query(Currency, {'del_ind': False}),
                'requester': requester_user_name, 'unit': UnitOfMeasures.objects.filter(del_ind=False),
@@ -210,7 +216,8 @@ def my_order_doc_details(req, flag, type, guid, mode, access_type):
                'acct_assignment_category': sys_attributes_instance.get_acct_assignment_category(),
                'edit_address_flag': sys_attributes_instance.get_edit_address(),
                'shipping_address_flag': sys_attributes_instance.get_shipping_address(),
-               'country_dropdown': get_country_data()}
+               'country_dropdown': get_country_data(),
+               'is_approval_preview': is_approval_preview}
     return render(req, template, context)
 
 

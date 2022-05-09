@@ -12,10 +12,10 @@
             <h3>Maintain Countries</h3>
             <div>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_country_template' %}'"type="button">
-                    <i class="fas fa-download"></i> download Template
+                    <i class="fas fa-download"></i> template
                 </button>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_country_data' %}'"type="button">
-                    <i class="fas fa-download"></i> extract
+                    <i class="fas fa-download"></i> extract data
                 </button>
                 <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_data"  title="Upload Data" value="country_upload"  onclick="onclick_upload_button();" type="button">
                     <i class="fas fa-cloud-upload-alt"></i> upload data
@@ -23,8 +23,8 @@
                 <button class="btn btn-primary" id="id_add_data" value="ADD" title="Add Country" data-toggle="modal"  data-target="#myModal" onclick="onclick_add_button(this);">
                     <i class="fa fa-plus"></i> add country
                 </button>
-                <button class="btn btn-primary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
-                    <i class="fa fa-plus"></i> close
+                <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                    <i class="fas fa-times"></i> close
                 </button>
             </div>
         </div>
@@ -155,6 +155,8 @@
 
     <!-- modal popup to upload the csv file; save confirmation popup; delete confirmation popup -->
     {% include 'configuration_common_pop_up.html' %}
+
+
 
     <div>
         {% if messages %}

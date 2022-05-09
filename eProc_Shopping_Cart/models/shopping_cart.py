@@ -46,7 +46,7 @@ class ScHeader(models.Model, DBQueries):
     doc_flow_ctrl = models.BooleanField(default=False, null=False, db_column='DOC_FLOW_CTRL')
     subtype = models.CharField(db_column='SUBTYPE', max_length=10, blank=True, null=True,
                                verbose_name='Specification of a Purchasing Doc.e.g. Credit Memo/Invoice')
-    transaction_type = models.CharField(db_column='TRANSACTION_TYPE', null=False, max_length=10)
+    transaction_type = models.CharField(db_column='TRANSACTION_TYPE', null=False, max_length=10)# Transaction number of sc eg SHC1,SHC2
     ref_object_id = models.CharField(db_column='REF_OBJECT_ID', max_length=10, blank=True, null=True,
                                      verbose_name='Reference Object Id')
     requester = models.CharField(db_column='REQUESTER', max_length=40, blank=False, null=False,
@@ -250,7 +250,7 @@ class ScItem(models.Model):
     supplier_fax_no = models.CharField(max_length=30, db_column='SUPPLIER_FAX_NO', blank=True, null=True)
     supplier_email = models.CharField(max_length=100, db_column='SUPPLIER_EMAIL', blank=True, null=True)
     delivery_days = models.CharField(db_column='DELIVERY_DAYS', max_length=20, null=True, blank=True)
-    transaction_type = models.CharField(db_column='TRANSACTION_TYPE', null=False, max_length=10)
+    transaction_type = models.CharField(db_column='TRANSACTION_TYPE', null=False, max_length=10) # Transaction number of PO eg SHC1,SHC2
     blocked_supplier = models.CharField(max_length=10, db_column='BLOCKED_SUPPLIER', blank=True, null=True)
     service_item = models.BooleanField(default=False, null=False, db_column='SERVICE_ITEM')
     required_on = models.DateField(null=True, blank=True, db_column='REQUIRED_ON')

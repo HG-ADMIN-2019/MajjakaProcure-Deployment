@@ -70,7 +70,7 @@ def create_update_master_data(request):
         return JsonResponse(display_data, safe=False)
     if master_data['table_name'] == 'SpendLimitValue':
         display_data = save_spend_limit_value_data_into_db(master_data)
-        return JsonResponse(display_data, safe=False)
+        return JsonResponse(display_data,safe=False)
     if master_data['table_name'] == 'Payterms':
         display_data = save_payterm_data_into_db(master_data)
         return JsonResponse(display_data, safe=False)
@@ -306,18 +306,19 @@ def extract_aav_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['ACC_ASSIGN_VALUE', 'ACCOUNT_ASSIGN_CAT', 'COMPANY_ID','VAILD_FROM', 'VAILD_TO', 'del_ind'])
+    writer.writerow(['ACC_ASSIGN_VALUE', 'ACCOUNT_ASSIGN_CAT', 'COMPANY_ID', 'VAILD_FROM', 'VAILD_TO', 'del_ind'])
 
     accounting = django_query_instance.django_filter_query(AccountingData,
                                                            {'del_ind': False}, None,
                                                            ['account_assign_value',
-                                                            'account_assign_cat', 'company_id', 'valid_from', 'valid_to', 'del_ind'])
+                                                            'account_assign_cat', 'company_id', 'valid_from',
+                                                            'valid_to', 'del_ind'])
     accounting_data = query_update_del_ind(accounting)
 
     for accountingData in accounting_data:
-        accountingData_info = [accountingData['account_assign_value'],  accountingData['account_assign_cat'],
+        accountingData_info = [accountingData['account_assign_value'], accountingData['account_assign_cat'],
                                accountingData['company_id'], accountingData['valid_from'],
-                               accountingData['valid_to'],accountingData['del_ind']]
+                               accountingData['valid_to'], accountingData['del_ind']]
         writer.writerow(accountingData_info)
 
     return response
@@ -330,7 +331,7 @@ def extract_accdesc_data(request):
     writer = csv.writer(response)
 
     writer.writerow(
-        ['ACCOUNT_ASSIGN_VALUE', 'DESCRIPTION','ACCOUNT_ASSIGN_CAT', 'COMPANY_ID', 'LANGUAGE_ID', 'del_ind'])
+        ['ACCOUNT_ASSIGN_VALUE', 'DESCRIPTION', 'ACCOUNT_ASSIGN_CAT', 'COMPANY_ID', 'LANGUAGE_ID', 'del_ind'])
 
     accountingdesc = django_query_instance.django_filter_query(AccountingDataDesc,
                                                                {'del_ind': False}, None,
@@ -353,17 +354,18 @@ def extract_cusprodcat_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['PRODUCT CATEGORY ID', 'del_ind'])
+    writer.writerow(['del_ind','PROD_CAT_ID'])
 
     customerprod = django_query_instance.django_filter_query(UnspscCategoriesCust,
                                                              {'del_ind': False}, None,
-                                                             ['prod_cat_id', 'del_ind'])
+                                                             ['del_ind','prod_cat_id'])
 
     customerprod_data = query_update_del_ind(customerprod)
 
     for customerprodData in customerprod_data:
-        customerprodData_info = [customerprodData['prod_cat_id'],
-                                 customerprodData['del_ind']]
+        customerprodData_info = [customerprodData['del_ind'],
+                                    customerprodData['prod_cat_id']]
+
         writer.writerow(customerprodData_info)
 
     return response
@@ -375,7 +377,7 @@ def extract_cusprodcat_template(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['PRODUCT CATEGORY ID', 'del_ind'])
+    writer.writerow(['del_ind','PROD_CAT_ID'])
 
     return response
 
@@ -386,21 +388,21 @@ def extract_cusprodcatdesc_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['PRODUCT CATEGORY', 'CATEGORY_DESC', 'LANGUAGE_ID', 'del_ind'])
+    writer.writerow(['CATEGORY_DESC','del_ind','LANGUAGE_ID','PROD_CAT_ID'])
     # get only active record
 
     customerproddesc = django_query_instance.django_filter_query(UnspscCategoriesCustDesc,
                                                                  {'del_ind': False}, None,
-                                                                 ['prod_cat_id', 'category_desc', 'language_id',
-                                                                  'del_ind'
+                                                                 ['category_desc','del_ind','language_id',
+                                                                  'prod_cat_id',
                                                                   ])
     customerproddesc_data = query_update_del_ind(customerproddesc)
 
     for customerproddescData in customerproddesc_data:
-        customerproddescData_info = [customerproddescData['prod_cat_id'],
-                                     customerproddescData['category_desc'],
+        customerproddescData_info = [customerproddescData['category_desc'],
+                                     customerproddescData['del_ind'],
                                      customerproddescData['language_id'],
-                                     customerproddescData['del_ind']]
+                                     customerproddescData['prod_cat_id']]
         writer.writerow(customerproddescData_info)
 
     return response
@@ -412,7 +414,7 @@ def extract_cusprodcatdesc_template(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['PRODUCT CATEGORY', 'CATEGORY_DESC', 'LANGUAGE_ID', 'del_ind'])
+    writer.writerow(['CATEGORY_DESC','del_ind','LANGUAGE_ID','PROD_CAT_ID'])
 
     return response
 
@@ -459,23 +461,42 @@ def extract_workflowaccount_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['ACC_VALUE', 'COMPANY_ID', 'APP_USERNAME','SUP_COMPANY_ID', 'SUP_ACC_VALUE', 'WORKFLOW_ACC_SOURCE_SYSTEM', 'del_ind','ACCOUNT_ASSIGN_CAT', 'CURRENCY_ID', 'SUP_ACCOUNT_ASSIGN_CAT'])
+    writer.writerow(
+        ['ACC_VALUE', 'COMPANY_ID', 'APP_USERNAME', 'SUP_COMPANY_ID', 'SUP_ACC_VALUE',
+         'del_ind', 'ACCOUNT_ASSIGN_CAT', 'CURRENCY_ID', 'SUP_ACCOUNT_ASSIGN_CAT'])
 
     # get only active records
     workflow_acct = django_query_instance.django_filter_query(WorkflowACC,
                                                               {'del_ind': False}, None,
-                                                              ['acc_value', 'company_id', 'app_username','sup_company_id', 'sup_acc_value', 'workflow_acc_source_system', 'del_ind','account_assign_cat', 'currency_id', 'sup_account_assign_cat'])
+                                                              ['acc_value', 'company_id', 'app_username',
+                                                               'sup_company_id', 'sup_acc_value',
+                                                                'del_ind',
+                                                               'account_assign_cat', 'currency_id',
+                                                               'sup_account_assign_cat'])
     workflow_acct_data = query_update_del_ind(workflow_acct)
 
     for workflowacct in workflow_acct_data:
         workflowacct_info = [workflowacct['acc_value'], workflowacct['company_id'], workflowacct['app_username'],
                              workflowacct['sup_company_id'], workflowacct['sup_acc_value'],
-                             workflowacct['workflow_acc_source_system'], workflowacct['del_ind'],
+                              workflowacct['del_ind'],
                              workflowacct['account_assign_cat'],
                              workflowacct['currency_id'],
                              workflowacct['sup_account_assign_cat'],
                              ]
         writer.writerow(workflowacct_info)
+
+    return response
+
+
+def extract_workflowacct_template(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="Work Flow Acct Template.CSV"'
+
+    writer = csv.writer(response)
+
+    writer.writerow(
+        ['ACC_VALUE', 'COMPANY_ID', 'APP_USERNAME', 'SUP_COMPANY_ID', 'SUP_ACC_VALUE',
+         'del_ind', 'ACCOUNT_ASSIGN_CAT', 'CURRENCY_ID', 'SUP_ACCOUNT_ASSIGN_CAT'])
 
     return response
 
@@ -693,7 +714,18 @@ def address_type(request):
     client = getClients(request)
     address_type_data = list(
         OrgAddressMap.objects.filter(del_ind=False).values('address_guid', 'address_number', 'address_type',
-                                                           'company_id'))
+                                                           'company_id','valid_from','valid_to'))
+    for valid_from in address_type_data:
+
+        if valid_from['valid_from'] == None:
+            valid_from['valid_from'] = ''
+
+    for valid_to in address_type_data:
+
+        if valid_to['valid_to'] == None:
+            valid_to['valid_to'] = ''
+
+
     dropdown_db_values = list(
         FieldTypeDesc.objects.filter(field_name='address_type', del_ind=False).values('field_type_id',
                                                                                       'field_type_desc'
@@ -760,18 +792,20 @@ def extract_approverlimitval_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['APP_CODE_ID','COMPANY_ID','APP_TYPES','UPPER_LIMIT_VALUE','CURRENCY_ID','del_ind'])
+    writer.writerow(['APP_CODE_ID', 'COMPANY_ID', 'APP_TYPES', 'UPPER_LIMIT_VALUE', 'CURRENCY_ID', 'del_ind'])
 
     approverlimitval = django_query_instance.django_filter_query(ApproverLimitValue,
                                                                  {'del_ind': False}, None,
-                                                                 ['app_code_id','company_id','app_types','upper_limit_value',
-                                                                  'currency_id','del_ind'])
+                                                                 ['app_code_id', 'company_id', 'app_types',
+                                                                  'upper_limit_value',
+                                                                  'currency_id', 'del_ind'])
     approverlim_data = query_update_del_ind(approverlimitval)
 
     for approverlimitvaldata in approverlim_data:
         approverlimitvaldata_info = [approverlimitvaldata['app_code_id'], approverlimitvaldata['company_id'],
-                                     approverlimitvaldata['app_types'],approverlimitvaldata['upper_limit_value'], approverlimitvaldata['currency_id'],
-                                      approverlimitvaldata['del_ind']]
+                                     approverlimitvaldata['app_types'], approverlimitvaldata['upper_limit_value'],
+                                     approverlimitvaldata['currency_id'],
+                                     approverlimitvaldata['del_ind']]
 
         writer.writerow(approverlimitvaldata_info)
 
@@ -807,16 +841,16 @@ def extract_spendlimitval_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['SPEND_CODE_ID', 'UPPER_LIMIT_VALUE', 'CURRENCY_ID', 'COMPANY_ID', 'del_ind'])
+    writer.writerow(['SPEND_CODE_ID', 'COMPANY_ID','UPPER_LIMIT_VALUE', 'CURRENCY_ID',  'del_ind'])
 
     spendlimitvalues = django_query_instance.django_filter_query(SpendLimitValue, {'del_ind': False}, None,
-                                                                 ['spend_code_id', 'upper_limit_value', 'company_id',
+                                                                 ['spend_code_id','company_id', 'upper_limit_value',
                                                                   'currency_id', 'del_ind'])
     spendlim_data = query_update_del_ind(spendlimitvalues)
 
     for spendlimitvaluedata in spendlim_data:
-        spendlimitvaluedata_info = [spendlimitvaluedata['spend_code_id'], spendlimitvaluedata['upper_limit_value'],
-                                    spendlimitvaluedata['company_id'],
+        spendlimitvaluedata_info = [spendlimitvaluedata['spend_code_id'], spendlimitvaluedata['company_id'],
+                                    spendlimitvaluedata['upper_limit_value'],
                                     spendlimitvaluedata['currency_id'], spendlimitvaluedata['del_ind']]
         writer.writerow(spendlimitvaluedata_info)
 
@@ -840,18 +874,21 @@ def extract_address_type_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['ADDRESS_NUMBER', 'ADDRESS_TYPE', 'COMPANY_ID', 'del_ind'])
+    writer.writerow(['ADDRESS_TYPE','ADDRESS_NUMBER','COMPANY_ID','VALID_FROM','VALID_TO','del_ind'])
 
     address_type = django_query_instance.django_filter_query(OrgAddressMap,
                                                              {'del_ind': False}, None,
-                                                             ['address_number', 'address_type', 'company_id',
+                                                             ['address_type','address_number','company_id',
+                                                              'valid_from','valid_to',
                                                               'del_ind'])
     address_type_data = query_update_del_ind(address_type)
 
     for addresstypedata in address_type_data:
-        address_type_info = [addresstypedata['address_number'],
-                             addresstypedata['address_type'],
+        address_type_info = [addresstypedata['address_type'],
+                             addresstypedata['address_number'],
                              addresstypedata['company_id'],
+                             addresstypedata['valid_from'],
+                             addresstypedata['valid_to'],
                              addresstypedata['del_ind']]
         writer.writerow(address_type_info)
 
@@ -864,7 +901,7 @@ def extract_address_type_template(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['ADDRESS_NUMBER', 'ADDRESS_TYPE', 'COMPANY_ID', 'del_ind'])
+    writer.writerow(['ADDRESS_TYPE','ADDRESS_NUMBER','COMPANY_ID','VALID_FROM','VALID_TO','del_ind'])
 
     return response
 
@@ -915,7 +952,7 @@ def extract_glaccount_data(request):
                                                           {'del_ind': False}, None,
                                                           ['prod_cat_id', 'gl_acc_num',
                                                            'gl_acc_default', 'account_assign_cat', 'company_id',
-                                                           'item_from_value','item_to_value','currency_id',
+                                                           'item_from_value', 'item_to_value', 'currency_id',
                                                            'del_ind'])
 
     glaccount_data = query_update_del_ind(glaccount)
@@ -950,18 +987,18 @@ def extract_pgrp_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['PURCHASE GROUP ID', 'DESCRIPTION', 'PORG ID', 'OBJECT ID', 'del_ind'])
+    writer.writerow(['PGROUP_ID','DESCRIPTION','PORG_ID','del_ind'])
 
     purgrp = django_query_instance.django_filter_query(OrgPGroup,
                                                        {'del_ind': False}, None,
-                                                       ['pgroup_id', 'description', 'porg_id', 'object_id',
+                                                       ['pgroup_id','description','porg_id',
                                                         'del_ind'])
 
     purgrp_data = query_update_del_ind(purgrp)
 
     for purgrpdata in purgrp_data:
         purgrp_info = [purgrpdata['pgroup_id'], purgrpdata['description'],
-                       purgrpdata['porg_id'], purgrpdata['object_id'], purgrpdata['del_ind']]
+                       purgrpdata['porg_id'],purgrpdata['del_ind']]
 
         writer.writerow(purgrp_info)
 
@@ -974,7 +1011,7 @@ def extract_pgrp_template(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['PURCHASE GROUP ID', 'DESCRIPTION', 'PORG ID', 'OBJECT ID', 'del_ind'])
+    writer.writerow(['PGROUP_ID', 'DESCRIPTION', 'PORG ID','del_ind'])
 
     return response
 
@@ -985,18 +1022,18 @@ def extract_porg_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['PURCHASE ORGANISATION ID', 'DESCRIPTION', 'COMPANY ID', 'OBJECT ID', 'del_ind'])
+    writer.writerow(['PORG_ID', 'DESCRIPTION','COMPANY_ID','del_ind'])
 
     purorg = django_query_instance.django_filter_query(OrgPorg,
                                                        {'del_ind': False}, None,
-                                                       ['porg_id', 'description', 'company_id', 'object_id',
+                                                       ['porg_id', 'description', 'company_id',
                                                         'del_ind'])
 
     purorg_data = query_update_del_ind(purorg)
 
     for purorgdata in purorg_data:
         purorg_info = [purorgdata['porg_id'], purorgdata['description'],
-                       purorgdata['company_id'], purorgdata['object_id'], purorgdata['del_ind']]
+                       purorgdata['company_id'],purorgdata['del_ind']]
 
         writer.writerow(purorg_info)
 
@@ -1009,7 +1046,7 @@ def extract_porg_template(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['PURCHASE ORGANISATION ID', 'DESCRIPTION', 'COMPANY ID', 'OBJECT ID', 'del_ind'])
+    writer.writerow(['PORG_ID', 'DESCRIPTION', 'COMPANY ID','del_ind'])
 
     return response
 
@@ -1037,16 +1074,16 @@ def extract_orgcompany_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['OBJECT_ID', 'NAME1', 'NAME2', 'COMPANY_ID', 'del_ind'])
+    writer.writerow(['NAME1', 'NAME2', 'COMPANY_ID', 'del_ind'])
 
     orgcompany = django_query_instance.django_filter_query(OrgCompanies,
                                                            {'del_ind': False}, None,
-                                                           ['object_id', 'name1', 'name2',
+                                                           ['name1', 'name2',
                                                             'company_id', 'del_ind'])
     orgcompany_data = query_update_del_ind(orgcompany)
 
     for orgcompanydata in orgcompany_data:
-        orgcompanydata_info = [orgcompanydata['object_id'], orgcompanydata['name1'], orgcompanydata['name2'],
+        orgcompanydata_info = [orgcompanydata['name1'], orgcompanydata['name2'],
                                orgcompanydata['company_id'], orgcompanydata['del_ind']]
         writer.writerow(orgcompanydata_info)
 
@@ -1138,17 +1175,15 @@ def upload_cust_prod_cat(request):
 
         else:
             prod['image_url'] = ""
-
-    upload_ProdCat = list(UnspscCategories.objects.filter(del_ind=False).values('prod_cat_id', 'prod_cat_desc'))
+    filter_queue = ~Q(prod_cat_id__in=product_cat_list)
+    upload_ProdCat = django_query_instance.django_queue_query(UnspscCategories, {'del_ind': False},
+                                                              filter_queue, None, ['prod_cat_id','prod_cat_desc'])
 
     for prod_cat_desc in upload_ProdCat:
-
-        if prod_cat_desc['prod_cat_desc'] == None:
+        if not prod_cat_desc['prod_cat_desc']:
             prod_cat_desc['prod_cat_desc'] = ''
 
-    # upload_dropdown = ~Q(prod_cat_id=[upload_ProdCat, product_cat_list])
-    #
-    # print(upload_dropdown)
+
 
     content_managment_settings = 'content_managment_settings'
 
@@ -1156,7 +1191,6 @@ def upload_cust_prod_cat(request):
                   'Customer_Product_Category/customer_product_category.html',
                   {'upload_cust_prod_cat': upload_cust_prod_catogories,
                    'upload_ProdCat': upload_ProdCat,
-                   # 'upload_dropdown':upload_dropdown,
                    'content_managment_settings': content_managment_settings,
                    'inc_nav': True})
 
@@ -1220,12 +1254,13 @@ def org_companies(request):
         OrgCompanies.objects.filter(client=client, del_ind=False).values('company_guid', 'object_id', 'name1', 'name2',
                                                                          'company_id'))
     upload_data_Orgmodel = list(OrgModel.objects.filter(client=client, del_ind=False).values('object_id'))
+    upload_data_company = list(OrgCompanies.objects.filter(client=client, del_ind=False).values('company_id'))
     for object_id in upload_orgcompany:
         if object_id['object_id'] == None:
             object_id['object_id'] = ''
     master_data_settings = 'master_data_settings'
     return render(request, 'Organizational_Data/org_companies.html',
-                  {'org_companies': upload_orgcompany, 'upload_data_Orgmodel': upload_data_Orgmodel,
+                  {'org_companies': upload_orgcompany, 'upload_data_Orgmodel': upload_data_Orgmodel,'upload_data_company':upload_data_company,
                    'master_data_settings': master_data_settings, 'inc_nav': True})
 
 
@@ -1504,18 +1539,18 @@ def extract_payterms_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['PAYMENT_TERM_KEY', 'DAY_LIMIT', 'DESCRIPTION', 'del_ind', 'LANGUAGE_ID'])
+    writer.writerow(['PAYMENT_TERM_KEY','DESCRIPTION','DAY_LIMIT','del_ind','LANGUAGE_ID'])
 
     payment_term = django_query_instance.django_filter_query(Payterms_desc,
                                                              {'del_ind': False}, None,
-                                                             ['payment_term_key', 'day_limit', 'description',
-                                                              'del_ind', 'language_id',
+                                                             ['payment_term_key','description','day_limit',
+                                                              'del_ind', 'language_id'
                                                               ])
     payterm_data = query_update_del_ind(payment_term)
 
     for paytem_desc_data in payterm_data:
-        paytermdata_info = [paytem_desc_data['payment_term_key'], paytem_desc_data['day_limit'],
-                            paytem_desc_data['description'], paytem_desc_data['del_ind'],
+        paytermdata_info = [paytem_desc_data['payment_term_key'],paytem_desc_data['description'],
+                            paytem_desc_data['day_limit'],paytem_desc_data['del_ind'],
                             paytem_desc_data['language_id']]
         writer.writerow(paytermdata_info)
 
@@ -1528,17 +1563,20 @@ def extract_payterm_template(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['PAYMENT_TERM_KEY', 'DAY_LIMIT', 'DESCRIPTION', 'LANGUAGE_ID', 'DEL_IND'])
+    writer.writerow(['PAYMENT_TERM_KEY','DESCRIPTION','DAY_LIMIT','DEL_IND','LANGUAGE_ID'])
 
     return response
+
+
 def extract_spendlimitval_data_template(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="Spend Limit Value Template.CSV"'
 
     writer = csv.writer(response)
 
-    writer.writerow(['SPEND_CODE_ID', 'UPPER_LIMIT_VALUE', 'CURRENCY_ID','COMPANY_ID',  'del_ind'])
+    writer.writerow(['SPEND_CODE_ID', 'COMPANY_ID','UPPER_LIMIT_VALUE', 'CURRENCY_ID', 'del_ind'])
     return response
+
 
 def extract_accdesc_data_template(request):
     response = HttpResponse(content_type='text/csv')
@@ -1546,8 +1584,10 @@ def extract_accdesc_data_template(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['ACCOUNT_ASSIGN_VALUE', 'DESCRIPTION','ACCOUNT_ASSIGN_CAT', 'COMPANY_ID', 'LANGUAGE_ID', 'del_ind'])
+    writer.writerow(
+        ['ACCOUNT_ASSIGN_VALUE', 'DESCRIPTION', 'ACCOUNT_ASSIGN_CAT', 'COMPANY_ID', 'LANGUAGE_ID', 'del_ind'])
     return response
+
 
 def extract_aav_data_template(request):
     response = HttpResponse(content_type='text/csv')
@@ -1555,8 +1595,9 @@ def extract_aav_data_template(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['ACC_ASSIGN_VALUE', 'ACCOUNT_ASSIGN_CAT', 'COMPANY_ID','VAILD_FROM', 'VAILD_TO', 'del_ind'])
+    writer.writerow(['ACC_ASSIGN_VALUE', 'ACCOUNT_ASSIGN_CAT', 'COMPANY_ID', 'VAILD_FROM', 'VAILD_TO', 'del_ind'])
     return response
+
 
 def extract_address_data_Template(request):
     response = HttpResponse(content_type='text/csv')
@@ -1570,6 +1611,7 @@ def extract_address_data_Template(request):
                      'LANGUAGE_ID', 'TIME_ZONE', 'del_ind'])
     return response
 
+
 def extract_approverlimit_data_template(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="Approval Limit Template.CSV"'
@@ -1579,19 +1621,22 @@ def extract_approverlimit_data_template(request):
     writer.writerow(['APPROVER_USERNAME', 'APP_CODE_ID', 'COMPANY_ID', 'del_ind'])
     return response
 
+
 def extract_approverlimitval_data_template(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="Approval Limit Value Template.CSV"'
 
     writer = csv.writer(response)
 
-    writer.writerow(['APP_CODE_ID','COMPANY_ID','APP_TYPES', 'UPPER_LIMIT_VALUE','CURRENCY_ID','del_ind'])
+    writer.writerow(['APP_CODE_ID', 'COMPANY_ID', 'APP_TYPES', 'UPPER_LIMIT_VALUE', 'CURRENCY_ID', 'del_ind'])
     return response
+
+
 def extract_orgcompany_data_template(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="OrgCompany Template.CSV"'
 
     writer = csv.writer(response)
 
-    writer.writerow(['OBJECT_ID', 'NAME1', 'NAME2', 'COMPANY_ID', 'del_ind'])
+    writer.writerow(['NAME1', 'NAME2', 'COMPANY_ID', 'del_ind'])
     return response

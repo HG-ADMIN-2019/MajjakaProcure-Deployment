@@ -68,32 +68,42 @@
                 <h6 class="mb-3" hidden>Silent PO: <input type="checkbox" id="silent_PO" name="silent_PO" value="silent_PO" ></h6>
             </div>
             
-            <div id="button">
-                <button id="delete_sc" class="btn btn-outline-danger editable_mode" data-toggle="modal" data-target="#delete_saved_sc"><i class="far fa-trash-alt"></i> Delete</button>
-                <button type="button" class="btn btn-outline-primary" onclick="window.close()"><i class="fas fa-times"></i> Close</button>
-                <button class="btn btn-primary" id="add_approver_note_btn" data-toggle="modal" data-target="#add_approver_note"><i class="fa fa-plus" aria-hidden="true"></i> approver note</button>
-                <button id="id_check_sc" onclick="check_shopping_cart('check', 'sc_data', highest_item_acc_asgn_cat, highest_item_change_acc_value);" class="btn btn-primary editable_mode"><i class="fa fa-check" aria-hidden="true"></i> Check</button>
-                <button id="id_save_sc" class="btn btn-primary editable_mode"><i class="fa fa-save" aria-hidden="true"></i> Save</button>
+            <div id="button" class="mo-doc-button-container">
+                <div class="mo-doc-button-group__saved">
+                    <button id="delete_sc" class="btn btn-outline-danger editable_mode" data-toggle="modal" data-target="#delete_saved_sc"><i class="far fa-trash-alt"></i> Delete</button>
+                    <button type="button" class="btn btn-outline-primary" onclick="window.close()"><i class="fas fa-times"></i> Close</button>
+                    <button class="btn btn-primary" id="add_approver_note_btn" data-toggle="modal" data-target="#add_approver_note"><i class="fa fa-plus" aria-hidden="true"></i> approver note</button>
+                    <button id="id_check_sc" onclick="check_shopping_cart('check', 'sc_data', highest_item_acc_asgn_cat, highest_item_change_acc_value);" class="btn btn-primary editable_mode"><i class="fa fa-check" aria-hidden="true"></i> Check</button>
+                    <button id="id_save_sc" class="btn btn-primary editable_mode"><i class="fa fa-save" aria-hidden="true"></i> Save</button>
 
-                {% if sc_appr and sc_completion %}
-                <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> send to purchasing team</button>
+                    {% if sc_appr and sc_completion %}
+                    <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> send to purchasing team</button>
+                    {% endif %}
+            
+                    {% if sc_appr.0.app_id != 'Auto' and not sc_completion %}
+                    <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> submit for approval</button>
+                    {% endif %}
+            
+                    {% if sc_appr.0.app_id == 'Auto' and not sc_completion %}
+                    <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> place order</button>
+                    {% endif %}
+            
+                    {% if sc_header_data.status == 'SAVED'%}
+                    <button type="button" id="id_edit_sc" class="btn btn-primary">
+                        <i class="fas fa-edit"></i>
+                        Edit
+                    </button>
+                    {% endif %}
+                </div>
+                {% if is_approval_preview %}
+                <div class="mo-doc-button-group__approval">
+                    <button type="button" class="btn btn-secondary d-inline-flex"><span class="material-icons-outlined">info</span> Inquire</button>
+                    <button class="btn btn-danger reject-btn" ><i class="fas fa-times"></i> Reject</button>
+                    <button class="btn btn-success approve-btn"  ><i class="fas fa-check"></i> Approve</button>
+                </div>
+                
                 {% endif %}
-        
-                {% if sc_appr.0.app_id != 'Auto' and not sc_completion %}
-                <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> submit for approval</button>
-                {% endif %}
-        
-                {% if sc_appr.0.app_id == 'Auto' and not sc_completion %}
-                <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> place order</button>
-                {% endif %}
-        
-                {% if sc_header_data.status == 'SAVED'%}
-                <button type="button" id="id_edit_sc" class="btn btn-primary">
-                    <i class="fas fa-edit"></i>
-                    Edit
-                </button>
-                {% endif %}
-            </div>
+            </div> 
             
         </div>
 
@@ -398,7 +408,7 @@
                         manager_icon += '' + double_angular + '<div class="workflow-overview__user-icon-container"><div class="workflow-user-bg workflow-inactive"><i class="fas fa-user-tie fa-3x" aria-hidden="true"> </i></div><button type="button" class="button-workflow-user">' + item.first_name + '</button></div>';
                     });
                 }
-                if (response.msg_info) {b
+                if (response.msg_info) {
                     // error_msg = '<br><br><span style="color:red;">' + response.msg_info + '</span>'
                     $('#sc_error_msg').append(response.msg_info)
                     $('#sc_error_msg').show()

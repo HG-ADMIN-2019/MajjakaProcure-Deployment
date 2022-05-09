@@ -265,7 +265,7 @@ def find_range(quantity_price_details, quantity):
     range_detail = 0
     quantity = int(quantity)
     for index, quantity_price_detail in enumerate(quantity_price_details):
-        if quantity in range(min_quantity, int(quantity_price_detail['pricing_data'])):
+        if quantity in range(min_quantity, int(quantity_price_detail['pricing_data'])-1):
             if index != 0:
                 range_detail = quantity_price_details[index - 1]
             break

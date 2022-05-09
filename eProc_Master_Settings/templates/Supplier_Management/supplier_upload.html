@@ -16,6 +16,9 @@
                     value="supplier_upload" onclick="onclick_upload_button()" type="button">
                     <i class="fas fa-cloud-upload-alt"></i> UPLOAD DATA
                 </button>
+                  <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                    <i class="fas fa-times"></i> close
+                </button>
             </div>
         </div>
 
@@ -601,7 +604,18 @@ function check_data() {
     });
 }
 
-
+       function GetReferrer() {
+             window.history.back();
+              var preUrl = document.referrer;
+              console.log(preUrl);
+              window.open('', '_self', '').close();
+<!--               var win = window.open(preUrl);-->
+<!--                win.focus();-->
+              if (preUrl == null)
+                     return "The previous page url is empty";
+               else
+                     return preUrl;
+       }
 </script>
 
 <script src="{% static 'scripts/supplier_managment/supplier_upload.js' %}"></script>

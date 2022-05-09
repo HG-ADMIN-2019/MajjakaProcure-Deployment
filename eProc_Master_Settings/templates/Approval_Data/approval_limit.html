@@ -12,10 +12,10 @@
             <h3>Maintain Approval Limits</h3>
             <div>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_approverlimit_data_template' %}'"type="button">
-                    <i class="fas fa-download"></i> download Template
+                    <i class="fas fa-download"></i> template
                 </button>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_approverlimit_data'%} '"type="button">
-                    <i class="fas fa-download"></i> extract
+                    <i class="fas fa-download"></i> extract data
                 </button>
                 <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_data" value="approval_limit_upload" onclick="onclick_upload_button()" type="button">
                     <i class="fas fa-cloud-upload-alt"></i> upload data
@@ -23,6 +23,9 @@
 
                 <button class="btn btn-primary" type="button" id="id_add_data" value="ADD" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add approval limit
+                </button>
+                  <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                    <i class="fas fa-times"></i> close
                 </button>
             </div>
         </div>
@@ -250,7 +253,6 @@
                     $(".class_del_checkbox").prop("hidden", false);
                     $('#myModal').modal('show');
                     $('#id_data_upload').modal('hide');
-                    //$('#id_data_upload').modal('show');
                     document.getElementById("id_check_data").style.display = "block";
                     document.getElementById("id_del_add_button").style.display = "block";
                     $("#id_check_data").prop("hidden", false);
@@ -554,6 +556,20 @@ function onclick_add_button(button) {
     document.getElementById("id_del_add_button").style.display = "block";
     $("#save_id").prop("hidden", false);
 }
+
+       function GetReferrer() {
+             window.history.back();
+              var preUrl = document.referrer;
+              console.log(preUrl);
+              window.open('', '_self', '').close();
+<!--               var win = window.open(preUrl);-->
+<!--                win.focus();-->
+              if (preUrl == null)
+                     return "The previous page url is empty";
+               else
+                     return preUrl;
+       }
+
 
 </script>
 <script src="{% static 'scripts/approval_data/approval_limit.js' %}"></script>

@@ -40,7 +40,11 @@ def globalise_context(request):
             read_status=False).count()
 
         # Get assigned catalogs
-        obj_id_list = get_object_id_list_user(global_variables.GLOBAL_CLIENT, global_variables.GLOBAL_LOGIN_USER_OBJ_ID)
+        if global_variables.GLOBAL_REQUESTER_OBJECT_ID:
+            user_object_id = global_variables.GLOBAL_REQUESTER_OBJECT_ID
+        else:
+            user_object_id = global_variables.GLOBAL_LOGIN_USER_OBJ_ID
+        obj_id_list = get_object_id_list_user(global_variables.GLOBAL_CLIENT, user_object_id)
         global_variables.CATALOGS_ASSIGNED = CatalogGenericMethods.get_logged_in_user_catalogs(obj_id_list)
 
         # encrypt_value = encrypt(global_variables.CATALOGS_ASSIGNED)

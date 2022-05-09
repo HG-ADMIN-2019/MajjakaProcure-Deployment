@@ -18,6 +18,9 @@
                 <button class="btn btn-primary" type="button" id="id_add_data" title="Add Unspc" value="ADD" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add UNSPSC Code
                 </button>
+                  <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                    <i class="fas fa-times"></i> close
+                </button>
             </div>
 
         </div>
@@ -42,7 +45,9 @@
                         <i class="far fa-edit"></i> Update
                     </button>
                     <button class="btn btn-secondary btn-sm" title="Cancel" id="id_cancel_data" style="display:none;" type="button"  onclick="display_basic_db_data()">
-                        <i class="fas fa-times"></i> cancel</button>
+                        <i class="fas fa-times"></i> cancel
+                    </button>
+
 
                 </div>
 
@@ -447,6 +452,21 @@ function popup_save_data() {
                 }
             });
         }
+
+           //**********************************************
+        function GetReferrer() {
+             window.history.back();
+              var preUrl = document.referrer;
+              console.log(preUrl);
+              window.open('', '_self', '').close();
+<!--               var win = window.open(preUrl);-->
+<!--                win.focus();-->
+              if (preUrl == null)
+                     return "The previous page url is empty";
+               else
+                     return preUrl;
+       }
+
 
     </script>
 

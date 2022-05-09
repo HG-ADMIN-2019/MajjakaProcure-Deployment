@@ -169,15 +169,14 @@ def update_create_free_text_item(freetext_ui_data):
             header_guid = django_query_instance.django_get_query(ScHeader, {'doc_number': document_number,
                                                                             'client': client}).guid
 
-
     if django_query_instance.django_existence_check(FreeTextDetails,
-                                                    {'client':global_variables.GLOBAL_CLIENT,
-                                                     'freetext_id':freetext_ui_data['freetext_id'],
-                                                     'del_ind':False}):
+                                                    {'client': global_variables.GLOBAL_CLIENT,
+                                                     'freetext_id': freetext_ui_data['freetext_id'],
+                                                     'del_ind': False}):
         freetext_detail = django_query_instance.django_get_query(FreeTextDetails,
                                                                  {'client': global_variables.GLOBAL_CLIENT,
                                                                   'freetext_id': freetext_ui_data['freetext_id'],
-                                                                  'del_ind':False})
+                                                                  'del_ind': False})
     # prod_id = django_query_instance.django_get_query(FreeTextForm, {'supp_id': supp_id,
     #                                                                 'prod_cat_id': product_category_id,
     #                                                                 'client': client})
@@ -199,8 +198,8 @@ def update_create_free_text_item(freetext_ui_data):
         'client_id': client,
         'lead_time': freetext_detail.lead_time,
         'eform_id': freetext_detail.eform_id,
-        'currency':freetext_detail.currency_id,
-        'int_product_id':freetext_detail.freetext_id
+        'currency': freetext_detail.currency_id,
+        'int_product_id': freetext_detail.freetext_id
     }
     django_query_instance.django_update_or_create_query(CartItemDetails, {'guid': guid}, free_text_data)
     if freetext_detail.eform_id:
@@ -228,21 +227,21 @@ def update_create_free_text_item(freetext_ui_data):
     #     field_value10 = free_text_fields[18]
     #     form_id = free_text_fields[19]
 
-        # django_query_instance.django_update_or_create_query(EformData, {'cart_guid': guid}, {
-        #     'cart_guid': guid,
-        #     'form_field1': field_value1,
-        #     'form_field2': field_value2,
-        #     'form_field3': field_value3,
-        #     'form_field4': field_value4,
-        #     'form_field5': field_value5,
-        #     'form_field6': field_value6,
-        #     'form_field7': field_value7,
-        #     'form_field8': field_value8,
-        #     'form_field9': field_value9,
-        #     'form_field10': field_value10,
-        #     'form_id': form_id,
-        #     'client_id': client
-        # })
+    # django_query_instance.django_update_or_create_query(EformData, {'cart_guid': guid}, {
+    #     'cart_guid': guid,
+    #     'form_field1': field_value1,
+    #     'form_field2': field_value2,
+    #     'form_field3': field_value3,
+    #     'form_field4': field_value4,
+    #     'form_field5': field_value5,
+    #     'form_field6': field_value6,
+    #     'form_field7': field_value7,
+    #     'form_field8': field_value8,
+    #     'form_field9': field_value9,
+    #     'form_field10': field_value10,
+    #     'form_id': form_id,
+    #     'client_id': client
+    # })
 
     # if header_guid != '':
     #     del free_text_data['username']
@@ -304,7 +303,7 @@ class CartItem:
                                                             {'client': self.client,
                                                              'cart_guid': user_cart_item['guid']}):
                 for eform_data in eform_detail:
-                    eform_field_name,eform_field_data = self.get_eform_field_data(eform_data)
+                    eform_field_name, eform_field_data = self.get_eform_field_data(eform_data)
                     if not django_query_instance.django_existence_check(EformFieldData,
                                                                         {'client': self.client,
                                                                          'cart_guid': user_cart_item['guid'],
@@ -321,6 +320,7 @@ class CartItem:
             eform_data_existence_flag = True
 
         return eform_data_existence_flag, cart_item_detail
+
     @staticmethod
     def get_eform_field_data(eform_data):
         """
@@ -344,7 +344,7 @@ class CartItem:
 
         else:
             eform_field_data = eform_data['data']
-        return eform_field_name,eform_field_data
+        return eform_field_name, eform_field_data
 
     def limit_order_validation(self, call_off):
         if call_off == CONST_CO04:
@@ -410,13 +410,11 @@ class CartItem:
                 header_guid = django_query_instance.django_get_query(ScHeader, {'doc_number': document_number,
                                                                                 'client': client}).guid
 
-        if item_details['ext_product_id'] == '':
-            item_details['ext_product_id'] = None
-
         item_details['prod_cat_desc'] = get_prod_by_id(item_details['prod_cat'])
         item_details['price_unit'] = 1
         item_details['username'] = self.requester
         item_details['client'] = self.client
+        item_details['item_num'] = get_cart_item_max_num()
 
         item_value = calculate_item_total_value(item_details['call_off'], item_details['quantity'], None,
                                                 item_details['quantity'], item_details['price'], overall_limit=None)
@@ -424,7 +422,6 @@ class CartItem:
         item_value = convert_currency(item_value, str(self.selected_currency), str(self.user_currency))
         if item_value:
             item_value = round(item_value, 2)
-
         if header_guid == '':
             return guid, item_details, item_value
         else:
@@ -439,7 +436,6 @@ class CartItem:
             item_details['catalog_id'] = 'Majjaka_Catalog'
             item_details['item_del_date'] = datetime.datetime.now()
             item_details['price_unit'] = 1
-            item_details['supp_prod_num'] = item_details['ext_product_id']
             item_details['call_off'] = CONST_CO03
             item_details['del_ind'] = False
             item_details['created_at'] = datetime.datetime.now()
@@ -583,7 +579,8 @@ class CartItem:
                     # if eform without impact on price then calculate discount from product details value
                     if get_prd_ref.eform_id:
                         queue_query = Q()
-                        queue_query = ~Q(dropdown_pricetype__in=[CONST_VARIANT_BASE_PRICING, CONST_VARIANT_ADDITIONAL_PRICING])
+                        queue_query = ~Q(
+                            dropdown_pricetype__in=[CONST_VARIANT_BASE_PRICING, CONST_VARIANT_ADDITIONAL_PRICING])
                         if django_query_instance.django_queue_existence_check(EformFieldConfig,
                                                                               {'client': global_variables.GLOBAL_CLIENT,
                                                                                'del_ind': False,
@@ -591,11 +588,11 @@ class CartItem:
                                                                                'eform_type': CONST_CATALOG_ITEM_EFORM},
                                                                               queue_query):
                             user_cart_item.price = check_discount_update_base_price(get_prd_ref.price, total_quantity,
-                                                                                        get_prd_ref.eform_id)
+                                                                                    get_prd_ref.eform_id)
                             user_cart_item.value = calculate_item_total_value(CONST_CO01, quantity,
-                                                                                  quantity, 1,
-                                                                                  user_cart_item.price,
-                                                                                  overall_limit=None)
+                                                                              quantity, 1,
+                                                                              user_cart_item.price,
+                                                                              overall_limit=None)
 
                     user_cart_item.save()
                     cart_count = display_cart_counter(global_variables.GLOBAL_LOGIN_USERNAME)
@@ -635,6 +632,7 @@ class CartItem:
             'supplier_id': get_prd_ref.supplier_id,
             'pref_supplier': get_prd_ref.supplier_id,
             'int_product_id': get_prd_ref.product_id,
+            'item_num': get_cart_item_max_num()
         }
         if header_guid != '':
             is_success = []
@@ -654,11 +652,13 @@ class CartItem:
             catalog_content['doc_type'] = CONST_DOC_TYPE_SC
             catalog_content['catalog_qty'] = quantity
             catalog_content['eform_id'] = None
+            catalog_content['item_num'] = get_sc_item_max_num(header_guid)
             # if catalog  with eform exists
             if get_prd_ref.eform_id:
                 # check product already exist in ScItem table and EformFieldData
-                eform_existence_flag,item_detail,item_quantity = self.check_if_exist_update_sc_item(get_prd_ref.product_id, header_guid,
-                                                              item_details['eform_detail'],quantity)
+                eform_existence_flag, item_detail, item_quantity = self.check_if_exist_update_sc_item(
+                    get_prd_ref.product_id, header_guid,
+                    item_details['eform_detail'], quantity)
                 if eform_existence_flag:
                     is_success.append(True)
                     is_success.append('')
@@ -671,12 +671,13 @@ class CartItem:
                         catalog_content['value'] = item_price
                         catalog_content['price'] = price
                         catalog_content['eform_id'] = item_details['eform_id']
-                pricing_list = [CONST_VARIANT_BASE_PRICING, CONST_VARIANT_ADDITIONAL_PRICING, CONST_QUANTITY_BASED_DISCOUNT]
+                pricing_list = [CONST_VARIANT_BASE_PRICING, CONST_VARIANT_ADDITIONAL_PRICING,
+                                CONST_QUANTITY_BASED_DISCOUNT]
                 if not django_query_instance.django_existence_check(EformFieldConfig,
-                                                                {'client': global_variables.GLOBAL_CLIENT,
-                                                                 'del_ind': False,
-                                                                 'eform_id': item_details['eform_id'],
-                                                                 'dropdown_pricetype__in': pricing_list}):
+                                                                    {'client': global_variables.GLOBAL_CLIENT,
+                                                                     'del_ind': False,
+                                                                     'eform_id': item_details['eform_id'],
+                                                                     'dropdown_pricetype__in': pricing_list}):
                     item_price = get_prd_ref.price
                     catalog_content['value'] = calculate_item_total_value(CONST_CO01, quantity,
                                                                           quantity, 1,
@@ -684,15 +685,15 @@ class CartItem:
             else:
                 item_price = get_prd_ref.price
                 if django_query_instance.django_existence_check(ScItem,
-                                                                {'header_guid':header_guid,
-                                                                 'client':global_variables.GLOBAL_CLIENT,
-                                                                    'int_prod_id':get_prd_ref.product_id
+                                                                {'header_guid': header_guid,
+                                                                 'client': global_variables.GLOBAL_CLIENT,
+                                                                 'int_prod_id': get_prd_ref.product_id
                                                                  }):
                     cart_item_detail = django_query_instance.django_filter_query(ScItem,
-                                                                {'header_guid':header_guid,
-                                                                 'client':global_variables.GLOBAL_CLIENT,
-                                                                    'int_prod_id':get_prd_ref.product_id
-                                                                 },None,None)[0]
+                                                                                 {'header_guid': header_guid,
+                                                                                  'client': global_variables.GLOBAL_CLIENT,
+                                                                                  'int_prod_id': get_prd_ref.product_id
+                                                                                  }, None, None)[0]
                     product_id_exists = exists_update_sc_item(header_guid, cart_item_detail, quantity)
                     is_success.append(True)
                     is_success.append('')
@@ -702,13 +703,14 @@ class CartItem:
                                                                       quantity, 1,
                                                                       item_price, overall_limit=None)
             # catalog_content['eform'] = None
-            catalog_content['client'] = django_query_instance.django_get_query(OrgClients, {'client': global_variables.GLOBAL_CLIENT,
-                                                                                            'del_ind': False})
+            catalog_content['client'] = django_query_instance.django_get_query(OrgClients, {
+                'client': global_variables.GLOBAL_CLIENT,
+                'del_ind': False})
             catalog_content['supp_prod_num'] = 'Catalog'
             catalog_content['item_del_date'] = datetime.datetime.now()
             if not product_id_exists:
                 if not eform_existence_flag:
-                    if checkKey(item_details,'eform_id'):
+                    if checkKey(item_details, 'eform_id'):
                         catalog_content['eform_id'] = item_details['eform_id']
                     is_success = edit_object.add_item_to_saved_cart(header_guid, catalog_content)
 
@@ -719,7 +721,9 @@ class CartItem:
                                                                                                                 'client': global_variables.GLOBAL_CLIENT,
                                                                                                                 'del_ind': False},
                                                                                                             'guid',
-                                                                                                            ['-item_num'])[0]
+                                                                                                            [
+                                                                                                                '-item_num'])[
+                        0]
 
                     update_product_detail_eform(item_details, None, sc_item_guid)
 
@@ -755,19 +759,21 @@ class CartItem:
                     queue_query = ~Q(
                         dropdown_pricetype__in=[CONST_VARIANT_BASE_PRICING, CONST_VARIANT_ADDITIONAL_PRICING])
                     if django_query_instance.django_queue_existence_check(EformFieldConfig,
-                                                                              {'client': global_variables.GLOBAL_CLIENT,
-                                                                               'del_ind': False,
-                                                                               'eform_id': get_prd_ref.eform_id,
-                                                                               'eform_type': CONST_CATALOG_ITEM_EFORM},
-                                                                              queue_query):
-                        catalog_content['price'] = check_discount_update_base_price(catalog_content['price'], quantity, get_prd_ref.eform_id)
+                                                                          {'client': global_variables.GLOBAL_CLIENT,
+                                                                           'del_ind': False,
+                                                                           'eform_id': get_prd_ref.eform_id,
+                                                                           'eform_type': CONST_CATALOG_ITEM_EFORM},
+                                                                          queue_query):
+                        # catalog_content['price'] = check_discount_update_base_price(catalog_content['price'], quantity,
+                        #                                                             get_prd_ref.eform_id)
                         catalog_content['value'] = calculate_item_total_value(CONST_CO01, quantity,
                                                                               quantity, 1,
-                                                                              catalog_content['price'], overall_limit=None)
+                                                                              catalog_content['price'],
+                                                                              overall_limit=None)
                     self.add_or_update_item(user_cart_item_guid, catalog_content)
 
                 if not eform_data_existence_flag:
-                    update_product_detail_eform(item_details, cart_item_guid,None)
+                    update_product_detail_eform(item_details, cart_item_guid, None)
                 if not user_cart_item_guid:
                     print("unused")
                     catalog_content['guid'] = cart_item_guid
@@ -779,7 +785,7 @@ class CartItem:
             cart_count = display_cart_counter(global_variables.GLOBAL_LOGIN_USERNAME)
             return True, MSG016, cart_count
 
-    def check_if_exist_update_sc_item(self,product_id, header_guid, eform_detail, ui_quantity):
+    def check_if_exist_update_sc_item(self, product_id, header_guid, eform_detail, ui_quantity):
         """"
         """
         existence_flag = False
@@ -801,7 +807,7 @@ class CartItem:
 
         return existence_flag, cart_item_detail, quantity
 
-    def check_catalog_item_exists(self,user_cart_item_dic_list, eform_detail):
+    def check_catalog_item_exists(self, user_cart_item_dic_list, eform_detail):
         eform_data_existence_flag = True
         user_cart_item_detail = []
         cart_item_detail = None
@@ -834,7 +840,8 @@ class CartItem:
 
         return eform_data_existence_flag, cart_item_detail
 
-def update_product_detail_eform(item_details, cart_guid,item_guid):
+
+def update_product_detail_eform(item_details, cart_guid, item_guid):
     """
 
     """
@@ -851,19 +858,23 @@ def update_product_detail_eform(item_details, cart_guid,item_guid):
             #                                               item_detail['eform_field_data'])
             product_eform_pricing_guid = item_detail['product_eform_pricing_guid']
         eform_detail = django_query_instance.django_filter_query(EformFieldConfig,
-                                                                 {'eform_field_config_guid':item_detail['eform_field_config_guid']},
-                                                                 None,None)[0]
+                                                                 {'eform_field_config_guid': item_detail[
+                                                                     'eform_field_config_guid']},
+                                                                 None, None)[0]
         if item_detail['pricing_type'] != CONST_VARIANT_WITHOUT_PRICING:
-            eform_field_data  = django_query_instance.django_filter_value_list_query(ProductEformPricing,
-                                                                                     {'client': global_variables.GLOBAL_CLIENT,
-                                                                                      'product_eform_pricing_guid':item_detail['product_eform_pricing_guid']},
-                                                                                     'pricing_data')[0]
+            eform_field_data = django_query_instance.django_filter_value_list_query(ProductEformPricing,
+                                                                                    {
+                                                                                        'client': global_variables.GLOBAL_CLIENT,
+                                                                                        'product_eform_pricing_guid':
+                                                                                            item_detail[
+                                                                                                'product_eform_pricing_guid']},
+                                                                                    'pricing_data')[0]
         else:
             eform_field_data = item_detail['data']
         eform_dictionary = {'eform_field_data_guid': guid_generator(),
                             'eform_id': item_details['eform_id'],
                             'cart_guid': cart_guid,
-                            'item_guid':item_guid_obj,
+                            'item_guid': item_guid_obj,
                             'product_eform_pricing_guid': django_query_instance.django_get_query(ProductEformPricing,
                                                                                                  {
                                                                                                      'product_eform_pricing_guid': product_eform_pricing_guid}),
@@ -895,7 +906,36 @@ def get_pricing_guid(eform_field_config_guid, pricing_data):
     return product_eform_pricing_guid
 
 
+def get_cart_item_max_num():
+    """
+
+    """
+    if django_query_instance.django_existence_check(CartItemDetails,
+                                                    {'client': global_variables.GLOBAL_CLIENT,
+                                                     'username': global_variables.GLOBAL_LOGIN_USERNAME}
+                                                    ):
+        max_item_num = django_query_instance.django_max_filter(CartItemDetails,
+                                                               {'client': global_variables.GLOBAL_CLIENT,
+                                                                'username': global_variables.GLOBAL_LOGIN_USERNAME},
+                                                               'item_num')
+        max_item_num = int(max_item_num) + 1
+    else:
+        max_item_num = 1
+    return max_item_num
 
 
+def get_sc_item_max_num(header_guid):
+    """
 
-
+    """
+    if django_query_instance.django_existence_check(ScItem,
+                                                    {'client': global_variables.GLOBAL_CLIENT,
+                                                     'header_guid': header_guid}
+                                                    ):
+        max_item_num = django_query_instance.django_max_filter(ScItem,
+                                                               {'client': global_variables.GLOBAL_CLIENT,
+                                                                'header_guid': header_guid}, 'item_num')
+        max_item_num = int(max_item_num) + 1
+    else:
+        max_item_num = 1
+    return max_item_num

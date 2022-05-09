@@ -14,6 +14,9 @@
                 <button type="button" id="id_add_data" value="ADD" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> Add Shopping Cart Number Range
                 </button>
+                 <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                    <i class="fas fa-times"></i> close
+                </button>
             </div>
         </div>
 
@@ -541,6 +544,19 @@ function popup_save_data() {
                 }
             });
         }
+
+             function GetReferrer() {
+             window.history.back();
+              var preUrl = document.referrer;
+              console.log(preUrl);
+              window.open('', '_self', '').close();
+<!--               var win = window.open(preUrl);-->
+<!--                win.focus();-->
+              if (preUrl == null)
+                     return "The previous page url is empty";
+               else
+                     return preUrl;
+       }
     </script>
 
     <script src="{% static 'scripts/Number_ranges/sc_number_ranges.js' %}"></script>

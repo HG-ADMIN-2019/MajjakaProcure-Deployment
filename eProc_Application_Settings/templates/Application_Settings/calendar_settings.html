@@ -16,6 +16,9 @@
                 <button type="button" id="id_add_data" value="ADD" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus" title="Add Country"></i> add calendar
                 </button>
+                  <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                    <i class="fas fa-times"></i> close
+                </button>
             </div>
         </div>
 
@@ -212,7 +215,7 @@
 
         basic_add_new_html = '<tr> <td><input type="checkbox"> </td>'+
          '<td hidden><input class="form-control" type="text"  pattern="[A-Z]" maxlength="10"  onkeypress="return /[A-Z 0-9]/i.test(event.key)" name="calender_id" style="text-transform:uppercase;" required></td>'+
-         '<td> <input class="form-control" type="text" name="description" onkeypress="return /[A-Z 0-9]/i.test(event.key)" style="text-transform:uppercase;" > </td>'+
+         '<td> <input class="form-control" type="text" name="description"> </td>'+
          '<td><select id="country" class="input form-control" type="text" name="country"> {% for country in country_list %} <option value="{{country.country_code}}">{{country.country_name}}</option> {% endfor %} </select> </td>'+
          '<td> <input class="form-control yearPicker" type="text" maxlength="4"  name="year"> </td>'+
          '<td style="max-width: 100px;"> <select type="text" class="form-control multiple_select working_days" type="text" name="working_days"  multiple  title="Select.." >'+
@@ -348,7 +351,7 @@
         });
         basic_add_new_html ='<tr> <td> <input type="checkbox" required> </td>'+
         '<td hidden><input class="form-control" type="text"  maxlength="10" onkeypress="return /[A-Z 0-9]/i.test(event.key)" name="calender_id" style="text-transform:uppercase" required></td>'+
-        '<td> <input class="form-control" type="text" name="description" onkeypress="return /[a-z 0-9]/i.test(event.key)" style="text-transform:uppercase"> </td>'+
+        '<td> <input class="form-control" type="text" name="description" onkeypress="return /[a-z 0-9]/i.test(event.key)"> </td>'+
         '<td> <select id="country" class="input form-control" type="text" name="country"> {% for country in country_list %} <option value={{country.country_code}}>{{country.country_name}}</option> {% endfor %} </select> </td>'+
         '<td> <input class="form-control yearPicker" type="text" maxlength="4"  name="year"> </td>'+
         '<td> <select type="text" type="text" name="working_days"  class="form-control multiple_select working_days" multiple  title="Select.." >'+
@@ -485,6 +488,19 @@ function get_values(short_day){
                     }
         return day;
 }
+
+       function GetReferrer() {
+             window.history.back();
+              var preUrl = document.referrer;
+              console.log(preUrl);
+              window.open('', '_self', '').close();
+<!--               var win = window.open(preUrl);-->
+<!--                win.focus();-->
+              if (preUrl == null)
+                     return "The previous page url is empty";
+               else
+                     return preUrl;
+       }
 
 </script>
 

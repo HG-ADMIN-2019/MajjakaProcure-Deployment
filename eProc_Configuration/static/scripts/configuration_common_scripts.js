@@ -60,31 +60,51 @@ function valueChanged() {
 //onclick of delete,delete the row.
 function application_settings_delete_Row(myTable) {
     $('#id_popup_table').DataTable().destroy();
+    var uncheck_count=0
+
      try {
-        var table = document.getElementById(myTable);
-        var rowCount = table.rows.length;
-        for (var i = 0; i < rowCount; i++) {
-            var row = table.rows[i];
-            var chkbox = row.cells[0].childNodes[0];
-            if (null != chkbox && true == chkbox.checked) {
-                table.deleteRow(i);
-                rowCount--;
-                i--;
+        $("#id_popup_table TBODY TR").each(function() {
+            var row = $(this);
+            var checked = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked')
+            if (!(row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked'))){
+                uncheck_count ++;
             }
+        });
+        if (uncheck_count==0){
+            $('#myModal').modal('hide');
+            $('#delete_not_possible').modal('show');
         }
-        $("#id_delete_currency").hide();
-        $("#id_copy_currency").hide();
-        $("#id_update_currency").hide();
-        $("#error_msg_id").css("display", "none");
-        table_sort_filter_popup('id_popup_table');
-        return rowCount;
+        else{
+            var table = document.getElementById(myTable);
+            var rowCount = table.rows.length;
+            for (var i = 0; i < rowCount; i++) {
+                var row = table.rows[i];
+                var chkbox = row.cells[0].childNodes[0];
+                if (null != chkbox && true == chkbox.checked) {
+                    table.deleteRow(i);
+                    rowCount--;
+                    i--;
+                }
+            }
+            $("#id_delete_currency").hide();
+            $("#id_copy_currency").hide();
+            $("#id_update_currency").hide();
+            $("#error_msg_id").css("display", "none");
+            table_sort_filter_popup('id_popup_table');
+            return rowCount;
+        }
+
     } catch (e) {
         alert(e);
     }
 }
 
 
+function display_popup(){
+    $('#delete_not_possible').modal('hide');
+    $('#myModal').modal('show');
 
+}
 
 
 

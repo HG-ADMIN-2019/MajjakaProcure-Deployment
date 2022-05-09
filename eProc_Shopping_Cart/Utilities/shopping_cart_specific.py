@@ -36,11 +36,13 @@ from eProc_Configuration.models import *
 from django.core.exceptions import ObjectDoesNotExist
 from eProc_Basic.Utilities.constants.constants import *
 from eProc_Basic.Utilities.functions.get_db_query import getClients, getUsername, get_login_user_roles_by_obj_id
-from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_prod_cat
-from eProc_Shopping_Cart.models import CartItemDetails
+from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_prod_cat, get_highest_acc_detail, \
+    delete_approver_detail
+from eProc_Shopping_Cart.models import CartItemDetails, ScHeader, ScItem, ScPotentialApproval, ScApproval, ScAccounting
 from eProc_Registration.models import *
 from eProc_Exchange_Rates.Utilities.exchange_rates_specific import get_currency_by_max_spending_value
 from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_currency
+from eProc_Workflow.Utilities.work_flow_generic import save_sc_approval
 
 django_query_instance = DjangoQueries()
 
@@ -357,8 +359,8 @@ def get_login_user_spend_limit(company_code, client, login_username):
         sl_value = django_query_instance.django_filter_value_list_query(SpendLimitValue, {
             'company_id': company_code, 'spend_code_id__in': sl_code_id, 'client': client
         }, 'upper_limit_value')
-
-        max_sl_value = max(sl_value)
+        if sl_value:
+            max_sl_value = max(sl_value)
 
     return max_sl_value, sl_code_id
 
@@ -628,6 +630,7 @@ def get_manger_detail(client, login_username, acc_default, total_value, default_
                                         #     app_limit_value,
                                         #     manger_list)
                                         if msg_info:
+                                            manger_list = []
                                             return manger_list, msg_info
                                             # acc_value = sup_acc_val
                                             # default_cmp_code = sup_company_id
@@ -960,3 +963,25 @@ def update_country(prod_detail):
                                                                                            {'country_code': prod_detail['country_of_origin_id']},
                                                                                            'country_name')[0]
     return prod_detail
+
+
+def save_approver_detail(header_guid):
+    """
+
+    """
+    sc_header_data = django_query_instance.django_get_query(ScHeader,{'client':global_variables.GLOBAL_CLIENT,
+                                                                      'guid':header_guid})
+    account_assignment_category, account_assignment_value = get_highest_acc_detail(header_guid)
+    approval_data = get_manger_detail(global_variables.GLOBAL_CLIENT, sc_header_data.requester,
+                                      account_assignment_category, sc_header_data.total_value, sc_header_data.co_code,
+                                      account_assignment_value,
+                                      global_variables.GLOBAL_USER_CURRENCY)
+    delete_approver_detail(header_guid)
+
+    sc_completion_flag = False
+    if django_query_instance.django_existence_check(ScItem, {'client': global_variables.GLOBAL_CLIENT,
+                                                             'del_ind': False,
+                                                             'header_guid': header_guid,
+                                                             'call_off': CONST_CO03}):
+        sc_completion_flag = True
+    save_sc_approval(approval_data[0], header_guid, CONST_SC_HEADER_SAVED, sc_completion_flag)

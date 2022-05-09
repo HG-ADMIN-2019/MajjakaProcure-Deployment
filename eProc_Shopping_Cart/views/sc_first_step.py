@@ -67,7 +67,7 @@ def sc_first_step(request):
     )
 
     if len(cart_items) == 0:
-        return HttpResponseRedirect('/shop/products_services/get_catalogs/All/create')
+        return HttpResponseRedirect('/shop/products_services/All/create')
 
     object_id_list = get_object_id_list_user(client, login_user_obj_id)
     default_calendar_id = org_attr_value_instance.get_user_default_attr_value_list_by_attr_id(object_id_list,

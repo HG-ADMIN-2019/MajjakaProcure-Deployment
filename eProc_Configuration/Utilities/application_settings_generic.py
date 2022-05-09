@@ -17,6 +17,14 @@ def get_configuration_data(db_name, filter_query, value_list):
     result = django_query_instance.django_filter_query(db_name, filter_query, None, value_list)
     return result
 
+def get_configuration_data_image(db_name, filter_query, value_list):
+    """
+
+    """
+    result = django_query_instance.django_filter_query(db_name, filter_query, None, value_list)
+    return result
+
+
 
 class FieldTypeDescription:
     @staticmethod

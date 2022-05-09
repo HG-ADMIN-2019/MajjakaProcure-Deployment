@@ -32,7 +32,7 @@
         
         {% if slide_menu.PURCHASING %}
         <li class="sidenav__listitem {% if is_purchase_active %}  sidenav__listitem-active {% endif %}" title="Purchase" id="sidenav__listitem-purchase">
-            <a {% if shop_purchaser_flag %} href="{% url 'eProc_Purchaser_Cockpit:sc_item_field_filter' %}" {% else %} href="{% url 'eProc_Doc_Search_and_Display:sc_completion_doc_search' %}" {% endif %}>
+            <a {% if shop_purchaser_flag %} href="{% url 'eProc_Doc_Search_and_Display:sc_completion_doc_search' %}" {% else %} href="{% url 'eProc_Doc_Search_and_Display:sc_completion_doc_search' %}" {% endif %}>
                 <div>
                     <div class="sidenav__icon-container"><i class="fas fa-chalkboard-teacher fa-lg"></i></div>
                 </div>
@@ -84,7 +84,7 @@
         </li>
         {% endif %}
 
-        {% if slide_menu.USER_SETTINGS %}
+        <!-- {% if slide_menu.USER_SETTINGS %}
         <li class="sidenav__listitem {% if is_personalization_active %} sidenav__listitem-active {% endif %}" title="Personalize" id="sidenav__listitem-personalize" title="Personalize">
             <a href="{% url 'eProc_User_Settings:personal_settings_display' %}">
                 <div>
@@ -93,7 +93,7 @@
                 <p class="hg_link_text">Personalize</p>
             </a>
         </li>
-        {% endif %}
+        {% endif %} -->
 
         {% if slide_menu.APPL_SETTINGS %}
         <!-- <li class="sidenav__listitem" title="Configuration" id="sidenav__listitem-config">

@@ -13,10 +13,10 @@
             <h3>Maintain Timezones</h3>
             <div>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_timezone_template' %}'"type="button">
-                    <i class="fas fa-download"></i> download Template
+                    <i class="fas fa-download"></i> template
                 </button>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_timezone_data' %}'"type="button">
-                    <i class="fas fa-download"></i> extract
+                    <i class="fas fa-download"></i> extract data
                 </button>
                 <button class="btn btn-outline-primary modal_upload"  title="Data Upload" id="id_upload_redirect_data" value="timezone_upload" onclick="onclick_upload_button();" type="button">
                     <i class="fas fa-cloud-upload-alt"></i> data upload
@@ -24,6 +24,10 @@
                 
                 <button type="button" id="id_add_data" value="ADD"  class="btn btn-primary" title="Add Timezone" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add timezone
+                </button>
+
+                 <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                    <i class="fas fa-times"></i> close
                 </button>
             </div>
         </div>
@@ -503,6 +507,20 @@
                 }
             });
         }
+
+        //**********************************************
+        function GetReferrer() {
+             window.history.back();
+              var preUrl = document.referrer;
+              console.log(preUrl);
+              window.open('', '_self', '').close();
+<!--               var win = window.open(preUrl);-->
+<!--                win.focus();-->
+              if (preUrl == null)
+                     return "The previous page url is empty";
+               else
+                     return preUrl;
+       }
        
     </script>
 

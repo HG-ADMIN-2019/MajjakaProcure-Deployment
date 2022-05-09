@@ -11,32 +11,6 @@
         background-color: white;
         border: 1px solid #ced4da;
     }
-
-    .card {
-        box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.15);
-        -webkit-box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.15);
-        -moz-box-shadow: 0px 1px 5px 0px rgba(0,0,0,0.75);
-    }
-
-    .eform-field-wrapper {
-        border-radius: 5px;
-        display: flex;
-        justify-content: center;
-        padding: 0.5rem;
-    }
-
-    .eform-field-wrapper:hover {
-        background: #e9ecef;
-    }
-
-    .eform-field-btn-wrapper {
-        display: flex;
-        align-items: center;
-    }
-
-    .eform-field-btn-wrapper .btn {
-        margin-top: 0.7rem;
-    }
 </style>
 
 <div class="container-fluid">
@@ -75,7 +49,7 @@
             <div class="mt-3">
                 <div class="row no-gutters justify-content-center">
                     <div class="col-10 pt-2">
-                        <div class="card" id="">
+                        <div class="card card-shadow-1" id="">
                             <div class="card-body">
 
                                 <h5 class="card-title">Basic Form Details</h5>
@@ -132,7 +106,7 @@
 
                         </div>
 
-                        <div class="card mt-3">
+                        <div class="card mt-3 card-shadow-1">
                             <div class="card-body">
                                 <div class="elements-space-between">
                                     <h5 class="card-title"> Custom Eform Fields</h5>
@@ -494,6 +468,7 @@
                 $("#field_property_specialchars_none").hide();
                 $("#field_property_dropdown").show();
                 $("#field_property_datetime").hide();
+                $('#tbody_eform_dropdown').empty();
                 AddNewRow_dropdown()
             }
             else if(id == "input_datetime_type") {

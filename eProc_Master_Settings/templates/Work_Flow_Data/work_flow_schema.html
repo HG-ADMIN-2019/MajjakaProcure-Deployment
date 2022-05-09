@@ -10,16 +10,19 @@
             <h3>Maintain Work Flow Schemas</h3>
             <div>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_workflowschema_template' %}'"type="button">
-                    <i class="fas fa-download"></i> download Template
+                    <i class="fas fa-download"></i> template
                 </button>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_workflowschema_data' %}'"type="button">
-                    <i class="fas fa-download"></i> extract
+                    <i class="fas fa-download"></i> extract data
                 </button>
                 <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_data"  title="Upload Data" value="workflowsch_upload"  onclick="onclick_upload_button();" type="button">
                     <i class="fas fa-cloud-upload-alt"></i> upload data
                 </button>
                 <button class="btn btn-primary " id="id_add_data" value="ADD" title="Add workflow schema," data-toggle="modal" onclick="onclick_add_button(this);">
                     <i class="fa fa-plus"></i> add work flow schema
+                </button>
+                  <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                    <i class="fas fa-times"></i> close
                 </button>
             </div>
         </div>
@@ -642,34 +645,53 @@ $('#save_id').click(function () {
                         var edit_basic_data = '';
                         var del_ind = '';
                         var dropdown_values = [];
+                        var inc_index=0;
                         $("#id_popup_tbody").empty();
                             $.each(response.data, function (i, value) {
-                            var app_types_value = value[1]
-                            var company_id_value = value[2]
-                            dropdown_values.push([app_types_value, company_id_value])
-                            del_ind = '<td>' + value[3] + '</td>'
-                            if (value[3] == 1) {
-                                del_ind=' <input type="checkbox" value="' + value[2] + '" checked>'
-                            }
-                            else {
-                                del_ind= '<input type="checkbox" value="' + value[2] + '" required>'
-                            }
 
-                  edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><input class = "form-control" type="text" name="workflowschema" value ="' + value[0] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td><select class="form-control">value ="' + value[1] + '"'+app_types_value+'</select></td><td><select class="form-control">value ="' + value[2] + '"'+company_id_value+'</select></td><td hidden></td><td>'+ del_ind +'</td></tr>';
-                });
+                                    del_ind = '<td>' + value[3] + '</td>'
+                                    if (value[3] == 1) {
+                                        del_ind=' <input type="checkbox" value="' + value[3] + '" checked>'
+                                    }
+                                    else {
+                                        del_ind= '<input type="checkbox" value="' + value[3] + '" required>'
+                                    }
+
+                                var company = '';
+                                var company_list = '';
+                                var company_id_list = '';
+                          $.each(rendered_company_data, function(i, item){
+                                if( value[0].company_type_value == item){
+
+                                    company = '<option value="' + item.company_id + '">' + item.company_id + '</option>';
+
+                                   }else{
+
+                                    company_list += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
+
+                                }
+                                    company_id_list = company + company_list
+                          });
+
+                            var company_id = value[0]
+                            dropdown_values.push(company_id)
+
+
+                     edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
+                            '<td><input class="form-control workflow_schema" id="workflow_schema-'+inc_index+'" type="text" value="' + value[1] + '" maxlength="3" onkeypress="return /[a-z]/i.test(event.key)" required></td><td><input class="form-control" type="text" value="' + value[3] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td><select class="form-control">' + company_id_list + '</select> </td><td>' + del_ind + '</td></tr>';
+                            inc_index += 1;
+                        });
                $('#id_popup_tbody').append(edit_basic_data);
                     var i =0;
 
+                       $("#id_popup_table TBODY TR").each(function() {
+                        var row = $(this);
+                        var company_id_list = dropdown_values[i][0]
 
-                       //$("#id_popup_table TBODY TR").each(function() {-->
-                       //var row = $(this);-->
-                       //var prod_cat_id_value = dropdown_values[i][0]-->
-                       //var language_id_value = dropdown_values[i][1]-->
+                   $(row.find("TD").eq(3).find("select option[value="+company_id_list+"]")).attr('selected','selected');
 
-                      //$(row.find("TD").eq(1).find("select option[value="+prod_cat_id_value+"]")).attr('selected','selected');-->
-                        //$(row.find("TD").eq(3).find("select option[value="+language_id_value+"]")).attr('selected','selected');-->
-                        //i++;
-                       //})
+                        i++;
+                       })
                 $( "#id_del_ind_checkbox").prop( "hidden", false );
                 $( "#header_select").prop( "hidden", false );
                 $( ".class_del_checkbox").prop( "hidden", false );
@@ -827,7 +849,18 @@ function check_data() {
             });
         }
 
-    
+          function GetReferrer() {
+             window.history.back();
+              var preUrl = document.referrer;
+              console.log(preUrl);
+              window.open('', '_self', '').close();
+<!--               var win = window.open(preUrl);-->
+<!--                win.focus();-->
+              if (preUrl == null)
+                     return "The previous page url is empty";
+               else
+                     return preUrl;
+       }
 </script>
 <!--
 <script src="{% static 'scripts/work_flow_data/work_flow_schema.js' %}"></script> -->

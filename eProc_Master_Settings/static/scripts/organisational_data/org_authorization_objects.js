@@ -57,7 +57,7 @@ function onclick_copy_update_button() {
             var auth_level= row.cells[3].innerHTML;
             dropdown_values.push([auth_obj_id, auth_level])
             if (GLOBAL_ACTION == "UPDATE") {
-                edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td><select type="text" class="input form-control" id="authobjectid"  name="authobjectid" disabled>'+ auth_obj_id_db_values_onload +'</select></td><td><input class="input form-control description" id="description-1" value="' + row.cells[2].innerHTML + '" type="text"  name="description" disabled></td><td><select id="authobject_type" name="authobject_type" class="input form-control"><option selected="true">' + row.cells[3].innerHTML + '</option>' + auth_type_dropdown + '</select></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td><select type="text" class="input form-control" id="authobjectid"  name="authobjectid" disabled>'+ auth_obj_id_db_values_onload +'</select></td><td><input class="input form-control description" id="description-1" value="' + row.cells[2].innerHTML + '" type="text"  name="description" disabled></td><td><select id="authobject_type" name="authobject_type" class="input form-control" value="' + row.cells[3].innerHTML + '">' + auth_type_dropdown + '</select></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                 $("#header_select").prop("hidden", true);
             }
             else{

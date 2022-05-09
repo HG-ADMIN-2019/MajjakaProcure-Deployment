@@ -12,7 +12,7 @@ function onclick_add_button(button) {
     $('#myModal').modal('show');
     basic_add_new_html = '<tr ><td><input type="checkbox" required></td>'+
     '<td><input class="input form-control" type="text" maxlength="20" onkeypress="return /[0-9]/i.test(event.key)"  name="prod_cat_id" required></td>'+
-    '<td><input class="input form-control" type="text" maxlength="20" onkeypress="return /[A-Z ]/i.test(event.key)" name="prod_cat_desc"  pattern="[A-Z]" style="text-transform:uppercase;" required></td>'+
+    '<td><input class="input form-control" type="text" maxlength="20" name="prod_cat_desc" required></td>'+
     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>'
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
@@ -218,7 +218,7 @@ function add_popup_row() {
     });
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
     '<td><input class="input form-control" type="text" maxlength="20" onkeypress="return /[0-9]/i.test(event.key)" name="prod_cat_id" required></td>'+
-     '<td><input class="input form-control" type="text" maxlength="20" onkeypress="return /[a-z ]/i.test(event.key)" name="prod_cat_desc"  pattern="[A-Z]" style="text-transform:uppercase;" required></td>'+
+     '<td><input class="input form-control" type="text" maxlength="20" onkeypress="return /[a-z ]/i.test(event.key)" name="prod_cat_desc"  required></td>'+
      '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     if (GLOBAL_ACTION == "prodcat_upload") {

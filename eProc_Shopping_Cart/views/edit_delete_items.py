@@ -93,7 +93,8 @@ def update_item(request):
             'unit': item_details.unit,
             'del_date': item_details.item_del_date,
             'quantity': item_details.quantity,
-            'supp_id': item_details.supplier_id
+            'supp_id': item_details.supplier_id,
+            'currency_id':item_details.currency
         }
         supplier = item_details.supplier_id
         freetext_id = django_query_instance.django_filter_value_list_query(CartItemDetails,

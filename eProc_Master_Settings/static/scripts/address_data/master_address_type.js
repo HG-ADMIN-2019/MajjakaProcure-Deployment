@@ -14,10 +14,12 @@ function onclick_add_button(button) {
     $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
     $('#myModal').modal('show');
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td>' +
+   basic_add_new_html = '<tr><td><input type="checkbox" required></td>' +
         '<td><select class="form-control">'+address_number_dropdwn+'</select></td>' +
         '<td><select class="form-control">'+address_type_dropdown+'</select></td>' +
         '<td><select class="form-control">'+company_dropdwn+'</select></td>' +
+        '<td><input  type="date" name = "valid_from" class="form-control"></td>' +
+        '<td><input type="date" name = "valid_to"  class="form-control"></td>' +
         '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
         '<td hidden><input  type="text" class="form-control"  name="guid"></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
@@ -76,6 +78,8 @@ function onclick_copy_update_button() {
                 '<td>'+unique_input+'</td>' +
                 '<td><select class="form-control" value="' + row.cells[2].innerHTML + '">'+address_type_dropdown_onload+'</select></td>' +
                 '<td><select class="form-control" value="' + row.cells[3].innerHTML + '">'+company_dropdwn+'</select></td>'+
+                '<td><input  type="date" name = "valid_from" value="' + row.cells[4].innerHTML + '"class="form-control"></td>'
+                '<td><input  type="date" name = "valid_to" value="' + row.cells[5].innerHTML + '"class="form-control"></td>'
                 '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
                 '<td hidden><input  type="text" class="form-control"  value="' + row.cells[5].innerHTML + '"  name="guid"></td></tr>';
                 $("#header_select").prop("hidden", true);
@@ -87,6 +91,8 @@ function onclick_copy_update_button() {
                 '<td>'+unique_input+'</td>' +
                 '<td><select class="form-control" value="' + row.cells[2].innerHTML + '">'+address_type_dropdown_onload+'</select></td>' +
                 '<td><select class="form-control" value="' + row.cells[3].innerHTML + '">'+company_dropdwn+'</select></td>' +
+                 '<td><input  type="date" name = "valid_from" value="' + row.cells[4].innerHTML + '"class="form-control"></td>'
+                '<td><input  type="date" name = "valid_to" value="' + row.cells[5].innerHTML + '"class="form-control"></td>'
                 '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
                 '<td hidden><input  type="text" class="form-control"  value="' + row.cells[5].innerHTML + '"  name="guid"></td></tr>';
                  $("#header_select").prop("hidden", false);
@@ -228,6 +234,8 @@ function add_popup_row() {
         '<td><select class="form-control">'+address_number_dropdwn+'</select></td>' +
         '<td><select class="form-control">'+address_type_dropdown+'</select></td>' +
         '<td><select class="form-control">'+company_dropdwn+'</select></td>' +
+        '<td><input  type="date" name = "valid_from" class="form-control"></td>' +
+        '<td><input type="date" name = "valid_to"  class="form-control"></td>' +
         '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
         '<td hidden><input  type="text" class="form-control"  name="guid"></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
@@ -248,6 +256,8 @@ function display_basic_db_data() {
             '<td>' + item.address_number + '</td>' +
             '<td>' + item.address_type + '</td>' +
             '<td>'+ item.company_id +'</td>'+
+            '<td>'+ item.valid_from +'</td>'+
+            '<td>'+ item.valid_to +'</td>'+
             '<td hidden> <input type="checkbox"></td>' +
             '<td hidden>' + item.address_guid + '</td></tr>';
     });
@@ -280,6 +290,8 @@ $('#save_id').click(function () {
           addresstype.address_number = row.find("TD").eq(1).find('select').val();
           addresstype.address_type = row.find("TD").eq(2).find('select').val();
            addresstype.company_id = row.find("TD").eq(3).find('select').val();
+           addresstype.valid_from = row.find("TD").eq(3).find('input').val();
+           addresstype.valid_to = row.find("TD").eq(3).find('input').val();
            if (addresstype == undefined){
             addresstype.address_number = row.find("TD").eq(2).find('input').val();
             }

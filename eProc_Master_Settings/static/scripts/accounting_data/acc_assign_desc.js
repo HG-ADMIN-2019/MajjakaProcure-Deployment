@@ -27,7 +27,7 @@ function onclick_add_button(button) {
     GLOBAL_ACTION = button.value
     $("#id_popup_tbody").empty();
     $('#myModal').modal('show');
-    basic_add_new_html = '<tr> <td><input class="input" type="checkbox" required></td> <td><select class="form-control">' + acc_ass_val_dropdwn + ' </select></td> <td><input class="form-control" type="text"  maxlength="255" style="text-transform:uppercase" ></td> <td><select class="form-control"></select></td> <td ><select class="form-control"></select></td> <td><select class="form-control">' + language_dropdwn + '</select></td><td hidden><input value="GUID" hidden></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td> <td hidden></td> </tr>';
+    basic_add_new_html = '<tr> <td><input class="input" type="checkbox" required></td> <td><select class="form-control">' + acc_ass_val_dropdwn + ' </select></td> <td><input class="form-control" type="text"  maxlength="255" ></td><td><select class="form-control"></select></td> <td><select class="form-control"></select></td> <td><select class="form-control">' + language_dropdwn + '</select></td><td hidden><input value="GUID" hidden></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td> <td hidden></td> </tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
     var account_assign = '';
@@ -103,13 +103,13 @@ function onclick_copy_update_button() {
             if (GLOBAL_ACTION == "COPY") {
                 guid = 'GUID';
                 unique_input = '<input class="form-control" type="number" value="' + row.cells[1].innerHTML + '" name="Account Assignment Value" maxlength="40" required>'
-                edit_basic_data += '<tr><td><input class="input" type="checkbox" required></td> <td><select class="form-control" id="acc_ass_val_dropdw">' + acc_ass_val_dropdwn + ' </select></td><td><input class="form-control" type="text" value="' + row.cells[2].innerHTML + '"  maxlength="255" onkeypress="return /[a-z ]/i.test(event.key)" style="text-transform:uppercase" ></td><td><select id="acc_ass_dropdw" class="form-control"></select></td> <td ><select id="company_dropdw" class="form-control">'+ company_dropdwn +'</select></td> <td><select id="language_dropdw" class="form-control">' + language_dropdwn + '</select></td><td hidden><input value="' + guid + '"></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td> <td hidden> </td></tr>'
+                edit_basic_data += '<tr><td><input class="input" type="checkbox" required></td> <td><select class="form-control" id="acc_ass_val_dropdw">' + acc_ass_val_dropdwn + ' </select></td><td><input class="form-control" type="text" value="' + row.cells[2].innerHTML + '"  maxlength="255" onkeypress="return /[a-z ]/i.test(event.key)"></td><td><select id="acc_ass_dropdw" class="form-control"></select></td> <td ><select id="company_dropdw" class="form-control">'+ company_dropdwn +'</select></td> <td><select id="language_dropdw" class="form-control">' + language_dropdwn + '</select></td><td hidden><input value="' + guid + '"></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td> <td hidden> </td></tr>'
                 $("#header_select").prop("hidden",false);
 
             } else {
                 guid = row.cells[6].innerHTML;
                 unique_input = '<input class="form-control" type="number" value="' + row.cells[1].innerHTML + '" name="Account Assignment Value" maxlength="40" disabled>'
-                edit_basic_data += '<tr><td hidden><input class="input" type="checkbox" required></td> <td><select class="form-control" id="acc_ass_val_dropdw" disabled>' + acc_ass_val_dropdwn + ' </select></td><td><input class="form-control" type="text" value="' + row.cells[2].innerHTML + '"  maxlength="255" onkeypress="return /[a-z ]/i.test(event.key)" style="text-transform:uppercase" ></td><td><select id="acc_ass_dropdw" class="form-control" disabled></select></td> <td ><select id="company_dropdw" class="form-control" disabled>'+ company_dropdwn +'</select></td> <td><select id="language_dropdw" class="form-control"'+ company_dropdwn +' disabled>' + language_dropdwn + '</select></td><td hidden><input value="' + guid + '"></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td> <td hidden> </td></tr>'
+                edit_basic_data += '<tr><td hidden><input class="input" type="checkbox" required></td> <td><select class="form-control" id="acc_ass_val_dropdw" disabled>' + acc_ass_val_dropdwn + ' </select></td><td><input class="form-control" type="text" value="' + row.cells[2].innerHTML + '"  maxlength="255" onkeypress="return /[a-z ]/i.test(event.key)"></td><td><select id="acc_ass_dropdw" class="form-control" disabled></select></td> <td ><select id="company_dropdw" class="form-control" disabled>'+ company_dropdwn +'</select></td> <td><select id="language_dropdw" class="form-control"'+ company_dropdwn +' disabled>' + language_dropdwn + '</select></td><td hidden><input value="' + guid + '"></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td> <td hidden> </td></tr>'
                 $("#header_select").prop("hidden",true);
 
             }
@@ -249,7 +249,7 @@ function add_popup_row() {
     $(".modal").on("hidden.bs.modal", function () {
         $("#id_error_msg").html("");
     });
-    basic_add_new_html = '<tr> <td><input class="input" type="checkbox" required></td> <td><select class="form-control">' + acc_ass_val_dropdwn + ' </select></td> <td><input class="form-control" type="text"  maxlength="255" style="text-transform:uppercase"></td> <td><select class="form-control"></select></td> <td ><select class="form-control"></select></td> <td><select class="form-control">' + language_dropdwn + '</select></td> <td hidden><input value="GUID"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td hidden> </td></tr>';
+    basic_add_new_html = '<tr> <td><input class="input" type="checkbox" required></td> <td><select class="form-control">' + acc_ass_val_dropdwn + ' </select></td> <td><input class="form-control" type="text"  maxlength="255"></td> <td><select class="form-control"></select></td> <td ><select class="form-control"></select></td><td><select class="form-control">' + language_dropdwn + '</select></td> <td hidden><input value="GUID"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td hidden> </td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
 
     var account_assign = '';

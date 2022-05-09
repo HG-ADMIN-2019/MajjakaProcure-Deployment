@@ -462,6 +462,11 @@ function on_change_quantity(action){
     quantity = document.getElementById("id_quantity").value
     if(!quantity){
         quantity = 1
+        document.getElementById("catalog_quantity").value = quantity
+    }
+    if(parseInt(quantity) == 0){
+        quantity = 1
+        document.getElementById("catalog_quantity").value = quantity
     }
     if (action == 'INCREMENT'){
         quantity = parseInt(quantity)+1;
@@ -469,7 +474,7 @@ function on_change_quantity(action){
     else if(action == 'DECREMENT'){
         if(parseInt(quantity) > 1)
         {
-            quantity_flag = false
+            //quantity_flag = false
             quantity = parseInt(quantity)-1;
         }
     }

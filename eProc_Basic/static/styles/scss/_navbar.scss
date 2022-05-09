@@ -56,6 +56,17 @@
         color: #969696;
     }
 
+    .user-dropdown {
+    
+        .user-dropdown-item {
+            display: flex;
+
+            &__icons {
+                padding-right: 0.5rem;
+            }
+        }
+    }
+
 }
 
 .notification_wrap {

@@ -6,9 +6,6 @@
 {% block maincontent %}
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
-<style>
-    .ui-autocomplete { z-index:2147483647; }
-</style>
 
     {% include 'root/loader.html' %}
 
@@ -122,45 +119,6 @@
         
     </div>
 
-<!-- start of username popup -->
-<div class="modal fade" id="get_username_popup">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-
-            <!-- Modal Header -->
-            <div class="modal-header">
-                <h4 class="modal-title">Select User</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-
-            <!-- Modal body -->
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col">
-                        <div class="input-group">
-                            <input class="form-control py-2 border-right-0 border" type="search" placeholder="Search User" id="search_user" name="search_user" value="">
-                             <div class="input-group-append">
-                            <button class="btn btn-primary" id="user-search-submit" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
-                        </div>
-<!--                            <span class="input-group-append">-->
-<!--                                <div class="input-group-text bg-transparent"><i class="fa fa-search"></i></div>-->
-<!--                            </span>-->
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Modal footer -->
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="select_username"  data-dismiss="modal"><i class="fa fa-check" aria-hidden="true"></i> select</button>
-            </div>
-
-        </div>
-    </div>
-</div>
-<!-- end of username popup -->
-
-
 <div class="hg_spacer2"> &nbsp; </div>
 
 <script src="{% static 'scripts/user_report.js' %}"></script>
@@ -178,68 +136,6 @@ $(document).ready(function () {
     $('#hg_user_report_search').click(function () {
         $('#hg_loader').modal('show');
     });
-    var res;
-
-    // user search autocomplete
-    $("#search_user").autocomplete({
-        source: function(request, response) {
-            $.ajax({
-            url  : "{% url 'eProc_Doc_Details:auto_complete_goods_receiver' %}",
-                dataType: "json",
-                data: {
-                    term : request.term,
-                },
-                success: function(data) {
-                    response(data);
-                }
-            });
-        },
-        min_length: 3,
-<!--        delay: 300-->
-    });
-});
- $('#id_username').click(function () {
-     $("#get_username_popup").modal('toggle');
-    });
-   $("input[type='search']").on('input',function(e) {
-     res = document.getElementById("search_user").value;
-     user_auto(res);
-    });
-
-   function user_auto(res) {
-   $.ajax({
-            url  : "{% url 'eProc_Doc_Details:auto_complete_goods_receiver' %}",
-                dataType: "json",
-                data: {term : res },
-                success: function(data) {
-                        console.log(data);
-                        $("#search_user").autocomplete({
-                        source: data
-                       });
-                }
-            });
-         }
-
-  $("#select_username").click(function(){
-        $("#get_username_popup").modal('hide');
-      //  $('#hg_loader').modal('show');
-        var username_value = document.getElementById('search_user').value
-        var split_name = username_value.split(' ');
-        var first_name = split_name[0];
-        var email_id = split_name.pop();
-        console.log(email_id);
-        $.ajax({
-                url  : "{% url 'eProc_Admin_Tool:get_username' %}",
-                type: 'POST',
-<!--                data: {'email_id':email_id} ,-->
-                data: JSON.stringify(email_id),
-                dataType: "json",
-                success: function(response) {
-                        console.log(response);
-                       document.getElementById('id_username').value = response;
-                }
-            });
-
     });
 
 </script>

@@ -27,7 +27,8 @@ from eProc_Notes_Attachments.Utilities.notes_attachments_generic import save_att
     save_internal_supplier_note
 from eProc_Price_Calculator.Utilities.price_calculator_generic import calculate_item_total_value, \
     calculate_item_price
-from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_prod_by_id
+from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_prod_by_id, get_highest_acc_detail, \
+    delete_approver_detail
 from eProc_Shopping_Cart.models import CartItemDetails, ScHeader, ScItem, ScAccounting, \
     ScAddresses, ScApproval, PurchasingData, ScPotentialApproval
 from eProc_User_Settings.Utilities.user_settings_generic import get_object_id_list_user, get_attr_value
@@ -842,26 +843,8 @@ class EditShoppingCart(SaveShoppingCart):
             supplier_id = item_data['supplier_id']
 
         sc_instance = django_query_instance.django_get_query(ScHeader, {'guid': header_guid, 'client': self.client})
-        previous_item_highest_value = django_query_instance.django_filter_only_query(ScItem, {
-            'header_guid': django_query_instance.django_get_query(ScHeader, {'guid': header_guid})
-        }).order_by('-value')[0]
 
-        highest_item_accounting_data = django_query_instance.django_get_query(ScAccounting, {
-            'item_guid': previous_item_highest_value
-        })
 
-        account_assignment_category = highest_item_accounting_data.acc_cat
-        if account_assignment_category == 'CC':
-            account_assignment_value = highest_item_accounting_data.cost_center
-
-        elif account_assignment_category == 'AS':
-            account_assignment_value = highest_item_accounting_data.asset_number
-
-        elif account_assignment_category == 'OR':
-            account_assignment_value = highest_item_accounting_data.internal_order
-
-        else:
-            account_assignment_value = highest_item_accounting_data.wbs_ele
 
         document_number = sc_instance.doc_number
         requester = sc_instance.requester
@@ -871,20 +854,8 @@ class EditShoppingCart(SaveShoppingCart):
             eform_guid = item_data.get("guid")
             eform = item_data.get('eform')
         value = item_data.get('value')
-        total_value = float(sc_instance.total_value) + float(value)
-        approval_data = get_manger_detail(self.client, requester,
-                                          account_assignment_category, total_value, sc_instance.co_code,
-                                          account_assignment_value,
-                                          global_variables.GLOBAL_USER_CURRENCY)
-        if len(approval_data[0]) == 0:
-            if django_query_instance.django_existence_check(ScPotentialApproval, {'sc_header_guid': header_guid,
-                                                                                  'client':global_variables.GLOBAL_CLIENT}):
-                django_query_instance.django_filter_delete_query(ScPotentialApproval, {'sc_header_guid': header_guid,
-                                                                                  'client':global_variables.GLOBAL_CLIENT})
-            if django_query_instance.django_existence_check(ScApproval, {'header_guid': header_guid,
-                                                                                  'client':global_variables.GLOBAL_CLIENT}):
-                django_query_instance.django_filter_delete_query(ScApproval, {'header_guid': header_guid,
-                                                                                  'client':global_variables.GLOBAL_CLIENT})
+        sc_instance.total_value = float(sc_instance.total_value) + float(value)
+        sc_instance.save()
 
         item_details = django_query_instance.django_filter_only_query(ScItem, {'header_guid': header_guid,
                                                                                'client': self.client,
@@ -907,6 +878,7 @@ class EditShoppingCart(SaveShoppingCart):
         item_data['goods_recep'] = self.username
         item_data['silent_po'] = get_silent_po[0]
         save_sc_data_to_db.save_sc_item_details_to_db(new_item_guid, item_data)
+
         get_address_data = django_query_instance.django_get_query(ScAddresses,
                                                                   {'header_guid': header_guid,
                                                                    'client': self.client,
@@ -1002,7 +974,23 @@ class EditShoppingCart(SaveShoppingCart):
                                                                                     'del_ind': False}, 'value')
         total_value = sum(value_of_sc)
         django_query_instance.django_filter_only_query(ScHeader, {
-            'guid': header_guid}).update(total_value=total_value, gross_amount=total_value)
+            'guid': header_guid}).update(total_value=sc_instance.total_value, gross_amount=sc_instance.total_value)
+
+        account_assignment_category, account_assignment_value = get_highest_acc_detail(header_guid)
+        approval_data = get_manger_detail(self.client, requester,
+                                          account_assignment_category, sc_instance.total_value, sc_instance.co_code,
+                                          account_assignment_value,
+                                          global_variables.GLOBAL_USER_CURRENCY)
+        # Save Approver detail
+        delete_approver_detail(header_guid)
+        sc_completion_flag = False
+        if django_query_instance.django_existence_check(ScItem, {'client': global_variables.GLOBAL_CLIENT,
+                                                                 'del_ind': False,
+                                                                 'header_guid': header_guid,
+                                                                 'call_off': CONST_CO03}):
+            sc_completion_flag = True
+        save_sc_approval(approval_data[0], header_guid, CONST_SC_HEADER_SAVED, sc_completion_flag)
+        # end of save Approver detail
         # purch_worklist_flag = False
         # if item_data['call_off'] == CONST_CO03:
         #     purch_worklist_flag = True

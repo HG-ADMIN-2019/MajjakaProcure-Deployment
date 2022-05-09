@@ -15,6 +15,9 @@
                 <button type="button" id="id_add_data" value="ADD" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add message number
                 </button>
+                <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                 <i class="fas fa-times"></i> close
+                </button>
             </div>
         </div>
 
@@ -472,7 +475,18 @@ function compare_duplicate(validate_add_attributes,main_table_low_value, main_ta
   return [no_duplicate_value,error_message];
 }
 
-
+       function GetReferrer() {
+             window.history.back();
+              var preUrl = document.referrer;
+              console.log(preUrl);
+              window.open('', '_self', '').close();
+<!--               var win = window.open(preUrl);-->
+<!--                win.focus();-->
+              if (preUrl == null)
+                     return "The previous page url is empty";
+               else
+                     return preUrl;
+       }
 
 
 </script>

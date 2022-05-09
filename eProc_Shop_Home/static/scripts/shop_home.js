@@ -46,9 +46,12 @@ function TriggerOutlook() {
  function RviDelete(item_prod_id) {
     let data = {}
     data.item_prod_id = item_prod_id
-    ajax_delete_rvi(data) 
+    response = ajax_delete_rvi(data)
 
     $("#rvi_card_"+item_prod_id).remove();
+    if(response.recently_viewed_count == 0){
+        document.getElementById("recently_viewed_product").style.display = "none";
+    }
 
 }
 var GLOBAL_QUANTITY = 0;

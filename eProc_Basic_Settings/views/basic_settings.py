@@ -614,8 +614,8 @@ def account_ass_values(request):
     upload_accassvalues = get_configuration_data(AccountingData, {'del_ind': False},
                                                  ['account_assign_guid', 'account_assign_value', 'valid_from',
                                                   'valid_to', 'account_assign_cat', 'company_id'])
-    upload_data_acccat = get_configuration_data(AccountAssignmentCategory, {'del_ind': False}, ['account_assign_cat'])
-    upload_data_company = get_configuration_data(OrgCompanies, {'del_ind': False}, ['company_id'])
+    upload_data_acccat = get_configuration_data(AccountAssignmentCategory, {'del_ind': False},['account_assign_cat'])
+    upload_data_company = get_configuration_data(OrgCompanies, {'del_ind': False},['company_id'])
     master_data_settings = 'master_data_settings'
     for data in upload_accassvalues:
         print(data)
@@ -678,30 +678,30 @@ def upload_product_cattegories(request):
                    })
 
 
-def upload_cust_prod_cat(request):
-    client = getClients(request)
-    upload_cust_prod_catogories = list(
-        UnspscCategoriesCust.objects.filter(client=client, del_ind=False).values('prod_cat_guid', 'prod_cat_id'))
-    content_managment_settings = 'content_managment_settings'
-    return render(request,
-                  'Customer_Product_Category/customer_product_category.html',
-                  {'upload_cust_prod_cat': upload_cust_prod_catogories,
-                   'content_managment_settings': content_managment_settings
-                   })
-
-
-def upload_cust_prod_cat_desc(request):
-    client = getClients(request)
-    upload_cust_prod_desc_catogories = list(
-        UnspscCategoriesCustDesc.objects.filter(client=client, del_ind=False).values('prod_cat_desc_guid',
-                                                                                     'prod_cat_id',
-                                                                                     'category_desc', 'language_id'))
-    content_managment_settings = 'content_managment_settings'
-    return render(request,
-                  'Customer_Product_Category_Descriptiony/customer_product_category_description.html',
-                  {'upload_cust_prod_cat_desc': upload_cust_prod_desc_catogories,
-                   'content_managment_settings': content_managment_settings
-                   })
+# def upload_cust_prod_cat(request):
+#     client = getClients(request)
+#     upload_cust_prod_catogories = list(
+#         UnspscCategoriesCust.objects.filter(client=client, del_ind=False).values('prod_cat_guid', 'prod_cat_id'))
+#     content_managment_settings = 'content_managment_settings'
+#     return render(request,
+#                   'Customer_Product_Category/customer_product_category.html',
+#                   {'upload_cust_prod_cat': upload_cust_prod_catogories,
+#                    'content_managment_settings': content_managment_settings
+#                    })
+#
+#
+# def upload_cust_prod_cat_desc(request):
+#     client = getClients(request)
+#     upload_cust_prod_desc_catogories = list(
+#         UnspscCategoriesCustDesc.objects.filter(client=client, del_ind=False).values('prod_cat_desc_guid',
+#                                                                                      'prod_cat_id',
+#                                                                                      'category_desc', 'language_id'))
+#     content_managment_settings = 'content_managment_settings'
+#     return render(request,
+#                   'Customer_Product_Category_Descriptiony/customer_product_category_description.html',
+#                   {'upload_cust_prod_cat_desc': upload_cust_prod_desc_catogories,
+#                    'content_managment_settings': content_managment_settings
+#                    })
 
 
 def check_data(request):

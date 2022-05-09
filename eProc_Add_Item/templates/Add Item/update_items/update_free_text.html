@@ -21,7 +21,7 @@
     
     <div class="form-row">
         <div class="form-group col-md-4">
-            <label for="id_price">Estimated Price in ()<span class="hg_required"></span></label>
+            <label for="id_price">Estimated Price in (<span id="estimated_price_currency"></span>)<span class="hg_required"></span></label>
             <input  type="text" id="id_price" min="1" class="form-control" required>
         </div>
     
@@ -100,7 +100,7 @@ function update_free_text_data(){
     cart_item_data = {
             guid        : update_item_guid,
             description   : item_name,
-            long_desc:prod_desc,
+            int_product_id:prod_desc,
             price       : price,
             price_unit : price_unit,
             unit        : unit,

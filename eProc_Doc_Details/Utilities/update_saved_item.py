@@ -1,5 +1,5 @@
 from eProc_Attributes.Utilities.attributes_generic import OrgAttributeValues
-from eProc_Basic.Utilities.constants.constants import CONST_CALENDAR_ID
+from eProc_Basic.Utilities.constants.constants import CONST_CALENDAR_ID, CONST_CO03, CONST_SC_HEADER_SAVED
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.get_db_query import get_requester_currency, get_object_id_from_username
 from eProc_Basic.Utilities.global_defination import global_variables
@@ -8,10 +8,13 @@ from eProc_Calendar_Settings.Utilities.calender_settings_generic import calculat
 from eProc_Doc_Details.Utilities.details_specific import get_approver_list
 from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_currency
 from eProc_Price_Calculator.Utilities.price_calculator_generic import calculate_item_total_value, calculate_item_price
-from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_prod_by_id
+from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_prod_by_id, get_highest_acc_detail, \
+    delete_approver_detail
+from eProc_Shopping_Cart.Utilities.shopping_cart_specific import get_manger_detail
 from eProc_Shopping_Cart.context_processors import update_user_obj_id_list_info
 from eProc_Shopping_Cart.models import ScItem, ScHeader
 from eProc_User_Settings.Utilities.user_settings_generic import get_object_id_list_user
+from eProc_Workflow.Utilities.work_flow_generic import save_sc_approval
 
 django_query_instance = DjangoQueries()
 
@@ -244,7 +247,22 @@ class UpdateSavedItem:
                                                   {'guid': sc_item_instance.header_guid,
                                                    'client': global_variables.GLOBAL_CLIENT},
                                                   {'total_value': total_sc_value})
-
+        # save ScApproval data
+        account_assignment_category, account_assignment_value = get_highest_acc_detail(self.sc_header_guid)
+        approval_data = get_manger_detail(global_variables.GLOBAL_CLIENT, self.sc_header_instance.requester,
+                                          account_assignment_category, self.sc_header_instance.total_value,
+                                          self.sc_header_instance.co_code,
+                                          account_assignment_value,
+                                          global_variables.GLOBAL_USER_CURRENCY)
+        # Save Approver detail
+        delete_approver_detail(self.sc_header_guid)
+        sc_completion_flag = False
+        if django_query_instance.django_existence_check(ScItem, {'client': global_variables.GLOBAL_CLIENT,
+                                                                 'del_ind': False,
+                                                                 'header_guid': self.sc_header_guid,
+                                                                 'call_off': CONST_CO03}):
+            sc_completion_flag = True
+        save_sc_approval(approval_data[0], self.sc_header_guid, CONST_SC_HEADER_SAVED, sc_completion_flag)
         return item_details, item_total_value, total_sc_value, item_with_highest_value
 
     def save_to_db_onclick(self, item_details):

@@ -40,7 +40,7 @@
                         </div>
                         <div class="col-md search_docs">
                             <label>Document Status</label>
-                            <select name="status" id="status" class="multiple_select form-control" multiple data-selected-text-format="count" title="Select..">
+                            <select name="status" id="status" class="multiple_select form-control" multiple data-selected-text-format="count" data-actions-box="true" title="Select..">
                                 <option value="SAVED">Saved</option>
                                 <option value="APPROVED">Approved</option>
                                 <option value="REJECTED">Rejected</option>
@@ -63,19 +63,6 @@
                 </form>
             </div>
         </div>
-
-        <!-- {% if t_count > 0 %} -->
-        <!--Display no. of documents if count is greater than 0-->
-        <!-- <div class="card results-card">
-            <div class="card-body d-flex justify-content-end" ><h6 class="card-title text-muted"> Total number of results found: {{t_count}}</h6> </div>
-        </div> -->
-        <!--Display the result-->
-        <!-- {% elif t_count == 0 %}
-        <div class="card results-card">
-            <div class="card-body d-flex justify-content-end" ><h6 class="card-title text-muted"> No Results Found</h6></div>
-        </div>
-        {% endif %} -->
-
         
         <div class="d-flex justify-content-end mt-3 mb-3">
             {% if t_count > 0 %}
@@ -84,147 +71,148 @@
             <h6 class="text-muted"> Total number of results found {{t_count}}</h6>
             {% endif %}
         </div>
+
         <!--    To Display Header Details only if there are any results-->
-    {% if t_count > 0 %}
-    <div>
+        {% if t_count > 0 %}
+        <div>
 
-        <table class="my-orders-results-table table_sort_filter_pagination" >
-            <thead>
-                <tr>
-                    <td>
-                        <div class="row h6 ml-2 text-muted">
-                            <div class="col">Document Number</div>
-                            <div class="col">Document Name</div>
-                            <div class="col">Created On </div>
-                            <div class="col">Total Value</div>
-                            <div class="col">Document Status</div>
-                        </div>
-                    </td>
-                </tr>
-            </thead>
-            <tbody>
-                {% for sc_head, encrypted_guid in sc_header %}
+            <table class="my-orders-results-table table_sort_filter_pagination" >
+                <thead>
+                    <tr>
+                        <td>
+                            <div class="row h6 ml-2 text-muted">
+                                <div class="col">Document Number</div>
+                                <div class="col">Document Name</div>
+                                <div class="col">Created On </div>
+                                <div class="col">Total Value</div>
+                                <div class="col">Document Status</div>
+                            </div>
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sc_head, encrypted_guid in sc_header %}
 
-                <tr>
-                    <td>
-                        <div class="card mb-1 my-orders-card-list">
-                            <div class="card-header" data-toggle="collapse" onclick="displayToggle(this)" id="dataTargetId-{{ forloop.counter }}">
-                                {% if inp_doc_type == 'SC' %}
-                                <div class="row h5 mt-2" >
-                                    <div class="col">
-                                        <a href="{% url 'eProc_Doc_Details:my_order_doc_details' sc_completion_flag inp_doc_type encrypted_guid 'display' 'my_order' %}" class="link-blue" target="_blank">{{ sc_head.doc_number }}</a>
-                                    </div>
-
-                                    <div class="col">
-                                        <a href="{% url 'eProc_Doc_Details:my_order_doc_details' sc_completion_flag inp_doc_type encrypted_guid 'display' 'my_order' %}" class="link-blue" target="_blank">{{ sc_head.description }}</a>
-                                    </div>
-
-                                    <div class="col">
-                                        {{ sc_head.created_at }}
-                                    </div>
-
-                                    <div class="col">
-                                        <div>
-                                            {{ sc_head.total_value }} {{ sc_head.currency }}
+                    <tr>
+                        <td>
+                            <div class="card mb-1 my-orders-card-list">
+                                <div class="card-header" data-toggle="collapse" onclick="displayToggle(this)" id="dataTargetId-{{ forloop.counter }}">
+                                    {% if inp_doc_type == 'SC' %}
+                                    <div class="row h5 mt-2" >
+                                        <div class="col">
+                                            <a href="{% url 'eProc_Doc_Details:my_order_doc_details' sc_completion_flag inp_doc_type encrypted_guid 'display' 'my_order' %}" class="link-blue" target="_blank">{{ sc_head.doc_number }}</a>
                                         </div>
+
+                                        <div class="col">
+                                            <a href="{% url 'eProc_Doc_Details:my_order_doc_details' sc_completion_flag inp_doc_type encrypted_guid 'display' 'my_order' %}" class="link-blue" target="_blank">{{ sc_head.description }}</a>
+                                        </div>
+
+                                        <div class="col">
+                                            {{ sc_head.created_at }}
+                                        </div>
+
+                                        <div class="col">
+                                            <div>
+                                                {{ sc_head.total_value }} {{ sc_head.currency }}
+                                            </div>
+                                        </div>
+
+                                        <div class="col">    
+                                        <i class="fas fa-plus plus-symbol"></i>
+
+                                            {% for sc_app in sc_appr %}
+                                            {% if sc_app.header_guid_id in sc_head.guid and sc_app.step_num == '1'  %}
+
+                                            {% if sc_app.app_id != 'Auto'  %}
+                                            {% if sc_head.status == 'AWAITING_APPROVAL'%} 
+                                            <span class="badge badge-pill badge_status_await_approval">WAITING FOR APPROVAL</span>
+
+                                            {% elif sc_head.status == 'SAVED' %}  
+                                            <span class="badge badge-pill badge_status_save">SAVED</span>
+
+                                            {% elif sc_head.status == 'APPROVED' %} 
+                                            <span class="badge badge-pill badge_status_approved">APPROVED</span>
+                                            <!-- <a href="{% url 'eProc_Doc_Search:generate_sc_details_pdf' sc_head.doc_number %}" target="_blank"><button style="float: right;" class="btn btn-primary">print pdf</button></a> -->
+
+                                            {% elif sc_head.status == 'PURCHASER_WORKLIST' %} 
+                                            <span class="badge badge-pill badge_status_purch_wrkl">IN PURCHASER's WORK LIST</span> 
+                                            
+                                            {% elif sc_head.status == 'REJECTED' %} 
+                                            <span class="badge badge-pill badge_status_rejected">REJECTED</span> 
+                                            
+                                            {% endif %}
+                                            
+                                            {% elif sc_app.app_id == 'Auto' %}
+                                            {% if sc_head.status == 'PURCHASER_WORKLIST' %}
+                                            <span class="badge badge-pill badge_status_purch_wrkl">IN PURCHASER's WORK LIST</span>
+
+                                            {% elif sc_head.status == 'SAVED' %}
+                                            <span class="badge badge-pill badge_status_save">SAVED</span>
+
+                                            {% else %}
+                                            <span class="badge badge-pill badge_status_approved">APPROVED</span>
+                                            
+                                            {% endif %}
+                                            {% endif %}
+                                            {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                        
                                     </div>
-
-                                    <div class="col">    
-                                       <i class="fas fa-plus plus-symbol"></i>
-
-                                        {% for sc_app in sc_appr %}
-                                        {% if sc_app.header_guid_id in sc_head.guid and sc_app.step_num == '1'  %}
-
-                                        {% if sc_app.app_id != 'Auto'  %}
-                                        {% if sc_head.status == 'AWAITING_APPROVAL'%} 
-                                        <span class="badge badge-pill badge_status_await_approval">WAITING FOR APPROVAL</span>
-
-                                        {% elif sc_head.status == 'SAVED' %}  
-                                        <span class="badge badge-pill badge_status_save">SAVED</span>
-
-                                        {% elif sc_head.status == 'APPROVED' %} 
-                                        <span class="badge badge-pill badge_status_approved">APPROVED</span>
-                                        <!-- <a href="{% url 'eProc_Doc_Search:generate_sc_details_pdf' sc_head.doc_number %}" target="_blank"><button style="float: right;" class="btn btn-primary">print pdf</button></a> -->
-
-                                        {% elif sc_head.status == 'PURCHASER_WORKLIST' %} 
-                                        <span class="badge badge-pill badge_status_purch_wrkl">IN PURCHASER's WORK LIST</span> 
-                                        
-                                        {% elif sc_head.status == 'REJECTED' %} 
-                                        <span class="badge badge-pill badge_status_rejected">REJECTED</span> 
-                                        
-                                        {% endif %}
-                                        
-                                        {% elif sc_app.app_id == 'Auto' %}
-                                        {% if sc_head.status == 'PURCHASER_WORKLIST' %}
-                                        <span class="badge badge-pill badge_status_purch_wrkl">IN PURCHASER's WORK LIST</span>
-
-                                        {% elif sc_head.status == 'SAVED' %}
-                                        <span class="badge badge-pill badge_status_save">SAVED</span>
-
-                                        {% else %}
-                                        <span class="badge badge-pill badge_status_approved">APPROVED</span>
-                                        
-                                        {% endif %}
-                                        {% endif %}
-                                        {% endif %}
-                                        {% endfor %}
-                                    </div>
-                                    
+                                    {% endif %}
                                 </div>
-                                {% endif %}
+                                
+                                <div id="collapseSearch{{ forloop.counter }}" class="collapse">
+                                    <div class="card-body">
+                                        <div class="row" >
+                                            <div class="col-md-3 grey-border">
+                                            
+                                                <div class="row mt-2">
+                                                    <div class="col-md-2">
+                                                        <!-- To display cart logo when document type is shopping cart   -->
+                                                        {% if inp_doc_type == 'SC' %}
+                                                        <div>
+                                                            <i class="fas fa-shopping-cart fa-2x" ></i>
+                                                        </div>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="col-md-10">
+                                                        {% if inp_doc_type == 'SC' %}
+                                                        <span class="hg_subtext_color">Shopping Cart Number</span><br>
+                                                        <div class="h5 link-blue"> {{ sc_head.doc_number }} </div>
+                                                        {% endif %}
+                    
+                                                        {% if inp_doc_type == 'PO' %}
+                                                        <span class="hg_subtext_color">PO Name</span><br>
+                                                        <div class="h5 link-blue"> {{ sc_head.doc_number }} </div>
+                                                        {% endif %}
+                    
+                                                        <span class="hg_subtext_color">Requested By</span><br>
+                                                        <div class="h5 link-blue"> {{ requester_first_name }} </div>
+                                                    </div>
+                                                </div>
+                                                
+                                            </div>
+                                            <div class="col-md-9">
+                                                {% if inp_doc_type == 'SC' %}
+                                                {% include 'Workflow/manager_detail.html' %}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                    
+                                    </div>
+                                </div>
                             </div>
                             
-                            <div id="collapseSearch{{ forloop.counter }}" class="collapse">
-                                <div class="card-body">
-                                    <div class="row" >
-                                        <div class="col-md-3 grey-border">
-                                        
-                                            <div class="row mt-2">
-                                                <div class="col-md-2">
-                                                    <!-- To display cart logo when document type is shopping cart   -->
-                                                    {% if inp_doc_type == 'SC' %}
-                                                    <div>
-                                                        <i class="fas fa-shopping-cart fa-2x" ></i>
-                                                    </div>
-                                                    {% endif %}
-                                                </div>
-                                                <div class="col-md-10">
-                                                    {% if inp_doc_type == 'SC' %}
-                                                    <span class="hg_subtext_color">Shopping Cart Number</span><br>
-                                                    <div class="h5 link-blue"> {{ sc_head.doc_number }} </div>
-                                                    {% endif %}
-                
-                                                    {% if inp_doc_type == 'PO' %}
-                                                    <span class="hg_subtext_color">PO Name</span><br>
-                                                    <div class="h5 link-blue"> {{ sc_head.doc_number }} </div>
-                                                    {% endif %}
-                
-                                                    <span class="hg_subtext_color">Requested By</span><br>
-                                                    <div class="h5 link-blue"> {{ requester_first_name }} </div>
-                                                </div>
-                                            </div>
-                                            
-                                        </div>
-                                        <div class="col-md-9">
-                                            {% if inp_doc_type == 'SC' %}
-                                            {% include 'Workflow/manager_detail.html' %}
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                
-                                </div>
-                            </div>
-                        </div>
-                        
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-  
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+    
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
-</div>
 </div>
 
 <!--  start of manager detail pop up-->

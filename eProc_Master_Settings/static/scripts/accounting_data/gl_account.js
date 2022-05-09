@@ -14,7 +14,7 @@ function onclick_add_button(button) {
     basic_add_new_html = '<tr ><td><input type="checkbox" required></td>'+
     '<td><select class="form-control">' + prod_cat_dropdown + '</select></td>'+
     '<td><select class="form-control">' + glacc_dropdown + '</select></td>'+
-    '<td><input type="checkbox" name="default" required></td>><td><select class="form-control">' + accasscat_dropdown + '</select></td>'+
+    '<td><input type="checkbox" name="gl_acc_default" required></td>><td><select class="form-control">' + accasscat_dropdown + '</select></td>'+
     '<td><select class="form-control">' + company_dropdown + '</select></td>'+
     '<td><input class="form-control" type="number" onkeypress="return event.charCode >= 48" min="1" name="From_value"  required></td>'+
     '<td><input class="form-control" type="number" onkeypress="return event.charCode >= 48" min="1" name="To_value"  required></td>'+
@@ -33,7 +33,13 @@ function display_basic_db_data() {
     $('#id_detgl_tbody').empty();
     var edit_basic_data = '';
     $.each(rendered_detgl_data, function (i, item) {
-        edit_basic_data += '<tr ><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.prod_cat_id + '</td><td>' + item.gl_acc_num + '</td><td>' + item.gl_acc_default + '</td><td>' + item.account_assign_cat + '</td><td>' + item.company_id + '</td><td>' + item.item_from_value + '</td><td>' + item.item_to_value + '</td><td>' + item.currency_id + '</td><td hidden>' + item.det_gl_acc_guid + '</td></tr>';
+        var data = '';
+          if (item.gl_acc_default == true){
+                data = '<input type="checkbox" name="gl_acc_default" value="" checked disabled>'
+            } else{
+                data = '<input type="checkbox" name="gl_acc_default" value="" disabled>'
+            }
+        edit_basic_data += '<tr ><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.prod_cat_id + '</td><td>' + item.gl_acc_num + '</td><td>' + data + '</td><td>' + item.account_assign_cat + '</td><td>' + item.company_id + '</td><td>' + item.item_from_value + '</td><td>' + item.item_to_value + '</td><td>' + item.currency_id + '</td><td hidden>' + item.det_gl_acc_guid + '</td></tr>';
     });
     $('#id_detgl_tbody').append(edit_basic_data);
     $("#hg_select_checkbox").prop("hidden", true);
@@ -69,19 +75,24 @@ $(".remove_upload_data").click(() => {
 
 });
 //validate by comparing  main table values and popup table values
-function maintable_validation(validate_add_attributes, main_table_low_value) {
+function maintable_validation(detgl_data, main_table_low_value) {
     var no_duplicate_entries = 'Y'
     var error_message =''
-    var common = [];
-    jQuery.grep(validate_add_attributes, function (el) {
-        if (jQuery.inArray(el, main_table_low_value) != -1) { common.push(el); }
-    });
-    if (common.length != 0) {
+    var dup_entry = "";
+    $.each(detgl_data, function (i, item) {
+        $.each(main_table_low_value, function (j, item1) {
+            if((item.prod_cat_id == item1.prod_cat_id) && (item.gl_account == item1.gl_account) &&
+            (item.gl_acc_default == item1.gl_acc_default) && (item.account_assign_cat == item1.account_assign_cat) && (item.company_id == item1.company_id) && (item.item_from_value == item1.item_from_value)
+            && (item.item_to_value == item1.item_to_value) && (item.currency_id == item1.currency_id) ){
+                dup_entry = "1"
+            }
+        });
+     });
+         if((dup_entry == "1"))
+        {
         error_message = messageConstants["JMSG001"]
-
         no_duplicate_entries = 'N'
-    }
-    return [no_duplicate_entries,error_message]
+        }
 }
 //****************************
 // validating the  popup table for duplicate entries
@@ -210,7 +221,7 @@ function onclick_copy_update_button() {
                  '<td><select class="form-control"><option selected="true">' + row.cells[4].innerHTML + '</option>' + accasscat_dropdown + '</select></td>' +
                  '<td><select class="form-control"><option selected="true" disabled="disabled">' + row.cells[5].innerHTML + '</option>' + company_dropdown + ' </select></td>'+
                  '<td><input class="form-control" type="number" value="' + row.cells[6].innerHTML + '" onkeypress="return event.charCode >= 48" min="1" name="From_value"  required></td><td><input class="form-control" type="number" value="' + row.cells[7].innerHTML + '" onkeypress="return event.charCode >= 48" min="1" name="To_value"  required></td>' +
-                 '<td><select class="form-control"><option selected="true">' + row.cells[8].innerHTML + '</option>' + currency_dropdown + '</select></td><td hidden><input type="text" class ="form-control"  value="' + guid + '"</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                 '<td><select class="form-control"><option selected="true">' + row.cells[8].innerHTML + '</option>' + currency_dropdown + '</select></td><td hidden><input type="text" class ="form-control"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                   $("#header_select").prop("hidden", false);
         
             }
@@ -249,7 +260,7 @@ function add_popup_row() {
     basic_add_new_html = '<tr ><td><input type="checkbox" required></td>'+
     '<td><select class="form-control">' + prod_cat_dropdown + '</select></td>'+
     '<td><select class="form-control">' + glacc_dropdown + '</select></td>'+
-    '<td><input type="checkbox" name="default" required></td><td><select class="form-control">' + accasscat_dropdown + '</select></td>'+
+    '<td><input type="checkbox" name="gl_acc_default" required></td><td><select class="form-control">' + accasscat_dropdown + '</select></td>'+
     '<td><select class="form-control">' + company_dropdown + '</select></td>'+
     '<td><input class="form-control" type="number" onkeypress="return event.charCode >= 48" min="1" name="From_value"  required></td>'+
     '<td><input class="form-control" type="number" onkeypress="return event.charCode >= 48" min="1" name="To_value"  required></td>'+

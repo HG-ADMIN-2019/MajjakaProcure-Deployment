@@ -15,6 +15,9 @@
 
                 <button class="btn btn-primary" type="button" id="id_add_data" value="ADD" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add authorization group</button>
+                  <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                    <i class="fas fa-times"></i> close
+                </button>
             </div>
         </div>
 
@@ -52,10 +55,11 @@
                             </div>
                         </th>
                         <th>Authorization Group</th>
-                        <th>Authorization Object </th>
                         <th>Authorization Group Description</th>
                         <th>Authorization Type</th>
+                        <th>Authorization Object </th>
                         <th hidden>Guid</th>
+
                     </tr>
                     </thead>
                     <tbody id="id_auth_group_tbody">
@@ -63,9 +67,9 @@
                     <tr>
                         <td class="class_select_checkbox" hidden><input type="checkbox" class="checkbox_check" onclick="valueChanged()" required></td>
                         <td>{{authgrp.auth_obj_grp}}</td>
-                        <td>{{authgrp.auth_obj_id}}</td>
                         <td>{{authgrp.auth_grp_desc}}</td>
                         <td>{{authgrp.auth_level}}</td>
+                         <td>{{authgrp.auth_obj_id}}</td>
                         <td hidden>{{authgrp.auth_grp_guid}}</td>
                     </tr>
                     {% endfor %}
@@ -110,9 +114,9 @@
                         <tr>
                             <th>Select</th>
                             <th>Authorization Group</th>
-                            <th>Authorization Object </th>
                             <th>Authorization Group Description</th>
                             <th>Authorization Type</th>
+                            <th>Authorization Object </th>
                             <th hidden>GUID</th>
                             <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
                         </tr>
@@ -228,9 +232,9 @@
                     var dropdown_values = [];
                     $("#id_popup_tbody").empty();
                     $.each(response, function(i, value) {
-                        var auth_obj = value[1]
+                        var auth_obj = value[4]
                         var auth_level = value[3]
-                        var auth_group_id = value[0]
+                        var auth_group_id = value[1]
                         var auth_group_desc = value[2]
                         dropdown_values.push([auth_obj,auth_level,auth_group_id,auth_group_desc])
                         del_ind = '<td>' + value[4] + '</td>'
@@ -239,20 +243,20 @@
                         } else {
                             del_ind = '<input type="checkbox" value="' + value[4] + '" required>'
                         }
-                        edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class="form-control">'+auth_group_id_dropdown+'</select></td><td><select class="form-control">'+auth_obj_id_dropdown+'</select></td><td><select class="form-control">'+auth_group_desc_dropdown+'</select></td><td><select class="form-control">'+auth_level_dropdown+'</select></td><td hidden><input type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                        edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class="form-control">'+auth_group_id_dropdown+'</select></td><td><select class="form-control">'+auth_group_desc_dropdown+'</select></td><td><select class="form-control">'+auth_level_dropdown+'</select></td><td><select class="form-control">'+auth_obj_id_dropdown+'</select></td><td hidden><input type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                     });
                     $('#id_popup_tbody').append(edit_basic_data);
                     var i =0;
                     $("#id_popup_table TBODY TR").each(function() {
                         var row = $(this);
-                        var auth_obj = dropdown_values[i][0]
-                        var auth_level = dropdown_values[i][1]
-                        var auth_group_id = dropdown_values[i][2]
-                        var auth_group_desc = dropdown_values[i][3]
-                        $(row.find("TD").eq(2).find("select option[value="+auth_obj+"]")).attr('selected','selected');
-                        $(row.find("TD").eq(4).find("select option[value="+auth_level+"]")).attr('selected','selected');
+                        var auth_obj = dropdown_values[i][3]
+                        var auth_level = dropdown_values[i][2]
+                        var auth_group_id = dropdown_values[i][0]
+                        var auth_group_desc = dropdown_values[i][1]
+                        $(row.find("TD").eq(4).find("select option[value="+auth_obj+"]")).attr('selected','selected');
+                        $(row.find("TD").eq(3).find("select option[value="+auth_level+"]")).attr('selected','selected');
                         $(row.find("TD").eq(1).find("select option[value="+auth_group_id+"]")).attr('selected','selected');
-                        $(row.find("TD").eq(3).find("select option[value='"+auth_group_desc+"']")).attr('selected','selected');
+                        $(row.find("TD").eq(2).find("select option[value='"+auth_group_desc+"']")).attr('selected','selected');
                         i++;
                     });
                     $("#id_del_ind_checkbox").prop("hidden", false);
@@ -289,10 +293,10 @@
             var row = $(this);
             var main_attribute = {};
             main_attribute.auth_obj_grp = row.find("TD").eq(1).html();
-            main_attribute.auth_obj_id = row.find("TD").eq(2).html();
-            main_attribute.auth_grp_desc = row.find("TD").eq(3).html();
-            main_attribute.auth_level = row.find("TD").eq(4).html();
-            var main_attribute_compare = main_attribute.auth_obj_grp + ' - ' + main_attribute.auth_obj_id+ ' - ' + main_attribute.auth_grp_desc+ ' - ' + main_attribute.auth_level
+            main_attribute.auth_obj_id = row.find("TD").eq(4).html();
+            main_attribute.auth_grp_desc = row.find("TD").eq(2).html();
+            main_attribute.auth_level = row.find("TD").eq(3).html();
+            var main_attribute_compare = main_attribute.auth_obj_grp + ' - ' + main_attribute.auth_grp_desc+ ' - ' + main_attribute.auth_level+ ' - ' + main_attribute.auth_obj_id
             main_table_low_value.push(main_attribute_compare);
         });
         table_sort_filter('display_basic_table');
@@ -371,9 +375,9 @@
             auth_group_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
             if( auth_group_arr_obj.del_ind) {
             auth_group_arr_obj.auth_obj_grp = row.find("TD").eq(1).html();
-            auth_group_arr_obj.auth_obj_id = row.find("TD").eq(2).html();
-            auth_group_arr_obj.auth_grp_desc = row.find("TD").eq(3).html();
-            auth_group_arr_obj.auth_level = row.find("TD").eq(4).html();
+            auth_group_arr_obj.auth_obj_id = row.find("TD").eq(4).html();
+            auth_group_arr_obj.auth_grp_desc = row.find("TD").eq(2).html();
+            auth_group_arr_obj.auth_level = row.find("TD").eq(3).html();
             auth_group_arr_obj.auth_grp_guid = row.find("TD").eq(5).html();
             auth_group_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
             main_table_auth_group_checked.push(auth_group_arr_obj);
@@ -423,11 +427,11 @@
 
             //*************** reading data from the pop-up ***************
             auth_obj_grp = row.find("TD").eq(1).find("select option:selected").val();
-            auth_obj_id = row.find("TD").eq(2).find("select option:selected").val();
-            auth_grp_desc = row.find("TD").eq(3).find("select option:selected").val();
-            auth_level = row.find("TD").eq(4).find("select option:selected").val();
+            auth_obj_id = row.find("TD").eq(4).find("select option:selected").val();
+            auth_grp_desc = row.find("TD").eq(2).find("select option:selected").val();
+            auth_level = row.find("TD").eq(3).find("select option:selected").val();
             auth_grp_guid = row.find("TD").eq(5).find('input[type="text"]').val().toUpperCase();
-            checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
+            checked_box = row.find("TD").eq(2).find('input[type="checkbox"]').is(':checked')
             var compare = auth_obj_grp+'-'+auth_obj_id
             if (checked_box) {
                 del_ind = '1'
@@ -535,7 +539,18 @@
         });
     }
 
-    
+         function GetReferrer() {
+             window.history.back();
+              var preUrl = document.referrer;
+              console.log(preUrl);
+              window.open('', '_self', '').close();
+<!--               var win = window.open(preUrl);-->
+<!--                win.focus();-->
+              if (preUrl == null)
+                     return "The previous page url is empty";
+               else
+                     return preUrl;
+       }
 </script>
 <script src="{% static 'scripts/organisational_data/org_authorization_group.js' %}"></script>
 {% endblock %}

@@ -153,7 +153,7 @@
                 </div>
             </li>
             <li data-tab-target="#item_approval_process_overview" class="sub-tab" id="item_approval_overview">
-                <div class="sub-tab-link text-size-small">
+                <div class="sub-tab-link text-size-small" onclick="open_item_details(event, 'approval_process_summary')">
                     <i class="material-icons">check_circle </i><span> Approval Process Overview</span>
                 </div>
             </li>
@@ -169,7 +169,7 @@
             </li>
             <li data-tab-target="#item_efrom_details" class="sub-tab" id="eform_tab">
                 <div class="sub-tab-link text-size-small">
-                    <i class="material-icons">list_alt</i><span> eFrom Details</span>
+                    <i class="material-icons">list_alt</i><span> eForm Details</span>
                 </div>
             </li>
         </ul>
@@ -814,13 +814,12 @@
                     </div>
                 </div>
             </div>
-            <div id="item_efrom_details" class="dummy_eform_class" data-tab-content >
+            <div id="item_efrom_details" data-tab-content >
                 <div class="m-4">
                     {% for items in item_dictionary_list %}
                     <div id="display_eform-{{items.guid}}-{{ forloop.counter0 }}" class="hg_class_eform" style="display:none;">
-                        <div class="card-header" style="background-color: white;">
+                        <div class="card-header">
                             <span class="h5">Additional eForm Data</span>
-                            <span style="float: right;" onclick="display_eform('{{items.guid}}',{{forloop.counter}});"><i class="fas fa-times"></i></span>
                         </div>
                         <div class="card-body">
                             {% if items.call_off == 'Catalog'%}

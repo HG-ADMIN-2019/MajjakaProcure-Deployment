@@ -23,6 +23,10 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
+div.dataTables_wrapper div.dataTables_paginate ul.pagination {
+    margin-right: 1rem;
+}
+
 </style>
 
 <!-- Start of Search Modal -->
@@ -105,7 +109,7 @@ input::-webkit-inner-spin-button {
                         <div class="input-group">
                             <input type="text" id="hg_cat_search_txt" name="hg_cat_search_txt" class="form-control" placeholder="Search for products and services">
                             <div class="input-group-append">
-                                <button class="btn btn-primary sfps-button" type="button" id="button-addon2"><i class="material-icons-outlined">search</i></button>
+                                <button class="btn btn-primary sfps-button" type="submit" id="button-addon2" ><i class="material-icons-outlined">search</i></button>
                             </div>
                         </div>
                     </div>
@@ -267,8 +271,8 @@ input::-webkit-inner-spin-button {
 
                                                 <li class="list-body-text">
                                                     <div>
-                                                        <a onclick="generate_url('{{selected_catalog}}', 'prod_category', '{{prd.prod_cat_id}}')">
-                                                            {{prd.prod_cat}}
+                                                        <a onclick="generate_url('{{selected_catalog}}', 'prod_category', '{{prd.prod_cat_id}}')" id="classification-prod_category-{{prd.prod_cat_id}}" class="prod-classification-select-link">
+                                                            <span id="text-{{prd.prod_cat_id}}" class="prod-classification-select-link-text">{{prd.prod_cat}}</span>
                                                             ({{prd.prod_cat_count}})
                                                         </a>
                                                     </div>
@@ -286,8 +290,8 @@ input::-webkit-inner-spin-button {
                                                 {% for suppliers in supp_info %}
                                                 <li class="list-body-text">
                                                     <div>
-                                                        <a onclick="generate_url('{{selected_catalog}}', 'supplier', '{{suppliers.supplier_id}}')">
-                                                            {{suppliers.supplier}}
+                                                        <a onclick="generate_url('{{selected_catalog}}', 'supplier', '{{suppliers.supplier_id}}')" id="classification-supplier-{{suppliers.supplier_id}}" class="prod-classification-select-link">
+                                                            <span id="text-{{suppliers.supplier_id}}" class="prod-classification-select-link-text">{{suppliers.supplier}}</span>
                                                             ({{ suppliers.supp_count}})
                                                         </a>
                                                     </div>
@@ -302,69 +306,151 @@ input::-webkit-inner-spin-button {
                                 <div class="col-8">
                                     <div class="card product-results-catalog__results-card">
                                         <div class="card-body product-results-catalog__card-header" style="padding-bottom: 0.5rem;">
-                                            <h5 class="card-title">Results ({{total_result_count}})</h5>
+                                            <h6 class="card-title">Showing {{total_result_count}} Results for <span id="results-text"></span></h6>
+                                            
                                         </div>
-
-                                        {% for i in catalog_array %}
-<!--                                        {{catalog_array}}-->
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-md-2">
-                                                    <a href="{% url 'eProc_Add_Item:get_product_service_product_details' i.product_id %}" target="_blank" >
-                                                        <div class="product-results-catalog__img-container">
-                                                            <img class="product-results-catalog__img" onerror='this.src="/static/images/no-image-cropped.png"' src="/media/{{i.image_url}}">
-                                                        </div>
-                                                    </a>
+                                        <ul class="sub-tabs">
+                                            <li data-tab-target="#regular_products_content" class="sub-tab active">
+                                                <div class="sub-tab-link sm">
+                                                    <span> Products</span>
                                                 </div>
-                                                <div class="col-md-7">
-                                                    <div class="product-results-details-section">
-
-                                                        <a id="product_click" href="{% url 'eProc_Add_Item:get_product_service_product_details' i.product_id %}" target="_blank" onclick="add_recently_viewed({{i.product_id}}, {{i.prod_cat_id_id}})">
-                                                            <span class="h5 product-results-catalog__desc">{{ i.short_desc }}</span>
-                                                        </a>
-                                                        <div class="product-results-catalog__supplier">
-                                                            <span class="hg_subtext_color">
-                                                            {{i.supplier_desc}}
-                                                            </span>
-                                                        </div>
-                                                        <div>
-                                                            <span class="h6 product-results-catalog__leadtime">Lead Time: {{i.lead_time}} days</span>
-                                                        </div>
-                                                        <div class="product-results-catalog__price" style="display: flex; gap: 2rem;">
-                                                            <div> 
-                                                                <span class="h5 product-price">{{i.currency_id }} {{ i.price }}</span> <span class="product-unit hg_subtext_color">{{i.unit_desc }}</span>
-                                                            </div>
-
-                                                            {% if i.eform_id %}
-                                                            <span class="badge badge_custom_pill_primary" style="display: flex; align-items: center;">
-                                                                <i class="material-icons-outlined" style="font-size: 18px; margin-right: 5px;"> info </i> Product/Service Contains Variant
-                                                            </span>
-                                                            {% endif %}
-                                                        </div>
-                                                    </div>
+                                            </li>
+                                            {% if Free_Texts_list %}
+                                            <li data-tab-target="#freetext_products_content" class="sub-tab">
+                                                <div class="sub-tab-link sm">
+                                                    <span> Freetext items</span>
                                                 </div>
-                                                <div class="col-md-3">
-                                                    <div class="row">
-                                                        <div class="col-12 product-results-catalog__quantity">
-                                                            <span class="h5">Quantity </span> <input type = "number" value="1" id="Q{{i.product_id}}" onkeypress="return event.charCode >= 49" onchange="check_quantity(this)"  class="quanity-input-field">
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-12 product-results-catalog__add-button">
-                                                            <button onclick="add_catalog('{{ i.product_id}}','{{i.eform_id}}')" class="btn btn-primary" title="">add to cart <i class="fas fa-shopping-cart" ></i></button>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                            </li>
+                                            {% endif %}
+                                        </ul>
+
+                                        <div class="tab-content">
+                                            <div id="regular_products_content" data-tab-content class="active">
+                                                <table class="catalog-table-results-list">
+                                                    <thead>
+                                                        <tr>
+                                                            <th></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for i in catalog_array %}
+                                                        <tr>
+                                                            <td>
+                                                                <div class="card-body">
+                                                                    <div class="row">
+                                                                        <div class="col-md-2">
+                                                                            <a href="{% url 'eProc_Add_Item:get_product_service_product_details' i.encrypted_product_id %}" target="_blank" >
+                                                                                <div class="product-results-catalog__img-container">
+                                                                                    <img class="product-results-catalog__img" onerror='this.src="/static/images/no-image-cropped.png"' src="/media/{{i.image_url}}">
+                                                                                </div>
+                                                                            </a>
+                                                                        </div>
+                                                                        <div class="col-md-7">
+                                                                            <div class="product-results-details-section">
+
+                                                                                <a id="product_click" href="{% url 'eProc_Add_Item:get_product_service_product_details' i.encrypted_product_id %}" target="_blank" onclick="add_recently_viewed({{i.product_id}}, {{i.prod_cat_id_id}})">
+                                                                                    <span class="h5 product-results-catalog__desc">{{ i.short_desc }}</span>
+                                                                                </a>
+                                                                                <div class="product-results-catalog__supplier">
+                                                                                    <span class="hg_subtext_color">
+                                                                                    {{i.supplier_desc}}
+                                                                                    </span>
+                                                                                </div>
+                                                                                <div>
+                                                                                    <span class="h6 product-results-catalog__leadtime">Lead Time: {{i.lead_time}} days</span>
+                                                                                </div>
+                                                                                <div class="product-results-catalog__price" style="display: flex; gap: 2rem;">
+                                                                                    <div> 
+                                                                                        <span class="h5 product-price">{{i.currency_id }} {{ i.price }}</span> <span class="product-unit hg_subtext_color">{{i.unit_desc }}</span>
+                                                                                    </div>
+
+                                                                                    {% if i.eform_id %}
+                                                                                    <span class="badge badge_custom_pill_primary" style="display: flex; align-items: center;">
+                                                                                        <i class="material-icons-outlined" style="font-size: 18px; margin-right: 5px;"> info </i> Product/Service Contains Variant
+                                                                                    </span>
+                                                                                    {% endif %}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            <div class="row">
+                                                                                <div class="col-12 product-results-catalog__quantity">
+                                                                                    <span class="h5">Quantity </span> <input type = "number" value="1" id="Q{{i.product_id}}" onkeypress="return event.charCode >= 49" onchange="check_quantity(this)"  class="quanity-input-field">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-12 product-results-catalog__add-button">
+                                                                                    <button onclick="add_catalog('{{ i.product_id}}','{{ i.encrypted_product_id}}','{{i.eform_id}}')" class="btn btn-primary" title="">add to cart <i class="fas fa-shopping-cart" ></i></button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            
                                             </div>
+
+                                            {% if Free_Texts_list %}
+                                            <div id="freetext_products_content" data-tab-content>
+                                                <table class="catalog-table-results-list">
+                                                    <thead>
+                                                        <tr>
+                                                            <th></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for i in Free_Texts_list %}
+                                                        <tr>
+                                                            <td>
+                                                                <div class="card-body">
+                                                                    <div class="row">
+                                                                        <div class="col-md-2">
+                                                                            <div class="product-results-freetext__img-container">
+                                                                                <img class="product-results-freetext__img" src="/static/img/FreeText.png">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-7">
+                
+                                                                            <div class="product-results-details-section">
+                                                                                <div> <span class="h5">{{ i.description }}</span> </div>
+                                                                                <div><span class="hg_subtext_color"> Free text item by - {{i.supplier_id}}</span></div>
+                                                                                <div>
+                                                                                    <span class="hg_subtext_color" > Product Category - {{i.prod_cat_id}}
+                                                                                        {% for x in suppliers_name %}
+                                                                                        {% if x.supplier_id == i.supplier_id %}
+                                                                                            {{ x.name1 }}
+                                                                                        {% endif %}
+                                                                                        {% endfor %}
+                                                                                    </span>
+                                                                                </div>
+                                                                                <div><span class="h6">Lead Time: {{i.lead_time}} days</span></div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-3 product-results-freetext__button">
+                                                                            <a onclick="freetext_url('{{i.encrypted_freetext_id}}')">
+                                                                                <button class="btn btn-primary">add to cart <i class="fas fa-shopping-cart" ></i></button>
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            {% endif %}
                                         </div>
-                                        {% endfor %}
                                         <div class="card-body">
                                             Unable To Find Your Product/Service ? Create A <a href="#" onclick="purchase_requisition_url()">Requisition Item</a>
                                         </div>
                                     </div>
 
-
-                                    {% if Free_Texts_list %}
+                                    <!-- {% if Free_Texts_list %}
 
                                     <div class="card product-results-freetext__card">
                                         <div class="card-body product-results-catalog__card-header">
@@ -412,7 +498,7 @@ input::-webkit-inner-spin-button {
                                         </div>
                                     </div>
                                     <br>
-                                    {% endif %}
+                                    {% endif %} -->
                                 </div>
                             </div>
                         </div>
@@ -469,6 +555,16 @@ var GLOBAL_SEARCH_TYPE = '{{search_type}}';
 var GLOBAL_SEARCH_ID = '{{search_id}}';
 
 $(document).ready(function() {
+    NavigateTabs(); // Custom function to switch tabs
+
+    $('.catalog-table-results-list').DataTable({
+        "searching": false,
+        "ordering":  false,
+        "info":     false,
+        pageLength : 10,
+    // lengthMenu: [[5, 10, 20, -1], [5, 10, 20, 'Todos']]
+        "dom": 'rtip'
+    });
 
     if(is_edit){
         no_slide_menu_style()
@@ -648,12 +744,12 @@ const get_sobo_users = () => {
     }
 }
 // General Function to ADD TO CART
-function add_catalog(prd_id,eform_id) {
+function add_catalog(prd_id,encrypted_product_id, eform_id) {
     var document_number_data = '{{document_number|safe}}';
     if(eform_id){
         if(document_number_data == 'create'){
             var url = "{% url 'eProc_Add_Item:get_product_service_product_details' 123 %}";
-            var href_link = url.replace('123', prd_id)
+            var href_link = url.replace('123', encrypted_product_id)
              window.open(href_link,'_blank');
         }
         else{

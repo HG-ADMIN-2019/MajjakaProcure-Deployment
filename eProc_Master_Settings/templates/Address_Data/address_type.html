@@ -13,16 +13,19 @@
             <h3>Maintain Address Types</h3>
             <div>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_address_type_template' %}'"type="button">
-                    <i class="fas fa-download"></i> download Template
+                    <i class="fas fa-download"></i> template
                 </button>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_address_type_data' %}'"type="button">
-                    <i class="fas fa-download"></i> extract
+                    <i class="fas fa-download"></i> extract data
                 </button>
                  <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_data" title="Upload Data" value="addresstype_upload"  onclick="onclick_upload_button()" type="button">
                                 <i class="fas fa-cloud-upload-alt"></i> upload data
                  </button>
                  <button class="btn btn-primary" type="button" title="Address type" id="id_add_data" value="ADD" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus" aria-hidden="true"></i> add address type
+                </button>
+                   <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                    <i class="fas fa-times"></i> close
                 </button>
             </div>
         </div>
@@ -67,6 +70,8 @@
                             <th>Address Number</th>
                             <th>Address Type</th>
                             <th>Company Number</th>
+                            <th>Valid From</th>
+                            <th>Valid To</th>
                             <th hidden>Del Indicator</th>
                             <th hidden>Guid</th>
                         </tr>
@@ -79,6 +84,8 @@
                             <td>{{ data.address_number}}</td>
                             <td>{{ data.address_type}}</td>
                             <td>{{ data.company_id}}</td>
+                             <td>{{ data.valid_from}}</td>
+                             <td>{{ data.valid_to}}</td>
                             <td hidden>{{ data.del_ind}}</td>
                             <td hidden>{{ data.address_guid}}</td>
                         </tr>
@@ -133,6 +140,8 @@
                                 <th>Address Number</th>
                                 <th>Address Type</th>
                                 <th>Company Number </th>
+                                <th>Valid From</th>
+                                <th>Valid To</th>
                                 <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
                                 <th hidden>Guid</th>
                             </tr>
@@ -309,7 +318,9 @@
             address_type_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
               
             if(address_type_arr_obj.del_ind ){
-                address_type_arr_obj.address_guid = row.find("TD").eq(5).html();
+                address_type_arr_obj.address_guid = row.find("TD").eq(7).html();
+                 address_type_arr_obj.valid_to = row.find("TD").eq(5).html();
+                  address_type_arr_obj.valid_from = row.find("TD").eq(4).html();
                  address_type_arr_obj.company_id = row.find("TD").eq(3).html();
                 address_type_arr_obj.address_type = row.find("TD").eq(2).html();
                 address_type_arr_obj.address_number = row.find("TD").eq(1).html();
@@ -370,20 +381,88 @@ function onclick_display_csv_data() {
                 var dropdown_values = [];
                 $("#id_popup_tbody").empty();
                     $.each(response.data, function (i, value) {
-
-                        var company_id_value = value[3]
-                        dropdown_values.push([company_id_value])
-                        del_ind = '<td>' + value[3] + '</td>'
-                    if (value[3] == 1) {
-                        del_ind=' <input type="checkbox" value="' + value[3] + '" checked>'
+                          var address_type = value[0]
+                          var address_number = value[1]
+                        var company_id_value = value[2]
+                        dropdown_values.push([address_number,address_type,company_id_value])
+                        del_ind = '<td>' + value[5] + '</td>'
+                    if (value[5] == 1) {
+                        del_ind=' <input type="checkbox" value="' + value[5] + '" checked>'
                     }
                     else {
-                        del_ind= '<input type="checkbox" value="' + value[3] + '" required>'
+                        del_ind= '<input type="checkbox" value="' + value[5] + '" required>'
                     }
 
-                  edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class = "form-control"> type="text" name="address number" value ="' + value[0] + '" '+address_number_dropdwn+'</select></td><td><select class = "form-control"> value ="' + value[1] + '" maxlength="1" ' +address_type_dropdown_onload+'</select></td><td><select class="form-control">value ="' + value[2] + '"'+company_dropdwn+'</select></td><td hidden></td><td>'+ del_ind +'</td></tr>';
+
+
+                                var address_data = '';
+                                var address_data_list = '';
+                                var address_data_id_list = '';
+                         $.each(rendered_address_type_values, function(i, item){
+                               if( value[0].address_type_value == item){
+
+                                    address_data = '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
+
+                               }else{
+
+                                 address_data_list += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
+
+                                }
+                                    address_data_id_list = address_data + address_data_list
+                         });
+
+                                var address_number = '';
+                                var address_number_list = '';
+                                var address_number_id_list = '';
+                          $.each(rendered_address_data, function(i, item){
+                                if( value[1].address_number == item){
+
+                                    address_number = '<option value="' + item.address_number + '">' + item.address_number + '</option>';
+
+                                   }else{
+
+                                    address_number_list += '<option value="' + item.address_number + '">' + item.address_number + '</option>';
+
+                                }
+                                    address_number_id_list = address_number + address_number_list
+                          });
+
+
+                                var company = '';
+                                var company_list = '';
+                                var company_id_list = '';
+                          $.each(rendered_company_data, function(i, item){
+                                if( value[2].company_type_value == item){
+
+                                    company = '<option value="' + item.company_id + '">' + item.company_id + '</option>';
+
+                                   }else{
+
+                                    company_list += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
+
+                                }
+                                    company_id_list = company + company_list
+                          });
+
+
+                  edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class = "form-control"> type="text" name="address number" value ="' + value[1] + '" '+address_number_id_list+'</select></td><td><select class = "form-control"> value ="' + value[0] + '" maxlength="1" ' +address_data_id_list+'</select></td><td><select class="form-control">value ="' + value[2] + '"'+company_id_list+'</select></td><td><input  type="number" name = "valid_from" class="form-control" value ="' + value[3] + '"></td><td><input  type="number" name = "valid_to" value ="' + value[4] + '" class="form-control"></td><td hidden></td><td>'+ del_ind +'</td></tr>';
                 });
                 $('#id_popup_tbody').append(edit_basic_data);
+
+                var i = 0;
+                    $("#id_popup_table TBODY TR").each(function () {
+                        var row = $(this);
+                        var address_number_id_list = dropdown_values[i][0]
+                        var address_data_id_list = dropdown_values[i][1]
+                        var company_id_list = dropdown_values[i][2]
+
+
+                        $(row.find("TD").eq(1).find("select option[value=" + address_number_id_list + "]")).attr('selected', 'selected');
+                        $(row.find("TD").eq(2).find("select option[value=" + address_data_id_list + "]")).attr('selected', 'selected');
+                         $(row.find("TD").eq(3).find("select option[value=" + company_id_list + "]")).attr('selected', 'selected');
+                        i++;
+                    })
+
                 $("#id_del_ind_checkbox").prop("hidden", false);
                 $(".class_del_checkbox").prop("hidden", false);
                 $( "#header_select").prop( "hidden", false );
@@ -540,6 +619,19 @@ function check_data() {
         }
     });
 }
+
+       function GetReferrer() {
+             window.history.back();
+              var preUrl = document.referrer;
+              console.log(preUrl);
+              window.open('', '_self', '').close();
+<!--               var win = window.open(preUrl);-->
+<!--                win.focus();-->
+              if (preUrl == null)
+                     return "The previous page url is empty";
+               else
+                     return preUrl;
+       }
 
 </script>
 <script src="{% static 'scripts/address_data/master_address_type.js' %}"></script>

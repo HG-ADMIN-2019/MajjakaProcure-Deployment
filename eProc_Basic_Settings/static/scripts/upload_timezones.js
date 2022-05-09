@@ -10,7 +10,7 @@ function onclick_add_button(button) {
      $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
     $('#myModal').modal('show');
-    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="form-control"  type="text" pattern="[A-Z]" maxlength="6" onkeypress="return /[a-z]/i.test(event.key)" name="timezonecode" style="text-transform:uppercase;" required></td><td><input class="input form-control" type="text" maxlength="255" onkeypress="return /[a-z ]/i.test(event.key)" name="timezonename"  pattern="[A-Z]" style="text-transform:uppercase;" required></td><td><input class="input form-control" type="text" maxlength="15" onkeypress="return /[a-z0-9 :+-]/i.test(event.key)" name="utcdifference"  style="text-transform:uppercase;" required></td><td><input class="input form-control" type="text" maxlength="10" onkeypress="return /[a-z ]/i.test(event.key)" name="daylightsave"  pattern="[A-Z]" style="text-transform:uppercase;"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="form-control"  type="text" pattern="[A-Z]" maxlength="6" onkeypress="return /[a-z]/i.test(event.key)" name="timezonecode" style="text-transform:uppercase;" required></td><td><input class="input form-control" type="text" maxlength="255" onkeypress="return /[a-z ]/i.test(event.key)" name="timezonename" required></td><td><input class="input form-control" type="text" maxlength="15" onkeypress="return /[a-z0-9 :+-]/i.test(event.key)" name="utcdifference"  style="text-transform:uppercase;" required></td><td><input class="input form-control" type="text" maxlength="10" onkeypress="return /[a-z ]/i.test(event.key)" name="daylightsave"  pattern="[A-Z]" style="text-transform:uppercase;"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
     $("#id_del_ind_checkbox").prop("hidden", true);
@@ -62,7 +62,7 @@ function onclick_copy_update_button(data) {
                 unique_input = '<input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="time_zone" onkeypress="return /[a-z]/i.test(event.key)" maxlength="6" style="text-transform:uppercase" disabled>'
                  edit_basic_data += '<tr ><td hidden><input type="checkbox" required></td>'+
                  '<td>'+ unique_input +'</td>'+
-                 '<td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="text" onkeypress="return /[a-z ]/i.test(event.key)" name="description"  maxlength="255" style="text-transform:uppercase" required></td>'+
+                 '<td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="text" onkeypress="return /[a-z ]/i.test(event.key)" name="description"  maxlength="255" required></td>'+
                  '<td><input class="form-control" value="' + row.cells[3].innerHTML + '" type="text" onkeypress="return /[a-z0-9 +:-]/i.test(event.key)" name="utcdifference"  maxlength="15" style="text-transform:uppercase" required></td>'+
                  '<td><input class="form-control" value="' + row.cells[4].innerHTML + '" type="text" onkeypress="return /[a-z]/i.test(event.key)" name="daylightsave"  maxlength="10" style="text-transform:uppercase"</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                  $("#header_select").prop("hidden", true);
@@ -71,7 +71,7 @@ function onclick_copy_update_button(data) {
                 unique_input = '<input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="time_zone" onkeypress="return /[a-z]/i.test(event.key)" maxlength="6" style="text-transform:uppercase" required>'
                  edit_basic_data += '<tr ><td><input type="checkbox" required></td>'+
                  '<td>'+ unique_input +'</td>'+
-                 '<td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="text" onkeypress="return /[a-z ]/i.test(event.key)" name="description"  maxlength="255" style="text-transform:uppercase" required></td>'+
+                 '<td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="text" onkeypress="return /[a-z ]/i.test(event.key)" name="description"  maxlength="255" required></td>'+
                  '<td><input class="form-control" value="' + row.cells[3].innerHTML + '" type="text" onkeypress="return /[a-z0-9 +:-]/i.test(event.key)" name="utcdifference"  maxlength="15" style="text-transform:uppercase" required></td>'+
                  '<td><input class="form-control" value="' + row.cells[4].innerHTML + '" type="text" onkeypress="return /[a-z]/i.test(event.key)" name="daylightsave"  maxlength="10" style="text-transform:uppercase"</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                   $("#header_select").prop("hidden", false);
@@ -201,7 +201,7 @@ function add_popup_row() {
     });
     basic_add_new_html = '<tr ><td><input type="checkbox" required></td>'+
     '<td><input class="input form-control" type="text" pattern="[A-Z]" maxlength="6" onkeypress="return /[a-z]/i.test(event.key)" name="timezonecode" style="text-transform:uppercase;" required></td>'+
-    '<td><input class="input form-control" type="text" maxlength="255" onkeypress="return /[a-z ]/i.test(event.key)" name="timezonename"  pattern="[A-Z]" style="text-transform:uppercase;" required></td>'+
+    '<td><input class="input form-control" type="text" maxlength="255" onkeypress="return /[a-z ]/i.test(event.key)" name="timezonename"  required></td>'+
     '<td><input class="input form-control" type="text" maxlength="15" onkeypress="return /[a-z0-9 +:-]/i.test(event.key)" name="utcdifference"  pattern="[A-Z]" style="text-transform:uppercase;" required></td>'+
     '<td><input class="input form-control" type="text" maxlength="10" onkeypress="return /[a-z ]/i.test(event.key)" name="daylightsave"  pattern="[A-Z]" style="text-transform:uppercase;" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);

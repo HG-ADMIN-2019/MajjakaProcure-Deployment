@@ -10,7 +10,7 @@ function onclick_add_button(button) {
     $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
     $('#myModal').modal('show');
-    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="input form-control" type="text" pattern="[A-Z]" maxlength="3" onkeypress="return /[a-z]/i.test(event.key)" name="currencycode" style="text-transform:uppercase;" required></td><td><input class="input form-control" type="text" maxlength="100" onkeypress="return regex_char_restriction(event)" name="currencyname"  pattern="[A-Z]" style="text-transform:uppercase;" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="input form-control" type="text" pattern="[A-Z]" maxlength="3" onkeypress="return /[a-z]/i.test(event.key)" name="currencycode" style="text-transform:uppercase;" required></td><td><input class="input form-control" type="text" maxlength="100" onkeypress="return regex_char_restriction(event)" name="currencyname"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
     $("#id_del_ind_checkbox").prop("hidden", true);
@@ -61,12 +61,12 @@ function onclick_copy_update_button(data) {
             var row = checkBoxes[i].parentNode.parentNode;
             if(GLOBAL_ACTION == "UPDATE"){
                 unique_input = '<input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="currency code" onkeypress="return /[a-z]/i.test(event.key)" maxlength="3" style="text-transform:uppercase" disabled>'
-                edit_basic_data += '<tr ><td hidden><input type="checkbox" required></td><td>'+ unique_input +'</td><td><input value="' + row.cells[2].innerHTML + '" type="text" class="form-control" onkeypress="return /[a-z ]/i.test(event.key)" name="currency description"  maxlength="100" style="text-transform:uppercase" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                edit_basic_data += '<tr ><td hidden><input type="checkbox" required></td><td>'+ unique_input +'</td><td><input value="' + row.cells[2].innerHTML + '" type="text" class="form-control" onkeypress="return /[a-z ]/i.test(event.key)" name="currency description"  maxlength="100"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                 $("#header_select").prop("hidden", true);
             }
             else{
                 unique_input = '<input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="currency code" onkeypress="return /[a-z]/i.test(event.key)" maxlength="3" style="text-transform:uppercase" required>'
-                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td>'+ unique_input +'</td><td><input value="' + row.cells[2].innerHTML + '" type="text" class="form-control" onkeypress="return /[a-z ]/i.test(event.key)" name="currency description"  maxlength="100" style="text-transform:uppercase" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td>'+ unique_input +'</td><td><input value="' + row.cells[2].innerHTML + '" type="text" class="form-control" onkeypress="return /[a-z ]/i.test(event.key)" name="currency description"  maxlength="100"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                 $("#header_select").prop("hidden", false);
             }
 
@@ -175,7 +175,7 @@ function add_popup_row() {
     $(".modal").on("hidden.bs.modal", function() {
         $("#id_error_msg").html(" ");
     });
-    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="input form-control" type="text" pattern="[A-Z]" maxlength="3" onkeypress="return /[a-z]/i.test(event.key)" name="currencycode" style="text-transform:uppercase;" required></td><td><input class="input form-control" type="text" maxlength="100" onkeypress="return regex_char_restriction(event)" name="currencyname"  pattern="[A-Z]" style="text-transform:uppercase;" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="input form-control" type="text" pattern="[A-Z]" maxlength="3" onkeypress="return /[a-z]/i.test(event.key)" name="currencycode" style="text-transform:uppercase;" required></td><td><input class="input form-control" type="text" maxlength="100" onkeypress="return regex_char_restriction(event)" name="currencyname"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     if (GLOBAL_ACTION == "currency_upload") {
         $(".class_del_checkbox").prop("hidden", false);

@@ -134,8 +134,8 @@ function display_basic_db_data() {
             }
         edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td>'+
             '<td>' + item.payment_term_key + '</td>' +
-            '<td>' + item.day_limit + '</td>' +
             '<td>' + item.description + '</td>' +
+            '<td>' + item.day_limit + '</td>' +
             '<td>' + desc + '</td>' +
             '<td hidden> <input type="checkbox"</td>' +
             '<td hidden>' + item.payment_term_guid + '</td></tr>';
@@ -167,8 +167,8 @@ $('#save_id').click(function () {
             payment_term = {};
             payment_term.payment_term_guid = row.find("TD").eq(6).find('input[type="text"]').val();
             payment_term.payment_term_key = row.find("TD").eq(1).find('select[type="text"]').val();
-            payment_term.day_limit = row.find("TD").eq(2).find('input[type="number"]').val();
-            payment_term.description = row.find("TD").eq(3).find('input[type="text"]').val();
+            payment_term.description = row.find("TD").eq(2).find('input[type="text"]').val();
+            payment_term.day_limit = row.find("TD").eq(3).find('input[type="number"]').val();
             payment_term.language_id = row.find("TD").eq(4).find('select[type="text"]').val();
             payment_term.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
             if (payment_term == undefined) {

@@ -79,15 +79,7 @@ function open_item_details(evt, detail_tab_name) {
 
             approve_tab_click_trigger_wf(evt, detail_tab_name,'APPROVE_TYPE');
         }
-        else {
-            display_tab(evt, detail_tab_name);
-        }
     }
-    else {
-        display_tab(evt, detail_tab_name);
-    }
-
-
 }
 
 function display_tab(evt, detail_tab_name) {

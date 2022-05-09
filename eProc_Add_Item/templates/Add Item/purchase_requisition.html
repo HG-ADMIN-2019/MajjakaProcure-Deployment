@@ -179,14 +179,15 @@
             url: pr_url,
             data: JSON.stringify({
                 description: item_name,
-                ext_product_id: prod_id,
+                int_product_id: prod_id,
                 price: price,
                 prod_cat: prod_cat,
                 currency: currency,
                 unit: unit,
                 lead_time: lead_time,
                 quantity: quantity,
-                call_off: 'PR'
+                call_off: 'PR',
+                long_desc:prod_desc
             }),
             success: function (response) {
                 $('#requisition_form').trigger("reset");

@@ -148,6 +148,8 @@ class CatalogSearch:
 
         get_result = CatalogGenericMethods.get_supplier_prod_cat_info(selected_catalog,
                                                                       global_variables.GLOBAL_LOGIN_USER_OBJ_ID)
+        for product in catalog_array:
+            product['encrypted_product_id'] = encrypt(product['product_id'])
 
         get_result["catalogs_list"] = get_prds
         get_result["catalog_array"] = catalog_array
@@ -407,7 +409,8 @@ def get_searched_prod_detail(selected_catalog, search_type, search_id):
                                                                                             form_detail)
     get_unique_prods, prod_cat_info, total_prod_count = CatalogGenericMethods.get_prod_cat_list_count(
         prod_detail_search, form_detail)
-
+    for product_detail in  catalog_array:
+        product_detail['encrypted_product_id'] = encrypt(product_detail['product_id'])
     context = {
         'is_slide_menu': True,
         'inc_nav': True,
@@ -675,6 +678,8 @@ def get_search_result_list(search_value, selected_catalog, search_type, search_i
         total_result_count = product_count + freetext_count
     if free_texts_detail:
         free_texts_detail = encrypt_freetext(free_texts_detail)
+    for product_detail in  catalog_array:
+        product_detail['encrypted_product_id'] = encrypt(product_detail['product_id'])
     context = {
         'is_slide_menu': True,
         'inc_nav': True,

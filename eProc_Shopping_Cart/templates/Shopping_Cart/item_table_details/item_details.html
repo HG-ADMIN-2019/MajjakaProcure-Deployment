@@ -624,7 +624,7 @@ function update(element, item_guid, product_category_id,row_count) {
                 document.getElementById("delivery_date").value                = response.free_text_context.del_date
                 document.getElementById("quantity").value                     = response.free_text_context.quantity
                 document.getElementById("supplier_id").value                  = response.free_text_context.supp_id
-
+                document.getElementById("estimated_price_currency").textContent     = response.free_text_context.currency_id
                 $('#eform_card_details').empty();
                 eform_configured = response.eform_configured
                 display_fields_from_array(response.eform_configured)

@@ -27,4 +27,18 @@
             font-size: 2rem;
         }
     }
+
+    &__header {
+        text-align: right;
+    }
+
+    &__desc-sections {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
 }

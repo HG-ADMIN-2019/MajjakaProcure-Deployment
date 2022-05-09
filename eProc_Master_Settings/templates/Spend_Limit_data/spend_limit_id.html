@@ -12,11 +12,11 @@
             <h3>Maintain Spending Limits</h3>
             <div>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_spendlimit_template' %}'"type="button">
-                    <i class="fas fa-download"></i> download Template
+                    <i class="fas fa-download"></i> template
                 </button>
 
                 <button class="btn btn-outline-primary" title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_spendlimit_data'%} '"type="button">
-                    <i class="fas fa-download"></i> extract
+                    <i class="fas fa-download"></i> extract data
                 </button>
                 <!--<button onclick="basic_save()" class="btn btn-primary"> <i class="fas fa-save"></i> SAVE</button>-->
 
@@ -26,6 +26,9 @@
                 <button class="btn btn-primary" id="id_add_data"  value="ADD" onclick="onclick_add_button(this);">
 
                     <i class="fa fa-plus"></i> add spending limit
+                </button>
+                 <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                    <i class="fas fa-times"></i> close
                 </button>
             </div>
         </div>
@@ -181,7 +184,7 @@
     var rendered_spndlimval_data ={{spend_limit_value|safe}};
     var Tablename = uiConstants["CONST_TABLENAME_SPEND_LIMIT_ID"]
     var appname = uiConstants["CONST_APPNAME01"]
-    var db_header_data = uiConstants['SPEND_CODE_ID', 'SPENDER_USERNAME', 'COMPANY_ID', 'del_ind']
+    var db_header_data = uiConstants["CONST_HEADER_DATA_SPEND_LIMIT_ID"]
     var spend_limit_data_array = {}
     var main_table_spend_limit_id_value = [];
     var spend_limit_id = '';
@@ -267,24 +270,66 @@ function onclick_display_csv_data() {
                     var del_ind = '';
                     $("#id_popup_tbody").empty();
                     $.each(response.data, function(i, value) {
+
+                        var spend_limit_id = value[0]
+                        var company_type_value = value[2]
+                        dropdown_values.push([spend_limit_id,company_type_value])
+
                         del_ind = '<td>' + value[3] + '</td>'
                         if (value[3] == 1) {
                             del_ind = ' <input type="checkbox" value="' + value[3] + '" checked>'
                         } else {
                             del_ind = '<input type="checkbox" value="' + value[3] + '" required>'
                         }
-                        edit_basic_data += '<tr><td><input type="checkbox" required></td><td><input class="form-control"  type="text" value="'+value[0]+'" maxlength="16" onkeypress="return /[a-z0-9]/i.test(event.key)" name="spend_code_id" style="text-transform:uppercase;" required></td><td><input class="form-control"  type="text" value="'+value[1]+'" maxlength="16" onkeypress="return /[a-z0-9]/i.test(event.key)" name="spender_username" style="text-transform:uppercase;" required></td><td><select class="form-control">'+company_dropdwn+'</select></td><td>' + del_ind + '</td></tr>';
+
+
+                                var spendcode = '';
+                                var spendcode_list = '';
+                                var spendcode_id_list = '';
+                          $.each(rendered_spndlimval_data, function(i, item){
+                                if( value[0].spndlimval_value == item){
+
+                                    spendcode = '<option value="' + item.spend_code_id + '">' + item.spend_code_id + '</option>';
+
+                                   }else{
+
+                                    spendcode_list += '<option value="' + item.spend_code_id + '">' + item.spend_code_id + '</option>';
+
+                                }
+                                    spendcode_id_list = spendcode + spendcode_list
+                          });
+                                var company = '';
+                                var company_list = '';
+                                var company_id_list = '';
+                          $.each(rendered_company_data, function(i, item){
+                                if( value[2].company_type_value == item){
+
+                                    company = '<option value="' + item.company_id + '">' + item.company_id + '</option>';
+
+                                   }else{
+
+                                    company_list += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
+
+                                }
+                                    company_id_list = company + company_list
+                          });
+
+
+
+                        edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control">'+spendcode_id_list+'</select></td><td><input class="form-control"  type="text" value="'+value[1]+'" maxlength="16" onkeypress="return /[a-z0-9]/i.test(event.key)" name="spender_username" style="text-transform:uppercase;" required></td><td><select class="form-control">'+company_id_list+'</select></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
                     });
-                        var spend_limit_id = value[1]
-                        var company_type_value = value[3]
-                        dropdown_values.push([company_type_value])
+
                     $('#id_popup_tbody').append(edit_basic_data);
                     var i =0;
                     $("#id_popup_table TBODY TR").each(function() {
                         var row = $(this);
-                        var company_type_value= dropdown_values[i][0]
-                        $(row.find("TD").eq(3).find("select option[value="+company_type_value+"]")).attr('selected','selected');
-                        i++;
+                         var spendcode_id_list= dropdown_values[i][0]
+                        var company_id_list= dropdown_values[i][1]
+
+                           $(row.find("TD").eq(1).find("select option[value="+spendcode_id_list+"]")).attr('selected','selected');
+
+                        $(row.find("TD").eq(3).find("select option[value="+company_id_list+"]")).attr('selected','selected');
+                        i = i + 1;
                     });
                     $("#id_del_ind_checkbox").prop("hidden", false);
                     $(".class_del_checkbox").prop("hidden", false);
@@ -873,6 +918,20 @@ function maintable_validation(spend_limit_id_data, main_table_low_value) {
     return [no_duplicate_entries,error_message]
 
 }
+
+       function GetReferrer() {
+             window.history.back();
+              var preUrl = document.referrer;
+              console.log(preUrl);
+              window.open('', '_self', '').close();
+<!--               var win = window.open(preUrl);-->
+<!--                win.focus();-->
+              if (preUrl == null)
+                     return "The previous page url is empty";
+               else
+                     return preUrl;
+       }
+
 
 
 </script>

@@ -17,6 +17,9 @@
                 <button class="btn btn-primary" type="button" id="id_add_number_range" value="number_range_add"  data-toggle="modal" data-target="#myModal">
                     <i class="fa fa-plus"></i> add number range</button>
             </div>
+                <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                    <i class="fas fa-times"></i> close
+                </button>
         </div>
 
         <hr>
@@ -530,7 +533,18 @@
             }
         });
     }
-
+     function GetReferrer() {
+             window.history.back();
+              var preUrl = document.referrer;
+              console.log(preUrl);
+              window.open('', '_self', '').close();
+<!--               var win = window.open(preUrl);-->
+<!--                win.focus();-->
+              if (preUrl == null)
+                     return "The previous page url is empty";
+               else
+                     return preUrl;
+       }
        
 </script>
 <script src="{% static 'scripts/Number_ranges/gv_number_ranges.js' %}"></script>

@@ -369,6 +369,7 @@ function table_sort_filter_page(id_name) {
 function table_sort_filter_popup_pagination(id_name){
     $('#' + id_name).DataTable({
              "dom": '<"top">rt<"bottom"lip><"clear">'
+
     });
 }
 

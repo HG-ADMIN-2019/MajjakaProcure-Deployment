@@ -459,12 +459,6 @@
         highest_item_acc_asgn_cat = (document.getElementById('ScAccounting-acc_cat-' + rendered_acc_guid[GLOBAL_HIGHEST_VALUE_ITEM_ROW - 1]).value).split(' - ')[0]
         highest_item_acc_asgn_cat = highest_item_acc_asgn_cat.replace(/\s/g, '');
         let document_url = location.href.split('/')
-
-        if(document_url.includes('edit')){
-            document_edit_mode();
-            check_shopping_cart('check', 'sc_data', highest_item_acc_asgn_cat, highest_item_change_acc_value);
-        }
-
         // assign highest Account Assignment Value
         if (highest_item_acc_asgn_cat == 'CC') {
             highest_item_change_acc_value = (document.getElementById('ScAccounting-cost_center-' + rendered_acc_guid[GLOBAL_HIGHEST_VALUE_ITEM_ROW - 1]).value).split(' - ')[0]
@@ -483,6 +477,12 @@
             highest_item_change_acc_value = highest_item_change_acc_value.replace(/\s/g, '');
         }
         //######################################## Start HIHEST ACCOUNT ASSIGN CATEGORY AND ITS VALUE ######################################
+
+        if(document_url.includes('edit')){
+            document_edit_mode();
+            check_shopping_cart('check', 'sc_data', highest_item_acc_asgn_cat, highest_item_change_acc_value);
+        }
+
 
         // on change in input or select or textarea, add 'sc_changed' class
         $('#eform_tab').hide();
@@ -841,9 +841,9 @@
                 }
                 //$('#id_dynamic').append(error_msg);
                 $('#div_manager_detail').append(manager_icon);
-                if(type == 'APPROVE_TYPE'){
-                    display_tab(evt, detail_tab_name);
-                }
+                //if(type == 'APPROVE_TYPE'){
+               //     display_tab(evt, detail_tab_name);
+              //  }
                 document.getElementById("ScHeader-total_value-" + GLOBAL_HEADER_GUID).innerHTML = response.total_value;
                 //$("#quantity-"+rendered_item_guid[item_detail_visible_div]).html(response.quantity);
                 $.each(rendered_item_guid, function (index, item_guid) {

@@ -4,8 +4,7 @@
 {% block title %} Free Text (Shop){% endblock %}
 {% block maincontent %}
 
-
-    <!-- Free text form start (SC-FT-US01: As a user I should be able to enter an item in Free Text form) -->
+<!-- Free text form start (SC-FT-US01: As a user I should be able to enter an item in Free Text form) -->
 <div class="container-fluid">
     <div class="mep-form_wrapper">
 
@@ -80,7 +79,10 @@
                 <h5 class="card-title">What Are The Custom Fields ?</h5>
 
                     <span id="is_eform" hidden>no_eform</span>
-                    <div id="eform_fields" class="row"></div>
+
+                    <div class="row justify-content-center" >
+                        <div class="col-md-7 freetext-eform-body" id="eform_fields"> </div>
+                    </div>
                 </div>
             </div>
 
@@ -149,8 +151,6 @@
     </div>
 </div>
 <!-- Free text form end -->
-
-<div class="hg_ftr">© 2019 Hiranya-Garbha Consultancy. All rights reserved.</div>
 
 {% include 'root/loader.html' %}
 {% include 'Doc_Details/add_item_confirmation_popup.html' %}
@@ -352,9 +352,7 @@ $('#free_text_form_submit').submit(function (e) {
         })
     });
 
-// Function display configured freetext form fields from MSS_FREETEXT_FORM
-
-    // var form_date_today =
+    // Function display configured freetext form fields from MSS_FREETEXT_FORM
     const display_configured_fields = configured_free_text_form => {
         var eform_configured = configured_free_text_form['eform_configured']
         delete configured_free_text_form.eform_configured

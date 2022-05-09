@@ -66,6 +66,7 @@ def get_catalog_list(req, catalog_id, document_number=None):
     if document_number == 'create':
         global_variables.GLOBAL_DOCUMENT_NUM = 'create'
         user_object_id = global_variables.GLOBAL_LOGIN_USER_OBJ_ID
+        global_variables.GLOBAL_REQUESTER_OBJECT_ID = None
     else:
 
         document_number = decrypt(document_number.split('doc_number-')[1])
@@ -76,6 +77,7 @@ def get_catalog_list(req, catalog_id, document_number=None):
 
         user_object_id = django_query_instance.django_get_query(UserData, {'username': document_requester,
                                                                            'client': global_variables.GLOBAL_CLIENT}).object_id_id
+        global_variables.GLOBAL_REQUESTER_OBJECT_ID = user_object_id
 
     result = CatalogGenericMethods.get_supplier_prod_cat_info(catalog_id, user_object_id)
     catalog_global_variables.CATALOG_PAGE_REQUIERED_DATA = result
@@ -429,6 +431,8 @@ def get_prod_details(request):
             'client': global_variables.GLOBAL_CLIENT,
             'product_id': prod_id['prod_id']
         }, None, None)
+        product_detail['prod_detail']  = [update_unspsc(product_detail['prod_detail'][0] , 'prod_cat_id_id')]
+        product_detail['prod_detail']  = [update_country(product_detail['prod_detail'] [0])]
         product_detail['prod_detail'] = [update_supplier_uom(product_detail['prod_detail'][0])]
         product_detail['prod_detail'] = update_product_pricing(product_detail['prod_detail'])
     prod_detail_get_query = django_query_instance.django_get_query(ProductsDetail,

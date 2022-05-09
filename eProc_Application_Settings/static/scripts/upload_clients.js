@@ -10,7 +10,7 @@ function onclick_add_button(button) {
     $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
     $('#myModal').modal('show');
-    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="form-control" type="text" maxlength="8" onkeypress="return /[A-Z0-9]/i.test(event.key)" name="client"  required></td><td><input class="form-control" type="text" maxlength="100" onkeypress="return /[a-z 0-9]/i.test(event.key)" name="description" style="text-transform:uppercase" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="form-control" type="text" maxlength="8" onkeypress="return /[A-Z0-9]/i.test(event.key)" name="client"  required></td><td><input class="form-control" type="text" maxlength="30"  name="description" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
     //$("#header_select").prop("hidden", false);
@@ -62,13 +62,13 @@ function onclick_copy_update_button() {
             var row = checkBoxes[i].parentNode.parentNode;
             if(GLOBAL_ACTION == "UPDATE"){
                unique_input = '<input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="client code" onkeypress="return /[A-Z0-9]/i.test(event.key)" maxlength="8" style="text-transform:uppercase" disabled>'
-               edit_basic_data += '<tr ><td hidden><input type="checkbox" required></td><td><input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="client code" onkeypress="return /[a-z]/i.test(event.key)" maxlength="4" style="text-transform:uppercase" disabled></td><td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="text" onkeypress="return /[a-z 0-9]/i.test(event.key)" name="description"  maxlength="100" style="text-transform:uppercase" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+               edit_basic_data += '<tr ><td hidden><input type="checkbox" required></td><td><input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="client code" onkeypress="return /[a-z]/i.test(event.key)" maxlength="4" style="text-transform:uppercase" disabled></td><td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="text" onkeypress="return /[a-z 0-9]/i.test(event.key)" name="description"  maxlength="30"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                $("#header_select").prop("hidden", true);
             }
             else{
                unique_input = '<input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="client code" onkeypress="return /[A-Z0-9]/i.test(event.key)" maxlength="8" style="text-transform:uppercase" required>'
 
-               edit_basic_data += '<tr ><td ><input type="checkbox" required></td><td>'+unique_input+'</td><td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="text" onkeypress="return /[a-z 0-9]/i.test(event.key)" name="description"  maxlength="100" style="text-transform:uppercase" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+               edit_basic_data += '<tr ><td ><input type="checkbox" required></td><td>'+unique_input+'</td><td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="text" onkeypress="return /[a-z 0-9]/i.test(event.key)" name="description"  maxlength="30"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                $("#header_select").prop("hidden", false);
             }
         }
@@ -175,7 +175,7 @@ function add_popup_row() {
     $(".modal").on("hidden.bs.modal", function() {
        $("#id_error_msg").html("");
      });
-    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="form-control" type="text" maxlength="8" onkeypress="return /[A-Z0-9]/i.test(event.key)" name="client" required></td><td><input class="form-control" type="text" maxlength="100" onkeypress="return /[a-z 0-9]/i.test(event.key)" name="description"  pattern="[A-Z]" style="text-transform:uppercase;" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="form-control" type="text" maxlength="8" onkeypress="return /[A-Z0-9]/i.test(event.key)" name="client" required></td><td><input class="form-control" type="text" maxlength="30" onkeypress="return /[a-z 0-9]/i.test(event.key)" name="description"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     if (GLOBAL_ACTION == "client_upload") {
         $(".class_del_checkbox").prop("hidden", false);

@@ -1,18 +1,10 @@
 {% extends 'root/base.html' %}
 {% load static %}
-{% block title %} Home {% endblock %}
+{% block title %} My Approvals {% endblock %}
 
 {% block maincontent %}
 
 <!-- Home page start (SC-HP-US01: Upon successful logging in, user should be able to see the home page of the application) -->
-
-<style>
-    .flex-column {
-        display: flex;
-        flex-direction: column;
-    }
-
-</style>
 
 <div class="container-fluid">
     <div class="mep-form_wrapper">
@@ -48,7 +40,7 @@
                         </div>
                         <div class="col-md search_docs">
                             <label>Status:</label>
-                            <select name="status" id="status" class="multiple_select form-control" multiple data-selected-text-format="count" title="Select..">
+                            <select name="status" id="status" class="multiple_select form-control" multiple data-selected-text-format="count" data-actions-box="true" title="Select..">
                                 <option value="APPROVED">Approved</option>
                                 <option value="REJECTED">Rejected</option>
                                 <option value="AWAITING_APPROVAL">Awaiting Approval</option>
@@ -63,35 +55,40 @@
                 </form>
             </div>
         </div>
-        <br>
+
+        <div class="d-flex justify-content-end mt-3 mb-3">
+            {% if sc_header_app_detail|length > 0 %}
+                <h6 class="text-muted">Total number of results found: {{ sc_header_app_detail|length }}</h6>
+            {% else %}
+                <h6 class="text-muted">No results found.</h6>
+            {% endif %}
+        </div>
+        
         <div>
             <div class="row">
-                {% for header_app,encrypted_guid in zipped_content %}
+                {% for header_app in sc_header_app_detail %}
                 <div class="col-md-4">
                     <div class="card mb-4 box-shadow manager-approval-card">
                         <div class="card-body"> 
                             
-                            <div style="text-align: right;">
-                                <span class="text-muted">Shopping Cart Number </span><span class="h4"><a href="{% url 'eProc_Doc_Details:my_order_doc_details' sc_completion_flag inp_doc_type encrypted_guid 'display' 'approvals'  %}" class="approval-cart-number" target="_blank">{{header_app.3}}</a></span>
+                            <div class="manager-approval-card__header">
+                                <span class="text-muted">Shopping Cart Number </span><span class="h4"><a href="{% url 'eProc_Doc_Details:my_order_doc_details' sc_completion_flag inp_doc_type header_app.9 'display' 'approvals'  %}" class="approval-cart-number" target="_blank">{{header_app.3}}</a></span>
                             </div>
-                                   <!-- <span style="font-size: 2rem;">{{header_app.3}}</span> -->
-                                   <!-- <div class="text-muted"> <span class="font-italic">Created on: </span>{{header_app.1}}</div> -->
-                            
                             <hr>
                             <!-- cart name -->
-                            <div class="flex-column">
+                            <div class="manager-approval-card__desc-sections">
                                 <span class="text-muted">Cart Name</span>
                                 <span class="h6">{{header_app.2}}</span>
                             </div>
 
                             <!-- Created On -->
-                            <div class="flex-column">
+                            <div class="manager-approval-card__desc-sections">
                                 <span class="text-muted">Created On</span>
                                 <span class="h6">{{header_app.1}}</span>
                             </div>
 
                             <!-- Created By -->
-                            <div class="flex-column">
+                            <div class="manager-approval-card__desc-sections">
                                 <span class="text-muted">Created By</span>
                                 <span class="h6">{{header_app.7}}</span>
                             </div>
@@ -114,6 +111,9 @@
                                     <span class="text-muted">Total Value </span><span class="h4">{{header_app.5}} {{header_app.4}} </span>
                                 </div>
                             </div>
+
+                            <!-- if status AWAITING_APPROVAL only display approval action button group -->
+                            {% if header_app.6 == 'AWAITING_APPROVAL' %}
                             <hr>
                             <div class="row no-gutters">
                                 <div class="col ar-col-section ft-btn1" style=" padding: 0px 2px;">
@@ -124,6 +124,7 @@
                                     <button type="button" onclick="approve_status(this);" class="btn btn-outline-success btn-lg btn-block approve-btn " id="APPROVER_APPROVED-{{header_app.0}}-{{header_app.3}}" ><i class="fas fa-check"></i> Approve</button>
                                 </div>   
                             </div>
+                            {% endif %}
                             
                         </div>
                     </div>

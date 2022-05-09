@@ -16,6 +16,9 @@
                 <button class="btn btn-primary" type="button" id="id_add_data" value="ADD" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus" ></i> Add New Org Attribute
                 </button>
+                 <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                    <i class="fas fa-times"></i> close
+                </button>
             </div>
         </div>
 
@@ -68,12 +71,37 @@
                     {% for orgattributes in org_attributes %}
                     <tr>
                         <td class="class_select_checkbox" hidden><input type="checkbox" class="checkbox_check" onclick="valueChanged()" required></td>
-                        <td>{{ orgattributes.attribute_id}}</td>
+                        <td>{{orgattributes.attribute_id}}</td>
                         <td>{{orgattributes.attribute_name}}</td>
-                        <td>{% if orgattributes.range_indicator %}YES{% else %}NO{% endif %}</td>
-                        <td>{% if orgattributes.multiple_value %}YES{% else %}NO{% endif %}</td>
-                        <td>{% if orgattributes.allow_defaults %}YES{% else %}NO{% endif %}</td>
-                        <td>{% if orgattributes.inherit_values %}YES{% else %}NO{% endif %}</td>
+                        <td class="class_select_checkbox">
+                                            {% if orgattributes.range_indicator %}
+                                            <input type="checkbox" name="range_indicator" value="" checked disabled>
+                                            {% else %}
+                                            <input type="checkbox" name="range_indicator" value="" disabled>
+                                            {% endif %}
+                                        </td>
+                        <td class="class_select_checkbox">
+                                            {% if orgattributes.multiple_value %}
+                                            <input type="checkbox" name="multiple_value" value="" checked disabled>
+                                            {% else %}
+                                            <input type="checkbox" name="multiple_value" value="" disabled>
+                                            {% endif %}
+                                        </td>
+                        <td class="class_select_checkbox">
+                                            {% if orgattributes.allow_defaults %}
+                                            <input type="checkbox" name="allow_defaults" value="" checked disabled>
+                                            {% else %}
+                                            <input type="checkbox" name="allow_defaults" value="" disabled>
+                                            {% endif %}
+                                        </td>
+                        <td class="class_select_checkbox">
+                                            {% if orgattributes.inherit_values %}
+                                            <input type="checkbox" name="inherit_values" value="" checked disabled>
+                                            {% else %}
+                                            <input type="checkbox" name="inherit_values" value="" disabled>
+                                            {% endif %}
+                                        </td>
+
                         <td>{{orgattributes.maximum_length}}</td>
                         <td hidden>del_ind</td>
                     </tr>
@@ -336,7 +364,7 @@ function onclick_add_button(button) {
     $('#myModal').modal('show');
     $("#id_popup_tbody").empty();
     $('#myModal').modal('show');
-     basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control attribute" id="attribute-1"  name="attribute" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ attribute_id_dropdown +'</select></td><td><input class="form-control attribute_name" type="text" name="attribute_name" id="attribute_name-1" disabled></td><td><input type="checkbox" name="range indicator " required></td><td><input type="checkbox" name="multiple values" required></td><td><input type="checkbox" name="allow defaults" required></td><td><input type="checkbox" name="inherit values" required></td><td><input type="number" name="maxlength"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+     basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control attribute" id="attribute-1"  name="attribute" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ attribute_id_dropdown +'</select></td><td><input class="form-control attribute_name" type="text" name="attribute_name" id="attribute_name-1" disabled></td><td><input type="checkbox" name="range_indicator" required></td><td><input type="checkbox" name="multiple_value" required></td><td><input type="checkbox" name="allow_defaults" required></td><td><input type="checkbox" name="inherit_values" required></td><td><input type="number" name="maxlength"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
 	$('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
     $("#id_del_ind_checkbox").prop("hidden", true);
@@ -358,8 +386,8 @@ function add_popup_row() {
     $(".modal").on("hidden.bs.modal", function () {
         $("#id_error_msg").html("");
     });
-    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><select type="text" class="input form-control attribute" id="attribute-'+inc_index+'" name="attribute" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ attribute_id_dropdown +'</select></td><td><input class="form-control attribute_name" type="text" id="attribute_name-'+inc_index+'" name="attribute_name" disabled></td><td><input type="checkbox" name="range indicator " required></td><td><input type="checkbox" name="multiple values" required></td><td><input type="checkbox" name="allow defaults" required></td><td><input type="checkbox" name="inherit values" required></td><td><input type="number" name="maxlength"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-	 $('#id_popup_tbody').append(basic_add_new_html);
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control attribute" id="attribute-1"  name="attribute" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ attribute_id_dropdown +'</select></td><td><input class="form-control attribute_name" type="text" name="attribute_name" id="attribute_name-1" disabled></td><td><input type="checkbox" name="range_indicator" required></td><td><input type="checkbox" name="multiple_value" required></td><td><input type="checkbox" name="allow_defaults" required></td><td><input type="checkbox" name="inherit_values" required></td><td><input type="number" name="maxlength"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+     $('#id_popup_tbody').append(basic_add_new_html);
     if (GLOBAL_ACTION == "org_attr_upload") {
         $(".class_del_checkbox").prop("hidden", false);
     }
@@ -378,6 +406,19 @@ function GetSelectedTextValue(attribute) {
     });
 
 }
+
+     function GetReferrer() {
+             window.history.back();
+              var preUrl = document.referrer;
+              console.log(preUrl);
+              window.open('', '_self', '').close();
+<!--               var win = window.open(preUrl);-->
+<!--                win.focus();-->
+              if (preUrl == null)
+                     return "The previous page url is empty";
+               else
+                     return preUrl;
+       }
 
 </script>
 <script src="{% static 'scripts/organisational_data/org_attributes.js' %}"></script>

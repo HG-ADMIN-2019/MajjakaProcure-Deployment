@@ -144,7 +144,7 @@ class DetermineGLAccount(models.Model):
     prod_cat_id = models.CharField(db_column='PROD_CAT_ID', max_length=20, null=False)
     item_from_value = models.PositiveIntegerField(db_column='ITEM_FROM_VALUE', null=True)
     item_to_value = models.PositiveIntegerField(db_column='ITEM_TO_VALUE', null=True)
-    gl_acc_num = models.CharField(db_column=' GL_ACC_NUM', max_length=10, null=True)
+    gl_acc_num = models.CharField(db_column='GL_ACC_NUM', max_length=10, null=True)
     gl_acc_default = models.BooleanField(default=False, null=False, db_column='GL_ACC_DEFAULT')
     company_id = models.CharField(db_column='COMPANY_ID', max_length=8, null=False)
     determine_gl_account_created_by = models.CharField(db_column='DETERMINE_GL_ACCOUNT_CREATED_BY', max_length=30,

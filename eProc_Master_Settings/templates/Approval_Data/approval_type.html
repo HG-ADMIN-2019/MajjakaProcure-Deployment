@@ -12,16 +12,19 @@
             <h3>Maintain Approval Types</h3>
             <div>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_approvertype_template' %}'"type="button">
-                    <i class="fas fa-download"></i> download Template
+                    <i class="fas fa-download"></i> template
                 </button>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_approver_type_data' %}'" type="button">
-                    <i class="fas fa-download"></i> extract
+                    <i class="fas fa-download"></i> extract data
                 </button>
                 <button class="btn btn-outline-primary modal_upload" title="Upload Data" id="id_upload_redirect_data" value="currency_upload" onclick="onclick_upload_button()" type="button">
                     <i class="fas fa-cloud-upload-alt"></i> upload data
                 </button>
                 <button class="btn btn-primary" type="button" id="id_add_data" value="ADD" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add approval type
+                </button>
+                  <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                    <i class="fas fa-times"></i> close
                 </button>
             </div>
         </div>
@@ -370,6 +373,7 @@ function add_popup_row() {
                         currency_data_array = response.data;
                         var edit_basic_data = '';
                         var del_ind = '';
+                        var dropdown_values = [];
                         var inc_index=0;
                         $("#id_popup_tbody").empty();
                         $.each(response.data, function(i, value) {
@@ -382,6 +386,7 @@ function add_popup_row() {
                            // console.log($("value[0]").attr("id"));
                             //var getid = $(".approvaltype:last").attr("id");
                             //var getindex = getid.split("-")[1]
+
                             edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
                             '<td><input class="form-control approvaltype" id="approvaltype-'+inc_index+'" type="text" value="' + value[0] + '" maxlength="3" onkeypress="return /[a-z]/i.test(event.key)" required></td><td><input class="form-control" type="text" value="' + value[1] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td>' + del_ind + '</td></tr>';
                             inc_index += 1;
@@ -406,11 +411,11 @@ function add_popup_row() {
             });
         }
 		    else{
-        $("#id_error_msg_upload").prop("hidden",false)
-        document.getElementById("id_error_msg_upload").innerHTML = messageConstants["JMSG110"];
-        document.getElementById("id_error_msg_upload").style.color = "Red";
-        $('#id_data_upload').modal('show');
-    }
+                $("#id_error_msg_upload").prop("hidden",false)
+                document.getElementById("id_error_msg_upload").innerHTML = messageConstants["JMSG110"];
+                document.getElementById("id_error_msg_upload").style.color = "Red";
+                $('#id_data_upload').modal('show');
+            }
 }
    //check function restricting special char and diaplay the data count of csv file
 
@@ -518,6 +523,20 @@ function add_popup_row() {
             });
         }
         //**********************************************
+
+               function GetReferrer() {
+             window.history.back();
+              var preUrl = document.referrer;
+              console.log(preUrl);
+              window.open('', '_self', '').close();
+<!--               var win = window.open(preUrl);-->
+<!--                win.focus();-->
+              if (preUrl == null)
+                     return "The previous page url is empty";
+               else
+                     return preUrl;
+       }
+
 
     </script>
     <script src="{% static 'scripts/approval_data/approval_type.js' %}"></script>

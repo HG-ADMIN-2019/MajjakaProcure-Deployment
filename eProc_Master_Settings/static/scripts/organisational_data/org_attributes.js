@@ -26,7 +26,6 @@ function onclick_copy_update_button() {
     //Reference the CheckBoxes in Table.
     var checkBoxes = grid.getElementsByTagName("INPUT");
     var edit_basic_data = "";
-
     var dropdown_values = [];
     //Loop through the CheckBoxes.
     for (var i = 1; i < checkBoxes.length; i++) {
@@ -34,17 +33,21 @@ function onclick_copy_update_button() {
             var row = checkBoxes[i].parentNode.parentNode;
             if(GLOBAL_ACTION == "UPDATE"){
 
-                edit_basic_data +=  '<tr><td hidden><input type="checkbox" required></td><td><select type="text" class="input form-control" id="attributeid"  name="attributeid" disabled>'+ attribute_id_dropdown_onload +'</select></td></td><td><input class="form-control attribute_name" type="text" value="' + row.cells[2].innerHTML + '" name="attribute_name" id="attribute_name-1" disabled></td><td><input type="checkbox" value="' + row.cells[3].innerHTML + '"  name="range indicator " required></td><td><input type="checkbox" value="' + row.cells[4].innerHTML + '" name="multiple values" required></td><td><input type="checkbox" value="' + row.cells[5].innerHTML + '" name="allow defaults" required></td><td><input type="checkbox" value="' + row.cells[6].innerHTML + '"  name="inherit values" required></td><td><input type="number" value="' + row.cells[7].innerHTML + '" name="maxlength"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                edit_basic_data +=  '<tr><td hidden><input type="checkbox" required></td><td><select type="text" class="input form-control" id="attributeid"  name="attributeid" disabled>'+ attribute_id_dropdown_onload +'</select></td></td><td><input class="form-control attribute_name" type="text" value="' + row.cells[2].innerHTML + '" name="attribute_name" id="attribute_name-1" disabled></td><td><input type="checkbox"  name="range_indicator" required></td><td><input type="checkbox"  name="multiple_value" required></td><td><input type="checkbox" name="allow_defaults" required></td><td><input type="checkbox"  name="inherit_values" required></td><td><input type="number" value="' + row.cells[7].innerHTML + '" name="maxlength"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
 	             $("#header_select").prop("hidden", true);
 
             }
             else{
 
-               edit_basic_data +=  '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control attribute" id="attribute-1"  name="attribute" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ attribute_id_dropdown +'</select></td><td><input class="form-control attribute_name" type="text" value="' + row.cells[2].innerHTML + '" name="attribute_name" id="attribute_name-1" disabled></td><td><input type="checkbox" value="' + row.cells[3].innerHTML + '"  name="range indicator " required></td><td><input type="checkbox" value="' + row.cells[4].innerHTML + '" name="multiple values" required></td><td><input type="checkbox" value="' + row.cells[5].innerHTML + '" name="allow defaults" required></td><td><input type="checkbox" value="' + row.cells[6].innerHTML + '"  name="inherit values" required></td><td><input type="number" value="' + row.cells[7].innerHTML + '" name="maxlength"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+               edit_basic_data +=  '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control attribute" id="attribute-1"  name="attribute" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ attribute_id_dropdown +'</select></td><td><input class="form-control attribute_name" type="text" value="' + row.cells[2].innerHTML + '" name="attribute_name" id="attribute_name-1" disabled></td><td><input type="checkbox"  name="range_indicator" required></td><td><input type="checkbox"  name="multiple_value" required></td><td><input type="checkbox"  name="allow_defaults" required></td><td><input type="checkbox" name="inherit_values" required></td><td><input type="number" value="' + row.cells[7].innerHTML + '" name="maxlength"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
 	           $("#header_select").prop("hidden", false);
             }
-           var attribute = row.cells[1].innerHTML
-            dropdown_values.push([ attribute])
+            var attribute = row.cells[1].innerHTML
+            var range_indicator = row.cells[3].innerHTML
+            var multiple_value = row.cells[4].innerHTML
+            var allow_defaults = row.cells[5].innerHTML
+            var inherit_values = row.cells[6].innerHTML
+            dropdown_values.push([ attribute,range_indicator,multiple_value,allow_defaults,inherit_values])
       }
     }
     $('#id_popup_table').append(edit_basic_data);
@@ -52,8 +55,27 @@ function onclick_copy_update_button() {
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
         var attribute = dropdown_values[i][0]
+        var range_indicator = dropdown_values[i][1]
+        var multiple_value = dropdown_values[i][2]
+        var allow_defaults = dropdown_values[i][3]
+        var inherit_values = dropdown_values[i][4]
 
-        $(row.find("TD").eq(1).find("select option[value=" + attribute + "]")).attr('selected', 'selected');
+
+
+      $(row.find("TD").eq(1).find("select option[value=" + attribute + "]")).attr('selected', 'selected');
+        if (range_indicator == "checkbox.checked") {
+                            $(row.find("TD").eq(3).find('input[type="checkbox"]')).attr('checked', 'checked');
+                        }
+        if (multiple_value  == "true") {
+                            $(row.find("TD").eq(4).find('input[type="checkbox"]')).attr('checked', 'checked');
+                        }
+        if (allow_defaults == "true") {
+                            $(row.find("TD").eq(5).find('input[type="checkbox"]')).attr('checked', 'checked');
+                        }
+          if (inherit_values == "true") {
+                            $(row.find("TD").eq(6).find('input[type="checkbox"]')).attr('checked', 'checked');
+                        }
+
         i++;
     });
     $("#id_del_ind_checkbox").prop("hidden", true);
@@ -148,14 +170,44 @@ function display_error_message(error_message){
 }
 
 
-
 //onclick of cancel display the table in display mode............
 function display_basic_db_data() {
     $('#display_basic_table').DataTable().destroy();
     $('#id_org_attr_tbody').empty();
     var edit_basic_data = '';
+
     $.each(rendered_org_attr_data, function (i, item) {
-        edit_basic_data += '<tr ><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.attribute_id + '</td><td>' + item.attribute_name + '</td><td>' + item.range_indicator + '</td><td>' + item.multiple_value + '</td><td>' + item.allow_defaults + '</td><td>' + item.inherit_values + '</td><td>' + item.maximum_length + '</td><td hidden> '+ item.del_ind+'</td></tr>';
+            var data = '';
+            var data1 = '';
+            var data2 = '';
+            var data3 = '';
+            if (item.range_indicator == true){
+                data = '<input type="checkbox" name="range_indicator" value="" checked disabled>'
+            } else{
+                data = '<input type="checkbox" name="range_indicator" value="" disabled>'
+            }
+             if (item.multiple_value == true){
+                data1 = '<input type="checkbox" name="multiple_value" value="" checked disabled>'
+            } else{
+                data1 = '<input type="checkbox" name="multiple_value" value="" disabled>'
+            }
+             if (item.allow_defaults == true){
+                data2 = '<input type="checkbox" name="allow_defaults" value="" checked disabled>'
+            } else{
+                data2 = '<input type="checkbox" name="allow_defaults" value="" disabled>'
+            }
+            if (item.inherit_values == true){
+                data3 = '<input type="checkbox" name="inherit_values" value="" checked disabled>'
+            } else{
+                data3 = '<input type="checkbox" name="inherit_values" value="" disabled>'
+            }
+        edit_basic_data += '<tr ><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.attribute_id + '</td><td>' + item.attribute_name + '</td>'+
+        '<td>' + data + '</td>' +
+        '<td>' + data1 + '</td>' +
+        '<td>' + data2 + '</td>' +
+        '<td>' + data3 + '</td>' +
+        '<td>' + item.maximum_length + '</td>' +
+        '<td hidden> '+ item.del_ind+'</td></tr>';
     });
     $('#id_org_attr_tbody').append(edit_basic_data);
     $("#hg_select_checkbox").prop("hidden", true);

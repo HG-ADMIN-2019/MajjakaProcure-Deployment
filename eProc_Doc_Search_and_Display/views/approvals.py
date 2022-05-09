@@ -58,9 +58,7 @@ def get_sc_for_approval(request):
         sc_header_app_detail = get_sc_header_app_wf(sc_header_detail, global_variables.GLOBAL_CLIENT)
 
         for header_guid in sc_header_app_detail:
-            encrypted_guid.append(encrypt(header_guid[0]))
-
-        zipped_content = zip(sc_header_app_detail, encrypted_guid)
+            header_guid.append(encrypt(header_guid))
 
     if request.method == 'POST':
         search_criteria = {}
@@ -81,9 +79,10 @@ def get_sc_for_approval(request):
         sc_header_app_detail = get_sc_header_app_wf(sc_header_detail, global_variables.GLOBAL_CLIENT)
 
         for header_guid in sc_header_app_detail:
-            encrypted_guid.append(encrypt(header_guid[0]))
+            # encrypted_guid.append(encrypt(header_guid[0]))
+            header_guid.append(encrypt(header_guid))
 
-        zipped_content = zip(sc_header_app_detail, encrypted_guid)
+        # zipped_content = zip(sc_header_app_detail, encrypted_guid)
 
     context = {
         'inc_nav': True,

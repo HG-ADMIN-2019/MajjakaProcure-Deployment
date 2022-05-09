@@ -11,11 +11,11 @@
         <div class="elements-space-between">
             <h3>Maintain Approval Limit Values</h3>
             <div>
-                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_approverlimitval_data_template' %}'"type="button">
-                    <i class="fas fa-download"></i> download Template
+                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_approverlimitval_data_template' %}'" type="button">
+                    <i class="fas fa-download"></i> template
                 </button>
-                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_approverlimitval_data'%} '"type="button">
-                    <i class="fas fa-download"></i> extract
+                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_approverlimitval_data'%} '" type="button">
+                    <i class="fas fa-download"></i> extract data
                 </button>
                 <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_data" value="alv_upload" onclick="onclick_upload_button()"
                         type="button">
@@ -24,6 +24,10 @@
 
                 <button class="btn btn-primary"  type="button" id="id_add_data" value="ADD" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus" ></i> add approval limit value
+                </button>
+
+                  <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                    <i class="fas fa-times"></i> close
                 </button>
             </div>
         </div>
@@ -39,7 +43,7 @@
                     <button class="btn btn-secondary btn-sm" id="id_edit_data" onclick="onclick_edit_button()">
                         <i class="fas fa-edit"></i> edit
                     </button>
-                    <button class="btn btn-outline-danger btn-sm" id="id_delete_data" value="alv_delete" style="display:none;"data-toggle="modal" data-target="#id_delete_confirm_popup">
+                    <button class="btn btn-outline-danger btn-sm" id="id_delete_data" value="alv_delete" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
                         <i class="fa fa-trash"></i> Delete
                     </button>
                     <button class="btn btn-primary btn-sm" id="id_copy_data" style="display:none;" value="COPY"  type="button" onclick="onclick_copy_button()">
@@ -48,7 +52,7 @@
                     <button class="btn btn-primary btn-sm" id="id_update_data" style="display:none;" value="UPDATE" type="button" onclick="onclick_update_button()">
                         <i class="far fa-edit"></i> Update
                     </button>
-                    <button class="btn btn-secondary btn-sm"  id="id_cancel_data" style="display:none;" type="button"onclick="display_basic_db_data()">
+                    <button class="btn btn-secondary btn-sm"  id="id_cancel_data" style="display:none;" type="button" onclick="display_basic_db_data()">
                         <i class="fas fa-times"></i> cancel
                     </button>
                 </div>
@@ -92,7 +96,7 @@
 
     <!--modal popup for Add,copy,update and upload-->
 
-    <div class="modal fade" id="myModal">
+    <div class="modal fade" id="myModal" style="overflow:auto;">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -121,7 +125,7 @@
                     <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
 
 
-
+                     <div style="overflow:auto;">
                     <table class="class_popup_table table table-bordered mt-2" id="id_popup_table">
                         <thead>
                         <tr>
@@ -139,7 +143,7 @@
 
                         </tbody>
                     </table>
-
+                    </div>
                 </div>
 
                 <!-- Modal footer -->
@@ -226,40 +230,87 @@
             data: formdata,
             contentType: "application/json; charset=utf-8",
             success: function(response) {
-                 if(response.error_message){
+                 if(response.data.error_message){
                     $("#id_error_msg_upload").prop("hidden",false)
                     document.getElementById("id_error_msg_upload").innerHTML = response.error_message;
                     document.getElementById("id_error_msg_upload").style.color = "Red";
                     $('#id_data_upload').modal('show');
                 } else {
-                    alv_data_array = response;
+                    alv_data_array = response.data;
                     var edit_basic_data = '';
                     var dropdown_values = [];
                     var del_ind = '';
                     $("#id_popup_tbody").empty();
                     $.each(response.data, function(i, value) {
-                        var approval_type_value = value[2]
-                        var currency_type_value = value[4]
-                        var company_type_value = value[1]
-                        dropdown_values.push([approval_type_value, currency_type_value, company_type_value])
+                        var approval_type_value = value[4]
+                        var currency_type_value = value[5]
+                        var company_type_value = value[2]
+                        dropdown_values.push([company_type_value,approval_type_value,currency_type_value])
                         del_ind = '<td>' + value[5] + '</td>'
                         if (value[5] == 1) {
                             del_ind = ' <input type="checkbox" value="' + value[5] + '" checked>'
                         } else {
                             del_ind = '<input type="checkbox" value="' + value[5] + '" required>'
                         }
-                        edit_basic_data += '<tr><td><input type="checkbox" required></td><td><input class="form-control"  type="text" value="'+value[0]+'" maxlength="8" onkeypress="return /[a-z0-9]/i.test(event.key)" name="approver_code-id" style="text-transform:uppercase;" required></td><td><select class="form-control">'+company_id_dropdown+'</select></td><td><select class="form-control">'+approval_type_dropdown+'</select></td><td><input class="form-control" type="number" value="'+value[3]+'" name="upper_limit_value" required></td><td><select class="form-control">'+currency_id_dropdown+'</select></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
+
+                            var company = '';
+                            var company_list = '';
+                            var company_id_list = '';
+                          $.each(rendered_company_data, function(i, item){
+                            if( value[2].company_type_value == item){
+
+                                company = '<option value="' + item.company_id + '">' + item.company_id + '</option>';
+
+                               }else{
+
+                                company_list += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
+
+                            }
+                                company_id_list = company + company_list
+                          });
+
+                            var currency = '';
+                            var currency_list = '';
+                            var currency_id_list = '';
+                         $.each(rendered_currency_data, function(i, item){
+                           if( value[5].currency_type_value == item){
+
+                                currency = '<option value="' + item.currency_id + '">' + item.currency_id + '</option>';
+
+                           }else{
+
+                             currency_list += '<option value="' + item.currency_id + '">' + item.currency_id + '</option>';
+
+                            }
+                                currency_id_list = currency + currency_list
+                         });
+
+
+                            var approval = '';
+                            var approval_list = '';
+                            var approval_id_list = '';
+                          $.each(rendered_approval_type_data, function(i, item){
+                           if( value[4].approval_type_value == item){
+                                approval += '<option value="' + item.app_types + '">' + item.app_types + '</option>';
+                           }else{
+
+                             approval_list += '<option value="' + item.app_types + '">' + item.app_types + '</option>';
+
+                            }
+                                approval_id_list = approval + approval_list
+                         });
+                        edit_basic_data += '<tr><td><input type="checkbox" required></td><td><input class="form-control"  type="text" value="'+value[0]+'" maxlength="8" onkeypress="return /[a-z0-9]/i.test(event.key)" name="approver_code-id" style="text-transform:uppercase;" required></td><td><select class="form-control">'+company_id_list+'</select></td><td><select class="form-control">'+approval_id_list+'</select></td><td><input class="form-control" type="number" value="'+value[1]+'" name="upper_limit_value" required></td><td><select class="form-control">'+currency_id_list+'</select></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
                     });
                     $('#id_popup_tbody').append(edit_basic_data);
                     var i =0;
                     $("#id_popup_table TBODY TR").each(function() {
                         var row = $(this);
+                        var company_id_list = dropdown_values[i][0]
                         var approval_type_value = dropdown_values[i][1]
-                        var currency_type_value = dropdown_values[i][2]
-                        var company_type_value = dropdown_values[i][0]
+                        var currency_id_list = dropdown_values[i][2]
                         $(row.find("TD").eq(3).find("select option[value="+approval_type_value+"]")).attr('selected','selected');
-                        $(row.find("TD").eq(5).find("select option[value="+currency_type_value+"]")).attr('selected','selected');
-                        $(row.find("TD").eq(2).find("select option[value="+company_type_value+"]")).attr('selected','selected');
+                        $(row.find("TD").eq(5).find("select option[value="+currency_id_list+"]")).attr('selected','selected');
+                        $(row.find("TD").eq(2).find("select option[value="+company_id_list+"]")).attr('selected','selected');
                         i++;
                     });
                     $("#id_del_ind_checkbox").prop("hidden", false);
@@ -570,6 +621,20 @@
             }
         });
     }
+
+           function GetReferrer() {
+             window.history.back();
+              var preUrl = document.referrer;
+              console.log(preUrl);
+              window.open('', '_self', '').close();
+<!--               var win = window.open(preUrl);-->
+<!--                win.focus();-->
+              if (preUrl == null)
+                     return "The previous page url is empty";
+               else
+                     return preUrl;
+       }
+
 
 
 </script>

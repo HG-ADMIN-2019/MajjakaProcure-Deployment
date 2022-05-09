@@ -34,7 +34,7 @@
     
                         <div class="col-md">
                             <label>Select Time Frame:</label>
-                            <select name="created_at" class="multiple_select form-control" multiple>
+                            <select name="created_at" class="multiple_select form-control" multiple data-selected-text-format="count" data-actions-box="true">
                                 <option value="Today">Today</option>
                                 <option value="7">Last 7 days</option>
                                 <option value="30">Last 30 days</option>
@@ -51,6 +51,14 @@
                     </div>
                 </form>
             </div>
+        </div>
+
+        <div class="d-flex justify-content-end mt-3 mb-3">
+            {% if sc_header_details|length > 0 %}
+                <h6 class="text-muted">Total number of results found: {{ sc_header_details|length }}</h6>
+            {% else %}
+                <h6 class="text-muted">No results found.</h6>
+            {% endif %}
         </div>
 
         {% if sc_header_details %}

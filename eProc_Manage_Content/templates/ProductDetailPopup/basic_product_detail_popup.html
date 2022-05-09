@@ -173,7 +173,7 @@
                 $("#id_desc").text(prod_detail.short_desc + ' ');
                 $("#id_lead_time").text(prod_detail.lead_time);
                 $("#id_lot_size").text(prod_detail.price_unit);
-                $("#id_unspsc_cat").text(prod_detail.unspsc);
+                $("#id_unspsc_cat").text(prod_detail.prod_cat_desc);
                 $("#prod_price").text(prod_detail.price);
 
                 $("#id_quantity").val($("#quantity_"+item_guid).html());
@@ -181,7 +181,7 @@
                 $("#id_supp").text(prod_detail.supplier_desc);
                 $('#id_available_qty').text(prod_detail.quantity_avail);
                 $('#id_manufacturer').text(prod_detail.manufacturer);
-                $('#id_country_of_origin').text(prod_detail.country_of_origin_id);
+                $('#id_country_of_origin').text(prod_detail.country_desc);
                 $('#id_brand').text(prod_detail.brand);
                 $('#id_contract_num').text(prod_detail.ctr_num);
                 if(product_specification_data){

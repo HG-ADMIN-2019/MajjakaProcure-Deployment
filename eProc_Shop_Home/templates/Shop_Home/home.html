@@ -11,7 +11,7 @@
     <div class="home_wrapper">
         <!-- Popular items in your company -->
         {% if popular_product_array %}
-        {% if frequently_purchased_flag == 1 %}
+
         <section>
             <div class="home_section_heading">
                 <p class="h4">Frequently purchased items in the company</p>
@@ -40,7 +40,7 @@
                                             <span class="product-currency text-muted">{{product_data.currency_id}}</span> <span class="product-value">{{product_data.price}}</span>
                                         </div>
                                         <div>
-                                            <button type="button" onclick="add_catalog('{{product_data.product_id}}','{{product_data.eform_id}}')" class="btn btn-primary btn-sm text-capitalize">Add to Cart</button>
+                                            <button type="button" onclick="add_catalog('{{product_data.encrypt_product_id}}','{{product_data.eform_id}}')" class="btn btn-primary btn-sm text-capitalize">Add to Cart</button>
                                         </div>
                                     </div>
                                 </div>
@@ -53,7 +53,6 @@
                 </div>
             </div>
         </section>
-        {% endif %}
         {% endif %}
 
         <!-- Your favourite shopping cart -->
@@ -129,7 +128,7 @@
         {% if recently_viewed_product_array %}
         {% if recently_viewed_flag == "1" %}
 
-        <section>
+        <section id="recently_viewed_product">
             <div class="home_section_heading">
                 <p class="h4" >Recently Viewed Products</p>
                 <hr>
@@ -142,7 +141,7 @@
                             <!-- product 1 -->
                             {% for viewed_data in recently_viewed_product_array %}
                             <div class="popular_products_card" id="rvi_card_{{viewed_data.product_id}}">
-                                <button type="button" class="btn btn-round btn-sm" onclick="RviDelete({{ viewed_data.product_id}})"><i class="far fa-trash-alt"></i></button>
+                                <button type="button" class="btn btn-round btn-sm" onclick="RviDelete('{{ viewed_data.product_id}}')"><i class="far fa-trash-alt"></i></button>
                                 <div class="popular_products_img">
                                     <a href="{% url 'eProc_Add_Item:get_product_service_product_details' viewed_data.product_id  %}" target="_blank">
                                         <img onerror='this.src="/static/images/no-image-cropped.png"' src="/media/{{viewed_data.image_url}}" alt="">
@@ -156,7 +155,7 @@
                                             <span class="product-currency text-muted">{{viewed_data.currency_id}}</span> <span class="product-value">{{viewed_data.price}}</span>
                                         </div>
                                         <div>
-                                            <button type="button" class="btn btn-primary btn-sm text-capitalize" id="{{viewed_data.eform_id}}" onclick="add_catalog('{{ viewed_data.product_id}}','{{viewed_data.eform_id}}')">Add to Cart</button>
+                                            <button type="button" class="btn btn-primary btn-sm text-capitalize" id="{{viewed_data.eform_id}}" onclick="add_catalog('{{ viewed_data.encrypt_product_id}}','{{viewed_data.eform_id}}')">Add to Cart</button>
                                         </div>
                                     </div>
                                 </div>
@@ -250,7 +249,8 @@
 
     function ajax_delete_rvi(data) {
         urlLink =  "{% url 'eProc_Shop_Home:delete_recently_viewed_item' %}";
-        AjaxCallAPIBasic(urlLink, data)
+        response = AjaxCallAPIBasic(urlLink, data)
+        return response
     }
     function ajax_add_fav_cart(fav_cart_num) {
         urlLink =  "{% url 'eProc_Shop_Home:add_fav_sc_to_cart' %}";

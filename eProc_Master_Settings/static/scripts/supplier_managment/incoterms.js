@@ -11,7 +11,7 @@ function onclick_add_button(button) {
     $('#myModal').modal('show');
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
     '<td><input class="input form-control" maxlength="3" name="incoterm_key" type="text" pattern="[A-Z]" style="text-transform:uppercase;" onkeypress="return /[a-z]/i.test(event.key)"></td>'+
-    '<td><input class="input form-control" maxlength="50" name="description" type="text" pattern="[A-Z]" style="text-transform:uppercase;"></td>'+
+    '<td><input  class="form-control"  maxlength="50" name="description" type="text"></td>'+
     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
@@ -62,7 +62,7 @@ function onclick_copy_update_button(data) {
            unique_input = '<input class="form-control" value = "'+ row.cells[1].innerHTML +'" name="incoterm_key" maxlength="3"  type="text" readonly>'
              edit_basic_data += '<tr><td hidden><input type="checkbox"></td>'+
              '<td>'+ unique_input +'</td>'+
-              '<td><input class="form-control" value="' + row.cells[2].innerHTML + '" name="description" maxlength="50" type="text" pattern="[A-Z]" style="text-transform:uppercase;" onkeypress="return /[a-z]/i.test(event.key)"></td>'+
+              '<td><input class="form-control" value="' + row.cells[2].innerHTML + '" name="description" maxlength="50" type="text"  onkeypress="return /[a-z]/i.test(event.key)"></td>'+
             '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
             $("#header_select").prop("hidden", true);
                 }
@@ -70,7 +70,7 @@ function onclick_copy_update_button(data) {
                 unique_input = '<input class="form-control" value = "'+ row.cells[1].innerHTML +'" name="incoterm_key" maxlength="3" type="text" pattern="[A-Z]" style="text-transform:uppercase;" onkeypress="return /[a-z]/i.test(event.key)">'
              edit_basic_data += '<tr><td><input type="checkbox" required></td>'+
              '<td>'+ unique_input +'</td>'+
-              '<td><input class="form-control" value="' + row.cells[2].innerHTML + '" maxlength="50" name="description" type="text" pattern="[A-Z]" style="text-transform:uppercase;" onkeypress="return /[a-z]/i.test(event.key)"></td>'+
+              '<td><input class="form-control" value="' + row.cells[2].innerHTML + '" maxlength="50" name="description" type="text"  onkeypress="return /[a-z]/i.test(event.key)"></td>'+
             '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
             $("#header_select").prop("hidden", false);
                 }

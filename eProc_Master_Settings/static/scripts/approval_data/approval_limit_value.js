@@ -175,7 +175,7 @@ function add_popup_row() {
     $(".modal").on("hidden.bs.modal", function() {
         $("#id_error_msg").html("");
     });
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="form-control" type="text" maxlength="8" onkeypress="return /[a-z0-9]/i.test(event.key)" name="approver_code" style="text-transform:uppercase;" required></td><td><select class="form-control">'+company_id_dropdown+'</select></td><td><select>'+approval_type_dropdown+'</select></td><td><input class="form-control" type="number" name="upper_limit_value" required></td><td><select class="form-control">'+currency_id_dropdown+'</select></td><td hidden><input type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="form-control" type="text" maxlength="8" onkeypress="return /[a-z0-9]/i.test(event.key)" name="approver_code" style="text-transform:uppercase;" required></td><td><select class="form-control">'+company_id_dropdown+'</select class="form-control"></td><td><select class="form-control" >'+approval_type_dropdown+'</select></td><td><input class="form-control" type="number" name="upper_limit_value" required></td><td><select class="form-control">'+currency_id_dropdown+'</select></td><td hidden><input type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     if (GLOBAL_ACTION == "alv_upload") {
         $(".class_del_checkbox").prop("hidden", false);

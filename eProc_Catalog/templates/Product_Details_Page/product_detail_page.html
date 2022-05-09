@@ -86,7 +86,7 @@ input::-webkit-inner-spin-button {
                                             <div class="input-group-prepend">
                                                 <button type="button" class="quantity-left-minus btn btn-light btn-lg" onclick="on_change_quantity('DECREMENT')"  data-type="minus" data-field=""><i class="fas fa-minus"></i></button>
                                             </div>
-                                            <input type="number" onkeypress="return event.charCode >= 49" onchange="on_change_quantity('')" id="catalog_quantity" name="catalog_quantity" class="form-control product-quantity-input" min="1" max="100" style="height: auto;" value="1">
+                                            <input type="number" onkeypress="return event.charCode >= 48" onchange="on_change_quantity('')" id="catalog_quantity" name="catalog_quantity" class="form-control product-quantity-input" min="1" max="100" style="height: auto;" value="1">
                                             <div class="input-group-append">
                                                 <button type="button" class="quantity-right-plus btn btn-light btn-lg" onclick="on_change_quantity('INCREMENT')" data-type="plus" data-field=""><i class="fas fa-plus"></i></button>
                                             </div>
@@ -175,7 +175,7 @@ input::-webkit-inner-spin-button {
                                 <h5 class="card-title">Product Description</h5>
                                 <p>{{prod_detail.long_desc}}</p> 
                             </div>
-
+                            {% if product_specification %}
                             <div class="product-detail-section__product-specification section-margin-t-b">
                                 <h5 class="card-title">Product Specification</h5>
 
@@ -191,6 +191,7 @@ input::-webkit-inner-spin-button {
 
                                 </table>
                             </div>
+                            {% endif %}
 
                         </div>
                     </div>
@@ -434,7 +435,7 @@ function get_price_range(quantity){
             max_quantity = item.pricing_data
         }
 
-        range_flag = inRange(parseFloat(quantity),min,parseFloat(max_quantity))
+        range_flag = inRange(parseFloat(quantity),min,parseFloat(max_quantity)-1)
         if(range_flag){
 
             var range = min
@@ -486,6 +487,11 @@ function on_change_quantity(action){
     quantity = document.getElementById("catalog_quantity").value
     if(!quantity){
         quantity = 1
+        document.getElementById("catalog_quantity").value = quantity
+    }
+    if(parseInt(quantity) == 0){
+        quantity = 1
+        document.getElementById("catalog_quantity").value = quantity
     }
     if (action == 'INCREMENT'){
         quantity = parseInt(quantity)+1;
@@ -493,7 +499,7 @@ function on_change_quantity(action){
     else if(action == 'DECREMENT'){
         if(parseInt(quantity) > 1)
         {
-            quantity_flag = false
+            //quantity_flag = false
             quantity = parseInt(quantity)-1;
         }
     }

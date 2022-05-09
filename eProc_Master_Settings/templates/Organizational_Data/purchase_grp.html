@@ -12,16 +12,19 @@
             <h3>Maintain Purchasing Groups</h3>
             <div>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_pgrp_template' %}'"type="button">
-                    <i class="fas fa-download"></i> download Template
+                    <i class="fas fa-download"></i> template
                 </button>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_pgrp_data' %}'"type="button">
-                    <i class="fas fa-download"></i> extract
+                    <i class="fas fa-download"></i> extract data
                 </button>
                 <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_data"  title="Upload Data" value="purchase_grp_upload"  onclick="onclick_upload_button();" type="button">
                     <i class="fas fa-cloud-upload-alt"></i> upload data
                 </button>
                 <button class="btn btn-primary " id="id_add_data" value="ADD" title="Add Purchasing Group" data-toggle="modal" onclick="onclick_add_button(this);">
                     <i class="fa fa-plus"></i> add purchasing group
+                </button>
+                 <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                    <i class="fas fa-times"></i> close
                 </button>
             </div>
         </div>
@@ -289,9 +292,9 @@ function onclick_display_csv_data() {
                         $("#id_popup_tbody").empty();
                             $.each(response.data, function (i, value) {
                             var purorg_id_value = value[3]
-                            var object_id_value = value[4]
 
-                            dropdown_values.push([purorg_id_value, object_id_value])
+
+                            dropdown_values.push([purorg_id_value])
                             del_ind = '<td>' + value[4] + '</td>'
                             if (value[4] == 1) {
                                 del_ind=' <input type="checkbox" value="' + value[4] + '" checked>'
@@ -300,21 +303,36 @@ function onclick_display_csv_data() {
                                 del_ind= '<input type="checkbox" value="' + value[4] + '" required>'
                             }
 
-                     edit_basic_data += '<tr ><td class="class_select_checkbox"><input type="checkbox" required></td><td><input type="text" class="form-control" value="' + value[0] + '" maxlength="8" onkeypress="return /[a-z]/i.test(event.key)" required></td><td><input type="text" class="form-control" value="' + value[1] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td><select class="form-control">value ="' + value[2] + '"'+Porg_dropdwn+'</select></td><td><select class="form-control">value ="' + value[2] + '"'+object_id_dropdwn+'</select></td><td>' + del_ind + '</td></tr>';
+
+                                var Pgrp_data = '';
+                                var Pgrp_data_list = '';
+                                var Pgrp_data_id_list = '';
+                         $.each(rendered_orgpgrp_data, function(i, item){
+                               if( value[3].currency_type_value == item){
+
+                                    Pgrp_data = '<option value="' + item.pgroup_id + '">' + item.pgroup_id + '</option>';
+
+                               }else{
+
+                                 Pgrp_data_list += '<option value="' + item.pgroup_id + '">' + item.pgroup_id + '</option>';
+
+                                }
+                                    Pgrp_data_id_list = Pgrp_data + Pgrp_data_list
+                         });
+
+                     edit_basic_data += '<tr ><td class="class_select_checkbox"><input type="checkbox" required></td><td><input type="text" class="form-control" value="' + value[0] + '" maxlength="8" onkeypress="return /[a-z]/i.test(event.key)" required></td><td><input type="text" class="form-control" value="' + value[1] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td><select class="form-control">value ="' + value[2] + '"'+Porg_dropdwn+'</select></td><td hidden><select class="form-control">value ="' + value[2] + '"'+object_id_dropdwn+'</select></td><td>' + del_ind + '</td></tr>';
                  });
                $('#id_popup_tbody').append(edit_basic_data);
                     var i =0;
 
+                    $("#id_popup_table TBODY TR").each(function () {
+                        var row = $(this);
+                         var Pgrp_data_id_list = dropdown_values[i][0]
 
-                       //$("#id_popup_table TBODY TR").each(function() {-->
-                       //var row = $(this);-->
-                       //var prod_cat_id_value = dropdown_values[i][0]-->
-                       //var language_id_value = dropdown_values[i][1]-->
+                             $(row.find("TD").eq(3).find("select option[value=" + Pgrp_data_id_list + "]")).attr('selected', 'selected');
+                        i++;
+                    })
 
-                      //$(row.find("TD").eq(1).find("select option[value="+prod_cat_id_value+"]")).attr('selected','selected');-->
-                        //$(row.find("TD").eq(3).find("select option[value="+language_id_value+"]")).attr('selected','selected');-->
-                        //i++;
-                       //})
 
                 $( "#id_del_ind_checkbox").prop( "hidden", false );
                 $( "#header_select").prop( "hidden", false );
@@ -593,7 +611,7 @@ function onclick_add_button(button) {
     $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
     $('#myModal').modal('show');
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="input form-control"  type="text" maxlength="8" onkeypress="return /[A-Z 0-9]/i.test(event.key)" style="text-transform:uppercase;" name="pgroup_id"required></td><td><input class="input form-control"  type="text" maxlength="100" onkeypress="return /[A-Z0-9]/i.test(event.key)" name="description"  required></td></td><td><select class="form-control">'+Porg_dropdwn+'</select></td><td hidden><select >' + object_id_dropdwn + ' </select><td hidden>pgroup_guid</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="input form-control"  type="text" maxlength="8"  name="pgroup_id"required></td><td><input class="input form-control"  type="text" maxlength="100"  name="description"  required></td></td><td><select class="form-control">'+Porg_dropdwn+'</select></td><td hidden><select >' + object_id_dropdwn + ' </select><td hidden>pgroup_guid</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
     $("#id_del_ind_checkbox").prop("hidden", true);
@@ -758,7 +776,7 @@ function add_popup_row() {
     $(".modal").on("hidden.bs.modal", function () {
     $("#id_error_msg").html(" ");
      });
-     basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="input form-control"  type="text" maxlength="8" onkeypress="return /[A-Z 0-9]/i.test(event.key)" style="text-transform:uppercase;" name="pgroup_id"required></td><td><input class="input form-control"  type="text" maxlength="100" onkeypress="return /[A-Z0-9]/i.test(event.key)" name="description"  required></td><td><select class="form-control">'+Porg_dropdwn+'</select></td><td hidden><select >' + object_id_dropdwn + ' </select></td><td hidden>pgroup_guid</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+     basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="input form-control"  type="text" maxlength="8" onkeypress="return /[A-Z 0-9]/i.test(event.key)" style="text-transform:uppercase;" name="pgroup_id"required></td><td><input class="input form-control"  type="text" maxlength="100"  name="description"  required></td><td><select class="form-control">'+Porg_dropdwn+'</select></td><td hidden><select >' + object_id_dropdwn + ' </select></td><td hidden>pgroup_guid</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
    $('#id_popup_tbody').append(basic_add_new_html);
     if (GLOBAL_ACTION == "purchase_grp_upload") {
         $(".class_del_checkbox").prop("hidden", false);
@@ -823,6 +841,18 @@ $('#save_id').click(function () {
     $('#id_save_confirm_popup').modal('show');
 });
 
+     function GetReferrer() {
+             window.history.back();
+              var preUrl = document.referrer;
+              console.log(preUrl);
+              window.open('', '_self', '').close();
+<!--               var win = window.open(preUrl);-->
+<!--                win.focus();-->
+              if (preUrl == null)
+                     return "The previous page url is empty";
+               else
+                     return preUrl;
+       }
 
 </script>
 {% endblock %}

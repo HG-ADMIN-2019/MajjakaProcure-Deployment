@@ -81,6 +81,7 @@ class CompareTableHeader:
             return err_msg
         return err_msg
 
+
     def csv_preview_data(self,db_header, data_set_val):
         """
             rearranging the jumbled data from csv

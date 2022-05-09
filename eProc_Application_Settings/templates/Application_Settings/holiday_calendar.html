@@ -19,7 +19,9 @@
             <h3>Maintain Holidays</h3>
 
             <div>
-
+                  <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                    <i class="fas fa-times"></i> close
+                </button>
             </div>
         </div>
 
@@ -46,8 +48,8 @@
                     <tr>
                        <!-- <th id="hg_select_checkbox"  hidden>Select</th> -->
                         <th>Calender Number</th>
-                        <th>Country</th>
                         <th>Calender Description</th>
+                        <th>Country</th>
                         <th>Year</th>
                         <!-- <th>Working Days</th> -->
                         <th hidden></th>
@@ -62,13 +64,14 @@
                     <tr>
                         <!-- <td class="class_calendar_checkbox" hidden><input type="checkbox" class="checkbox_check" onclick="valueChanged()" required></td> -->
                         <td>{{calendar.calender_id}}</td>
+                        <td>{{calendar.description}}</td>
                         {% for ct in country_list %}
                          {% if calendar.country_code == ct.country_code  %}
                             <td>{{ct.country_name}}</td>
                          {% endif %}
                          {% endfor %}
-                        <td>{{calendar.description}}</td>
                         <td>{{calendar.year}}</td>
+
                         <!-- <td>{{calendar.working_days}}</td> -->
                         <td hidden></td>
                         <td hidden></td>
@@ -205,7 +208,7 @@
                     empty_resp = '';
                     empty_resp += '<tr>';
                     empty_resp += '<td><input type="checkbox" name="hg_checkbox" required></td>';
-                    empty_resp += '<td><input class="holiday_description input" type="text" id="holiday_description1"  name="holiday_description" onkeypress="return /[A-Z 0-9]/i.test(event.key)" required></td>';
+                    empty_resp += '<td><input class="holiday_description input" type="text" id="holiday_description1"  name="holiday_description"  required></td>';
                     empty_resp += '<td><input  type="text" class="from_date input"   name="from_date"></td>';
                     empty_resp += '<td><input type="text"  class="to_date input" name="to_date"></td>';
                     empty_resp += '<td hidden><input type="checkbox" name="del_ind"></td>';
@@ -377,6 +380,18 @@
 
  }
 
+       function GetReferrer() {
+             window.history.back();
+              var preUrl = document.referrer;
+              console.log(preUrl);
+              window.open('', '_self', '').close();
+<!--               var win = window.open(preUrl);-->
+<!--                win.focus();-->
+              if (preUrl == null)
+                     return "The previous page url is empty";
+               else
+                     return preUrl;
+       }
 </script>
 <script src="{% static 'scripts/holiday_calendar.js' %}"></script>
 {% endblock %}

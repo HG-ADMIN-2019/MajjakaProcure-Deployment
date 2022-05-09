@@ -38,7 +38,7 @@
 
             <div class="alert alert-success display-none" id="product_details_success" role="alert"></div>
 
-            <div class="mt-4">
+            <div class="mb-4">
                 <span class="product-id-label">Internal Product no: </span><span class="product-id-text" id="prd_prd_id">{{product_details.product_id}}</span>
             </div>
 
@@ -825,12 +825,12 @@ function product_spec_popup_delete(myTable){
  var GLOBAL_PRODUCT_ID = '{{product_details.product_id|safe}}'
 function onclick_edit_product_details(){
     // on click of edit button display only save and cancel
-    $('.dummy_button_class').prop('hidden', true)
-    $('#save_product_details').prop('hidden', false)
-    $('#cancel_product_details').prop('hidden', false)
+    $('.dummy_button_class').prop('hidden', true);
+    $('#save_product_details').prop('hidden', false);
+    $('#cancel_product_details').prop('hidden', false);
+    $('.input-disable-class').prop('disabled', false);
     //enable all the field
     if (eform_edit_flag == 0){
-        $('.input-disable-class').prop('disabled', false);
         $('.eform_button_dummy_class').prop('disabled', false);
     }
     $('.input-disable-product-specification-class').prop('disabled', false);
@@ -839,6 +839,7 @@ function onclick_edit_product_details(){
     $(".prod-image-container").css("pointer-events", "auto");
 
 }
+
 function onclick_cancel_product_details(){
     // on click of cancel button display only edit
     $('.dummy_button_class').prop('hidden', true)

@@ -14,6 +14,9 @@
                     <button type="button" id="id_add_data" title="Add Document Types" value="ADD" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                         <i class="fa fa-plus" ></i> add document
                     </button>
+                      <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                        <i class="fas fa-times"></i> close
+                    </button>
                 </div>
             </div>
 
@@ -249,7 +252,7 @@ function onclick_copy_update_button(data) {
             if(GLOBAL_ACTION == "UPDATE"){
             edit_basic_data += '<tr><td><input type="checkbox" required></td>'+
             '<td><select type="text" class="input form-control" id="approvaltype" value="' + row.cells[2].innerHTML + '" name="approvaltype" disabled>'+ document_type_dropdown +'</select></td>'+
-            '<td><input value="' + row.cells[2].innerHTML + '" type="text" class ="form-control" onkeypress="return /[a-z ]/i.test(event.key)" name="doctypedescription"  maxlength="30" style="text-transform:uppercase" required></td>'+
+            '<td><input value="' + row.cells[2].innerHTML + '" type="text" class ="form-control" onkeypress="return /[a-z ]/i.test(event.key)" name="doctypedescription"  maxlength="30" required></td>'+
             '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
              $("#header_select").prop("hidden", false);
         }
@@ -536,6 +539,19 @@ function GetSelectedTextValue(documenttype) {
     });
 
 }
+
+       function GetReferrer() {
+             window.history.back();
+              var preUrl = document.referrer;
+              console.log(preUrl);
+              window.open('', '_self', '').close();
+<!--               var win = window.open(preUrl);-->
+<!--                win.focus();-->
+              if (preUrl == null)
+                     return "The previous page url is empty";
+               else
+                     return preUrl;
+       }
 
 
 </script>

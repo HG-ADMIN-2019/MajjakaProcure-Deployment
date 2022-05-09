@@ -14,6 +14,9 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
 from eProc_Attributes.models.org_attribute_models import OrgAttributesLevel
+from eProc_Basic.Utilities.functions.delete_shopping_carts import delete_all_shopping_carts
+from eProc_Basic.Utilities.functions.distinct_list import distinct_list
+from eProc_Basic.Utilities.functions.encryption_util import encrypt
 from eProc_Basic.Utilities.functions.generate_document_number import generate_document_number
 from eProc_Basic.Utilities.functions.guid_generator import guid_generator
 from eProc_Basic.Utilities.functions.sort_dictionary import sort_list_dictionary_key_values
@@ -52,7 +55,7 @@ def shopping_cart_home(request):
     freetext_supp_id = []
     freetext_item_flag = ''
     freetext_price = []
-
+    # delete_all_shopping_carts({}, global_variables.GLOBAL_CLIENT)
     context = {
         'inc_nav': True,
         'inc_footer': True,
@@ -79,27 +82,36 @@ def shopping_cart_home(request):
         OrgAttributesLevel, {
             'client': client, 'object_id__in': obj_id_list, 'attribute_id': CONST_CAT_ID, 'del_ind': False
         }, 'low')
-    catalog_global_variables.USER_ASSIGNED_CATALOGS_LIST = django_query_instance.django_filter_value_list_query(Catalogs,
-                                                                                                                {'client':global_variables.GLOBAL_CLIENT,
-                                                                                                                 'catalog_id__in': catalog_id_list,
-                                                                                                                 'del_ind':False,
-                                                                                                                 'is_active_flag':True},'catalog_id')
+    catalog_global_variables.USER_ASSIGNED_CATALOGS_LIST = django_query_instance.django_filter_value_list_query(
+        Catalogs,
+        {'client': global_variables.GLOBAL_CLIENT,
+         'catalog_id__in': catalog_id_list,
+         'del_ind': False,
+         'is_active_flag': True}, 'catalog_id')
     assigned_catalog_id_list = catalog_global_variables.USER_ASSIGNED_CATALOGS_LIST
 
     search_fields['client'] = client
     search_fields['co_code'] = default_company_code
-    search_fields['status'] = CONST_SC_APPR_APPROVED
+    search_fields['status'] = CONST_SC_HEADER_APPROVED
     search_fields['del_ind'] = False
 
     get_sc_header_guid = django_query_instance.django_filter_value_list_query(ScHeader, search_fields, 'guid')
 
     product_id = django_query_instance.django_filter_value_list_query(ScItem, {
         'client': client, 'comp_code': default_company_code, 'header_guid__in': get_sc_header_guid,
-        'call_off': CONST_CO01, 'catalog_id__in': assigned_catalog_id_list, 'del_ind': False
+        'call_off': CONST_CO01, 'del_ind': False
     }, 'int_prod_id')
+    product_id_list = []
+    product_id_data = distinct_list(product_id)
+    for product in product_id_data:
+        if django_query_instance.django_existence_check(CatalogMapping,
+                                                        {'client': global_variables.GLOBAL_CLIENT,
+                                                         'catalog_id__in': assigned_catalog_id_list,
+                                                         'item_id': product}):
+            product_id_list.append(product)
 
     # Counts repeated elements
-    get_product_count = dict(Counter(product_id))
+    get_product_count = dict(Counter(product_id_list))
 
     # Sort product id count in descending order
     sort_get_product_count = dict(sorted(get_product_count.items(), key=operator.itemgetter(1), reverse=True))
@@ -121,6 +133,7 @@ def shopping_cart_home(request):
     popular_product_array = append_image_into_catalog_list(product_details_value, image_info)
     if popular_product_array:
         for product in popular_product_array:
+            product['encrypt_product_id'] = encrypt(product['product_id'])
             product = update_supplier_desc(product)
     context['popular_product_array'] = popular_product_array
     sys_attributes_instance = sys_attributes(client)
@@ -216,8 +229,8 @@ def shopping_cart_home(request):
                                                                     product_data_and_image_array, 'product_id')
     if recently_viewed_product_array:
         for recently_viewed_product in recently_viewed_product_array:
+            recently_viewed_product['encrypt_product_id'] = encrypt(recently_viewed_product['product_id'])
             recently_viewed_product = update_supplier_desc(recently_viewed_product)
-    # print(recently_viewed_product_array)
 
     context['recently_viewed_product_array'] = recently_viewed_product_array
 
@@ -396,8 +409,11 @@ def delete_recently_viewed_item(request):
         django_query_instance.django_filter_delete_query(RecentlyViewedProducts, {
             'username': username, 'product_id': item_prod_id, 'client': client, 'del_ind': False
         })
-
-        return JsonResponse({'success': MSG113}, status=201)
+        recently_viewed_count = django_query_instance.django_filter_count_query(RecentlyViewedProducts,
+                                                                                {'username': username,
+                                                                                 'client': client,
+                                                                                 'del_ind': False})
+        return JsonResponse({'success': MSG113,'recently_viewed_count':recently_viewed_count}, status=201)
 
 
 def delete_favourite_shopping_cart(request):
@@ -426,18 +442,19 @@ def add_fav_sc_to_cart(request):
     if request.method == 'POST':
         fav_cart_num = request.POST.get('fav_cart_num')
         django_query_instance.django_filter_delete_query(CartItemDetails,
-                                                         {'username':global_variables.GLOBAL_LOGIN_USERNAME,
-                                                          'client':global_variables.GLOBAL_CLIENT})
+                                                         {'username': global_variables.GLOBAL_LOGIN_USERNAME,
+                                                          'client': global_variables.GLOBAL_CLIENT})
         fav_cart_detail = django_query_instance.django_filter_query(FavouriteCart,
                                                                     {'favourite_cart_number': fav_cart_num,
-                                                                     'username': username, 'client': client, 'del_ind': False},
+                                                                     'username': username, 'client': client,
+                                                                     'del_ind': False},
                                                                     None,
                                                                     None)
         cart_list = []
         for items_details in fav_cart_detail:
             guid = guid_generator()
             defaults = {
-                'guid':guid,
+                'guid': guid,
                 'item_num': items_details['item_num'],
                 'description': items_details['description'],
                 'prod_cat_desc': items_details['prod_cat_desc'],
@@ -490,8 +507,9 @@ def add_fav_sc_to_cart(request):
                 eform_transaction_data = django_query_instance.django_filter_query(EformFieldData,
                                                                                    {'eform_id': items_details[
                                                                                        'eform_id'],
-                                                                                    'favourite_cart_guid': items_details[
-                                                                                        'favourite_cart_guid'],
+                                                                                    'favourite_cart_guid':
+                                                                                        items_details[
+                                                                                            'favourite_cart_guid'],
                                                                                     'client': global_variables.GLOBAL_CLIENT},
                                                                                    None, None)
                 print(guid)
@@ -500,7 +518,7 @@ def add_fav_sc_to_cart(request):
                                                                        'eform_id'],
                                                                     'favourite_cart_guid': items_details[
                                                                         'favourite_cart_guid'],
-                                                                    'client': global_variables.GLOBAL_CLIENT},None,
+                                                                    'client': global_variables.GLOBAL_CLIENT}, None,
                                                                    None
                                                                    )
                 django_query_instance.django_update_query(EformFieldData,
@@ -509,7 +527,7 @@ def add_fav_sc_to_cart(request):
                                                            'favourite_cart_guid': items_details[
                                                                'favourite_cart_guid'],
                                                            'client': global_variables.GLOBAL_CLIENT},
-                                                          {'cart_guid':guid}
+                                                          {'cart_guid': guid}
                                                           )
         bulk_create_entry_db(CartItemDetails, cart_list)
     global_variables.GLOBAL_CART_COUNTER = display_cart_counter(global_variables.GLOBAL_LOGIN_USERNAME)

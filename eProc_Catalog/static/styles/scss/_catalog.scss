@@ -164,7 +164,7 @@
     }
 }
 
-// Product type catalog results 
+// Product type catalog results & Product type freetxt results 
 .product-results-catalog__results-card {
     margin-bottom:25px;
 
@@ -172,11 +172,13 @@
         border-bottom: solid 1px #ddd;
     }
 
-    .product-results-catalog__img-container {
+    .product-results-catalog__img-container,
+    .product-results-freetext__img-container {
         @include catalog-results-img-container;
     }
 
-    .product-results-catalog__img {
+    .product-results-catalog__img,
+    .product-results-freetext__img {
         @include catalog-results-img;
     }
 
@@ -196,30 +198,10 @@
         }
     }
 
-    .product-results-catalog__add-button {
-        text-align: right; 
-        padding: 5%;
-    }
-}
-
-// Product type freetxt results 
-.product-results-freetext__card {
-
-    .card-body {
-        border-bottom: solid 1px #ddd;
-    }
-
-    .product-results-freetext__img-container {
-        @include catalog-results-img-container;
-    }
-
-    .product-results-freetext__img {
-        @include catalog-results-img;
-    }
-
+    .product-results-catalog__add-button,
     .product-results-freetext__button {
         text-align: right; 
-        padding-top: 5%;
+        padding: 5%;
     }
 
 }
@@ -238,4 +220,16 @@
     padding-left: 1.25rem;
 }
 
+a.prod-classification-select-link {
+    color: initial;
+    text-decoration: none;
+} 
 
+.prod-classification-select-link.active {
+    font-weight: 700;
+    color: $blue-primary;
+}
+
+.catalog-table-results-list {
+    width:100%;
+}

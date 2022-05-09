@@ -15,10 +15,10 @@
             <h3>Maintain Payment Term Descriptions</h3>
             <div>
                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_payterm_template' %}'"type="button">
-                    <i class="fas fa-download"></i> extract template
+                    <i class="fas fa-download"></i>  template
                 </button>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_payterms_data' %}'" type="button">
-                    <i class="fas fa-download"></i> extract
+                    <i class="fas fa-download"></i> extract data
                 </button>
                 <button class="btn btn-outline-primary modal_upload" title="Upload Data" id="id_upload_redirect_data" value="payterm_desc_upload" onclick="onclick_upload_button()" type="button">
                     <i class="fas fa-cloud-upload-alt"></i> upload data
@@ -26,6 +26,9 @@
                 <button class="btn btn-primary" type="button" id="id_add_data" value="ADD"
                     data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add payment term description
+                </button>
+                  <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                    <i class="fas fa-times"></i> close
                 </button>
             </div>
         </div>
@@ -67,9 +70,9 @@
                                 </div>
                             </th>
                             <th>Payment Term</th>
-                            <th>Day Limit</th>
                             <th>Description</th>
-                            <th>Language </th>
+                            <th>Day Limit</th>
+                            <th>Language</th>
                             <th  hidden>Del Indicator</th>
                             <th hidden>Guid</th>
                         </tr>
@@ -80,8 +83,8 @@
                             <td class="class_select_checkbox" hidden><input type="checkbox" class="checkbox_check"
                                     onclick="valueChanged()" required></td>
                             <td>{{ data.payment_term_key}}</td>
-                            <td>{{ data.day_limit}}</td>
                             <td>{{ data.description}}</td>
+                            <td>{{ data.day_limit}}</td>
                             {% for lang in language_list %}
                             {% if data.language_id == lang.language_id %}
                             <td>{{lang.description}}</td>
@@ -140,8 +143,8 @@
                             <tr>
                                 <th id="header_select">Select</th>
                                 <th>Payment Term </th>
-                                <th>Day Limit</th>
                                 <th>Description</th>
+                                <th>Day Limit</th>
                                 <th>Language</th>
                                 <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
                                 <th hidden>Guid</th>
@@ -157,8 +160,8 @@
                 <!-- Modal footer -->
                 <div class="modal-footer">
                     
-					 <button class="btn btn-outline-primary remove_upload_data" type="button" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
-                      <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
+                     <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
                     <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
                     <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
                    
@@ -203,6 +206,7 @@
     var appname = uiConstants["CONST_APPNAME01"]
     var db_header_data = uiConstants['PAYMENT_TERM_KEY', 'DAY_LIMIT', 'DESCRIPTION', 'del_ind', 'LANGUAGE_ID']
 
+
     var payment_term_dropdown='';
     var language_dropdown= '';
     $.each(rendered_payment_key_list, function(i, item){
@@ -221,8 +225,8 @@
         $('#myModal').modal('show');
         basic_add_new_html = '<tr><td><input type="checkbox" required></td>' +
                     '<td><select id="payterm_key" name="payterm_key" class="form-control"  type="text">' + payment_term_dropdown +'</select></td>' +
-                    '<td><input  type="number"  name="day_limit" class="form-control" maxlength="10"></td>' +
                     '<td><input  type="text"  name="description" class="form-control" maxlength="50"></td>' +
+                    '<td><input  type="number"  name="day_limit" class="form-control" maxlength="10"></td>' +
                     '<td><select id="language" name="language" class="form-control"  type="text">' + language_dropdown +'</select></td>' +
                     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
                     '<td hidden><input  type="text"  name="guid"></td></tr>';
@@ -324,8 +328,8 @@
 			if(payment_term_arr_obj.del_ind){
 		    payment_term_arr_obj.payment_term_guid = row.find("TD").eq(6).html();
             payment_term_arr_obj.payment_term_key = row.find("TD").eq(1).html();
-            payment_term_arr_obj.day_limit = row.find("TD").eq(2).html();
-            payment_term_arr_obj.description = row.find("TD").eq(3).html();
+            payment_term_arr_obj.day_limit = row.find("TD").eq(3).html();
+            payment_term_arr_obj.description = row.find("TD").eq(2).html();
             payment_term_arr_obj.language_id = lang_code;           
             main_table_payment_term_checked.push(payment_term_arr_obj);
 			}
@@ -369,9 +373,9 @@
                  unique_input = '<select id="payterm_key" name="payterm_key" value="' + row.cells[1].innerHTML + '" class="form-control"  type="text" disabled>'+ payment_term_dropdown +' </select>';
                 edit_basic_data += '<tr><td hidden><input type="checkbox" required></td>' +
                     '<td>'+ unique_input +'</td>' +
-                    '<td><input  type="number" maxlength="10"  name="day_limit" value="' + row.cells[2].innerHTML + '" class="form-control"></td>' +
-                    '<td><input  type="text" maxlength="50" name="description" value="' + row.cells[3].innerHTML + '" class="form-control"></td>' +
-                    '<td><select id="language" name="language" class="form-control"   type="text">'+ language_dropdown +'</select></td>' +
+                     '<td><input  type="text" maxlength="50" name="description" value="' + row.cells[2].innerHTML + '" class="form-control"></td>' +
+                    '<td><input  type="number" maxlength="10"  name="day_limit" value="' + row.cells[3].innerHTML + '" class="form-control"></td>' +
+                     '<td><select id="language" name="language" class="form-control"   type="text">'+ language_dropdown +'</select></td>' +
                     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
                     '<td hidden><input  type="text" value="' + row.cells[6].innerHTML + '"  name="guid"></td></tr>';
                     $("#header_select").prop("hidden", true);
@@ -380,9 +384,9 @@
                     unique_input = '<select id="payterm_key" name="payterm_key" value="' + row.cells[1].innerHTML + '" class="form-control"  type="text">'+ payment_term_dropdown +' </select>';
                     edit_basic_data += '<tr><td><input type="checkbox" required></td>' +
                     '<td>'+ unique_input +'</td>' +
-                    '<td><input  type="number" maxlength="10"  name="day_limit" value="' + row.cells[2].innerHTML + '" class="form-control"></td>' +
-                    '<td><input  type="text" maxlength="50"  name="description" value="' + row.cells[3].innerHTML + '" class="form-control"></td>' +
-                    '<td><select id="language" name="language" class="form-control"   type="text">'+ language_dropdown +'</select></td>' +
+                    '<td><input  type="text" maxlength="50"  name="description" value="' + row.cells[2].innerHTML + '" class="form-control"></td>' +
+                    '<td><input  type="number" maxlength="10"  name="day_limit" value="' + row.cells[3].innerHTML + '" class="form-control"></td>' +
+                     '<td><select id="language" name="language" class="form-control"   type="text">'+ language_dropdown +'</select></td>' +
                     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
                     '<td hidden><input  type="text" value="' + row.cells[6].innerHTML + '"  name="guid"></td></tr>';
                     $("#header_select").prop("hidden", false);
@@ -432,8 +436,8 @@
         });
         basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
         '<td><select id="payterm_key" name="payterm_key" class="form-control"  type="text">'+ payment_term_dropdown +'</select></td>'+
-        '<td><input  type="number" maxlength="10"  name="day_limit" class="form-control"></td>'+
         '<td><input  type="text" maxlength="50"  name="description" class="form-control"></td>'+
+        '<td><input  type="number" maxlength="10"  name="day_limit" class="form-control"></td>'+
         '<td><select id="language" name="language" class="form-control"  type="text">'+ language_dropdown +'</select></td>'+
         '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
         '<td hidden><input  type="text"  name="guid"></td></tr>';
@@ -465,36 +469,81 @@
                 contentType: "application/json; charset=utf-8",
                 success: function(response) {
                     console.log(response);
-                    if (response.error_message) {
+                    if (response.data.error_message) {
                         $("#id_error_msg_upload").prop("hidden", false)
                         document.getElementById("id_error_msg_upload").innerHTML = response.error_message;
                         document.getElementById("id_error_msg_upload").style.color = "Red";
                         $('#id_data_upload').modal('show')
                     } else {
-                        currency_data_array = response.data;
+                        paymentdesc_data_array  = response.data;
                         var edit_basic_data = '';
                         var del_ind = '';
-                        var inc_index=0;
+                        var dropdown_values = [];
                         $("#id_popup_tbody").empty();
                         $.each(response.data, function(i, value) {
-                            del_ind = '<td>' + value[3] + '</td>'
-                            if (value[3] == 1) {
-                                del_ind = '<input type="checkbox" value="' + value[3] + '" checked>'
+                            var paymentdesc_type_value = value[0]
+                            var language_type_value = value[4]
+                            dropdown_values.push([paymentdesc_type_value,language_type_value])
+
+                            del_ind = '<td>' + value[4] + '</td>'
+                            if (value[4] == 1) {
+                                del_ind = '<input type="checkbox" value="' + value[4] + '" checked>'
                             } else {
-                                del_ind = '<input type="checkbox" value="' + value[3] + '" required>'
+                                del_ind = '<input type="checkbox" value="' + value[4] + '" required>'
                             }
+                                var payment = '';
+                                var payment_list = '';
+                                var payment_id_list = '';
 
-                            edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
-                            '<td><input class="form-control" type="text" value="' + value[0] + '" maxlength="3" onkeypress="return /[a-z]/i.test(event.key)" required></td>'+
-                            '<td><input class="form-control" type="text" value="' + value[1] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                            '<td><input class="form-control" type="text" value="' + value[2] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                            '<td><input class="form-control" type="text" value="' + value[4] + '" ></td>'+
-                            '<td>' + del_ind + '</td></tr>';
 
+                              $.each(rendered_payment_key_list, function(i, item){
+                                    if( value[0].payment_type_value == item){
+
+                                        payment = '<option value="' + item.payment_term_key + '">' + item.payment_term_key + '</option>';
+
+                                    }else{
+
+                                        payment_list += '<option value="' + item.payment_term_key + '">' + item.payment_term_key + '</option>';
+
+                                    }
+                                        payment_id_list = payment + payment_list
+                              });
+
+
+                                var language = '';
+                                var language_list = '';
+                                var language_id_list = '';
+
+
+                              $.each(render_language_data, function(i, item){
+                                    if( value[4].payment_type_value == item){
+
+                                        language = '<option value="' + item.language_id + '">' + item.description + '</option>';
+
+                                    }else{
+
+                                        language_list += '<option value="' + item.language_id + '">' + item.description + '</option>';
+
+                                    }
+                                        language_id_list = language + language_list
+                              });
+
+                                edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control">'+payment_id_list+'</select></td><td><input  type="text" value="'+value[2]+'"  maxlength="50"  name="description" class="form-control"></td><td><input  type="number" value="'+value[1]+'" maxlength="10"  name="day_limit" class="form-control"></td><td><select class="form-control">'+language_id_list+'</select></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
                         });
+
                         $('#id_popup_tbody').append(edit_basic_data);
+                         var i =0;
+                        $("#id_popup_table TBODY TR").each(function() {
+                            var row = $(this);
+                            var payment_id_list = dropdown_values[i][0]
+                            var language_id_list = dropdown_values[i][1]
+
+                            $(row.find("TD").eq(1).find("select option[value="+payment_id_list+"]")).attr('selected','selected');
+                            $(row.find("TD").eq(4).find("select option[value="+language_id_list+"]")).attr('selected','selected');
+                            i++;
+                        });
                         $("#id_del_ind_checkbox").prop("hidden", false);
-						 $( "#header_select").prop( "hidden", false );
+						$( "#header_select").prop( "hidden", false );
                         $(".class_del_checkbox").prop("hidden", false);
                         $('#myModal').modal('show');
                         $('#id_data_upload').modal('hide');
@@ -655,7 +704,18 @@
         }
         //**********************************************
 
-
+       function GetReferrer() {
+             window.history.back();
+              var preUrl = document.referrer;
+              console.log(preUrl);
+              window.open('', '_self', '').close();
+<!--               var win = window.open(preUrl);-->
+<!--                win.focus();-->
+              if (preUrl == null)
+                     return "The previous page url is empty";
+               else
+                     return preUrl;
+       }
 </script>
 <script src="{% static 'scripts/supplier_managment/payment_term_desc.js' %}"></script>
 {% endblock %}

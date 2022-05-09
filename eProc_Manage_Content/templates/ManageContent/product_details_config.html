@@ -18,6 +18,18 @@
         margin-left: 1px;
         margin-bottom: 15px;
     }
+
+    .hg-icon-blue-primary.hg-delete-icon-disabled  {
+        cursor: not-allowed;
+        color: #a9a9a9;
+    }
+    .desc-section {
+        display: flex;
+        flex-direction: row;
+        gap: 5px;
+        margin-top: 1rem;
+        
+}
 </style>
 <div class="container-fluid">
     <div class="mep-form_wrapper">
@@ -134,11 +146,12 @@
                     <i class="fa fa-trash"></i> Delete
                 </button>
                 <div>
+                  
                     <table id="product_detail_tab" class="table">
                         <thead class="thead-light">
                         <tr>
                             <th scope="col"> <input type="checkbox" onclick="checkAll(this)"></th>
-                            <th style="width: 30%;">Product Description</th>
+                            <th style="width: 30%;" >Product Description</th>
                             <th >Product Id</th>
                             <th >Supplier Id</th>
                             <th >Lead Time</th>
@@ -159,8 +172,15 @@
                                 <a href="{% url 'eProc_Manage_Content:get_product_details' product_detail.encrypted_product_id %}" target="_blank">
                                     <div style="display: flex; flex-direction: row;">
                                         <div> <img src="/media/{{product_detail.image_url}}" onerror='this.src="/static/images/no-image-cropped.png"' class="mr-3 catalog_img product-config-img" ></div>
-                                        <span>{{product_detail.short_desc}} </span>
+                                        <div>
+                                              <span>{{product_detail.short_desc}} </span>
+                                            <div class="desc-section">
+                                              <button type="button" class="hg_button_round notes badge_status_await_approval" id="Mapped_in_Catalog-{{forloop.counter}}" title="Mapped in Catalog" > <i class="material-icons-outlined">link</i></button>
+                                              <button type="button" class="hg_button_round attachment badge_status_purch_wrkl" id="Shopping_Cart_Created-{{forloop.counter}}" title="Shopping Cart Created" > <i class="material-icons-outlined">link_off</i></button>
+                                            </div>
+                                        </div>
                                     </div>
+                                   
                                 </a>
                             </td>
                             <td>{{product_detail.product_id}}</td>
@@ -170,7 +190,7 @@
                             <td>{{product_detail.price}}</td>
                             <td>{{product_detail.currency}}</td>
                             <td >{{product_detail.prod_cat_id}}</td>
-                            <td><i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete Form" id="{{product_detail.product_id}}-{{product_detail.product_transaction}}"
+                            <td><i class="fas fa-trash-alt hg-icon-blue-primary  {% if product_detail.product_transaction %} hg-delete-icon-disabled  {% endif %}" title="Delete Form" id="{{product_detail.product_id}}-{{product_detail.product_transaction}}"
                                 onclick="get_form_id_to_delete(this.id)" ></i></td>
         
                         </tr>

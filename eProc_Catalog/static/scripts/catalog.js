@@ -91,12 +91,42 @@ function openTab(evt, tabName) {
 // Function to generate url in products result filter card
 const generate_url = (selected_catalog, type, id) => {
     if(document_number != 'create'){
-        send_doc_number = 'doc_number-' + document_number
+        send_doc_number = 'doc_number-' + document_number;
     } else {
-        send_doc_number = document_number 
+        send_doc_number = document_number ;
     }
-    url = '/shop/products_services/' + selected_catalog + '/' + type + '/' + id + '/' + send_doc_number
-    location.href = url
+    var selected_classfication_text = $('#text-'+id).text();
+    $(".prod-classification-select-link").removeClass("active");
+    sessionStorage.setItem("prod_classification_select_id", id);
+    sessionStorage.setItem("prod_classification_select_type", type);
+    sessionStorage.setItem("prod_classification_select_text", selected_classfication_text);
+
+    url = '/shop/products_services/' + selected_catalog + '/' + type + '/' + id + '/' + send_doc_number;
+    location.href = url;
+}
+
+$(document).ready(function(){
+    var previously_selected_classification_link_id = sessionStorage.getItem('prod_classification_select_id');
+    var previously_selected_classification_link_type = sessionStorage.getItem('prod_classification_select_type');
+
+    if(previously_selected_classification_link_id) {
+        $(".prod-classification-select-link").removeClass("active");
+
+        if(previously_selected_classification_link_type == 'prod_category'){
+            $('#classification-' + previously_selected_classification_link_type + "-" + previously_selected_classification_link_id).addClass("active");
+        } else if(previously_selected_classification_link_type == 'supplier') {
+            $('#classification-' + previously_selected_classification_link_type + "-" + previously_selected_classification_link_id).addClass("active");
+        }
+
+        display_result_text()
+        
+    }
+})
+
+
+function display_result_text() {
+    var get_hild_text = $('.prod-classification-select-link.active').children().first().text();
+    $('#results-text').text(get_hild_text);
 }
 
 

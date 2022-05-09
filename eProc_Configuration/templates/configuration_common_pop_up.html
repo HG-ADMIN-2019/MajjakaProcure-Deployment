@@ -73,5 +73,17 @@
         </div>
     </div>
     <!--end of delete confirmation popup-->
-
+<!--    don't delete popup -->
+    <div class="modal fade" id="delete_not_possible">
+        <div class="modal-dialog modal-dialog-centered ">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p>Please maintain at least one record before deleting.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary"  onclick="display_popup()" > Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="{% static 'scripts/configuration_common_scripts.js' %}"></script>

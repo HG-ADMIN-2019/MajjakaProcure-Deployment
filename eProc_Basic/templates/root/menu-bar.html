@@ -89,7 +89,13 @@
 
         <div id="purchaser_sub_menu" style="display:none" >
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                <li class="nav-item active" id="nav-item__categroup">
+                <li class="nav-item active" id="nav-item__shopassist">
+                    {% if sub_menu.SC_COMPLETION %}
+                    {% url 'eProc_Doc_Search_and_Display:sc_completion_doc_search'  as sc_completion_url %}
+                    <div class="nav-link" id="sc_completion_btn"><a href="{{sc_completion_url}}" {% if request.path == sc_completion_url %} class="active"{% endif %} >Shopping assist</a></div>
+                    {% endif %}
+                </li>
+                <li class="nav-item" id="nav-item__categroup">
                     {% if sub_menu.GROUP_CATEGORY %}
                     {% url 'eProc_Purchaser_Cockpit:sc_item_field_filter'  as group_cat_url %}
                     <div class="nav-link" id="grp_cat_btn"><a href="{{group_cat_url}}" {% if request.path == group_cat_url %} class="active"{% endif %} >Category Grouping</a></div>
@@ -100,13 +106,6 @@
                     <div class="nav-link" id="change_po_btn"><a href="#">Purchase orders</a></div>
                     {% endif %}
                 </li>
-                <li class="nav-item" id="nav-item__shopassist">
-                    {% if sub_menu.SC_COMPLETION %}
-                    {% url 'eProc_Doc_Search_and_Display:sc_completion_doc_search'  as sc_completion_url %}
-                    <div class="nav-link" id="sc_completion_btn"><a href="{{sc_completion_url}}" {% if request.path == sc_completion_url %} class="active"{% endif %} >Shopping assist</a></div>
-                    {% endif %}
-                </li>
-
             </ul>
         </div>
 

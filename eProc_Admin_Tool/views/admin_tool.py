@@ -308,9 +308,12 @@ def user_report(request):
                 for list in user_list_star:
                     print("* in user name list", list.username)
                     print(list.email)
+            else:
+                user_list_star = django_query_instance.django_filter_only_query(UserData, {'is_active': active})
+                print(user_list_star)
             ####################################################################################
 
-            if inp_comp_code != None:
+            if inp_comp_code is not None:
                 # UserData
                 company_details = OrgCompanies.objects.filter(client=client, del_ind=False, company_guid=inp_comp_code)
 
@@ -322,7 +325,7 @@ def user_report(request):
                                                                  client=client, del_ind=False))
 
                     ###################################################################
-                    if (inp_username is not None and inp_username != ''):
+                    if inp_username is not None and inp_username != '':
 
                         for user_info in user_list_star:
                             confirm_in_comp = OrgModel.objects.filter(
@@ -342,8 +345,8 @@ def user_report(request):
                                 final_list.append(final_array)
                     else:
 
-                        # Using the Company Details - node_guid read the NODE type which has company code node_guid as parent_node
-                        # from the Org Model table
+                        # Using the Company Details - node_guid read the NODE type which has company code node_guid
+                        # as parent_node from the Org Model table
                         for comp in comp_obj_id_info:
                             node_info = OrgModel.objects.filter(Q(parent_node_guid=comp.node_guid, node_type='NODE',
                                                                   client=client, del_ind=False))
@@ -369,8 +372,7 @@ def user_report(request):
                                     final_array = []
 
                                     for user in user_details:
-                                        # print('User in Company:', user.first_name, user.username )
-
+                                        print('User in Company:', user.first_name, user.username )
                                         final_array.append(comp_det.company_id)
                                         final_array.append(concatenate_str(comp_det.name1, comp_det.name2))
                                         final_array.append(user.username)

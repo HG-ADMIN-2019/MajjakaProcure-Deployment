@@ -7,7 +7,7 @@ function onclick_add_button(button) {
     GLOBAL_ACTION = button.value
     $("#id_popup_tbody").empty();
     $('#myModal').modal('show');
-    basic_add_new_html = '<tr> <td><input type="checkbox" required></td> <td><input class="form-control" type="number" maxlength="40" name="Account Assignment Value" required></td><td><select class="form-control">' + acc_ass_dropdwn + ' </select></td> <td ><select class="form-control">' + company_dropdwn + '</select></td><td><input class="form-control" type="date" maxlength="10" name="Valid From Date" required></td> <td><input class="form-control" type="date" maxlength="10" name="Valid To Date" required></td>  <td hidden><input value=""></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr> <td><input type="checkbox" required></td> <td><input class="form-control" type="number" maxlength="40" name="Account Assignment Value" required></td><td><select class="form-control" id="acc_ass_val_dropdw">' + acc_ass_dropdwn + ' </select></td> <td ><select class="form-control" id="company_dropdw">' + company_dropdwn + '</select></td><td><input class="form-control" type="date" maxlength="10" name="Valid From Date" required></td> <td><input class="form-control" type="date" maxlength="10" name="Valid To Date" required></td>  <td hidden><input value=""></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
     $("#id_del_ind_checkbox").prop("hidden", true);
@@ -56,13 +56,13 @@ function onclick_copy_update_button() {
             if(GLOBAL_ACTION == "COPY"){
                 guid = 'GUID';
                 unique_input = '<input class="form-control" type="number" value="' + row.cells[1].innerHTML + '" name="Account Assignment Value" maxlength="40" required>'
-                edit_basic_data += '<tr> <td><input type="checkbox" required></td> <td>'+unique_input+'</td><td><select id="acc_dropdwn" class="form-control">' + acc_ass_dropdwn + ' </select></td> <td ><select class="form-control">' + company_dropdwn + '</select> </td> <td><input class="form-control" type="date" value="' + row.cells[4].innerHTML + '" maxlength="10" name="Valid From Date" required></td> <td><input class="form-control" type="date" value="' + row.cells[5].innerHTML + '" maxlength="10" name="Valid To Date" required></td> <td hidden><input value="' + guid + '"></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                edit_basic_data += '<tr> <td><input type="checkbox" required></td> <td>'+unique_input+'</td><td><select id="acc_dropdwn" class="form-control" id="acc_ass_val_dropdw">' + acc_ass_dropdwn + ' </select></td> <td ><select class="form-control" id="company_dropdw">' + company_dropdwn + '</select> </td> <td><input class="form-control" type="date" value="' + row.cells[4].innerHTML + '" maxlength="10" name="Valid From Date" required></td> <td><input class="form-control" type="date" value="' + row.cells[5].innerHTML + '" maxlength="10" name="Valid To Date" required></td> <td hidden><input value="' + guid + '"></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                 $("#header_select").prop("hidden",false);
             }
             else{
                 guid = row.cells[6].innerHTML;
                 unique_input = '<input class="form-control" type="number" value="' + row.cells[1].innerHTML + '" name="Account Assignment Value" maxlength="40" disabled>'
-                edit_basic_data += '<tr> <td hidden><input type="checkbox" required></td> <td>'+unique_input+'</td><td><select id="acc_dropdwn" class="form-control" disabled>' + acc_ass_dropdwn + ' </select></td> <td ><select class="form-control" disabled>' + company_dropdwn + '</select> </td> <td><input class="form-control" type="date" value="' + row.cells[4].innerHTML + '" maxlength="10" name="Valid From Date" required></td> <td><input class="form-control" type="date" value="' + row.cells[5].innerHTML + '" maxlength="10" name="Valid To Date" required></td>  <td hidden><input value="' + guid + '"></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                edit_basic_data += '<tr> <td hidden><input type="checkbox" required></td> <td>'+unique_input+'</td><td><select id="acc_dropdwn" class="form-control"  id="acc_ass_val_dropdw" disabled>' + acc_ass_dropdwn + ' </select></td> <td ><select class="form-control" id="company_dropdw" disabled>' + company_dropdwn + '</select> </td> <td><input class="form-control" type="date" value="' + row.cells[4].innerHTML + '" maxlength="10" name="Valid From Date" required></td> <td><input class="form-control" type="date" value="' + row.cells[5].innerHTML + '" maxlength="10" name="Valid To Date" required></td>  <td hidden><input value="' + guid + '"></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                 $("#header_select").prop("hidden",true);
             }
             var row = checkBoxes[i].parentNode.parentNode;
@@ -100,8 +100,8 @@ function add_popup_row() {
     $(".modal").on("hidden.bs.modal", function() {
         $("#id_error_msg").html("");
     });
-    basic_add_new_html = '<tr> <td><input type="checkbox" required></td> <td><input class="form-control" type="number" maxlength="40" name="Account Assignment Value" required></td><td><select class="form-control" >' + acc_ass_dropdwn + ' </select></td> <td ><select class="form-control" >' + company_dropdwn + '</select></td> <td><input class="form-control" type="date" maxlength="10" name="Valid From Date" required></td> <td><input class="form-control" type="date" maxlength="10" name="Valid To Date" required></td>  <td hidden><input value="GUID"></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-    $('#id_popup_tbody').append(basic_add_new_html);
+    basic_add_new_html = '<tr> <td><input type="checkbox" required></td><td><input class="form-control" type="number" maxlength="40" name="Account Assignment Value" required></td><td><select class="form-control" id="acc_ass_val_dropdw">' + acc_ass_dropdwn + ' </select></td> <td ><select class="form-control" id="company_dropdw">' + company_dropdwn + '</select></td><td><input class="form-control" type="date" maxlength="10" name="Valid From Date" required></td> <td><input class="form-control" type="date" maxlength="10" name="Valid To Date" required></td>  <td hidden><input value=""></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+   $('#id_popup_tbody').append(basic_add_new_html);
     if (GLOBAL_ACTION == "aav_upload") {
         $(".class_del_checkbox").prop("hidden", false);
     }

@@ -12,9 +12,9 @@ function onclick_add_button(button) {
     $('#myModal').modal('show');
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
     '<td><select type="text" class="input form-control authgroup"  id="authgroup-1" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ auth_group_id_dropdown+'</select></td>'+
-    '<td><select class="form-control">'+auth_obj_id_dropdown+'</select></td>'+
     '<td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td>'+
     '<td><select class="form-control">'+auth_level_dropdown+'</select></td>'+
+    '<td><select class="form-control">'+auth_obj_id_dropdown+'</select></td>'+
     '<td hidden><input type="text" value="GUID"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
@@ -59,17 +59,17 @@ function onclick_copy_update_button() {
     for (var i = 1; i < checkBoxes.length; i++) {
         if (checkBoxes[i].checked) {
             var row = checkBoxes[i].parentNode.parentNode;
-            var auth_obj = row.cells[2].innerHTML
-            var auth_level = row.cells[4].innerHTML
+            var auth_obj = row.cells[4].innerHTML
+            var auth_level = row.cells[3].innerHTML
             var auth_group_id = row.cells[1].innerHTML
-            var auth_group_desc = row.cells[3].innerHTML
+            var auth_group_desc = row.cells[2].innerHTML
             dropdown_values.push([auth_obj,auth_level,auth_group_id,auth_group_desc])
             if(GLOBAL_ACTION == "COPY"){
                 guid = 'GUID';
-                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class="form-control">'+auth_group_id_dropdown+'</select></td><td><select class="form-control">'+auth_obj_id_dropdown+'</select></td><td><select class="form-control">'+auth_group_desc_dropdown+'</select></td><td><select class="form-control">'+auth_level_dropdown+'</select></td><td hidden><input type="text" value="'+guid+'"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>'
+                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class="form-control">'+auth_group_id_dropdown+'</select></td><td><select class="form-control">'+auth_group_desc_dropdown+'</select></td><td><select class="form-control">'+auth_level_dropdown+'</select></td><td><select class="form-control">'+auth_obj_id_dropdown+'</select></td><td hidden><input type="text" value="'+guid+'"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>'
             } else{
                 guid = row.cells[5].innerHTML;
-                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class="form-control">'+auth_group_id_dropdown+'</select></td><td><select class="form-control">'+auth_obj_id_dropdown+'</select></td><td><select class="form-control">'+auth_group_desc_dropdown+'</select></td><td><select class="form-control">'+auth_level_dropdown+'</select></td><td hidden><input type="text" value="'+guid+'"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>'
+                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class="form-control">'+auth_group_id_dropdown+'</select></td><td><select class="form-control">'+auth_group_desc_dropdown+'</select></td><td><select class="form-control">'+auth_level_dropdown+'</select></td><td><select class="form-control">'+auth_obj_id_dropdown+'</select></td><td hidden><input type="text" value="'+guid+'"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>'
             }
 
         }
@@ -82,10 +82,10 @@ function onclick_copy_update_button() {
         var auth_level = dropdown_values[i][1]
         var auth_group_id = dropdown_values[i][2]
         var auth_group_desc = dropdown_values[i][3]
-        $(row.find("TD").eq(2).find("select option[value="+auth_obj+"]")).attr('selected','selected');
-        $(row.find("TD").eq(4).find("select option[value="+auth_level+"]")).attr('selected','selected');
+        $(row.find("TD").eq(4).find("select option[value="+auth_obj+"]")).attr('selected','selected');
+        $(row.find("TD").eq(3).find("select option[value="+auth_level+"]")).attr('selected','selected');
         $(row.find("TD").eq(1).find("select option[value="+auth_group_id+"]")).attr('selected','selected');
-        $(row.find("TD").eq(3).find("select option[value='"+auth_group_desc+"']")).attr('selected','selected');
+        $(row.find("TD").eq(2).find("select option[value='"+auth_group_desc+"']")).attr('selected','selected');
         i++;
     });
     $("#id_del_ind_checkbox").prop("hidden", true);
@@ -176,9 +176,9 @@ function add_popup_row() {
 //    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control authgroup"  id="authgroup-1" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ auth_group_id_dropdown+'</select></td><td><select class="form-control">'+auth_obj_id_dropdown+'</select></td><td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td><td><select class="form-control">'+auth_level_dropdown+'</select></td><td hidden><input type="text" value="GUID"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
      basic_add_new_html = '<tr ><td><input type="checkbox" required></td>'+
      '<td><select type="text" class="input form-control authgroup" id="authgroup-'+inc_index+'"  onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ auth_group_id_dropdown +'</select></td>'+
-     '<td><select class="form-control">'+auth_obj_id_dropdown+'</select></td>'+
      '<td><input class="form-control description" type="text" id="description-'+inc_index+'" disabled></td>'+
      '<td><select class="form-control">'+auth_level_dropdown+'</select></td>'+
+     '<td><select class="form-control">'+auth_obj_id_dropdown+'</select></td>'+
      '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     if (GLOBAL_ACTION == "auth_group_upload") {
@@ -193,7 +193,7 @@ function display_basic_db_data() {
     $('#id_auth_group_tbody').empty();
     var edit_basic_data = '';
     $.each(rendered_auth_group_data, function(i, item) {
-        edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.auth_obj_grp + '</td><td>' + item.auth_obj_id + '</td><td>' + item.auth_grp_desc + '</td><td>' + item.auth_level + '</td><td hidden>' + item.auth_grp_guid + '</td></tr>';
+        edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.auth_obj_grp + '</td><td>' + item.auth_grp_desc + '</td><td>' + item.auth_level + '</td><td>' + item.auth_obj_id + '</td><td hidden>' + item.auth_grp_guid + '</td></tr>';
     });
     $('#id_auth_group_tbody').append(edit_basic_data);
     $("#hg_select_checkbox").prop("hidden", true);
@@ -218,9 +218,9 @@ function delete_duplicate() {
 
         //*************** reading data from the pop-up ***************
         auth_obj_grp = row.find("TD").eq(1).find("select option:selected").val();
-        auth_obj_id = row.find("TD").eq(2).find("select option:selected").val();
-        auth_grp_desc = row.find("TD").eq(3).find("select option:selected").val();
-        auth_level = row.find("TD").eq(4).find("select option:selected").val();
+        auth_obj_id = row.find("TD").eq(4).find("select option:selected").val();
+        auth_grp_desc = row.find("TD").eq(2).find("select option:selected").val();
+        auth_level = row.find("TD").eq(3).find("select option:selected").val();
 
         var compare = auth_obj_grp+'-'+auth_grp_desc+'-'+auth_obj_id+'-'+auth_level
 
@@ -256,9 +256,9 @@ $('#save_id').click(function () {
             auth_group = {};
             auth_group.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
             auth_group.auth_obj_grp = row.find("TD").eq(1).find('select[type="text"]').val();
-            auth_group.auth_obj_id = row.find("TD").eq(2).find("select option:selected").val();
-            auth_group.auth_grp_desc = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
-            auth_group.auth_level = row.find("TD").eq(4).find("select option:selected").val();
+            auth_group.auth_obj_id = row.find("TD").eq(4).find("select option:selected").val();
+            auth_group.auth_grp_desc = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
+            auth_group.auth_level = row.find("TD").eq(3).find("select option:selected").val();
             auth_group.auth_grp_guid = row.find("TD").eq(5).find('input[type="text"]').val().toUpperCase();
             if (auth_group == undefined) {
                 auth_group.auth_obj_grp = row.find("TD").eq(1).find('input[type="text"]').val();
@@ -266,7 +266,7 @@ $('#save_id').click(function () {
             if (auth_group.auth_grp_guid == undefined) {
                 auth_group.auth_grp_guid = ''
             }
-            var compare = auth_group.auth_obj_grp + ' - ' + auth_group.auth_obj_id + ' - ' + auth_group.auth_grp_desc+ ' - ' +auth_group.auth_level
+            var compare = auth_group.auth_obj_grp+ ' - ' + auth_group.auth_grp_desc+ ' - ' +auth_group.auth_level+ ' - ' + auth_group.auth_obj_id
             validate_add_attributes.push(compare);
             auth_group_data.push(auth_group);
         });

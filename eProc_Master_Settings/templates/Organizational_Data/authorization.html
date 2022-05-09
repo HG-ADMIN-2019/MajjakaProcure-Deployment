@@ -18,6 +18,9 @@
                 <button class="btn btn-primary" type="button" id="id_add_data" value="ADD"  data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add Authorization
                 </button>
+                  <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                    <i class="fas fa-times"></i> close
+                </button>
             </div>
         </div>
 
@@ -53,9 +56,9 @@
                                 <INPUT type="checkbox" onchange="checkAll(this)" name="chk[]">
                             </div>
                         </th>
-                        <th>Authorization Group</th>
-                        <th>Type </th>
                         <th>Role</th>
+                        <th>Type </th>
+                        <th>Authorization Group</th>
                         <th hidden>Guid</th>
                     </tr>
                     </thead>
@@ -63,9 +66,9 @@
                     {% for auth_data in auth %}
                     <tr>
                         <td class="class_select_checkbox" hidden><input type="checkbox" class="checkbox_check" onclick="valueChanged()" required></td>
-                        <td>{{auth_data.auth_obj_grp}}</td>
-                        <td>{{auth_data.auth_type}}</td>
                         <td>{{auth_data.role}}</td>
+                        <td>{{auth_data.auth_type}}</td>
+                         <td>{{auth_data.auth_obj_grp}}</td>
                         <td hidden>{{auth_data.auth_guid}}</td>
                     </tr>
                     {% endfor %}
@@ -111,9 +114,9 @@
                         <thead>
                         <tr>
                             <th id="header_select">Select</th>
-                            <th>Authorization Group</th>
-                            <th>Type </th>
                             <th>Role</th>
+                            <th>Type </th>
+                            <th>Authorization Group</th>
                             <th hidden>Guid</th>
                             <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
                         </tr>
@@ -225,39 +228,39 @@
                     var del_ind = '';
                     $("#id_popup_tbody").empty();
                     $.each(response, function(i, value) {
-                        var auth_group = value[0];
-                        var roles = value[2];
-                        var auth_types = rvalue[1];
-                        dropdown_values.push([auth_group,roles,auth_types])
+                        var auth_group = value[2];
+                        var roles = value[0];
+                        var auth_types = value[1];
+                        dropdown_values.push([roles,auth_types,auth_group])
                         del_ind = '<td>' + value[2] + '</td>'
                         if (value[2] == 1) {
                             del_ind = ' <input type="checkbox" value="' + value[2] + '" checked>'
                         } else {
                             del_ind = '<input type="checkbox" value="' + value[2] + '" required>'
                         }
-                        edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control">'+auth_type_dropdown+'</select></td><td><select class="form-control">'+auth_group_dropdown+'</select></td><td><select class="form-control">'+roles_dropdown+'</select></td><td hidden><input class="input" type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                        edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control">'+auth_type_dropdown+'</select></td><td><select class="form-control">'+auth_type_dropdown+'</select></td><td><select class="form-control">'+auth_group_dropdown+'</select></td><td><select class="form-control">'+roles_dropdown+'</select></td><td hidden><input class="input" type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                     });
                     $('#id_popup_tbody').append(edit_basic_data);
                     var i =0;
                     $("#id_popup_table TBODY TR").each(function() {
                         var row = $(this);
-                        var auth_group = dropdown_values[i][0];
-                        var roles = dropdown_values[i][1];
+                        var auth_group = dropdown_values[i][2];
+                        var roles = dropdown_values[i][0];
                         var auth_types = dropdown_values[i][1];
 
-                        auth_type_val = row.find("TD").eq(1).find("select option:selected").val();
+                        auth_type_val = row.find("TD").eq(2).find("select option:selected").val();
                         var assign_val = corresponding_auth_group(auth_type_val)
-                        row.find("TD").eq(2).find("select").append(assign_val.auth_group_dropdown)
+                        row.find("TD").eq(1).find("select").append(assign_val.auth_group_dropdown)
 
-                        $(row.find("TD").eq(2).find("select option[value="+auth_group+"]")).attr('selected','selected');
-                        $(row.find("TD").eq(3).find("select option[value="+roles+"]")).attr('selected','selected');
-                        $(row.find("TD").eq(1).find("select option[value="+auth_types+"]")).attr('selected','selected');
+                        $(row.find("TD").eq(3).find("select option[value="+auth_group+"]")).attr('selected','selected');
+                        $(row.find("TD").eq(1).find("select option[value="+roles+"]")).attr('selected','selected');
+                        $(row.find("TD").eq(2).find("select option[value="+auth_types+"]")).attr('selected','selected');
                         i++;
 
-                        $(row.find("TD").eq(1).find("select")).change(function(){
+                        $(row.find("TD").eq(3).find("select")).change(function(){
                             row.find("TD").eq(2).find("select").empty()
 
-                            auth_type_val = row.find("TD").eq(1).find("select option:selected").val();
+                            auth_type_val = row.find("TD").eq(3).find("select option:selected").val();
 
                             var assign_val = corresponding_auth_group(auth_type_val)
                             row.find("TD").eq(2).find("select").append(assign_val.auth_group_dropdown)
@@ -389,9 +392,9 @@
             var auth_arr_obj = {};
             auth_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
              if(auth_arr_obj.del_ind){
-            auth_arr_obj.auth_obj_grp = row.find("TD").eq(1).html();
+            auth_arr_obj.auth_obj_grp = row.find("TD").eq(3).html();
             auth_arr_obj.auth_type = row.find("TD").eq(2).html();
-            auth_arr_obj.role = row.find("TD").eq(3).html();
+            auth_arr_obj.role = row.find("TD").eq(1).html();
             auth_arr_obj.auth_guid = row.find("TD").eq(4).html();
 
             main_table_auth_checked.push(auth_arr_obj);
@@ -439,9 +442,9 @@
             var row = $(this);
 
             //*************** reading data from the pop-up ***************
-            auth_obj_grp = row.find("TD").eq(1).find("select option:selected").val();
+            auth_obj_grp = row.find("TD").eq(3).find("select option:selected").val();
             auth_type = row.find("TD").eq(2).find("select option:selected").val();
-            role = row.find("TD").eq(3).find("select option:selected").val();
+            role = row.find("TD").eq(1).find("select option:selected").val();
             auth_guid = row.find("TD").eq(4).find('input[type="text"]').val().toUpperCase();
             checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked')
             if (checked_box) {
@@ -458,7 +461,7 @@
             //*************** checking for max length for auth type (max length = 40) ***************
             if (auth_type.length > 40) {
                 document.getElementById("id_error_msg_auth_length").innerHTML = messageConstants["JMSG004"] + "Authorization Type";
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                $(row.find("TD").eq(3).find('input[type="text"]')).css("border", "1px solid #FF0000");
                 count = count + 1;
             }
 
@@ -541,7 +544,18 @@
             }
         });
     }
-
+     function GetReferrer() {
+             window.history.back();
+              var preUrl = document.referrer;
+              console.log(preUrl);
+              window.open('', '_self', '').close();
+<!--               var win = window.open(preUrl);-->
+<!--                win.focus();-->
+              if (preUrl == null)
+                     return "The previous page url is empty";
+               else
+                     return preUrl;
+       }
     
 </script>
 <script src="{% static 'scripts/organisational_data/org_authorization.js' %}"></script>

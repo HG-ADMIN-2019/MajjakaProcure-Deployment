@@ -114,7 +114,7 @@ def free_text_form(request, encrypted_freetext_id, document_number):
     date_today = datetime.date.today()
     freetext_id = decrypt(encrypted_freetext_id)
     configured_free_text_form, eform_configured = form_builder.get_freetext_form(freetext_id)
-    configured_free_text_form = update_unspsc(configured_free_text_form,'product_category_id')
+    configured_free_text_form = update_unspsc(configured_free_text_form, 'product_category_id')
     if document_number != 'create':
         document_number = decrypt(document_number.split('doc_number-')[1])
     context = {
@@ -297,6 +297,7 @@ def save_eform_data(eform_data):
                                                   {'eform_field_data_guid': eform_detail['eform_transaction_guid']},
                                                   {'eform_field_data': eform_detail['eform_data']})
 
+
 def get_product_service_product_details(request, product_id):
     """
 
@@ -311,7 +312,8 @@ def get_product_service_product_details(request, product_id):
     username = global_variables.GLOBAL_LOGIN_USERNAME
     client = global_variables.GLOBAL_CLIENT
     product_details = {}
-    prod_id = product_id
+
+    prod_id = decrypt(product_id)
     # catalog_id = catalog_id
     prod_detail = {}
     context = {
@@ -328,7 +330,7 @@ def get_product_service_product_details(request, product_id):
                                                                         'product_id': prod_id})
         if prod_detail:
             prod_detail = update_supplier_uom(prod_detail)
-            prod_detail = update_unspsc(prod_detail,'prod_cat_id_id')
+            prod_detail = update_unspsc(prod_detail, 'prod_cat_id_id')
             prod_detail = update_country(prod_detail)
 
         if prod_detail_get_query.eform_id:

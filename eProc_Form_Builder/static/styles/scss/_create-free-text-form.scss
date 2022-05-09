@@ -106,3 +106,22 @@
     }
 }
 
+.eform-field-wrapper {
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    padding: 0.5rem;
+}
+
+.eform-field-wrapper:hover {
+    background: #e9ecef;
+}
+
+.eform-field-btn-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.eform-field-btn-wrapper .btn {
+    margin-top: 0.7rem;
+}

@@ -13,6 +13,7 @@ urlpatterns = [
     path('extract_cusprodcatdesc_data', views.extract_cusprodcatdesc_data, name='extract_cusprodcatdesc_data'),
     path('extract_cusprodcatdesc_template', views.extract_cusprodcatdesc_template, name='extract_cusprodcatdesc_template'),
     path('extract_workflowschema_data', views.extract_workflowschema_data, name='extract_workflowschema_data'),
+    path('extract_workflowacct_template', views.extract_workflowacct_template, name='extract_workflowacct_template'),
     path('extract_workflowschema_template', views.extract_workflowschema_template, name='extract_workflowschema_template'),
     path('extract_workflowaccount_data', views.extract_workflowaccount_data, name='extract_workflowaccount_data'),
     path('ACC_values', views.account_ass_values, name='account_ass_values'),
