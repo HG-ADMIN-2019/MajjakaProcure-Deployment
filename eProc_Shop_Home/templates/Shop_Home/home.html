@@ -27,7 +27,7 @@
                             <!-- product 1 -->
                             <div class="popular_products_card">
                                 <div class="popular_products_img">
-                                    <a href="{% url 'eProc_Add_Item:get_product_service_product_details' product_data.product_id  %}" target="_blank">
+                                    <a href="{% url 'eProc_Add_Item:get_product_service_product_details' product_data.encrypt_product_id  %}" target="_blank">
                                         <img onerror='this.src="/static/images/no-image-cropped.png"' src="/media/{{product_data.image_url}}" alt="">
                                     </a>
                                 </div>
@@ -143,7 +143,7 @@
                             <div class="popular_products_card" id="rvi_card_{{viewed_data.product_id}}">
                                 <button type="button" class="btn btn-round btn-sm" onclick="RviDelete('{{ viewed_data.product_id}}')"><i class="far fa-trash-alt"></i></button>
                                 <div class="popular_products_img">
-                                    <a href="{% url 'eProc_Add_Item:get_product_service_product_details' viewed_data.product_id  %}" target="_blank">
+                                    <a href="{% url 'eProc_Add_Item:get_product_service_product_details' viewed_data.encrypt_product_id  %}" target="_blank">
                                         <img onerror='this.src="/static/images/no-image-cropped.png"' src="/media/{{viewed_data.image_url}}" alt="">
                                     </a>
                                 </div>
