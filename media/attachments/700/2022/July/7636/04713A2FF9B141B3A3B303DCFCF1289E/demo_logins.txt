@@ -1,0 +1,18 @@
+shop user-    harika@majjaka.com Office@123
+manager user- hemant@majjaka.com Office@123
+shopper assist- 
+
+kalyan@majjaka.com 
+Office@123
+
+
+shiva@majjaka.com
+karthik@majjaka.com
+vasu@majjaka.com
+Office@321
+
+
+
+sharath@majjaka.com : shop user
+suresh@majjaka.com : manger
+password : Office@123

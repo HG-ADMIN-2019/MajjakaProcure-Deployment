@@ -1,0 +1,25 @@
+Why is buying for business so complex ?
+
+Introducing Majjaka Procure. Making procurement simple.
+
+Majjaka Procure is compatible with world leading ERP systems. It provides users with a simple online shopping experience.
+
+The start page points to specific supplies and products giving them access to recommended product and services.
+
+Now, Lets create a shopping cart. Like all online shops users press items and adds them to a shopping cart with a click of a button.
+
+The powerful search engine finds the right product across multiple supplier catalogues with in seconds. Products can be added directly from the search results.
+
+Here is our shopping cart. For the cart to be approved, the user needs to go to the checkout.
+
+During checkout, users can verify their order data.
+
+Define and check shipping address and assign a cost centre. This information is pre-populated based on the Org model set up for the purchasing entity.
+
+By clicking the place order button on the shopping cart it is sent for necessary approvals. Users can follow up on the status of their orders in my orders tab.
+
+Majjaka Procure is really that easy!
+
+To learn more about Majjaka Procure take a look at our website
+
+www.majjaka.com

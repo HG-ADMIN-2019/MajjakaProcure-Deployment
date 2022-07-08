@@ -55,7 +55,7 @@ def shopping_cart_home(request):
     freetext_supp_id = []
     freetext_item_flag = ''
     freetext_price = []
-    delete_all_shopping_carts({}, global_variables.GLOBAL_CLIENT)
+    # delete_all_shopping_carts({}, global_variables.GLOBAL_CLIENT)
     context = {
         'inc_nav': True,
         'inc_footer': True,
