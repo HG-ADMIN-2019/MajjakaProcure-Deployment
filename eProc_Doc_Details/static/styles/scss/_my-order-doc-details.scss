@@ -5,7 +5,7 @@
 }
 
 .mo-doc-header{
-    margin: 1rem 0.5rem 0.5rem;
+    margin: 1.5rem 0.5rem;
 
     &__alerts-wrapper {
         margin-top: 1rem;
@@ -43,7 +43,9 @@
 
 .mo-doc-button-container {
     display: flex;
-    flex-direction: row;
+    justify-content: space-between;
+    margin: 1.5rem 0.5rem 0.5rem;
+    flex-wrap: wrap;
 
     .mo-doc-button-group__approval {
         margin-left: 0.5rem;

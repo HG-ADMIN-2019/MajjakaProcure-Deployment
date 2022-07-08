@@ -1,8 +1,8 @@
 function show_manager_detail(id) {
-    scheader_guid_data = {};
-    scheader_guid_data.scheader_guid = id;
+    sc_app_guid_data = {};
+    sc_app_guid_data['guid'] = id;
 
-    ajax_get_manager_detail(scheader_guid_data)
+    ajax_get_manager_detail(sc_app_guid_data)
 
     $('#manager_detail_body').empty();
     trHTML = '<tr></tr>';

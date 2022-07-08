@@ -470,9 +470,9 @@
         </div>
     </div>
 </div>
-<!-----------------------------------------------End of User Assignment pop up------------------------------------------------------------->
+<!-- End of User Assignment pop up-
 
-<!-----------------------------------------------Basic details pop up------------------------------------------------------------->
+Basic details pop up -->
 
 <div class="modal" id="modal_Basic_Detail" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -498,9 +498,9 @@
         </div>
     </div>
 </div>
-<!-----------------------------------------------End of Basic details pop up------------------------------------------------------------->
+<!-- End of Basic details pop up
 
-<!----Loading Pop up ---->
+Loading Pop up -->
 
 <div class="modal" id="loading_popup" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
@@ -517,7 +517,6 @@
 
 
 {% include 'Search_node.html' %}
-<!--------------------------------------------------------------------------------------------------------->
 <script type="text/javascript">
 
 
@@ -543,7 +542,7 @@ var org_model_detail = {{org_model_detail|safe}};
 var root_node_name_user = '{{root_node_name}}';
 async function create_root_node(root_node_name){
     var root_node_name = '{{root_node_name}}';
-    var root_node_object_id = get_org_name_object_id(orgs ,root_node_name)
+    var root_node_object_id = get_org_name_object_id(orgs, root_node_name)
     ROOT_NODE_OBJECT_ID = root_node_object_id
     requested_parent_index = org_model_detail.length -2
     var requested_parent_object_id = org_model_detail[requested_parent_index].object_id
@@ -635,7 +634,7 @@ async_function();
 }
 );
 
-//Hadling input fields removal of spaces at starting and ending of the string
+// Hadling input fields removal of spaces at starting and ending of the string
 $(function(){
     $('input[type="text"]').change(function(){
         this.value = $.trim(this.value);

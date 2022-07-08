@@ -36,8 +36,8 @@ from eProc_Configuration.models import *
 from django.core.exceptions import ObjectDoesNotExist
 from eProc_Basic.Utilities.constants.constants import *
 from eProc_Basic.Utilities.functions.get_db_query import getClients, getUsername, get_login_user_roles_by_obj_id
-from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_prod_cat, get_highest_acc_detail, \
-    delete_approver_detail
+from eProc_Shopping_Cart.Utilities.prod_cat import get_prod_cat1
+from eProc_Shopping_Cart.Utilities.shopping_cart_generic import *
 from eProc_Shopping_Cart.models import CartItemDetails, ScHeader, ScItem, ScPotentialApproval, ScApproval, ScAccounting
 from eProc_Registration.models import *
 from eProc_Exchange_Rates.Utilities.exchange_rates_specific import get_currency_by_max_spending_value
@@ -87,12 +87,12 @@ def check_for_eform(request):
     supplier = []
     client = getClients(request)
     cart_items = django_query_instance.django_filter_only_query(CartItemDetails, {
-        'username': username, 'client': client, 'call_off': CONST_CO02
+        'username': username, 'client': client, 'call_off': CONST_FREETEXT_CALLOFF
     })
     for items in cart_items:
         try:
             supplier_id = django_query_instance.django_get_query(FreeTextForm, {
-                'supp_id': items.supplier_id, 'prod_cat_id': items.prod_cat, 'client': client
+                'supp_id': items.supplier_id, 'prod_cat_id': items.prod_cat_id, 'client': client
             })
             if not supplier_id:
                 return supplier
@@ -132,7 +132,7 @@ class AuthorizationLevel:
              CONST_GROUP_CATEGORY, CONST_CHANGE_PO, CONST_PERSONAL_SETTINGS, CONST_PURCHASE_SETTINGS,
              CONST_FORM_BUILDER, CONST_ORG_MODEL, CONST_CONFIRMATION, CONST_CANCELLATION, CONST_RETURN_DELIVERY,
              CONST_WORK_FLOW_ITEMS, CONST_PRODUCT_AND_SERVICE_CONFIG, CONST_CATALOG_CONFIG, CONST_BASIC_SETTINGS,
-             CONST_CONFIG_HOME], False)
+             CONST_CONFIG_HOME, CONST_APPLICATION_MONITOR], False)
         auth_feature = self.get_auth_level_id(auth_level)
         for auth_feature_value in auth_feature:
             sub_menu[auth_feature_value] = True
@@ -170,7 +170,7 @@ def get_prod_cat_dropdown(request):
     :param request:
     :return:
     """
-    product_category = get_prod_cat(request, prod_det=None)
+    product_category = get_prod_cat1(request, prod_det=None)
     prod_cat = []
     for prod_id, prod_desc in product_category:
         prod_cat.append(prod_id + ' - ' + prod_desc)
@@ -200,7 +200,7 @@ def get_limit_update_content(item_details):
         required = 'Between'
 
     supp_id = item_details.supplier_id
-    ir_gr_flag = item_details.ir_gr_ind
+    ir_gr_flag = item_details.ir_gr_ind_limi
     if ir_gr_flag:
         follow_up_action = CONST_IC
     else:
@@ -519,7 +519,7 @@ def get_manger_detail(client, login_username, acc_default, total_value, default_
     msg_info = ""
     workflow_schema = django_query_instance.django_filter_value_list_query(WorkflowSchema, {'client': client,
                                                                                             'company_id': default_cmp_code,
-                                                                                            'del_ind':False},
+                                                                                            'del_ind': False},
                                                                            'app_types')
 
     if workflow_schema:
@@ -588,9 +588,11 @@ def get_manger_detail(client, login_username, acc_default, total_value, default_
                                     for approver_detail in approver_detail:
                                         workflow_approver_details = list(
                                             django_query_instance.django_filter_only_query(WorkflowACC, {
-                                                'company_id': approver_detail[2], 'account_assign_cat': approver_detail[4],
+                                                'company_id': approver_detail[2],
+                                                'account_assign_cat': approver_detail[4],
                                                 'acc_value': approver_detail[1], 'client': client
-                                            }).values_list('app_username', 'sup_acc_value', 'sup_company_id', 'currency_id',
+                                            }).values_list('app_username', 'sup_acc_value', 'sup_company_id',
+                                                           'currency_id',
                                                            'sup_account_assign_cat', 'company_id'))
                                         if not workflow_approver_details:
                                             manger_list = []
@@ -644,7 +646,8 @@ def get_manger_detail(client, login_username, acc_default, total_value, default_
                                         else:
                                             app_id_value = app_id[0]
                                         app_id_detail = ",".join(list(app_id))
-                                        manger_list.append({'app_id_value': app_id_value, 'app_id_detail': app_id_detail})
+                                        manger_list.append(
+                                            {'app_id_value': app_id_value, 'app_id_detail': app_id_detail})
                         else:
                             msg_info = MSG173
         else:
@@ -849,7 +852,7 @@ def get_limit_item_details(cart_item_guid):
     limit_item_details = {}
     limit_item_data = django_query_instance.django_get_query(CartItemDetails, {'guid': cart_item_guid})
     if limit_item_data:
-        follow_up_actions = limit_item_data.ir_gr_ind
+        follow_up_actions = limit_item_data.ir_gr_ind_limi
 
         if follow_up_actions:
             limit_item_details['follow_up_actions'] = 'Invoice and confirmation only'
@@ -895,9 +898,9 @@ def update_supplier_uom(prod_detail):
     if django_query_instance.django_existence_check(UnitOfMeasures,
                                                     {'uom_id': prod_detail['unit_id']}):
         prod_detail['unit_desc'] = django_query_instance.django_filter_value_list_query(UnitOfMeasures,
-                                                                                      {'uom_id': prod_detail[
-                                                                                          'unit_id']},
-                                                                                      'uom_description')[0]
+                                                                                        {'uom_id': prod_detail[
+                                                                                            'unit_id']},
+                                                                                        'uom_description')[0]
     return prod_detail
 
 
@@ -909,9 +912,9 @@ def update_supplier_uom_for_prod(prod_detail):
     if django_query_instance.django_existence_check(UnitOfMeasures,
                                                     {'uom_id': prod_detail['unit']}):
         prod_detail['unit_desc'] = django_query_instance.django_filter_value_list_query(UnitOfMeasures,
-                                                                                   {'uom_id': prod_detail[
-                                                                                       'unit']},
-                                                                                   'uom_description')[0]
+                                                                                        {'uom_id': prod_detail[
+                                                                                            'unit']},
+                                                                                        'uom_description')[0]
     return prod_detail
 
 
@@ -924,15 +927,18 @@ def update_supplier_desc(prod_detail):
                                                      'supplier_id': prod_detail['supplier_id'],
                                                      'del_ind': False}):
         prod_detail['supplier_desc'] = django_query_instance.django_filter_value_list_query(SupplierMaster,
-                                                                                          {'client': global_variables.GLOBAL_CLIENT,
-                                                                                           'supplier_id': prod_detail['supplier_id'],
-                                                                                           'del_ind': False},
-                                                                                           'name1')[0]
+                                                                                            {
+                                                                                                'client': global_variables.GLOBAL_CLIENT,
+                                                                                                'supplier_id':
+                                                                                                    prod_detail[
+                                                                                                        'supplier_id'],
+                                                                                                'del_ind': False},
+                                                                                            'name1')[0]
 
     return prod_detail
 
 
-def update_unspsc(prod_detail,prod_cat_id):
+def update_unspsc(prod_detail, prod_cat_id):
     """
 
     """
@@ -941,13 +947,13 @@ def update_unspsc(prod_detail,prod_cat_id):
                                                      'language_id': global_variables.GLOBAL_USER_LANGUAGE,
                                                      'prod_cat_id': prod_detail[prod_cat_id]}):
         prod_detail['prod_cat_desc'] = django_query_instance.django_filter_value_list_query(UnspscCategoriesCustDesc,
-                                                                                          {
-                                                                                              'client': global_variables.GLOBAL_CLIENT,
-                                                                                              'language_id': global_variables.GLOBAL_USER_LANGUAGE,
-                                                                                              'prod_cat_id':
-                                                                                                  prod_detail[
-                                                                                                      prod_cat_id]},
-                                                                                          'category_desc')[0]
+                                                                                            {
+                                                                                                'client': global_variables.GLOBAL_CLIENT,
+                                                                                                'language_id': global_variables.GLOBAL_USER_LANGUAGE,
+                                                                                                'prod_cat_id':
+                                                                                                    prod_detail[
+                                                                                                        prod_cat_id]},
+                                                                                            'category_desc')[0]
     else:
         prod_detail['prod_cat_id'] = prod_detail[prod_cat_id]
     return prod_detail
@@ -960,7 +966,8 @@ def update_country(prod_detail):
     if django_query_instance.django_existence_check(Country,
                                                     {'country_code': prod_detail['country_of_origin_id']}):
         prod_detail['country_desc'] = django_query_instance.django_filter_value_list_query(Country,
-                                                                                           {'country_code': prod_detail['country_of_origin_id']},
+                                                                                           {'country_code': prod_detail[
+                                                                                               'country_of_origin_id']},
                                                                                            'country_name')[0]
     return prod_detail
 
@@ -969,8 +976,8 @@ def save_approver_detail(header_guid):
     """
 
     """
-    sc_header_data = django_query_instance.django_get_query(ScHeader,{'client':global_variables.GLOBAL_CLIENT,
-                                                                      'guid':header_guid})
+    sc_header_data = django_query_instance.django_get_query(ScHeader, {'client': global_variables.GLOBAL_CLIENT,
+                                                                       'guid': header_guid})
     account_assignment_category, account_assignment_value = get_highest_acc_detail(header_guid)
     approval_data = get_manger_detail(global_variables.GLOBAL_CLIENT, sc_header_data.requester,
                                       account_assignment_category, sc_header_data.total_value, sc_header_data.co_code,
@@ -982,6 +989,101 @@ def save_approver_detail(header_guid):
     if django_query_instance.django_existence_check(ScItem, {'client': global_variables.GLOBAL_CLIENT,
                                                              'del_ind': False,
                                                              'header_guid': header_guid,
-                                                             'call_off': CONST_CO03}):
+                                                             'call_off': CONST_PR_CALLOFF}):
         sc_completion_flag = True
     save_sc_approval(approval_data[0], header_guid, CONST_SC_HEADER_SAVED, sc_completion_flag)
+
+
+def get_SC_details(sc_header_guid):
+    """
+
+    """
+    po_header_details = django_query_instance.django_filter_query(ScHeader,
+                                                                  {'sc_header_guid': sc_header_guid,
+                                                                   'client': global_variables.GLOBAL_CLIENT},
+                                                                  None,
+                                                                  None)
+    for po_header_detail in po_header_details:
+        po_header_detail['supplier_description'] = django_query_instance.django_filter_value_list_query(SupplierMaster,
+                                                                                                        {
+                                                                                                            'client': global_variables.GLOBAL_CLIENT,
+                                                                                                            'supplier_id':
+                                                                                                                po_header_detail[
+                                                                                                                    'supplier_id']},
+                                                                                                        'name1')[0]
+        # if django_query_instance.django_filter_count_query(ScData,
+        #                                                    {'client': global_variables.GLOBAL_CLIENT,
+        #                                                     'sc_header_guid': po_header_detail['sc_header_guid']}) > 1:
+        #     po_header_detail['porg_description'] = 'MULTIPLE'
+        # elif django_query_instance.django_existence_check(PurchasingData,
+        #                                                   {'client': global_variables.GLOBAL_CLIENT,
+        #                                                    'sc_header_guid': po_header_detail['sc_header_guid']}):
+        # purchaser_detail = django_query_instance.django_filter_query(PurchasingData,
+        #                                                              {'client': global_variables.GLOBAL_CLIENT,
+        #                                                               'sc_header_guid': po_header_detail[
+        #                                                                   'sc_header_guid']},
+        #                                                              None,
+        #                                                              None)[0]
+        # if django_query_instance.django_existence_check(OrgPorg,
+        #                                                 {'client': global_variables.GLOBAL_CLIENT,
+        #                                                  'porg_id': purchaser_detail['purch_org']}):
+        #     porg_description = django_query_instance.django_filter_value_list_query(OrgPorg,
+        #                                                                             {
+        #                                                                                 'client': global_variables.GLOBAL_CLIENT,
+        #                                                                                 'porg_id': purchaser_detail[
+        #                                                                                     'purch_org']},
+        #                                                                             'description')[0]
+        #
+        #     po_header_detail['porg_description'] = purchaser_detail['purch_org'] + ' - ' + porg_description
+        #
+        # if django_query_instance.django_existence_check(OrgPGroup,
+        #                                                 {'client': global_variables.GLOBAL_CLIENT,
+        #                                                  'pgroup_id': purchaser_detail['purch_grp']}):
+        #     pgrp_description = django_query_instance.django_filter_value_list_query(OrgPGroup,
+        #                                                                             {'client': global_variables.GLOBAL_CLIENT,
+        #                                                                              'pgroup_id': purchaser_detail['purch_grp']},
+        #                                                                             'description')[0]
+        #
+        #     po_header_detail['pgrp_description'] = purchaser_detail['purch_grp'] + ' - ' + pgrp_description
+
+    sc_item_details = django_query_instance.django_filter_query(ScItem,
+                                                                {'sc_header_guid': sc_header_guid,
+                                                                 'client': global_variables.GLOBAL_CLIENT},
+                                                                None,
+                                                                None)
+    po_item_guid_list = dictionary_key_to_list(sc_item_details, 'po_item_guid')
+
+    sc_accounting_details = django_query_instance.django_filter_query(ScAccounting,
+                                                                      {'sc_item_guid__in': po_item_guid_list,
+                                                                       'client': global_variables.GLOBAL_CLIENT},
+                                                                      None,
+                                                                      None)
+    for sc_header_guid in po_header_details:
+        sc_header_guid['guid'] = sc_header_guid['sc_header_guid']
+        del sc_header_guid['sc_header_guid']
+        sc_header_guid['created_at'] = sc_header_guid['po_header_created_at']
+        del sc_header_guid['po_header_created_at']
+        sc_header_guid['created_by'] = sc_header_guid['po_header_created_by']
+        del sc_header_guid['po_header_created_by']
+    po_header_details, po_approver_details, sc_completion, requester_first_name = get_po_header_app(po_header_details,
+                                                                                                    global_variables.GLOBAL_CLIENT)
+    # po_header_level_address = django_query_instance.django_filter_query(ddresses,
+    #                                                                     {'sc_header_guid': sc_header_guid,
+    #                                                                      'client': global_variables.GLOBAL_CLIENT},
+    #                                                                     None,
+    #                                                                     None)
+    # po_item_level_address = django_query_instance.django_filter_query(PoAddresses,
+    #                                                                   {'po_item_guid__in': po_item_guid_list,
+    #                                                                    'client': global_variables.GLOBAL_CLIENT},
+    #                                                                   None,
+    #                                                                   None)
+    context = {'po_header_details': po_header_details,
+               'sc_item_details': sc_item_details,
+               'sc_accounting_details': sc_accounting_details,
+               'po_approver_details': po_approver_details,
+               'sc_completion': sc_completion,
+               'requester_first_name': requester_first_name,
+
+               }
+    return context
+

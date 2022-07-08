@@ -162,7 +162,7 @@ function compare_table_for_duplicate_entries(validate_add_attributes, country) {
     });
     if (add_attr_duplicates_list.length != 0) {
         $("#id_error_msg").prop("hidden", false)
-       document.getElementById("id_error_msg").innerHTML = messageConstants["JMSG001"];
+       //document.getElementById("id_error_msg").innerHTML = messageConstants["JMSG001"];
        document.getElementById("id_error_msg").style.color = "Red";
         $('#id_save_confirm_popup').modal('hide');
         $('#myModal').modal('show');
@@ -171,7 +171,7 @@ function compare_table_for_duplicate_entries(validate_add_attributes, country) {
     else if (country.country_code.length == 0) {
         $("#id_error_msg").prop("hidden", false)
         Error_msg = "";
-        Error_msg = messageConstants["JMSG002"] + "Country Code";
+        Error_msg = messageConstants["JMSG002"]+ "Country Code";
         document.getElementById("id_error_msg").innerHTML = Error_msg;
         document.getElementById("id_error_msg").style.color = "Red";
         $('#id_save_confirm_popup').modal('hide');
@@ -181,7 +181,7 @@ function compare_table_for_duplicate_entries(validate_add_attributes, country) {
     else if (country.country_name.length == 0) {
         $("#id_error_msg").prop("hidden", false)
         Error_msg = "";
-        Error_msg = messageConstants["JMSG002"] + "Country Name";
+        Error_msg = messageConstants["JMSG002"]+ "Country Name";
         document.getElementById("id_error_msg").innerHTML = Error_msg;
         document.getElementById("id_error_msg").style.color = "Red";
         $('#id_save_confirm_popup').modal('hide');

@@ -5,13 +5,50 @@
 
 {% block maincontent %}
 
-
-
 <div class="container-fluid">
-    <div class="hg_wrapper">
-        <div>
-            <div class="hg_head1">Supplier Registration</div>
-            <hr class="hg_heading_hrborder">
+    <div class="mep-form_wrapper">
+
+        <div class="elements-space-between">
+            <h3>Supplier Registration</h3>
+            <div></div>
+        </div>
+
+        <ul class="sub-tabs">
+            <li data-tab-target="#basic_data_tab" class="sub-tab active">
+                <div class="sub-tab-link">
+                    <i class="fas fa-info-circle"></i><span> Basic Data</span>
+                </div>
+            </li>
+            <li data-tab-target="#org_data_tab" class="sub-tab">
+                <div class="sub-tab-link">
+                    <i class="fas fa-sitemap"></i><span> Organizational Data</span>
+                </div>
+            </li>
+            <li data-tab-target="#buisness_doc_tab" class="sub-tab">
+                <div class="sub-tab-link">
+                    <i class="fas fa-file-alt"></i><span> Business Document</span>
+                </div>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div id="basic_data_tab" data-tab-content class="active">
+                <div class="mt-3">
+
+                </div>
+            </div>
+
+            <div id="org_data_tab" data-tab-content>
+                <div class="mt-3">
+
+                </div>
+            </div>
+
+            <div id="buisness_doc_tab" data-tab-content>
+                <div class="mt-3">
+
+                </div>
+            </div>
         </div>
 
         <div class="card card-margin">
@@ -174,7 +211,7 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label> Working days:</label><br>
-                                        {{ supplier_form.working_days }}
+                                        {{ supplier_form.delivery_days }}
                                     </div>
                                     <div class="form-group col-md">
                                         <label> Duns number:</label><br>

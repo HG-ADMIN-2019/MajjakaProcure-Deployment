@@ -124,7 +124,8 @@ class Catalogs(models.Model, DBQueries):
     catalog_id = models.CharField(db_column='CATALOG_ID', null=False, default=None, max_length=16)
     description = models.CharField(db_column='DESCRIPTION', max_length=255, null=False, blank=False)
     name = models.CharField(db_column='CATALOG_NAME', max_length=16, null=False)
-    product_type = models.CharField(db_column='PRODUCT_TYPE', max_length=16, null=False)
+    prod_type = models.CharField(db_column='PROD_TYPE', max_length=10, blank=False, null=True,
+                                 verbose_name='Product Type')
     catalogs_created_by = models.CharField(db_column='CATALOGS_CREATED_BY', max_length=30, null=True)
     catalogs_created_at = models.DateTimeField(db_column='CATALOGS_CREATED_AT', max_length=50, null=True)
     catalogs_changed_by = models.CharField(db_column='CATALOGS_CHANGED_BY', max_length=30, null=True)
@@ -195,7 +196,7 @@ class OrgAddress(models.Model):
     address_number = models.PositiveIntegerField(db_column='ADDRESS_NUMBER', null=False)
     address_partner_type = models.ForeignKey('eProc_Configuration.AddressPartnerType', models.DO_NOTHING,
                                              db_column='ADDRESS_PARTNER_TYPE', null=True)
-    title = models.CharField(db_column='TITLE', max_length=40)
+    title = models.CharField(db_column='TITLE', max_length=40,null=True)
     name1 = models.CharField(db_column='NAME1', max_length=40, null=False, verbose_name='First Name')
     name2 = models.CharField(db_column='NAME2', max_length=40, null=False, verbose_name='Last Name')
     street = models.CharField(db_column='STREET', max_length=100, null=False, verbose_name='Street')
@@ -207,9 +208,9 @@ class OrgAddress(models.Model):
     mobile_number = models.CharField(db_column='MOBILE_NUMBER', max_length=20, verbose_name='Mobile', null=False,
                                      blank=True)
     telephone_number = models.CharField(db_column='TELEPHONE_NUMBER', max_length=20, verbose_name='Telephone',
-                                        null=False, blank=True)
-    fax_number = models.CharField(db_column='FAX_NUMBER', max_length=30, null=False, blank=False, verbose_name='Fax')
-    email = models.EmailField(db_column='EMAIL', max_length=100, null=False)
+                                        null=True, blank=True)
+    fax_number = models.CharField(db_column='FAX_NUMBER', max_length=30, null=True, blank=False, verbose_name='Fax')
+    email = models.EmailField(db_column='EMAIL', max_length=100, null=True)
     org_address_created_by = models.CharField(db_column='ORG_ADDRESS_CREATED_BY', max_length=30, null=True)
     org_address_created_at = models.DateTimeField(db_column='ORG_ADDRESS_CREATED_AT', max_length=50, null=True)
     org_address_changed_by = models.CharField(db_column='ORG_ADDRESS_CHANGED_BY', max_length=30, null=True)
@@ -230,7 +231,7 @@ class OrgAddress(models.Model):
         managed = True
 
     def __str__(self):
-        return self.address_number
+        return self.address_guid
 
 
 class OrgAddressMap(models.Model):
@@ -409,7 +410,8 @@ class ProductsDetail(models.Model, DBQueries):
                                   verbose_name='Product Short Description')
     long_desc = models.CharField(db_column='LONG_DESC', max_length=1000, blank=True, null=True,
                                  verbose_name='Product Long desc')
-    supp_prod_num = models.CharField(db_column='SUPP_PROD_NUMBER', max_length=40, blank=True, null=True,
+    bundle_flag = models.BooleanField(db_column='BUNDLE_FLAG', null=True)
+    supp_product_id = models.CharField(db_column='SUPP_PRODUCT_ID', max_length=40, blank=True, null=True,
                                      verbose_name='Supplier Product Number')
     supplier_id = models.CharField(db_column='SUPPLIER_ID', max_length=10, verbose_name='Vendor Id', null=True)
     search_term1 = models.CharField(db_column='SEARCH_TERM1', null=True, max_length=15)
@@ -418,15 +420,20 @@ class ProductsDetail(models.Model, DBQueries):
     brand = models.CharField(db_column="BRAND", null=True, max_length=15)
     offer_key = models.CharField(db_column='OFFER_KEY', null=True, max_length=15)
     price_on_request = models.BooleanField(db_column='PRICE_ON_REQUEST', null=True, default=False)
-    manu_prod = models.CharField(db_column='MANU_PROD', null=True, max_length=8)
-    product_type = models.CharField(db_column='PRODUCT_TYPE', null=True, max_length=8)
+    manu_part_num = models.CharField(db_column='MANU_PART_NUM', max_length=40, null=True)
+    manu_code_num = models.CharField(db_column='MANU_CODE_NUM', max_length=10, null=True)
+    prod_type = models.CharField(db_column='PROD_TYPE', max_length=10, blank=True, null=True,
+                                 verbose_name='Product Type')
     lead_time = models.PositiveIntegerField(db_column='LEAD_TIME', null=True)
-    quantity_avail = models.CharField(db_column='QUANTITY_AVAIL', max_length=16, blank=True, null=True,
+    quantity_avail = models.PositiveIntegerField(db_column='QUANTITY_AVAIL',null=True,
                                       verbose_name='Quantity Availability')
     price = models.DecimalField(db_column='GROSS_PRICE', max_digits=15, decimal_places=2, null=True)
-    price_unit = models.CharField(db_column='PRICE_UNIT', max_length=5, null=True)
-    cust_prod_cat_id = models.CharField(db_column='CUST_PROD_CAT_ID', null=True, max_length=15)
+    price_unit = models.CharField(db_column='PRICE_UNIT', max_length=3, null=True)
+    cust_prod_cat_id = models.CharField(db_column='CUST_PROD_CAT_ID', null=True, max_length=20)
     quantity_min = models.PositiveIntegerField(db_column='QUANTITY_MIN', null=True)
+    value_min = models.PositiveIntegerField(db_column='VALUE_MIN', null=True)
+    quantity_max = models.PositiveIntegerField(db_column='QUANTITY_MAX', null=True, verbose_name='Quantity Max')
+    tiered_flag = models.BooleanField(default=False, null=False, db_column='TIERED_FLAG')
     created_at = models.DateField(db_column='CREATED_AT', null=True)
     created_by = models.CharField(db_column='CREATED_BY', null=True, max_length=15)
     changed_at = models.DateField(db_column='CHANGED_AT', null=True)
@@ -434,12 +441,19 @@ class ProductsDetail(models.Model, DBQueries):
     ctr_num = models.CharField(db_column='CTR_NUM', max_length=50, blank=True, null=True, verbose_name='ctr num')
     ctr_item_num = models.CharField(db_column='CTR_ITEM_NUM', max_length=50, blank=True, null=True,
                                     verbose_name='ctr num')
+    ctr_name = models.CharField(db_column='CTR_NAME', blank=True, null=True, max_length=50,verbose_name='Contract Name')
     # AWAITING_APPROVAL- UPON UPLOAD OF MASTER DATA BY SUPPLIER
     # ACTIVE - WHEN PRODUCT APPROVED BY PROD CAT MANAGER
     # INACTIVE - WHEN PRODUCT APPROVED BY PROD CAT MANAGER
     # DE-ACTIVE -WHEN PRODUCT IS DEPRECATED
     product_status = models.CharField(db_column='PRODUCT_STATUS', max_length=20, blank=False, null=True,
                                       verbose_name='Status')
+    sgst = models.DecimalField(db_column='SGST', max_digits=15, decimal_places=2, blank=True, null=True,
+                               verbose_name='State GST')
+    cgst = models.DecimalField(db_column='CGST', max_digits=15, decimal_places=2, blank=True, null=True,
+                               verbose_name='Central GST')
+    vat = models.DecimalField(db_column='VAT', max_digits=15, decimal_places=2, blank=True, null=True,
+                              verbose_name='Value Added Tax - VAT code (%age as decimal) returned from catalogue ')
     price_1 = models.DecimalField(db_column='PRICE_1', max_digits=15, decimal_places=2, null=True)
     quantity_1 = models.PositiveIntegerField(db_column='QUANTITY_1', null=True)
     price_2 = models.DecimalField(db_column='PRICE_2', max_digits=15, decimal_places=2, null=True)
@@ -546,6 +560,7 @@ class SupplierMaster(models.Model, DBQueriesSupplier):
                                  verbose_name='Supplier Type')
     name1 = models.CharField(db_column='NAME1', max_length=40, blank=False, null=False, verbose_name='Name 1')
     name2 = models.CharField(db_column='NAME2', max_length=40, blank=False, null=True, verbose_name='Name 2')
+    supplier_username = models.CharField(db_column='SUPPLIER_USERNAME', null=True, max_length=16)
     city = models.CharField(db_column='CITY', max_length=40, blank=True, null=True, verbose_name='City')
     postal_code = models.CharField(db_column='POSTAL_CODE', max_length=10, blank=True, null=True,
                                    verbose_name='Postal Code')
@@ -569,7 +584,7 @@ class SupplierMaster(models.Model, DBQueriesSupplier):
                                    verbose_name='Duns Number')
     block_date = models.DateField(db_column='BLOCK DATE', null=True, verbose_name='Block Date')
     block = models.BooleanField(db_column='BLOCK', default=False, null=False)
-    working_days = models.CharField(db_column='WORKING DAYS', max_length=13, null=False, verbose_name='Working Days')
+    delivery_days = models.CharField(db_column='DELIVERY_DAYS', max_length=20, null=True, blank=True)
     is_active = models.BooleanField(db_column='IS_ACTIVE', default=True, null=False)
     registration_number = models.CharField(db_column='REGISTRATION_NUMBER', unique=True, max_length=30, null=True)
     company_id = models.CharField(db_column='COMPANY_ID', max_length=8, null=False)

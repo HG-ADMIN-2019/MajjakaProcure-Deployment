@@ -128,7 +128,7 @@
                         <span id="supplier_name">{{configured_free_text_form.supplier_name}}</span>
                     </div>
                     <div class="col">
-                        <b>Supplier Article Number:</b><br>
+                        <b>Supplier Product Number:</b><br>
                         <span id="supplier_article_number">{{configured_free_text_form.supplier_article_number}}</span>
                     </div>
                     <div class="w-100 p-2"></div>
@@ -152,7 +152,6 @@
 </div>
 <!-- Free text form end -->
 
-{% include 'root/loader.html' %}
 {% include 'Doc_Details/add_item_confirmation_popup.html' %}
 
 <script>
@@ -173,6 +172,7 @@
        // var configured_free_text_form = {{configured_free_text_form|safe}};
         eform_configured = {{eform_configured|safe}};
         display_fields_from_array()
+        nav_bar_shop()
         //display_configured_fields(configured_free_text_form);
         if(is_edit){
             no_slide_menu_style()
@@ -181,24 +181,27 @@
             $('#edit_message').show()
         }
     });
+
+
 $('#free_text_form_submit').submit(function (e) {
     e.preventDefault();
+    OpenLoaderPopup();
     data = {}
     data.freetext_id = '{{configured_free_text_form.freetext_id|safe}}';
-    data.item_name = document.getElementById("id_product_name").value
-    data.prod_desc = document.getElementById("id_description").value
-    data.price_unit = document.getElementById("id_price_unit").value
-    data.price = document.getElementById("id_price").value
-    data.uom = document.getElementById("uom_free_text").value
-    data.item_del_date = document.getElementById("id_delivery_date").value
-    data.quantity = document.getElementById("id_quantity").value
+    data.item_name = document.getElementById("id_product_name").value;
+    data.prod_desc = document.getElementById("id_description").value;
+    data.price_unit = document.getElementById("id_price_unit").value;
+    data.price = document.getElementById("id_price").value;
+    data.uom = document.getElementById("uom_free_text").value;
+    data.item_del_date = document.getElementById("id_delivery_date").value;
+    data.quantity = document.getElementById("id_quantity").value;
 
-    let header_guid = ''
+    let header_guid = '';
     var error_message = '';
 
     if (is_edit) {
-        data.header_guid = window.sessionStorage.getItem('sc_header_guid')
-        data.document_number = window.sessionStorage.getItem('sc_header_guid')
+        data.header_guid = window.sessionStorage.getItem('sc_header_guid');
+        data.document_number = window.sessionStorage.getItem('sc_header_guid');
     }
     else{
         data.document_number = 'create'
@@ -239,6 +242,7 @@ $('#free_text_form_submit').submit(function (e) {
                 if (!is_edit) {
                     counter = document.getElementById('cart_counter').innerHTML
                     $('#cart_counter').html(parseInt(counter) + 1)
+                    CloseLoaderPopup();
                     item_added_to_cart_success_popup();
                 } else {
                     $('#confirm_add_item').modal('show')
@@ -252,20 +256,21 @@ $('#free_text_form_submit').submit(function (e) {
             }
         })
 });
-    nav_bar_shop()
+    
     // Function to add free text item to cart
     $('#free_text_form').submit(function (e) {
         e.preventDefault();
-        let supplier = document.getElementById("supplier_id").innerHTML
-        let eform_data = document.getElementById("is_eform").innerHTML
-        let item_name = document.getElementById("id_product_name").value
-        let prod_desc = document.getElementById("id_description").value
-        let price = document.getElementById("id_price_unit").value
-        let uom = document.getElementById("uom_free_text").value
-        let del_date = document.getElementById("id_delivery_date").value
-        let quantity = document.getElementById("id_quantity").value
-        let product_category_id = document.getElementById("product_category_id").innerHTML
-        let header_guid = ''
+        OpenLoaderPopup();
+        let supplier = document.getElementById("supplier_id").innerHTML;
+        let eform_data = document.getElementById("is_eform").innerHTML;
+        let item_name = document.getElementById("id_product_name").value;
+        let prod_desc = document.getElementById("id_description").value;
+        let price = document.getElementById("id_price_unit").value;
+        let uom = document.getElementById("uom_free_text").value;
+        let del_date = document.getElementById("id_delivery_date").value;
+        let quantity = document.getElementById("id_quantity").value;
+        let product_category_id = document.getElementById("product_category_id").innerHTML;
+        let header_guid = '';
         var error_message = '';
 
         if (is_edit) {
@@ -274,20 +279,72 @@ $('#free_text_form_submit').submit(function (e) {
 
         // Item name validation
         if (item_name.length < 3) {
-            error_message += messageConstants["JMSG028"]
+            //error_message += messageConstants["JMSG028"]
+           
+                var msg = "JMSG028";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+                var error_message = msg_type.messages_id_desc[0];
+               return [error_message]
         }
 
         // Item name validation
         is_valid = check_for_special_char(item_name)
         if (!is_valid) {
-            error_message += messageConstants["JMSG003"] + "Item Name";
+            var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+                var msg = "JMSG003";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+              var display4 = msg_type.messages_id_desc[0];
+              error_message += display4+ "Item Name";
+
+
         }
 
         if(dateframe_array.length === 2){
             from_date = document.getElementsByClassName('From Date')[0].value
             to_date = document.getElementsByClassName('To Date')[0].value
             if(to_date < from_date){
-                error_message += messageConstants["JMSG030"]
+
+                 
+                    var msg = "JMSG030";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display = msg_type.messages_id_desc[0];
+                  error_message += display;
             }
         }
 
@@ -337,19 +394,20 @@ $('#free_text_form_submit').submit(function (e) {
                 $('#free_text_form').trigger("reset");
                 if (!is_edit) {
                     counter = document.getElementById('cart_counter').innerHTML
-                    $('#cart_counter').html(parseInt(counter) + 1)
+                    $('#cart_counter').html(parseInt(counter) + 1);
+                    CloseLoaderPopup();
                     item_added_to_cart_success_popup();
                 } else {
-                    $('#confirm_add_item').modal('show')
+                    $('#confirm_add_item').modal('show');
                 }
                 $('#free_text_errors').hide();
             },
             error: function (response) {
                 document.getElementById('free_text_errors').innerHTML = response.responseJSON.error;
                 $('#free_text_errors').show();
-                scroll_top()
+                scroll_top();
             }
-        })
+        });
     });
 
     // Function display configured freetext form fields from MSS_FREETEXT_FORM

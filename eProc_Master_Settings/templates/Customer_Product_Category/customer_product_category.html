@@ -301,7 +301,23 @@ function upload_unscpsc_prod_cat_image(prod_id){
          window.msIDBKeyRange
 
          if (!window.indexedDB) {
-            window.alert(messageConstants["JMSG044"])
+                  
+                    var msg = "JMSG044";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display = msg_type.messages_id_desc[0];
+            window.alert(display)
          }
 
 
@@ -643,7 +659,22 @@ $(function() {
                             custprodcat_data.prod_cat_id = (row.find("TD").eq(1).find('input[type="number"]').val());
                             if (custprodcat_data.prod_cat_id.length == 0) {
                                 Error_msg = "";
-                                Error_msg = messageConstants["JMSG002"] + "Spend Code ID";
+                                //Error_msg = messageConstants["JMSG002"] + "Spend Code ID";
+                             
+                                    var msg = "JMSG002";
+                                    var msg_type ;
+                                  msg_type = message_config_details(msg);
+                                  $("#error_msg_id").prop("hidden", false)
+
+                                  if(msg_type.message_type[0] == "ERROR"){
+                                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                                  }
+                                  else if(msg_type.message_type[0] == "WARNING"){
+                                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                                  }
+                                  else if(msg_type.message_type[0] == "INFORMATION"){
+                                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                                  }
                                 document.getElementById("err_msg_app_settings").innerHTML = Error_msg;
                                 document.getElementById("err_msg_app_settings").style.color = "Red";
 
@@ -651,7 +682,24 @@ $(function() {
                             }
                             if (pattern_num.test(custprodcat_data.prod_cat_id)) {
                                 Error_msg = "";
-                                Error_msg = messageConstants["JMSG003"] + "Product Category ID";
+                                     
+                                        var msg = "JMSG003";
+                                        var msg_type ;
+                                      msg_type = message_config_details(msg);
+                                      $("#error_msg_id").prop("hidden", false)
+
+                                      if(msg_type.message_type[0] == "ERROR"){
+                                            display_message("error_msg_id", msg_type.messages_id_desc[0])
+                                      }
+                                      else if(msg_type.message_type[0] == "WARNING"){
+                                         display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                                      }
+                                      else if(msg_type.message_type[0] == "INFORMATION"){
+                                         display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                                      }
+                                      var display = msg_type.messages_id_desc[0];
+                                    Error_msg = display + "Product Category ID";
+
                                 document.getElementById("err_msg_app_settings").innerHTML = Error_msg;
                                 document.getElementById("err_msg_app_settings").style.color = "Red";
 
@@ -676,7 +724,24 @@ $(function() {
                             success: function (Response) {
                             rendered_cust_prod_cat_data = Response;
                             display_basic_db_data();
-                            document.getElementById("err_msg_app_settings_t").innerHTML = messageConstants["JMSG039"];
+                              
+                                   var msg = "JMSG039";
+                                    var msg_type ;
+                                  msg_type = message_config_details(msg);
+                                  $("#error_msg_id").prop("hidden", false)
+
+                                  if(msg_type.message_type[0] == "ERROR"){
+                                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                                  }
+                                  else if(msg_type.message_type[0] == "WARNING"){
+                                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                                  }
+                                  else if(msg_type.message_type[0] == "INFORMATION"){
+                                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                                  }
+                                  var display = messages_id_desc[0];
+                                 document.getElementById("err_msg_app_settings_t").innerHTML = display;
+
                             document.getElementById("err_msg_app_settings_t").style.color = "Green";
                             clearData();
                             },
@@ -921,6 +986,7 @@ function delete_duplicate() {
 //onclick of data Upload copy data to modal pop-up
 
 function onclick_display_csv_data() {
+   $("#error_msg_id").css("display", "none")
     $('#id_popup_table').DataTable().destroy();
     formdata = new FormData();
       attached_file = $('#id_file_data_upload').prop('files')[0]
@@ -933,6 +999,7 @@ function onclick_display_csv_data() {
                 formdata.append("appname",appname);
             $('#id_data_upload').modal('hide');
             $('#id_popup_tbody').empty();
+            OpenLoaderPopup();
             $.ajax({
                 type: 'POST',
                 url: "{% url 'eProc_Basic_Settings:data_upload' %}",
@@ -986,6 +1053,7 @@ function onclick_display_csv_data() {
                 $("#save_id").prop("hidden", true);
                 table_sort_filter('id_popup_table')
             }
+             CloseLoaderPopup();
         },
             cache: false,
             processData: false,
@@ -995,7 +1063,24 @@ function onclick_display_csv_data() {
 
  else{
         $("#id_error_msg_upload").prop("hidden",false)
-        document.getElementById("id_error_msg_upload").innerHTML = messageConstants["JMSG110"];
+              
+                   var msg = "JMSG110";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display = msg_type.messages_id_desc[0];
+                 document.getElementById("id_error_msg_upload").innerHTML = display;
+
         document.getElementById("id_error_msg_upload").style.color = "Red";
         $('#id_data_upload').modal('show');
     }
@@ -1025,7 +1110,7 @@ function main_table_delete(){
     });
     $('#id_delete_confirm_popup').modal('hide');
     data = {'data':main_table_cusprodcat_checked,'table_name':'UnspscCategoriesCust','action':GLOBAL_ACTION}
-
+    OpenLoaderPopup();
     $.ajax({
         type: 'POST',
         url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
@@ -1037,8 +1122,14 @@ function main_table_delete(){
             rendered_cust_prod_cat_data = Response[0];
             display_basic_db_data();
             $('#success_msg_id').text(Response[1])
+             if(Response[1].message_type[0]== 'SUCCESS'){
+                         $('#success_msg_id').text(Response[1].message_desc[0])
+              }
             $("#err_msg_app_settings_t").prop("hidden",false)
+             table_sort_filter('id_popup_table');
             setTimeout(function(){$("#err_msg_app_settings_t").prop("hidden",true);},5000)
+             table_sort_filter('id_popup_table');
+             CloseLoaderPopup();
         }
     });
 }
@@ -1084,8 +1175,7 @@ function main_table_delete(){
 
                     $('#id_save_confirm_popup').modal('hide');
                     data = {'data':cust_prod_cat_data,'table_name':'UnspscCategoriesCust','action':GLOBAL_ACTION}
-
-
+                    OpenLoaderPopup();
                     $.ajax({
                         type: 'POST',
                         url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
@@ -1096,14 +1186,18 @@ function main_table_delete(){
                             rendered_cust_prod_cat_data = Response[0];
                             display_basic_db_data();
                             $('#myModal').modal('hide');
-                            $('#id_error_msg').text(messageConstants["JMSG001"])
+                            //$('#id_error_msg').text(messageConstants["JMSG001"])
                             $('#success_msg_id').text(Response[1])
+                            if(Response[1].message_type[0]== 'SUCCESS'){
+                                $('#success_msg_id').text(Response[1].message_desc[0])
+                            }
                             $("#err_msg_app_settings_t").prop("hidden", false)
                             table_sort_filter('id_popup_table');
                             setTimeout(function() {
                                 $("#err_msg_app_settings_t").prop("hidden", true);
                             }, 5000)
                             table_sort_filter('id_popup_table');
+                            CloseLoaderPopup();
                         }
                     });
 
@@ -1204,8 +1298,24 @@ function maintable_validation(validate_add_attributes, main_table_low_value) {
         if (jQuery.inArray(el, main_table_low_value) != -1) { common.push(el); }
     });
     if (common.length != 0) {
-      error_message = messageConstants["JMSG001"]
-      no_duplicate_entries = 'N'
+      //error_message = messageConstants["JMSG001"]
+              
+                var msg = "JMSG001";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
     }
     return [no_duplicate_entries,error_message]
 }
@@ -1227,22 +1337,70 @@ function compare_table_for_duplicate_entries(validate_add_attributes, cusprodcat
             }
         }
     });
-       if (add_attr_duplicates_list.length != 0) {
-        error_message = messageConstants["JMSG001"];
-        no_duplicate_value = 'N'
-  }
-  else {
+   if (add_attr_duplicates_list.length != 0) {
+        //error_message = messageConstants["JMSG001"];
+              
+                var msg = "JMSG001";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+
+    }
+    else {
          $.each(cusprodcat, function (i, item) {
             if (item.prod_cat_id.length == 0) {
-                error_message = messageConstants["JMSG002"] +"Product Category Id";
+                //error_message = messageConstants["JMSG002"] +"Product Category Id";
+              
+                var msg = "JMSG002";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
                 no_duplicate_value = 'N'
                 return [no_duplicate_value,error_message]
             }
-<!--             if (item.prod_cat_desc.length == 0) {-->
-<!--                error_message = messageConstants["JMSG002"] +  "Description";-->
-<!--                no_duplicate_value = 'N'-->
-<!--                return [no_duplicate_value,error_message]-->
-<!--            }-->
+             if (item.prod_cat_desc.length == 0) {
+                //error_message = messageConstants["JMSG002"] +  "Description";
+                no_duplicate_value = 'N'
+             
+                var msg = "JMSG002";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
 
         });
     }

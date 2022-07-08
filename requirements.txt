@@ -47,3 +47,5 @@ django-sass
 libsass
 dj-static
 static3
+opencv-python==4.5.4.60
+yagmail==0.15.277

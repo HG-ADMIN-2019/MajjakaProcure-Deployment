@@ -108,95 +108,6 @@ $(".remove_upload_data").click(() => {
 });
 
 
-
-
-//validate by comparing  main table values and popup table values
-function maintable_validation(validate_add_attributes, main_table_low_value,numberranges_data,main_table_data) {
-    var no_duplicate_entries = 'Y'
-    var common = [];
-    var error_message =''
-    jQuery.grep(validate_add_attributes, function (el) {
-        if (jQuery.inArray(el, main_table_low_value) != -1) {
-            common.push(el);
-        }
-    });
-    if (common.length != 0) {
-        error_message = messageConstants["JMSG001"]
-        no_duplicate_entries = 'N'
-    }
-    validation_error = main_range_check_function(numberranges_data,main_table_data)
-    if(!validation_error){
-        error_message = messageConstants["JMSG109"] ;
-        no_duplicate_value = 'N'
-        return [no_duplicate_value,error_message]
-    }
-    return [no_duplicate_entries,error_message]
-}
-
-
-//****************************
-// validating the  popup table for duplicate entries
-function compare_table_for_duplicate_entries(validate_add_attributes, number_range) {
-    add_attr_duplicates = false;
-    var validation_error = false
-    var add_attr_duplicates_list = [];
-    var add_attr_unique_list = [];
-    var no_duplicate_value = 'Y'
-    var error_message = ''
-    $.each(validate_add_attributes, function (index, value) {
-        if ($.inArray(value, add_attr_unique_list) == -1) {
-            add_attr_unique_list.push(value);
-        } else {
-            if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                add_attr_duplicates_list.push(value);
-            }
-        }
-    });
-    if (add_attr_duplicates_list.length != 0) {
-        error_message = messageConstants["JMSG001"];
-        no_duplicate_value = 'N'
-            } else{
-           $.each(number_range, function (i, item) {
-
-            if (item.starting.length == 0) {
-                error_message = messageConstants["JMSG002"] + "starting";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
-             if (item.ending.length == 0) {
-                error_message = messageConstants["JMSG002"] + "ending";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
-             if (item.current.length == 0) {
-                error_message = messageConstants["JMSG002"] + "current";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
-
-         });
-        var range_check = list_out_of_range(number_range)
-        if (range_check){
-            error_message = messageConstants["JMSG016"] ;
-            no_duplicate_value = 'N'
-            return [no_duplicate_value,error_message]
-
-        }
-        else{
-            check_number_range = number_range
-            validation_error = range_check_function(number_range,check_number_range)
-            if(!validation_error){
-                error_message = messageConstants["JMSG109"] ;
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
-        }
-    }
-
-    return [no_duplicate_value,error_message]
-}
-
-
 function list_out_of_range(number_range){
     var range_flag = true
     $.each(number_range, function (i, number) {
@@ -253,49 +164,50 @@ function inRange(x, min, max) {
     return !((x-min)*(x-max) <= 0);
 }
 
-
-// on click add icon display the row in to add the new entries
+var nextval = max_sequence ;
 function add_popup_row() {
+  $("#error_msg_id").css("display", "none")
     basic_add_new_html = '';
     var display_db_data = '';
     $('#id_popup_table').DataTable().destroy();
     $(".modal").on("hidden.bs.modal", function () {
         $("#id_error_msg").html("");
     });
-    basic_add_new_html = '<tr ><td class="number_range_checkbox"><input type="checkbox" required></td><td><input class="form-control" type="text" maxlength="2" onkeypress="return /[0-9]/i.test(event.key)" name="sequence" style="text-transform:uppercase;" required></td><td><input class="form-control" type="text" maxlength="100000000" onkeypress="return /[0-9]/i.test(event.key)" name="starting" style="text-transform:uppercase;" required></td><td><input class="form-control" type="text" maxlength="100000000" onkeypress="return /[0-9]/i.test(event.key)" name="ending" style="text-transform:uppercase;" required></td><td><input class="form-control" type="text" maxlength="100000000" onkeypress="return /[0-9]/i.test(event.key)" name="current" style="text-transform:uppercase;" required></td>><td hidden><input type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    nextval += 1;
+    basic_add_new_html = '<tr ><td class="number_range_checkbox"><input type="checkbox" required></td><td><input class="form-control"  type="text" maxlength="2" value = '+ nextval +' onkeypress="return /[0-9]/i.test(event.key)" name="sequence" style="text-transform:uppercase;" required></td><td><input class="form-control" type="text" maxlength="100000000" onkeypress="return /[0-9]/i.test(event.key)" name="starting" style="text-transform:uppercase;" required></td><td><input class="form-control" type="text" maxlength="100000000" onkeypress="return /[0-9]/i.test(event.key)" name="ending" style="text-transform:uppercase;" required></td><td><input class="form-control" type="text" maxlength="100000000" onkeypress="return /[0-9]/i.test(event.key)" name="current" style="text-transform:uppercase;" required></td>><td hidden><input class="form-control" type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     if (GLOBAL_ACTION == "number_range") {
         $(".class_del_checkbox").prop("hidden", false);
     }
-    table_sort_filter_popup_pagination('id_popup_table');
+    table_sort_filter('id_popup_table');
 }
 
-//onclick of delete,delete the row.
-function application_settings_delete_Row(myTable) {
-    $('#id_popup_table').DataTable().destroy();
-    try {
-        var table = document.getElementById(myTable);
-        var rowCount = table.rows.length;
-
-        for (var i = 0; i < rowCount; i++) {
-            var row = table.rows[i];
-            var chkbox = row.cells[0].childNodes[0];
-            if (null != chkbox && true == chkbox.checked) {
-                table.deleteRow(i);
-                rowCount--;
-                i--;
-            }
-        }
-        
-        $("#id_delete_number_range").hide();
-        $("#id_copy_number_range").hide();
-        $("#id_update_number_range").hide();
-        table_sort_filter_popup_pagination('id_popup_table');
-        return rowCount;
-    } catch (e) {
-        alert(e);
-    }
-}
+////onclick of delete,delete the row.
+//function application_settings_delete_Row(myTable) {
+//    $('#id_popup_table').DataTable().destroy();
+//    try {
+//        var table = document.getElementById(myTable);
+//        var rowCount = table.rows.length;
+//
+//        for (var i = 0; i < rowCount; i++) {
+//            var row = table.rows[i];
+//            var chkbox = row.cells[0].childNodes[0];
+//            if (null != chkbox && true == chkbox.checked) {
+//                table.deleteRow(i);
+//                rowCount--;
+//                i--;
+//            }
+//        }
+//
+//        $("#id_delete_number_range").hide();
+//        $("#id_copy_number_range").hide();
+//        $("#id_update_number_range").hide();
+//        table_sort_filter_popup_pagination('id_popup_table');
+//        return rowCount;
+//    } catch (e) {
+//        alert(e);
+//    }
+//}
 
 
 //onclick of cancel display the table in display mode............
@@ -310,15 +222,14 @@ function display_basic_db_data() {
     $("#hg_select_checkbox").prop("hidden", true);
     $(".class_select_checkbox").prop("hidden", true);
     $('input:checkbox').removeAttr('checked');
-
-    $("#id_edit_number_range").show();
-    $("#id_cancel_number_range").hide();
-    $("#id_delete_number_range").hide();
-    $("#id_copy_number_range").hide();
-    $("#id_update_number_range").hide();
+    $('#id_edit_data').show();
+    $('#id_cancel_data').hide();
+    $('#id_delete_data').hide();
+    $('#id_copy_data').hide();
+    $('#id_update_data').hide();
     $('#id_save_confirm_popup').modal('hide');
-    $("#id_delete_confirm_popup").hide();
-    $("#id_check_all").hide();
+    $('#id_delete_confirm_popup').modal('hide');
+    $('#id_check_all').hide();
     table_sort_filter('display_basic_table');
 }
 

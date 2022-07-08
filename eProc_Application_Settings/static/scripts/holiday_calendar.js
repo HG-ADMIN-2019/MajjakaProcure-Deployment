@@ -52,22 +52,6 @@ $(".remove_upload_data").click(() => {
 });
 
 
-//validate by comparing  main table values and popup table values
-function maintable_validation(validate_add_attributes, main_table_low_value) {
-    var no_duplicate_entries = 'Y'
-    var common = [];
-    jQuery.grep(validate_add_attributes, function (el) {
-        if (jQuery.inArray(el, main_table_low_value) != -1) { common.push(el); }
-    });
-    if (common.length != 0) {
-       error_message = messageConstants["JMSG001"]
-        no_duplicate_entries = 'N'
-
-
-    }
-    return [no_duplicate_entries,error_message]
-}
-
 
 function check_date(calendar) {
     var validDate = 'Y';
@@ -75,7 +59,22 @@ function check_date(calendar) {
      $.each(calendar, function (i, item) {
         if ((Date.parse(item.to_date) < Date.parse(item.from_date)) == true) {
         $("#id_error_msg").prop("hidden", false)
-        error_message = messageConstants["JMSG017"];
+        //error_message = messageConstants["JMSG017"];
+
+                    var msg = "JMSG017";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
         $('#id_save_confirm_popup').modal('hide');
         onclick_copy_update_button(item.calender_id);
         $('#myModal').modal('show');
@@ -85,42 +84,6 @@ function check_date(calendar) {
     return [validDate,error_message]
 }
 
-// validating the  popup table for duplicate entries
-function compare_table_for_duplicate_entries(validate_add_attributes, calendar) {
-    add_attr_duplicates = false;
-    var error_message = ''
-    var add_attr_duplicates_list = [];
-    var add_attr_unique_list = [];
-    var no_duplicate_value = 'Y'
-    var validDate = 'Y';
-    $.each(validate_add_attributes, function (index, value) {
-        if ($.inArray(value, add_attr_unique_list) == -1) {
-            add_attr_unique_list.push(value);
-        }
-        else {
-            if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                add_attr_duplicates_list.push(value);
-            }
-        }
-    });
-    if (add_attr_duplicates_list.length != 0) {
-          error_message = messageConstants["JMSG001"];
-          no_duplicate_value = 'N'
-
-    }
-    else {
-         $.each(calendar, function (i, item) {
-             if (item.holiday_description.length == 0) {
-          error_message  = messageConstants["JMSG002"] + "Description";
-          no_duplicate_value = 'N'
-          return [no_duplicate_value,error_message]
-        }
-
-         });
-    }
-
-    return [no_duplicate_value,error_message]
-}
 
 function display_error_message(error_message){
         //$('#id_popup_table').DataTable().destroy();

@@ -1,27 +1,7 @@
 var auth_group_data = new Array();
 var validate_add_attributes = [];
 var auth_group={};
-//onclick of add button display myModal popup and set GLOBAL_ACTION button value
-function onclick_add_button(button) {
-    dropdown_value();
-    $("#error_msg_id").css("display", "none")
-    $("#header_select").prop( "hidden", false );
-    GLOBAL_ACTION = button.value
-    $('#id_popup_table').DataTable().destroy();
-    $("#id_popup_tbody").empty();
-    $('#myModal').modal('show');
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-    '<td><select type="text" class="input form-control authgroup"  id="authgroup-1" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ auth_group_id_dropdown+'</select></td>'+
-    '<td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td>'+
-    '<td><select class="form-control">'+auth_level_dropdown+'</select></td>'+
-    '<td><select class="form-control">'+auth_obj_id_dropdown+'</select></td>'+
-    '<td hidden><input type="text" value="GUID"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-    $('#id_popup_tbody').append(basic_add_new_html);
-    table_sort_filter('id_popup_table');
-    $("#id_del_ind_checkbox").prop("hidden", true);
-    document.getElementById("id_del_add_button").style.display = "block";
-    $("#save_id").prop("hidden", false);
-}
+
 
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
 function onclick_upload_button() {
@@ -111,81 +91,7 @@ $(".remove_upload_data").click(() => {
     $('#id_popup_table').DataTable().destroy();
 });
 
- //validate by comparing  main table values and popup table values
- function maintable_validation(validate_add_attributes, main_table_low_value) {
-    var no_duplicate_entries = 'Y'
-    var error_message =''
-    var common = [];
-    jQuery.grep(validate_add_attributes, function (el) {
-        if (jQuery.inArray(el, main_table_low_value) != -1) {
-        common.push(el);
-        }
-    });
-    if (common.length != 0) {
-        error_message = messageConstants["JMSG001"]
-        no_duplicate_entries = 'N'
-    }
-    return [no_duplicate_entries,error_message]
-}
 
-// validating the  popup table for duplicate entries
-function compare_table_for_duplicate_entries(validate_add_attributes, auth_group) {
-    add_attr_duplicates = false;
-    var error_message =''
-    var add_attr_duplicates_list = [];
-    var add_attr_unique_list = [];
-    var no_duplicate_value = 'Y'
-    $.each(validate_add_attributes, function(index, value) {
-        if ($.inArray(value, add_attr_unique_list) == -1) {
-            add_attr_unique_list.push(value);
-        } else {
-            if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                add_attr_duplicates_list.push(value);
-            }
-        }
-    });
-    if (add_attr_duplicates_list.length != 0) {
-       error_message = messageConstants["JMSG001"];
-        no_duplicate_value = 'N'
-
-    } else { $.each(auth_group, function (i, item) {
-     if (item.auth_obj_grp.length == 0) {
-         error_message = messageConstants["JMSG002"] + "Authorization Object Group";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
-     });
-    }
-
-    return [no_duplicate_value,error_message]
-}
-
-
-// on click add icon display the row in to add the new entries
-function add_popup_row() {
-    $("#error_msg_id").css("display", "none")
-    basic_add_new_html = '';
-    var display_db_data = '';
-    var getid = $(".authgroup:last").attr("id");
-    var getindex = getid.split("-")[1]
-    var inc_index = Number(getindex)+1
-    $('#id_popup_table').DataTable().destroy();
-    $(".modal").on("hidden.bs.modal", function() {
-        $("#id_error_msg").html("");
-    });
-//    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control authgroup"  id="authgroup-1" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ auth_group_id_dropdown+'</select></td><td><select class="form-control">'+auth_obj_id_dropdown+'</select></td><td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td><td><select class="form-control">'+auth_level_dropdown+'</select></td><td hidden><input type="text" value="GUID"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-     basic_add_new_html = '<tr ><td><input type="checkbox" required></td>'+
-     '<td><select type="text" class="input form-control authgroup" id="authgroup-'+inc_index+'"  onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ auth_group_id_dropdown +'</select></td>'+
-     '<td><input class="form-control description" type="text" id="description-'+inc_index+'" disabled></td>'+
-     '<td><select class="form-control">'+auth_level_dropdown+'</select></td>'+
-     '<td><select class="form-control">'+auth_obj_id_dropdown+'</select></td>'+
-     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-    $('#id_popup_tbody').append(basic_add_new_html);
-    if (GLOBAL_ACTION == "auth_group_upload") {
-        $(".class_del_checkbox").prop("hidden", false);
-    }
-    table_sort_filter_popup_pagination('id_popup_table');
-}
 
 //onclick of cancel display the table in display mode............
 function display_basic_db_data() {
@@ -272,15 +178,3 @@ $('#save_id').click(function () {
         });
     $('#id_save_confirm_popup').modal('show');
 });
- function GetSelectedTextValue(authgroup) {
-        var selectedText = authgroup.options[authgroup.selectedIndex].innerHTML;
-        var selectedValue = authgroup.value;
-        var selectedId = (authgroup.id).split('-')[1];
-         $.each(rendered_auth_group_field_data, function(i, item){
-            if(selectedValue == item.field_type_id){
-                $('#description-'+selectedId).val(item.field_type_desc);
-
-            }
-        });
-
-    }

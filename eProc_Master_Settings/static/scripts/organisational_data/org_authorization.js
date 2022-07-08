@@ -149,48 +149,6 @@ $(".remove_upload_data").click(() => {
 
 });
 
-//validate by comparing  main table values and popup table values
-function maintable_validation(validate_add_attributes, main_table_low_value) {
-    var no_duplicate_entries = 'Y'
-    var error_message =''
-    var common = [];
-    jQuery.grep(validate_add_attributes, function (el) {
-        if (jQuery.inArray(el, main_table_low_value) != -1) {
-        common.push(el);
-        }
-    });
-    if (common.length != 0) {
-        error_message = messageConstants["JMSG001"]
-        no_duplicate_entries = 'N'
-    }
-    return [no_duplicate_entries,error_message]
-}
-
-// val
-//****************************
-// validating the  popup table for duplicate entries
-function compare_table_for_duplicate_entries(validate_add_attributes, auth) {
-    add_attr_duplicates = false;
-     var error_message = ''
-    var add_attr_duplicates_list = [];
-    var add_attr_unique_list = [];
-    var no_duplicate_value = 'Y'
-    $.each(validate_add_attributes, function (index, value) {
-        if ($.inArray(value, add_attr_unique_list) == -1) {
-            add_attr_unique_list.push(value);
-        } else {
-            if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                add_attr_duplicates_list.push(value);
-            }
-        }
-    });
-    if (add_attr_duplicates_list.length != 0) {
-       error_message = messageConstants["JMSG001"];
-        no_duplicate_value = 'N'
-    }
-
-    return [no_duplicate_value,error_message]
-}
 
 // on click add icon display the row in to add the new entries
 function add_popup_row() {
@@ -298,7 +256,7 @@ $('#save_id').click(function () {
             auth.auth_obj_grp = row.find("TD").eq(3).find("select option:selected").val();
             auth.auth_type = row.find("TD").eq(2).find("select option:selected").val();
             auth.role = row.find("TD").eq(1).find("select option:selected").val();
-            auth.auth_guid = row.find("TD").eq(4).find('input[type="text"]').val().toUpperCase();
+            auth.auth_guid = row.find("TD").eq(4).find('input[type="text"]').val();
             if (auth == undefined) {
                 auth.auth_obj_grp = row.find("TD").eq(3).find('input[type="text"]').val();
             }
@@ -333,10 +291,10 @@ function onclick_copy_update_button() {
             dropdown_values.push([auth_obj_grp,auth_type,role])
             if(GLOBAL_ACTION == "COPY"){
                 guid = 'GUID';
-                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class="form-control">'+roles_dropdown_dropdown+'</select></td><td><select class="form-control">'+auth_type_dropdown+'</select></td><td><select class="form-control">'+auth_group_dropdown+'</select></td><td hidden><input type="text" value="'+guid+'"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>'
+                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class="form-control">'+roles_dropdown+'</select></td><td><select class="form-control">'+auth_type_dropdown+'</select></td><td><select class="form-control">'+auth_group_dropdown+'</select></td><td hidden><input type="text" value="'+guid+'"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>'
             } else{
                 guid = row.cells[4].innerHTML;
-                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class="form-control" disable>'+roles_dropdown_dropdown+'</select></td><td><select class="form-control">'+auth_type_dropdown+'</select></td><td><select class="form-control">'+auth_group_dropdown+'</select></td><td hidden><input type="text" value="'+guid+'"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>'
+                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class="form-control" disable>'+roles_dropdown+'</select></td><td><select class="form-control">'+auth_type_dropdown+'</select></td><td><select class="form-control">'+auth_group_dropdown+'</select></td><td hidden><input type="text" value="'+guid+'"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>'
             }
 
         }

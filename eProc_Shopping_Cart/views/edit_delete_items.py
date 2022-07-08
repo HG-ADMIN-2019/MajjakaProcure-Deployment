@@ -24,6 +24,7 @@ from eProc_Form_Builder.Utilities.form_builder_generic import FormBuilder
 from eProc_Form_Builder.models import EformData, EformFieldData
 from eProc_Price_Calculator.Utilities.price_calculator_generic import calculate_item_total_value, calculate_total_value, \
     calculate_item_price
+from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_price_discount_tax, get_total_price_details
 from eProc_Shopping_Cart.Utilities.shopping_cart_specific import check_for_eform, get_limit_update_content, \
     get_free_text_content
 from eProc_Shopping_Cart.context_processors import update_user_info
@@ -50,7 +51,7 @@ def update_item(request):
             item_details = django_query_instance.django_get_query(ScItem, {'pk': guid})
 
     # Catalogue context
-    if item_details.call_off == CONST_CO01:
+    if item_details.call_off == CONST_CATALOG_CALLOFF:
         quantity = item_details.quantity
         if not quantity:
             quantity = item_details.catalog_qty
@@ -61,18 +62,18 @@ def update_item(request):
         return JsonResponse(catalog_context)
 
     # Limit order context
-    if item_details.call_off == CONST_CO04:
+    if item_details.call_off == CONST_LIMIT_ORDER_CALLOFF:
         limit_context = get_limit_update_content(item_details)
         return JsonResponse(limit_context)
 
     # PR context
-    if item_details.call_off == CONST_CO03:
+    if item_details.call_off == CONST_PR_CALLOFF:
         pr_context = {
             'item_name': item_details.description,
             'item_long_desc': item_details.long_desc,
             'prod_desc': item_details.prod_cat_desc,
-            'prod_id': item_details.ext_product_id,
-            'prod_cat_id': item_details.prod_cat,
+            'prod_id': item_details.int_product_id,
+            'prod_cat_id': item_details.prod_cat_id,
             'price': item_details.price,
             'currency': item_details.currency,
             'unit': item_details.unit,
@@ -82,7 +83,7 @@ def update_item(request):
         return JsonResponse(pr_context)
 
     # freetext context
-    if item_details.call_off == CONST_CO02:
+    if item_details.call_off == CONST_FREETEXT_CALLOFF:
         free_text_context = {
             'is_eform': False,
             'item_name': item_details.description,
@@ -94,7 +95,7 @@ def update_item(request):
             'del_date': item_details.item_del_date,
             'quantity': item_details.quantity,
             'supp_id': item_details.supplier_id,
-            'currency_id':item_details.currency
+            'currency_id': item_details.currency
         }
         supplier = item_details.supplier_id
         freetext_id = django_query_instance.django_filter_value_list_query(CartItemDetails,
@@ -107,16 +108,20 @@ def update_item(request):
                                                              'cart_guid': guid,
                                                              'eform_field_count': eform_data['eform_field_count']}):
                 eform_data['user_field_data'] = django_query_instance.django_filter_value_list_query(EformFieldData,
-                                                                                                     {'client': global_variables.GLOBAL_CLIENT,
+                                                                                                     {
+                                                                                                         'client': global_variables.GLOBAL_CLIENT,
                                                                                                          'cart_guid': guid,
                                                                                                          'eform_field_count':
                                                                                                              eform_data[
                                                                                                                  'eform_field_count']},
-                                                                                                     'eform_field_data')[0]
-                eform_data['eform_transaction_guid'] = django_query_instance.django_filter_value_list_query(EformFieldData,
+                                                                                                     'eform_field_data')[
+                    0]
+                eform_data['eform_transaction_guid'] = \
+                django_query_instance.django_filter_value_list_query(EformFieldData,
                                                                      {'client': global_variables.GLOBAL_CLIENT,
                                                                       'cart_guid': guid,
-                                                                      'eform_field_count':eform_data['eform_field_count']},
+                                                                      'eform_field_count': eform_data[
+                                                                          'eform_field_count']},
                                                                      'eform_field_data_guid')[0]
         check = check_for_eform(request)
         if supplier not in check:
@@ -137,7 +142,7 @@ def update_free_text_item(request):
     :param request:
     :return:
     """
-    call_off = CONST_CO02
+    call_off = CONST_FREETEXT_CALLOFF
     catalog_qty = None
     lot_size = 1
     if request.method == 'POST':
@@ -212,15 +217,21 @@ def delete_item(request):
     item_details.delete()
     cart_length = display_cart_counter(global_variables.GLOBAL_LOGIN_USERNAME)
     # If call_off type is free text delete the eform data
-    if item_details.call_off == CONST_CO02:
+    if item_details.call_off == CONST_FREETEXT_CALLOFF:
         if django_query_instance.django_existence_check(EformData, {'cart_guid': guid}):
             eform_data = django_query_instance.django_get_query(EformData, {'cart_guid': guid})
             eform_data.delete()
-    if item_details.call_off == CONST_CO01:
+    if item_details.call_off == CONST_CATALOG_CALLOFF:
         if django_query_instance.django_existence_check(EformFieldData, {'cart_guid': guid}):
             eform_data = django_query_instance.django_get_query(EformFieldData, {'cart_guid': guid})
             eform_data.delete()
-    return JsonResponse({'message': cart_length})
+    cart_details = django_query_instance.django_filter_query(CartItemDetails,
+                                                             {'client':global_variables.GLOBAL_CLIENT,
+                                                              'username': global_variables.GLOBAL_LOGIN_USERNAME},
+                                                             None,
+                                                             None)
+    price_details = get_total_price_details(cart_details,global_variables.GLOBAL_USER_CURRENCY)
+    return JsonResponse({'message': cart_length,'price_details':price_details})
 
 
 # Function Delete all items in shopping cart
@@ -243,20 +254,39 @@ def empty_shopping_cart(request):
 @transaction.atomic
 def update_catalog_item(request):
     update_user_info(request)
-    call_off = CONST_CO01
+    call_off = CONST_CATALOG_CALLOFF
     catalog_qty = None
     lot_size = 1
     json_data = JsonParser_obj.get_json_from_req(request)
     guid = json_data['guid']
     quantity = json_data['quantity']
     price = json_data['price']
-    item_price = calculate_item_price(guid, quantity)
+    item_price, discount_percentage, base_price, additional_pricing = calculate_item_price(guid, quantity)
     item_value = calculate_item_total_value(call_off, quantity, catalog_qty, lot_size, item_price, overall_limit=None)
+    actual_price, discount_value, tax_value, gross_price = get_price_discount_tax(item_price,
+                                                                                  base_price,
+                                                                                  additional_pricing,
+                                                                                  None,
+                                                                                  discount_percentage,
+                                                                                  quantity)
+
     defaults = {
         'guid': guid,
         'quantity': quantity,
-        'price': item_price
+        'price': item_price,
+        'discount_percentage':discount_percentage,
+        'discount_value':discount_value,
+        'gross_price':gross_price
     }
     django_query_instance.django_update_or_create_query(CartItemDetails, {'guid': guid}, defaults)
     total_value = calculate_total_value(global_variables.GLOBAL_LOGIN_USERNAME)
-    return JsonResponse({'item_price': item_price, 'item_value': item_value, 'total_value': total_value})
+    cart_details = django_query_instance.django_filter_query(CartItemDetails,
+                                                             {'client': global_variables.GLOBAL_CLIENT,
+                                                              'username': global_variables.GLOBAL_LOGIN_USERNAME},
+                                                             None,
+                                                             None)
+    price_details = get_total_price_details(cart_details, global_variables.GLOBAL_USER_CURRENCY)
+    return JsonResponse({'item_price': item_price,
+                         'item_value': item_value,
+                         'total_value': total_value,
+                         'price_details':price_details})

@@ -6,31 +6,7 @@
 
 {% include 'root/loader.html' %}
 
-<style>
-    #product_detail_tab_wrapper .row:nth-child(1) {
-        margin-right: 1px;
-        margin-left: 1px;
-        margin-top: 15px;
-    }
 
-    #product_detail_tab_wrapper .row:nth-child(3) {
-        margin-right: 1px;
-        margin-left: 1px;
-        margin-bottom: 15px;
-    }
-
-    .hg-icon-blue-primary.hg-delete-icon-disabled  {
-        cursor: not-allowed;
-        color: #a9a9a9;
-    }
-    .desc-section {
-        display: flex;
-        flex-direction: row;
-        gap: 5px;
-        margin-top: 1rem;
-        
-}
-</style>
 <div class="container-fluid">
     <div class="mep-form_wrapper">
 
@@ -142,15 +118,15 @@
         <div class="card mt-5">
 
             <div>
-                <button class="btn btn-primary  btn-sm"  title="Delete" id="id_delete_product" value="product_delete" data-toggle="modal" data-target="#id_delete_confirm_popup" style="display:none;">
+                <button class="btn btn-primary btn-sm mt-2 ml-2"  title="Delete" id="id_delete_product" value="product_delete" data-toggle="modal" data-target="#id_delete_confirm_popup" style="display:none;">
                     <i class="fa fa-trash"></i> Delete
                 </button>
+
                 <div>
-                  
                     <table id="product_detail_tab" class="table">
                         <thead class="thead-light">
                         <tr>
-                            <th scope="col"> <input type="checkbox" onclick="checkAll(this)"></th>
+                            <th > <input type="checkbox" onclick="checkAll(this)"></th>
                             <th style="width: 30%;" >Product Description</th>
                             <th >Product Id</th>
                             <th >Supplier Id</th>
@@ -159,7 +135,7 @@
                             <th >Price</th>
                             <th >Currency</th>
                             <th >Product Category</th>
-                            <th>ACTION</th>
+                            <th>action</th>
                         </tr>
                         </thead>
                         
@@ -169,19 +145,24 @@
                             <td><input type="checkbox" class="product_checkbox"  onclick="valueChanged();"{% if product_detail.product_transaction %} disabled  {% endif %} > </td>
         
                             <td>
-                                <a href="{% url 'eProc_Manage_Content:get_product_details' product_detail.encrypted_product_id %}" target="_blank">
-                                    <div style="display: flex; flex-direction: row;">
-                                        <div> <img src="/media/{{product_detail.image_url}}" onerror='this.src="/static/images/no-image-cropped.png"' class="mr-3 catalog_img product-config-img" ></div>
-                                        <div>
-                                              <span>{{product_detail.short_desc}} </span>
-                                            <div class="desc-section">
-                                              <button type="button" class="hg_button_round notes badge_status_await_approval" id="Mapped_in_Catalog-{{forloop.counter}}" title="Mapped in Catalog" > <i class="material-icons-outlined">link</i></button>
-                                              <button type="button" class="hg_button_round attachment badge_status_purch_wrkl" id="Shopping_Cart_Created-{{forloop.counter}}" title="Shopping Cart Created" > <i class="material-icons-outlined">link_off</i></button>
-                                            </div>
+                                <div class="d-flex flex-row">
+                                    <div>
+                                        <a href="{% url 'eProc_Manage_Content:get_product_details' product_detail.encrypted_product_id %}" target="_blank">
+                                            <img src="/media/{{product_detail.image_url}}" onerror='this.src="/static/images/no-image-cropped.png"' class="mr-3 catalog_img product-config-img" >
+                                        </a> 
+                                    </div>
+                                    <div  class="d-flex flex-column">
+                                        <a href="{% url 'eProc_Manage_Content:get_product_details' product_detail.encrypted_product_id %}" target="_blank">{{product_detail.short_desc}}</a>
+                                        <div class="desc-section-bottom">
+                                            {% if product_detail.mapped_in_catlog %}
+                                            <button type="button" class="hg_button_round notes badge_status_await_approval" id="Mapped_in_Catalog-{{forloop.counter}}" title="Mapped in Catalog" > <i class="material-icons-outlined">link</i></button>
+                                            {% endif %}
+                                            {% if product_detail.exist_in_transaction_table %}
+                                            <button type="button" class="hg_button_round attachment badge_status_purch_wrkl" id="Shopping_Cart_Created-{{forloop.counter}}" title="Shopping Cart Created" > <i class="material-icons-outlined">shopping_cart_checkout</i></button>
+                                            {% endif %}
                                         </div>
                                     </div>
-                                   
-                                </a>
+                                </div>
                             </td>
                             <td>{{product_detail.product_id}}</td>
                             <td>{{product_detail.supplier_id}}</td>
@@ -190,9 +171,9 @@
                             <td>{{product_detail.price}}</td>
                             <td>{{product_detail.currency}}</td>
                             <td >{{product_detail.prod_cat_id}}</td>
-                            <td><i class="fas fa-trash-alt hg-icon-blue-primary  {% if product_detail.product_transaction %} hg-delete-icon-disabled  {% endif %}" title="Delete Form" id="{{product_detail.product_id}}-{{product_detail.product_transaction}}"
-                                onclick="get_form_id_to_delete(this.id)" ></i></td>
-        
+                            <td><i class="material-icons hg-icon-blue-primary  {% if product_detail.product_transaction %} hg-delete-icon-disabled  {% endif %}" title="Delete Form" id="{{product_detail.product_id}}-{{product_detail.product_transaction}}"
+                                onclick="get_form_id_to_delete(this.id)" >delete_outline</i>
+                            </td>
                         </tr>
                         {% endfor %}
                         </tbody>
@@ -216,16 +197,17 @@
                 </button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete?.</p>
+                <p>Are you sure you want to delete ?</p>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                 <button type="button" onclick="main_table_delete()" class="btn btn-primary"><i class="fas fa-check"></i> yes </button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fas fa-times"></i> Cancel</button>
             </div>
         </div>
     </div>
 </div>
 <!--end of delete confirmation popup-->
+
 <!--Start image popup-->
 <div class="modal fade" id="view_image_popup">
     <div class="modal-dialog modal-dialog-centered">
@@ -240,8 +222,8 @@
                 <i  onclick="item_detail_previous()" style="color:orange;" class="fas fa-chevron-circle-left"></i>
                 <img id="img_1"  onerror='this.src="/static/images/no-image-cropped.png"' style="border: 1px solid #e9ecef; display:none;"  class="mr-3 catalog_img" width="50%" height="50%">
                 <img id="img_2" onerror='this.src="/static/images/no-image-cropped.png"' style="border: 1px solid #e9ecef; display:none;"  class="mr-3 catalog_img" width="50%" height="50%">
-                <img id="img_3" onerror='this.src="/static/images/no-image-cropped.png"' style="border: 1px solid #e9ecef; dispay:none;"  class="mr-3 catalog_img" width="50%" height="50%">
-                <i  style="color:orange; height=50px; width=50px;" onclick="item_detail_next()" class="fas fa-chevron-circle-right"></i>
+                <img id="img_3" onerror='this.src="/static/images/no-image-cropped.png"' style="border: 1px solid #e9ecef; display:none;"  class="mr-3 catalog_img" width="50%" height="50%">
+                <i  style="color:orange; height:50px; width:50px;" onclick="item_detail_next()" class="fas fa-chevron-circle-right"></i>
             </div>
             <!-- Modal footer -->
             <div class="modal-footer">
@@ -278,8 +260,9 @@
                 <div class="modal-footer">
                     <!--                    <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fas fa-check"></i> Delete Duplicates</button>-->
                     <!--                    <button id="id_check_data" style="display:none;" class="btn btn-primary " type="button" onclick="check_data()"><i class="fas fa-check"></i> Check</button>-->
-                    <button id="popup_save" class="btn btn-primary" onclick="onclick_display_csv_data()"><i class="fas fa-save"></i> save</button>
                     <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="document.getElementById('id_data_upload').style.display='none'"><i class="fas fa-times"></i> Cancel</button>
+                    <button id="popup_save" class="btn btn-primary" onclick="onclick_display_csv_data()"><i class="fas fa-save"></i> save</button>
+                    
                 </div>
             </div>
         </div>
@@ -326,7 +309,7 @@
                             <th>CATALOG_ITEM</th>
                             <th>PRODUCT NAME</th>
                             <th>PRODUCT DESCRIPTION</th>
-                            <th>SUPP_PROD_NUM</th>
+                            <th>supp_product_id </th>
                             <th>SUPPLIER_ID</th>
                             <th>SEARCH_TERM1</th>
                             <th>SEARCH_TERM2</th>
@@ -334,7 +317,7 @@
                             <th>BRAND</th>
                             <th>OFFER_KEY</th>
                             <th>PRICE_ON_REQUEST</th>
-                            <th>MANU_PROD</th>
+                            <th>MANU_PART_NUM</th>
                             <th>PRODUCT_TYPE</th>
                             <th>CATALOG_ID</th>
                             <th>LEAD_TIME</th>
@@ -378,8 +361,9 @@
             <div class="modal-footer">
                 <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fas fa-check"></i> Delete Duplicates</button>
                 <button id="id_check_data" style="display:none;" class="btn btn-primary " type="button" onclick="check_data()"><i class="fas fa-check"></i> Check</button>
+                <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                 <button class="btn btn-primary" style="display:none;" id="save_product_details"><i class="fas fa-save"></i> save</button>
-                <button type="button" class="btn btn-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                
             </div>
         </div>
     </div>
@@ -413,8 +397,8 @@
                 <div class="modal-footer">
                     <!--                    <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fas fa-check"></i> Delete Duplicates</button>-->
                     <!--                    <button id="id_check_data" style="display:none;" class="btn btn-primary " type="button" onclick="check_data()"><i class="fas fa-check"></i> Check</button>-->
-                    <button id="popup_extract" class="btn btn-primary" onclick="extract_products()"><i class="fas fa-save"></i> save</button>
                     <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="document.getElementById('id_data_upload').style.display='none'"><i class="fas fa-times"></i> Cancel</button>
+                    <button id="popup_extract" class="btn btn-primary" onclick="extract_products()"><i class="fas fa-save"></i> save</button>
                 </div>
             </div>
         </div>
@@ -436,15 +420,19 @@
                 You are about to delete form "<span id="form_id_del"></span>". Are you sure?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><i class="fas fa-times"></i> Cancel</button>
                 <button type="button" class="btn btn-primary" onclick="delete_form()">Delete</button>
             </div>
         </div>
     </div>
 </div>
+
 <script>
-nav_bar_content_management()
-table_sort_filter('product_detail_tab');
+    $(document).ready(function () {
+        nav_bar_content_management();
+        table_sort_filter('product_detail_tab');
+    })
+
 var render_country_data = {{ country_list| safe}};
 var render_supp_data = {{ supp_data| safe}};
 var render_get_units = {{ get_units| safe}};
@@ -528,6 +516,7 @@ function show_image_div(){
 //################################## END SHOW IMAGE  #################################################################
 $('#submit_product_detail').click(function(e){
     e.preventDefault();
+    OpenLoaderPopup();
     var product_data = {};
     product_data.product_id = $('#product_id').val();
     product_data.product_desc = $('#product_desc').val();
@@ -849,7 +838,7 @@ function check_data() {
             $("#id_check_special_character_messages").prop("hidden",true)
              $("#save_product_details").prop("hidden", false);
     }
-    popup_data_dict ={'data_list' : product_list, 'Tablename' : Tablename, 'appname' : appname, 'db_header_data' : ['CATALOG_ITEM','PRODUCT_NAME','PRODUCT_DESCRIPTION','SUPP_PROD_NUM','SUPPLIER_ID','SEARCH_TERM1','SEARCH_TERM2','MANUFACTURER','BRAND','OFFER_KEY','PRICE_ON_REQUEST','MANU_PROD','PRODUCT_TYPE','CATALOG_ID','LEAD_TIME','QUANTITY_AVAIL','PRICE','PRICE_UNIT','PROD_CAT_ID','QUANTITY_MIN','CTR_NUM','CTR_ITEM_NUM','PRODUCT_STATUS','PRICE_1','QUANTITY_1','PRICE_2','QUANTITY_2','PRICE_3', 'QUANTITY_3','EXTERNAL_LINK','SUPPLIER_PRODUCT_ID','EFORM_ID','PRODUCT_INFO_ID','PRODUCTS_DETAIL_SOURCE_SYSTEM', 'CLIENT','COUNTRY_OF_ORIGIN','CURRENCY','LANGUAGE','UNIT_OF_MEASURE','UNSPSC','PRODUCT_ID','del_ind']}
+    popup_data_dict ={'data_list' : product_list, 'Tablename' : Tablename, 'appname' : appname, 'db_header_data' : ['CATALOG_ITEM','PRODUCT_NAME','PRODUCT_DESCRIPTION','supp_product_id ','SUPPLIER_ID','SEARCH_TERM1','SEARCH_TERM2','MANUFACTURER','BRAND','OFFER_KEY','PRICE_ON_REQUEST','MANU_PROD','PRODUCT_TYPE','CATALOG_ID','LEAD_TIME','QUANTITY_AVAIL','PRICE','PRICE_UNIT','PROD_CAT_ID','QUANTITY_MIN','CTR_NUM','CTR_ITEM_NUM','PRODUCT_STATUS','PRICE_1','QUANTITY_1','PRICE_2','QUANTITY_2','PRICE_3', 'QUANTITY_3','EXTERNAL_LINK','SUPPLIER_PRODUCT_ID','EFORM_ID','PRODUCT_INFO_ID','PRODUCTS_DETAIL_SOURCE_SYSTEM', 'CLIENT','COUNTRY_OF_ORIGIN','CURRENCY','LANGUAGE','UNIT_OF_MEASURE','UNSPSC','PRODUCT_ID','del_ind']}
     $.ajax({
         type: 'POST',
         url: "{% url 'eProc_Basic_Settings:check_data' %}",
@@ -868,13 +857,47 @@ function check_data() {
             var newArrayDataOfOjbect = Object.values(check_messages)
             $("#id_check_success_messages").prop("hidden",false)
 
-            //*************** if pop-up data count is greater than zero ***************
-            if (newArrayDataOfOjbect[1]>0){
-                $("#id_check_success_messages").append('<p>' + messageConstants["JMSG010"] + newArrayDataOfOjbect[0] + '</p>')
-                $("#id_check_success_messages").append('<p>' + messageConstants["JMSG011"] + newArrayDataOfOjbect[1] + '</p>')
-                $("#id_check_success_messages").append('<p>' + messageConstants["JMSG012"] + newArrayDataOfOjbect[3] + '</p>')
-                $("#id_check_success_messages").append('<p>' + messageConstants["JMSG013"] + newArrayDataOfOjbect[4] + '</p>')
-                $("#id_check_success_messages").append('<p>' + messageConstants["JMSG014"] + newArrayDataOfOjbect[5] + '</p>')
+                              //*************** if pop-up data count is greater than zero ***************
+                    if (newArrayDataOfOjbect[1] > 0) {
+
+                           
+                             var msg = "JMSG010";
+                             var msg_type ;
+                             msg_type = message_config_details(msg);
+                             $("#error_msg_id").prop("hidden", false)
+                             var display = msg_type.messages_id_desc[0];
+
+                        $("#id_check_success_messages").append('<p>' + display + newArrayDataOfOjbect[0] + '</p>')
+
+                           
+                             var msg = "JMSG011";
+                             var msg_type ;
+                             msg_type = message_config_details(msg);
+                             $("#error_msg_id").prop("hidden", false)
+                             var display1 = msg_type.messages_id_desc[0];
+
+                        $("#id_check_success_messages").append('<p>' + display1 + newArrayDataOfOjbect[1] + '</p>')
+
+                           
+                             var msg = "JMSG012";
+                             var msg_type ;
+                             msg_type = message_config_details(msg);
+                             $("#error_msg_id").prop("hidden", false)
+                             var display2 = msg_type.messages_id_desc[0];
+                        $("#id_check_success_messages").append('<p>' + display2 + newArrayDataOfOjbect[3] + '</p>')
+                               
+                                 var msg = "JMSG013";
+                                 var msg_type ;
+                                 msg_type = message_config_details(msg);
+                                 $("#error_msg_id").prop("hidden", false)
+                                 var display3 = msg_type.messages_id_desc[0];
+                        $("#id_check_success_messages").append('<p>' + display3 + newArrayDataOfOjbect[4] + '</p>')
+                               
+                                 var msg = "JMSG014";
+                                 var msg_type ;
+                                 msg_type = message_config_details(msg);
+                                 $("#error_msg_id").prop("hidden", false)
+                                 var display4 = msg_type.messages_id_desc[0];
 
                 //*************** if duplicate data data count is greater than zero ***************
 <!--                if(newArrayDataOfOjbect[2]>0){-->
@@ -893,7 +916,14 @@ function check_data() {
             else{
                 $("#id_check_success_messages").hide()
                 $("#id_check_error_messages").prop("hidden",false)
-                $("#id_check_error_messages").append('<p>' + messageConstants["JMSG006"] + '</p>')
+                 $("#id_check_error_messages").append('<p>' + display6 + newArrayDataOfOjbect[2] + '</p>')
+                               
+                                 var msg = "JMSG001";
+                                 var msg_type ;
+                                 msg_type = message_config_details(msg);
+                                 $("#error_msg_id").prop("hidden", false)
+                                 var display7 = msg_type.messages_id_desc[0];
+                            $("#id_check_error_messages").append('<p style = "font-weight: bold;">' + display7 + ' </p>')
                 $("#save_product_details").prop("hidden", true);
             }
         }
@@ -1160,38 +1190,54 @@ function compare_table_for_duplicate_entries(validate_add_attributes, products) 
     if ((add_attr_duplicates_list.length != 0) ) {
         $("#id_error_msg_data").show();
         $("#id_error_msg_data").prop("hidden", false)
-        document.getElementById("id_error_msg_data").innerHTML = messageConstants["JMSG001"] + "for Product Id";
+           
+                var msg = "JMSG001";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+              var display = msg_type.messages_id_desc[0];
+        document.getElementById("id_error_msg_data").innerHTML = display + "for Product Id";
         document.getElementById("id_error_msg_data").style.color = "Red";
         //$('#id_save_confirm_popup').modal('hide');
         $('#myModal').modal('show');
         no_duplicate_value = 'N'
     }
-<!--    else{-->
-<!--         $.each(products, function(index, value) {-->
-<!--        if (value.product_id.length == 0) {-->
-<!--        $("#id_error_msg").show();-->
-<!--        Error_msg = "";-->
-<!--        Error_msg = messageConstants["JMSG002"] + "Product Id";-->
-<!--        document.getElementById("id_error_msg").innerHTML = Error_msg;-->
-<!--        document.getElementById("id_error_msg").style.color = "Red";-->
-<!--        $('#id_save_confirm_popup').modal('hide');-->
-<!--        $('#myModal').modal('show');-->
-<!--        no_duplicate_value = 'N'-->
-<!--      }-->
-<!--            //console.log(value.product_id);-->
-<!--            });-->
-<!--    }-->
-<!--    approver_username = approval_limit.approver_username.replace(/\s\s+/g, ' ')-->
-<!--    if (approver_username == " ") {-->
-<!--        $("#id_error_msg").prop("hidden", false)-->
-<!--        Error_msg = "";-->
-<!--        Error_msg = messageConstants["JMSG002"] + "Approver Username";-->
-<!--        document.getElementById("id_error_msg").innerHTML = Error_msg;-->
-<!--        document.getElementById("id_error_msg").style.color = "Red";-->
-<!--        $('#id_save_confirm_popup').modal('hide');-->
-<!--        $('#myModal').modal('show');-->
-<!--        no_duplicate_value = 'N'-->
-<!--    }-->
+   // else{
+    //      $.each(products, function(index, value) {
+    //     if (value.product_id.length == 0) {
+    //     $("#id_error_msg").show();
+    //     Error_msg = "";
+    //     Error_msg = messageConstants["JMSG002"] + "Product Id";
+    //     document.getElementById("id_error_msg").innerHTML = Error_msg;
+    //     document.getElementById("id_error_msg").style.color = "Red";
+    //     $('#id_save_confirm_popup').modal('hide');
+    //     $('#myModal').modal('show');
+    //     no_duplicate_value = 'N'
+    //   }
+    //         //console.log(value.product_id);
+    //         });
+    // }
+    // approver_username = approval_limit.approver_username.replace(/\s\s+/g, ' ')
+    // if (approver_username == " ") {
+    //     $("#id_error_msg").prop("hidden", false)
+    //     Error_msg = "";
+    //     Error_msg = messageConstants["JMSG002"] + "Approver Username";
+    //     document.getElementById("id_error_msg").innerHTML = Error_msg;
+    //     document.getElementById("id_error_msg").style.color = "Red";
+    //     $('#id_save_confirm_popup').modal('hide');
+    //     $('#myModal').modal('show');
+    //     no_duplicate_value = 'N'
+   // }
 
     return no_duplicate_value
 }
@@ -1311,24 +1357,62 @@ function main_table_delete(){
         }
     });
 }
+
+// Render catalog table data on click of search 
 function display_product_data(product_data){
     var product_detail_html = '';
     $('#product_detail_tab').DataTable().destroy();
     $("#product_detail_tbody").empty();
+    var imagess_url = 'this.src="/static/images/no-image-cropped.png"';
     $.each(product_data, function (i, product_detail) {
+        var hg_delete_icon_disabled = '';
         if(product_detail.product_transaction){
 
-            checkbox_input = '<input type="checkbox" class="product_checkbox" onclick="valueChanged();" disabled >'
+            checkbox_input = '<input type="checkbox" class="product_checkbox" onclick="valueChanged();" disabled >';
+            hg_delete_icon_disabled = 'hg-delete-icon-disabled';
         }
         else{
-            checkbox_input = '<input type="checkbox" class="product_checkbox" onclick="valueChanged();" >'
+            checkbox_input = '<input type="checkbox" class="product_checkbox" onclick="valueChanged();" >';
         }
-        product_detail_html += '<tr id="'+product_detail.product_id+'"><td>'+checkbox_input+'</td> <td> <a href="#" class="dummy_product_detail"  id=" '+product_detail.encrypted_product_id+' "> <div style="display: flex; flex-direction: row;"> <div> <img src="/media/'+product_detail.image_url+'" onerror="this.onerror=null;this.src="/static/images/no-image-cropped.png"" class="mr-3 catalog_img product-config-img"></div><span>'+ product_detail.short_desc +' </span> </div> </a> </td> <td>'+product_detail.product_id+'</td> <td>'+product_detail.supplier_id+'</td> <td>'+product_detail.lead_time+'</td> <td>{{product_detail.unit}}</td> <td>' + product_detail.price + '</td> <td>'+product_detail.currency+ '</td> <td >'+ product_detail.prod_cat_id+'</td>'+
-                                '<td><i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete Form" id="'+product_detail.product_id+'-'+product_detail.product_transaction +'" onclick="get_form_id_to_delete(this.id)"></i></td></tr>';
-            });
+        var mapped_in_catalog_dom = '';
+        if(product_detail.mapped_in_catlog) {
+            mapped_in_catalog_dom = '<button type="button" class="hg_button_round notes badge_status_await_approval" id="Mapped_in_Catalog-{{forloop.counter}}" title="Mapped in Catalog" > <i class="material-icons-outlined">link</i></button>'
+        }
+        var exist_in_transaction_table_dom = '';
+        if(product_detail.exist_in_transaction_table) {
+            exist_in_transaction_table_dom = '<button type="button" class="hg_button_round attachment badge_status_purch_wrkl" id="Shopping_Cart_Created-{{forloop.counter}}" title="Shopping Cart Created" > <i class="material-icons-outlined">shopping_cart_checkout</i></button>'
+        }
+
+        product_detail_html += '<tr id="'+product_detail.product_id+'">'+
+                                '<td>'+checkbox_input+'</td>'+
+                                '<td>'+
+                                    '<div class="d-flex flex-row">'+
+                                        '<div>'+
+                                            '<a href="#" class="dummy_product_detail"  id=" '+product_detail.encrypted_product_id+' ">'+
+                                                '<img src="/media/'+product_detail.image_url+'" class="mr-3 catalog_img product-config-img">'+
+                                            '</a>'+
+                                        ' </div>'+
+                                        '<div class="d-flex flex-column">'+
+                                            '<a href="#" class="dummy_product_detail"  id=" '+product_detail.encrypted_product_id+' " >'+ product_detail.short_desc +'</a>'+
+                                            '<div class="desc-section-bottom">'+ mapped_in_catalog_dom +' '+ exist_in_transaction_table_dom +'</div>'+
+                                        '</div>'+
+                                    '</div>'+
+                                '</td>'+
+                                '<td>'+product_detail.product_id+'</td>'+
+                                '<td>'+product_detail.supplier_id+'</td>'+
+                                '<td>'+product_detail.lead_time+'</td>'+
+                                '<td>'+product_detail.unit+'</td>'+
+                                '<td>' + product_detail.price + '</td>'+
+                                '<td>'+product_detail.currency+ '</td> '+
+                                '<td >'+ product_detail.prod_cat_id+'</td>'+
+                                '<td><i class="material-icons hg-icon-blue-primary '+hg_delete_icon_disabled+'" title="Delete Form" id="'+product_detail.product_id+'-'+product_detail.product_transaction +'" onclick="get_form_id_to_delete(this.id)">delete_outline</i></td>'+
+                            '</tr>'    
+    });
     $("#product_detail_tbody").append(product_detail_html);
     table_sort_filter('product_detail_tab');
-}
+    $('.product-config-img').attr('onerror', 'this.src="/static/images/no-image-cropped.png"');
+    CloseLoaderPopup();
+};
 
 function get_form_id_to_delete(element) {
     var delete_id = element.split('-')
@@ -1339,7 +1423,6 @@ function get_form_id_to_delete(element) {
         $('#confirm_delete_pop_up').modal('show')
     }
 }
-
 
 </script>
 

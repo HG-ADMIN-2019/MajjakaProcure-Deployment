@@ -98,9 +98,6 @@ def display_freetext_forms(request):
 
 
 # This function is used to delete freetext form (not freetext item)
-
-
-
 # @login_required
 # def display_fields_to_update(request):
 #     client = getClients(request)
@@ -112,6 +109,7 @@ def display_freetext_forms(request):
 #     product_category = form_instance.prod_cat_id
 #     update_form_instance = FormBuilder().get_freetext_form(supplier_id, product_category, client)
 #     return JsonResponse({'update_form_instance': update_form_instance})
+
 
 def create_update_freetext_form(request):
     """

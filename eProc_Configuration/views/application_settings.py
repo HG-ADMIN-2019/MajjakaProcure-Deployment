@@ -29,13 +29,14 @@ from eProc_Configuration.Utilities.application_settings_specific import save_act
     save_messageId_data_into_db, save_messageIdDesc_data_into_db, \
     save_calendarholiday_data_into_db, \
     save_calendar_data_into_db, \
-    save_documenttype_data_into_db, save_transactiontype_data_into_db
+    save_documenttype_data_into_db, save_transactiontype_data_into_db, save_po_split_type_into_db, \
+    save_po_split_criteria_into_db
 from eProc_Configuration.Utilities.application_settings_specific import save_app_data_into_db, save_client_data_into_db, \
     save_number_range_data_into_db
 from eProc_Configuration.models import *
 from eProc_Master_Settings.Utilities.master_settings_specific import save_orgnode_types_data_into_db, \
     save_orgattributes_data_into_db, save_authorobject_data_into_db, save_auth_group_data_into_db, \
-    save_roles_data_into_db, save_auth_data_into_db
+    save_roles_data_into_db, save_auth_data_into_db,save_orgattributes_level_data_into_db
 from eProc_Shopping_Cart.context_processors import update_user_info
 from eProc_Upload.Utilities.upload_data.upload_basic_pk_fk_tables import UploadPkFkTables
 from eProc_Upload.Utilities.upload_data.upload_pk_tables import CompareTableHeader, MSG048
@@ -60,6 +61,7 @@ def app_setting_latest(request):
     return render(request, 'Application_Settings/app_settings.html', {'inc_nav': True})
 
 
+
 def create_update_application_data(request):
     """
 
@@ -78,6 +80,9 @@ def create_update_application_data(request):
     if app_data['table_name'] == 'OrgAttributes':
         display_data = save_orgattributes_data_into_db(app_data)
         return JsonResponse(display_data, safe=False)
+    if app_data['table_name'] == 'OrgModelNodetypeConfig':
+        display_data = save_orgattributes_level_data_into_db(app_data)
+        return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'AuthorizationObject':
         display_data = save_authorobject_data_into_db(app_data)
         return JsonResponse(display_data, safe=False)
@@ -90,20 +95,23 @@ def create_update_application_data(request):
     if app_data['table_name'] == 'Authorization':
         display_data = save_auth_data_into_db(app_data)
         return JsonResponse(display_data, safe=False)
-    if app_data['table_name'] == 'CalenderConfig':
-        display_data = save_calendar_data_into_db(app_data)
-        return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'DocumentType':
         display_data = save_documenttype_data_into_db(app_data)
+        return JsonResponse(display_data, safe=False)
+    if app_data['table_name'] == 'NumberRanges':
+        display_data = save_number_range_data_into_db(app_data)
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'TransactionTypes':
         display_data = save_transactiontype_data_into_db(app_data)
         return JsonResponse(display_data, safe=False)
-    if app_data['table_name'] == 'CalenderHolidays':
-        display_data = save_calendarholiday_data_into_db(app_data)
-        return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'AccountAssignmentCategory':
         display_data = save_actasmt_data_into_db(app_data)
+        return JsonResponse(display_data, safe=False)
+    if app_data['table_name'] == 'CalenderConfig':
+        display_data = save_calendar_data_into_db(app_data)
+        return JsonResponse(display_data, safe=False)
+    if app_data['table_name'] == 'CalenderHolidays':
+        display_data = save_calendarholiday_data_into_db(app_data)
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'MessagesId':
         display_data = save_messageId_data_into_db(app_data)
@@ -111,9 +119,13 @@ def create_update_application_data(request):
     if app_data['table_name'] == 'MessagesIdDesc':
         display_data = save_messageIdDesc_data_into_db(app_data)
         return JsonResponse(display_data, safe=False)
-    if app_data['table_name'] == 'NumberRanges':
-        display_data = save_number_range_data_into_db(app_data)
+    if app_data['table_name'] == 'PoSplitType':
+        display_data = save_po_split_type_into_db(app_data)
         return JsonResponse(display_data, safe=False)
+    if app_data['table_name'] == 'PoSplitCriteria':
+        display_data = save_po_split_criteria_into_db(app_data)
+        return JsonResponse(display_data, safe=False)
+
 
 
 def save_app_settings_data(request):
@@ -185,7 +197,7 @@ def save_catalog_data(request):
                                                              catalog_id=data['catalog_id'],
                                                              name=data['name'],
                                                              description=data['description'],
-                                                             product_type=data['product_type'])
+                                                             prod_type=data['product_type'])
     catalog_data_response = Catalogs.objects.filter(del_ind=False)
     return JsonParser_obj.get_json_from_obj(catalog_data_response)
 
@@ -224,7 +236,7 @@ def save_productservice_data(request):
                                                                        currency_id=data['currency']),
                                                                    price=data['price'],
                                                                    manufacturer=data['manufacturer'],
-                                                                   manu_prod=data['manu_prod'],
+                                                                   manu_part_num=data['manu_prod'],
                                                                    unspsc=UnspscCategories.objects.get(
                                                                        prod_cat_id=data['unspsc']),
                                                                    brand=data['brand'], lead_time=data['lead_time'],

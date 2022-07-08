@@ -1,15 +1,7 @@
 
 //To show supplier field only for purchase order
-function docchanged(value){
-    var sup_field = document.getElementById("id_doc_type");
-    if (sup_field.value == 'SC'){
-        document.getElementById("supplier").value="";
-        $('#supplier').hide();
-    }
-    else if (sup_field.value == 'PO'){
-        document.getElementById("supplier").style.display="block";
-        $('#supplier').show();
-    }
+function docchanged(doc_type){
+    display_status(doc_type)
 }
 
 // To get attachments

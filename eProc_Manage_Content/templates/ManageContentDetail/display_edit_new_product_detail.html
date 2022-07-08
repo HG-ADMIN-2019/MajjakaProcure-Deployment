@@ -117,21 +117,33 @@
                                             </div>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="pfm_unspsc_list">Product Category(UNSPSC)</label> <span class="hg_required"></span>
-                                            <input type="text" placeholder="Click to select product category" class="form-control input-disable-class" id="pfm_unspsc_list" required onkeydown="event.preventDefault()" required>
-                                        </div>
-
                                         <div class="form-row">
                                             <div class="form-group col-md-6">
-                                                <label for="prd_mini_qnt">Minimum Order Quantity</label> <span class="hg_required"></span>
-                                                <input type="number" id="prd_mini_qnt" class="form-control input-disable-class" required>
+                                                <label for="pfm_unspsc_list">Product Category(UNSPSC)</label> <span class="hg_required"></span>
+                                                <input type="text" placeholder="Click to select product category" class="form-control input-disable-class" id="pfm_unspsc_list" required onkeydown="event.preventDefault()" required>
                                             </div>
                                             <div class="form-group col-md-6">
                                                 <label for="prd_lead">Lead Time</label> <span class="hg_required"></span>
                                                 <input type="number" id="prd_lead" class="form-control input-disable-class" required>
                                                 <small id="leadtimelHelp" class="form-text text-muted">In number of days</small>
                                             </div>
+                                        </div>
+
+                                        <div class="form-row">
+                                            <div class="form-group col-md-4">
+                                                <label for="prd_mini_qnt">Minimum Order Quantity</label> <span class="hg_required"></span>
+                                                <input type="number" id="prd_mini_qnt" class="form-control input-disable-class" required>
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label for="prd_mini_value">Minimum Order Value</label> <span class="hg_required"></span>
+                                                <input type="number" id="prd_mini_value" class="form-control input-disable-class" required>
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label for="prd_max_qnt">Maximum Order Quantity</label> <span class="hg_required"></span>
+                                                <input type="number" id="prd_max_qnt" class="form-control input-disable-class" required>
+                                            </div>
+
+
                                         </div>
 
                                     </div>
@@ -152,19 +164,6 @@
                                                 <input type="text" id="prd_search2" class="form-control input-disable-class" >
                                             </div>
                                         </div>
-
-                                        <div class="form-row">
-                                            <div class="form-group col-md-6">
-                                                <label for="prd_mnf">Manufacturer</label> <span class="hg_required"></span>
-                                                <input type="text" id="prd_mnf" class="form-control input-disable-class" required>
-                                            </div>
-
-                                            <div class="form-group col-md-6">
-                                                <label for="prd_mnf_no"> Manufacturer Product No</label>
-                                                <input type="text" id="prd_mnf_no" class="form-control input-disable-class" >
-                                            </div>
-                                        </div>
-
                                         <div class="form-row">
                                             <div class="form-group col-md-6">
                                                 <label for="prd_brnd">Brand</label>
@@ -176,19 +175,42 @@
                                                 <input type="text" id="prd_off_key" class="form-control input-disable-class " >
                                             </div>
                                         </div>
-
                                         <div class="form-row">
                                             <div class="form-group col-md-4">
-                                                <label for="prd_prd_cate">Custom Product Category</label>
-                                                <input type="text" id="prd_prd_cate" class=" form-control input-disable-class " >
+                                                <label for="prd_mnf">Manufacturer</label> <span class="hg_required"></span>
+                                                <input type="text" id="prd_mnf" class="form-control input-disable-class" required>
                                             </div>
 
+                                            <div class="form-group col-md-4">
+                                                <label for="prd_mnf_no"> Manufacturer Part Number</label>
+                                                <input type="text" id="prd_mnf_no" class="form-control input-disable-class">
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label for="prd_manu_code_no"> Manufacturer Code Number</label>
+                                                <input type="text" id="prd_manu_code_no" class="form-control input-disable-class">
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+
+                                            <div class="form-group col-md-4">
+                                                <label for="prd_contract_number">Contract Name</label>
+                                                <input type="text" id="prd_contract_name" class=" form-control input-disable-class" max_length="50">
+                                            </div>
                                             <div class="form-group col-md-4">
                                                 <label for="prd_contract_number">Contract Number</label>
                                                 <input type="text" id="prd_contract_number" class=" form-control input-disable-class" max_length="50">
                                             </div>
-
                                             <div class="form-group col-md-4">
+                                                <label for="prd_contract_item_number">Contract Item Number</label>
+                                                <input type="text" id="prd_contract_item_number" class=" form-control input-disable-class" max_length="50">
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label for="prd_prd_cate">Custom Product Category</label>
+                                                <input type="text" id="prd_prd_cate" class=" form-control input-disable-class " >
+                                            </div>
+                                            <div class="form-group col-md-6">
                                                 <label for="prd_source_system">Product Source system</label> <span class="hg_required"></span>
                                                 <select class="form-control input-disable-class " id="prd_source_system" name="prd_source_system" >
                                                     <option value="ERP1">ERP1</option>
@@ -1316,6 +1338,12 @@ $('#product_detail_form_id').on('submit', function(e){
     product_details_data.product_webpage_link= document.getElementById("pfm_product_webpage_link").value
     product_details_data.product_contract_num= document.getElementById("prd_contract_number").value
     product_details_data.product_source_system= document.getElementById("prd_source_system").value
+    product_details_data.product_contract_name= document.getElementById("prd_contract_name").value
+    product_details_data.prd_manu_code_no= document.getElementById("prd_manu_code_no").value
+    product_details_data.quantity_max = document.getElementById("prd_max_qnt").value
+    product_details_data.value_min= document.getElementById("prd_mini_value").value
+    product_details_data.ctr_item_num= document.getElementById("prd_contract_item_number").value
+
 
     console.log(eform_data_new)
     data.append('eform_configured', JSON.stringify(eform_data_new))

@@ -62,8 +62,9 @@ def supplier_detail_search(**kwargs):
                 if '*' not in value:
                     value_list = [value]
                 org_supplier_query = django_q_query(value, value_list, 'porg_id')
-                supplier_id_query = django_query_instance.django_queue_query_value_list(OrgSuppliers,{'client':global_variables.GLOBAL_CLIENT,
-                                                                                                  'del_ind':False},org_supplier_query,'supplier_id')
+                supplier_id_query = django_query_instance.django_queue_query_value_list(OrgSuppliers, {
+                    'client': global_variables.GLOBAL_CLIENT,
+                    'del_ind': False}, org_supplier_query, 'supplier_id')
                 supplier_id_query = django_q_query(None, supplier_id_query, 'supplier_id')
             if key == 'name1':
                 if '*' not in value:
@@ -117,3 +118,22 @@ def supplier_detail_search(**kwargs):
     #                             ).values().order_by('username'))
     print(supplier_details_query)
     return supplier_details_query
+
+
+def get_supplier_email(supplier_id):
+    """
+
+    """
+    supplier_email_addr = ''
+    if django_query_instance.django_existence_check(SupplierMaster,
+                                                    {'client': global_variables.GLOBAL_CLIENT,
+                                                     'supplier_id': supplier_id,
+                                                     'del_ind': False}):
+        supplier_detail = django_query_instance.django_get_query(SupplierMaster,
+                                                                 {'client': global_variables.GLOBAL_CLIENT,
+                                                                  'supplier_id': supplier_id,
+                                                                  'del_ind': False})
+        supplier_email_addr = supplier_detail.email
+    print("supplier email address", supplier_email_addr)
+
+    return supplier_email_addr

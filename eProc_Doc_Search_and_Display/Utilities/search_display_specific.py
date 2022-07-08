@@ -1,11 +1,14 @@
 from datetime import date, timedelta
 
 from eProc_Attributes.models.org_attribute_models import OrgAttributesLevel
+from eProc_Basic.Utilities.functions.distinct_list import distinct_dictionary_list
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
+from eProc_Basic.Utilities.functions.encryption_util import encrypt
 from eProc_Basic.Utilities.functions.get_db_query import requester_field_info
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Configuration.models import OrgPGroup
 from eProc_Org_Model.models import OrgModel
+from eProc_Purchase_Order.models import PoHeader, PoApproval, PoPotentialApproval, PoItem
 from eProc_Shopping_Cart.models import *
 from eProc_Registration.models import UserData
 from eProc_Basic.Utilities.constants.constants import *
@@ -57,19 +60,42 @@ def get_sc_header_app(result, client):
 
         # convert timestamp to locale date
         created_at_date = sc_header_guid['created_at']
-        sc_header_guid['created_at'] = created_at_date.strftime("%d %B %Y ")
+        # sc_header_guid['created_at'] = created_at_date.strftime("%d %B %Y ")
         guid_completion = []
         prod_cat_list = []
         call_off_list = []
+        document_number_list = django_query_instance.django_filter_query(ScItem,
+                                                                         {'header_guid': sc_header_guid['guid'],
+                                                                          'client': global_variables.GLOBAL_CLIENT,
+                                                                          'del_ind': False},
+                                                                         None,
+                                                                         ['po_doc_num', 'po_header_guid'])
+        document_detail_list = []
+        document_list = distinct_dictionary_list(document_number_list,'po_doc_num')
+        for document_number in document_list:
+            if document_number['po_doc_num']:
+                print(document_number['po_doc_num'])
+                document_detail_list.append(
+                    {'document_number': document_number['po_doc_num'],
+                     'encrypt_document_number': encrypt(document_number['po_header_guid'])})
+
+        sc_header_guid['document_details'] = document_detail_list
 
         sc_approval = django_query_instance.django_filter_query(ScApproval,
                                                                 {'header_guid': sc_header_guid['guid'],
                                                                  'client': client},
                                                                 ['step_num'], None)
+        manager_array = []
         for sc_app in sc_approval:
             if django_query_instance.django_filter_count_query(ScPotentialApproval,
                                                                {'sc_approval_guid': sc_app['guid']}) > 1:
                 sc_app['app_id'] = CONST_MULTIPLE
+                # name = django_query_instance.django_filter_value_list_query(ScPotentialApproval,
+                #                                                             {'sc_approval_guid': sc_app['guid'],
+                #                                                              'client': client,
+                #                                                              'step_num': sc_app['step_num']},
+                #                                                             'app_id')[0]
+                # manager_array.append(name)
             else:
                 sc_app['app_id'] = django_query_instance.django_filter_value_list_query(ScPotentialApproval,
                                                                                         {'sc_approval_guid':
@@ -79,13 +105,14 @@ def get_sc_header_app(result, client):
         scitems = django_query_instance.django_filter_only_query(ScItem, {'header_guid': sc_header_guid['guid'],
                                                                           'client': client})
         for scitems in scitems:
-            prod_cat_list.append(scitems.prod_cat)
+            prod_cat_list.append(scitems.prod_cat_id)
             call_off_list.append(scitems.call_off)
             cmp_code.append(scitems.comp_code)
 
         default_cmp_code = list(set(cmp_code))
 
-        if (CONST_CO02 in call_off_list) or (CONST_CO03 in call_off_list) or (CONST_CO04 in call_off_list):
+        if (CONST_FREETEXT_CALLOFF in call_off_list) or (CONST_PR_CALLOFF in call_off_list) or (
+                CONST_LIMIT_ORDER_CALLOFF in call_off_list):
             purch_worklist_flag = True
             completion_work_flow = get_completion_work_flow(client, prod_cat_list, default_cmp_code[0])
             if completion_work_flow:
@@ -94,6 +121,89 @@ def get_sc_header_app(result, client):
                 sc_completion.append(guid_completion)
         requester_first_name = requester_field_info(sc_header_guid['requester'], 'first_name')
         sc_header.append(sc_header_guid)
+
+        for data in sc_approval:
+            # get work flow manager's first name
+            if data['app_id'] != CONST_AUTO and data['app_id'] != CONST_MULTIPLE:
+                data['app_id'] = django_query_instance.django_filter_value_list_query(UserData, {
+                    'client': client, 'username': data['app_id']
+                }, 'first_name')[0]
+            sc_appr.append(data)
+
+    return sc_header, sc_appr, sc_completion, requester_first_name
+
+
+def get_po_header_app(po_search_result, client):
+    """
+    :param client:
+    :param po_search_result:
+    :return:
+    """
+
+    sc_header = []
+    sc_appr = []
+    cmp_code = []
+    sc_completion = []
+    requester_first_name = ''
+    for po_header in po_search_result:
+
+        # convert timestamp to locale date
+        created_at_date = po_header['created_at']
+        po_header['created_at'] = created_at_date.strftime("%d %B %Y")
+        guid_completion = []
+        prod_cat_list = []
+        call_off_list = []
+        # get sc data for PO search
+        document_number_list = django_query_instance.django_filter_query(PoItem,
+                                                                         {'po_header_guid':
+                                                                              po_header['guid'],
+                                                                          'client': global_variables.GLOBAL_CLIENT,
+                                                                          'del_ind': False},
+                                                                         None,
+                                                                         ['sc_doc_num', 'sc_header_guid'])
+        document_list = distinct_dictionary_list(document_number_list, 'sc_doc_num')
+        document_detail_list = []
+        for document_number in document_list:
+            if document_number['sc_doc_num']:
+                document_detail_list.append(
+                    {'document_number': document_number['sc_doc_num'],
+                     'encrypt_document_number': encrypt(document_number['sc_header_guid'])})
+
+        po_header['document_details'] = document_detail_list
+        sc_approval = django_query_instance.django_filter_query(PoApproval,
+                                                                {'po_header_guid': po_header['guid'],
+                                                                 'client': client},
+                                                                ['step_num'], None)
+        for sc_app in sc_approval:
+            if django_query_instance.django_filter_count_query(PoPotentialApproval,
+                                                               {'po_approval_guid': sc_app['po_approval_guid']}) > 1:
+                sc_app['app_id'] = CONST_MULTIPLE
+            else:
+                sc_app['app_id'] = django_query_instance.django_filter_value_list_query(PoPotentialApproval,
+                                                                                        {'po_approval_guid':
+                                                                                             sc_app[
+                                                                                                 'po_approval_guid']},
+                                                                                        'app_id')[0]
+
+        scitems = django_query_instance.django_filter_only_query(PoItem, {'po_header_guid': po_header['guid'],
+                                                                          'client': client})
+        for scitems in scitems:
+            prod_cat_list.append(scitems.prod_cat_id)
+            call_off_list.append(scitems.call_off)
+            cmp_code.append(scitems.company_code_id)
+
+        default_cmp_code = list(set(cmp_code))
+
+        if (CONST_FREETEXT_CALLOFF in call_off_list) or (CONST_PR_CALLOFF in call_off_list) or (
+                CONST_LIMIT_ORDER_CALLOFF in call_off_list):
+            purch_worklist_flag = True
+            completion_work_flow = get_completion_work_flow(client, prod_cat_list, default_cmp_code[0])
+            if completion_work_flow:
+                guid_completion.append(po_header['guid'])
+                guid_completion.append(completion_work_flow[0])
+                sc_completion.append(guid_completion)
+        requester_first_name = po_header['requester']
+        sc_header.append(po_header)
 
         for data in sc_approval:
             # get work flow manager's first name
@@ -168,7 +278,7 @@ def get_header_based_on_calloff(search_fields):
         'purch_grp__in': pgroup_id, 'client': global_variables.GLOBAL_CLIENT, 'del_ind': False
     }, 'sc_header_guid')
 
-    call_off = [CONST_CO02, CONST_CO03, CONST_CO04]
+    call_off = [CONST_FREETEXT_CALLOFF, CONST_PR_CALLOFF, CONST_LIMIT_ORDER_CALLOFF]
 
     scitem_call_off = django_query_instance.django_filter_only_query(ScItem, {
         'header_guid__in': purch_header_guid, 'client': global_variables.GLOBAL_CLIENT, 'call_off__in': call_off
@@ -222,9 +332,16 @@ class DocumentSearch:
         search_criteria['del_ind'] = False
         return django_query_instance.django_filter_query(ScHeader, search_criteria, ['-created_at'], None)
 
+    def get_po_header_details(self, search_criteria):
+        search_criteria['client'] = self.client
+        search_criteria['del_ind'] = False
+        return django_query_instance.django_filter_query(PoHeader, search_criteria, ['-po_header_created_at'], None)
+
     def define_search_criteria(self, searched_fields, search_type):
         document_number = searched_fields['document_number']
         document_name = searched_fields['sc_name']
+        document_type = searched_fields['document_type']
+
         timeframe = searched_fields['timeframe']
         search_criteria = {}
 
@@ -237,7 +354,10 @@ class DocumentSearch:
 
         if search_type == 'my_order':
             search_criteria['requester'] = self.requester
-            search_criteria['created_by'] = self.created_by
+            if document_type == CONST_DOC_TYPE_SC:
+                search_criteria['created_by'] = self.created_by
+            else:
+                search_criteria['po_header_created_by'] = CONST_SYSTEM_USER
 
         if 'status' in searched_fields:
             status = searched_fields['status']
@@ -267,16 +387,24 @@ class DocumentSearch:
             if timeframe == "Today":
                 minimum_search_date = datetime.datetime.combine(datetime.date.today(), datetime.time.min)
                 maximum_search_date = datetime.datetime.combine(datetime.date.today(), datetime.time.max)
-                search_criteria['created_at__gte'] = minimum_search_date
-                search_criteria['created_at__lte'] = maximum_search_date
+                if document_type == CONST_DOC_TYPE_SC:
+                    search_criteria['created_at__gte'] = minimum_search_date
+                    search_criteria['created_at__lte'] = maximum_search_date
+                elif document_type == CONST_DOC_TYPE_PO:
+                    search_criteria['po_header_created_at__gte'] = minimum_search_date
+                    search_criteria['po_header_created_at__lte'] = maximum_search_date
 
             else:
                 days_to_subtract = int(timeframe)
                 from_date = date.today() - timedelta(days=days_to_subtract)
                 minimum_search_date = datetime.datetime.combine(from_date, datetime.time.min)
                 maximum_search_date = datetime.datetime.combine(datetime.date.today(), datetime.time.max)
-                search_criteria['created_at__gte'] = minimum_search_date
-                search_criteria['created_at__lte'] = maximum_search_date
+                if document_type == CONST_DOC_TYPE_SC:
+                    search_criteria['created_at__gte'] = minimum_search_date
+                    search_criteria['created_at__lte'] = maximum_search_date
+                elif document_type == CONST_DOC_TYPE_PO:
+                    search_criteria['po_header_created_at__gte'] = minimum_search_date
+                    search_criteria['po_header_created_at__lte'] = maximum_search_date
 
         if 'description__istartswith' in search_criteria:
             del search_criteria['description__istartswith']
@@ -284,6 +412,9 @@ class DocumentSearch:
         if 'created_by' in searched_fields:
             created_by = searched_fields['created_by']
             if created_by is not None and created_by != '':
-                search_criteria['created_by'] = created_by
+                if document_type == CONST_DOC_TYPE_SC:
+                    search_criteria['created_by'] = created_by
+                elif document_type == CONST_DOC_TYPE_PO:
+                    search_criteria['po_header_created_by'] = CONST_SYSTEM_USER
 
         return search_criteria

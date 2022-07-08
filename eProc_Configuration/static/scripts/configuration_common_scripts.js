@@ -106,7 +106,14 @@ function display_popup(){
 
 }
 
+// Function to display Description based on element Id
+function display_message(id, description){
+                $('#'+id).html(description);
+                $('#'+id).css("display", "block");
+                $('#id_save_confirm_popup').modal('hide');
+                $('#myModal').modal('show');
 
+}
 
 
 

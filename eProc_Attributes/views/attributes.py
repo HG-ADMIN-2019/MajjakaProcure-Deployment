@@ -168,6 +168,7 @@ def save_deleted_attr(request):
 
 
 def attr_id_list(request):
+    update_user_info(request)
     select_node_detail = JsonParser_obj.get_json_from_req(request)
     # get org attribute id list based on node type
     attr_id = get_org_attribute_id_list(select_node_detail)

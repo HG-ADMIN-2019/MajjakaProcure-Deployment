@@ -14,10 +14,12 @@
 
         <section>
             <div class="home_section_heading">
+                    <p  style="float:right;">Quick Link : <a href="{% url 'eProc_Doc_Search_and_Display:search_shopping_carts' %}" target="_blank">My orders</a></p>
+            </div>
+            <div class="home_section_heading">
                 <p class="h4">Frequently purchased items in the company</p>
                 <hr>
             </div>
-
             <div class="home_section_container">
                 <div class="row">
                     <div class="col-lg-12">
@@ -40,7 +42,11 @@
                                             <span class="product-currency text-muted">{{product_data.currency_id}}</span> <span class="product-value">{{product_data.price}}</span>
                                         </div>
                                         <div>
-                                            <button type="button" onclick="add_catalog('{{product_data.encrypt_product_id}}','{{product_data.eform_id}}')" class="btn btn-primary btn-sm text-capitalize">Add to Cart</button>
+                                            {% if product_data.eform_id %}
+                                                <button type="button" onclick="add_catalog('{{product_data.encrypt_product_id}}','{{product_data.eform_id}}')" class="btn btn-primary btn-sm text-capitalize">Add to Cart</button>
+                                            {% else %}
+                                            <button type="button" onclick="add_catalog('{{product_data.product_id}}','{{product_data.eform_id}}')" class="btn btn-primary btn-sm text-capitalize">Add to Cart</button>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
@@ -155,7 +161,12 @@
                                             <span class="product-currency text-muted">{{viewed_data.currency_id}}</span> <span class="product-value">{{viewed_data.price}}</span>
                                         </div>
                                         <div>
-                                            <button type="button" class="btn btn-primary btn-sm text-capitalize" id="{{viewed_data.eform_id}}" onclick="add_catalog('{{ viewed_data.encrypt_product_id}}','{{viewed_data.eform_id}}')">Add to Cart</button>
+                                            {% if viewed_data.eform_id %}
+                                                <button type="button" class="btn btn-primary btn-sm text-capitalize" id="{{viewed_data.eform_id}}" onclick="add_catalog('{{ viewed_data.encrypt_product_id}}','{{viewed_data.eform_id}}')">Add to Cart</button>
+                                            {% else %}
+                                                <button type="button" class="btn btn-primary btn-sm text-capitalize" onclick="add_catalog('{{ viewed_data.product_id}}','{{viewed_data.eform_id}}')">Add to Cart</button>
+                                            {% endif %}
+
                                         </div>
                                     </div>
                                 </div>
@@ -246,12 +257,8 @@
 
 <script>
 
+    const ajax_delete_rvi_url = "{% url 'eProc_Shop_Home:delete_recently_viewed_item' %}";
 
-    function ajax_delete_rvi(data) {
-        urlLink =  "{% url 'eProc_Shop_Home:delete_recently_viewed_item' %}";
-        response = AjaxCallAPIBasic(urlLink, data)
-        return response
-    }
     function ajax_add_fav_cart(fav_cart_num) {
         urlLink =  "{% url 'eProc_Shop_Home:add_fav_sc_to_cart' %}";
         response = AjaxCallAPIBasic(urlLink, fav_cart_num)
@@ -305,36 +312,43 @@ function add_catalog(prd_id,button_id) {
    if(button_id){
         var url = "{% url 'eProc_Add_Item:get_product_service_product_details' 123 %}";
         var href_link = url.replace('123', prd_id)
-         window.open(href_link,'_blank');
+        window.open(href_link,'_blank');
         //view_detail(prd_id, 0)
 
     }
     else{
         let catalog_item = {};
         catalog_item["prod_id"] = prd_id;
-        catalog_item['call_off'] = 'Catalog';
+        catalog_item['call_off'] = '01';
         catalog_item["quantity"] = 1;
         catalog_item["document_number"] = document_number;
         catalog_url = '/add_item/update_or_create_item/' + document_number;
+        OpenLoaderPopup();
 
-        var add_catalog_response = ajax_add_catalog_item(catalog_url, catalog_item);
-
-        if(add_catalog_response) {
-            if (!is_edit) {
-                if(response.cart_count){
-                    counter = document.getElementById('cart_counter').innerHTML
-                    $('#cart_counter').html(parseInt(counter)+1)
-                    item_added_to_cart_success_popup()
-                } else if(response.error) {
-                    alert( response.error)
+        // ajax Function to add catalog product
+        $.ajax({
+            type: "POST",
+            url: catalog_url,
+            dataType :'json',
+            data: JSON.stringify(catalog_item),
+            success: function(response){
+                if (!is_edit) {
+                    if (response.cart_count) {
+                        counter = document.getElementById('cart_counter').innerHTML;
+                        CloseLoaderPopup();
+                        $('#cart_counter').html(parseInt(counter)+1);
+                        item_added_to_cart_success_popup();
+                    }
+                } else {
+                    $('#confirm_add_item').modal('show');
                 }
-            } else {
-                $('#confirm_add_item').modal('show')
+                $('document').find('input:number').val('');
+            },
+            error: function(response) {
+                console.log(response);
             }
-            $('document').find('input:number').val('');
-        }
-
-    }
+        });
+    };
 }
 </script>
 

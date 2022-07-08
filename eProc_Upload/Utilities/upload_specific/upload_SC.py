@@ -27,7 +27,7 @@ from eProc_Basic.Utilities.functions.type_casting import get_date_value, str_dec
 from eProc_Basic.Utilities.messages.messages import *
 from eProc_Basic.models import *
 from eProc_Configuration.models import OrgClients
-from eProc_Purchase_Order.models import PoHeader, PoItem, PoAccounting, PoApproval
+from eProc_Purchase_Order.models import *
 from eProc_Shopping_Cart.models import ScHeader, ScItem, ScAccounting, ScApproval
 
 

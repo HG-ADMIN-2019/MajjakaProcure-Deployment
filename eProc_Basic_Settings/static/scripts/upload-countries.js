@@ -10,7 +10,7 @@ function onclick_add_button(button) {
     $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
     $('#myModal').modal('show');
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="form-control"  type="text" pattern="[A-Z]" maxlength="2" onkeypress="return /[a-z]/i.test(event.key)" name="countrycode" style="text-transform:uppercase;" required></td><td><input class="form-control" type="text" maxlength="100" onkeypress="return regex_char_restriction(event)" name="countryname" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="form-control"  type="text" pattern="[A-Z]"  maxlength="2" onkeypress="return /[a-z]/i.test(event.key)" name="countrycode" style="text-transform:uppercase;" required></td><td><input class="form-control" type="text" maxlength="100" onkeypress="return regex_char_restriction(event)" name="countryname" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
     $("#id_del_ind_checkbox").prop("hidden", true);
@@ -103,108 +103,7 @@ $(".remove_upload_data").click(() => {
 });
 
 
-//validate by comparing  main table values and popup table values
-function maintable_validation(validate_add_attributes, main_table_low_value) {
-    var no_duplicate_entries = 'Y'
-    var error_message =''
-    var common = [];
-    jQuery.grep(validate_add_attributes, function (el) {
-        if (jQuery.inArray(el, main_table_low_value) != -1) {
-        common.push(el);
-        }
-    });
-    if (common.length != 0) {
-        error_message = messageConstants["JMSG001"]
-        no_duplicate_entries = 'N'
-    }
-    return [no_duplicate_entries,error_message]
-}
-
-// validating the  popup table for duplicate entries
-function compare_table_for_duplicate_entries(validate_add_attributes, country) {
-    add_attr_duplicates = false;
-    var error_message = ''
-    var add_attr_duplicates_list = [];
-    var add_attr_unique_list = [];
-    var no_duplicate_value = 'Y'
-    $.each(validate_add_attributes, function (index, value) {
-        if ($.inArray(value, add_attr_unique_list) == -1) {
-            add_attr_unique_list.push(value);
-        }
-        else {
-            if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                add_attr_duplicates_list.push(value);
-            }
-        }
-    });
-    if (add_attr_duplicates_list.length != 0) {
-//        error_message = messageConstants["JMSG001"];
-        no_duplicate_value = 'N'
-                var url_new = "{% url 'eProc_Basic:get_message_description' %}";
-            var msg = "MSG186";
-            var msg_type ;
-              msg_type = message_config_details(msg, url_new);
-              $("#id_error_msg_id").prop("hidden", false)
-
-              if(msg_type.message_type[0] == "Error"){
-                    message_type_check("id_error_msg_id", msg_type.messages_id_desc[0])
-              }
-              else if(msg_type.message_type[0] == "Warning"){
-                 message_type_check("id_warning_msg_id", msg_type.messages_id_desc[0])
-              }
-              else if(msg_type.message_type[0] == "Information"){
-                 message_type_check("id_info_msg_id", msg_type.messages_id_desc[0])
-
-              }
-            error_message =  msg_type.messages_id_desc[0];
-            $('#id_save_confirm_popup').modal('hide');
-            $('#myModal').modal('show');
-        no_duplicate_entries = 'N'
-    }
-    else {
-        $.each(country, function (i, item) {
-           if (item.country_code.length == 0) {
-//                error_message = messageConstants["JMSG002"] + "Country Code";
-               no_duplicate_value = 'N'
-                var url_new = "{% url 'eProc_Basic:get_message_description' %}";
-            var msg = "MSG189";
-            var msg_type ;
-              msg_type = message_config_details(msg, url_new);
-              $("#id_error_msg_id").prop("hidden", false)
-
-              if(msg_type.message_type[0] == "Error"){
-                    message_type_check("id_error_msg_id", msg_type.messages_id_desc[0])
-              }
-              else if(msg_type.message_type[0] == "Warning"){
-                 message_type_check("id_warning_msg_id", msg_type.messages_id_desc[0])
-              }
-              else if(msg_type.message_type[0] == "Information"){
-                 message_type_check("id_info_msg_id", msg_type.messages_id_desc[0])
-
-              }
-            error_message =  msg_type.messages_id_desc[0];
-            $('#id_save_confirm_popup').modal('hide');
-            $('#myModal').modal('show');
-            no_duplicate_entries = 'N'
-            }
-            });
-              return [no_duplicate_value,error_message]
-       }
-//            if (item.country_name.length == 0) {
-//                error_message = messageConstants["JMSG002"] + "Country Name";
-//                no_duplicate_value = 'N'
-//                return [no_duplicate_value,error_message]
-//            }
-//         });
-//    }
-//
-//    return [no_duplicate_value,error_message]
-//
-
-
-}
 function display_error_message(error_message){
-
         $('#error_message').text(error_message);
         document.getElementById("error_message").style.color = "Red";
         $("#error_msg_id").css("display", "block")
@@ -212,6 +111,7 @@ function display_error_message(error_message){
         $('#myModal').modal('show');
 
 }
+
 
 //*******************************************************
 // on click add icon display the row in to add the new entries
@@ -223,7 +123,7 @@ function add_popup_row() {
     $(".modal").on("hidden.bs.modal", function () {
     $("#id_error_msg").html(" ");
      });
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="input form-control"  type="text" pattern="[A-Z]" maxlength="2" onkeypress="return /[a-z]/i.test(event.key)" name="countrycode" style="text-transform:uppercase;" required></td><td><input class="input form-control" type="text" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" name="countryname"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="input form-control"  type="text" pattern="[A-Z]"  maxlength="2" onkeypress="return /[a-z]/i.test(event.key)" name="countrycode" style="text-transform:uppercase;" required></td><td><input class="input form-control" type="text" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" name="countryname"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     if (GLOBAL_ACTION == "country_upload") {
         $(".class_del_checkbox").prop("hidden", false);
@@ -292,6 +192,9 @@ $('#save_id').click(function () {
             country.country_code = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
             if (country == undefined){
                 country.country_code = row.find("TD").eq(1).find('input[type="text"]').val();
+             }
+             if (country.country_code < "2"){
+                alert("country code minimum length is 1")
              }
             validate_add_attributes.push(country.country_code);
             countries_data.push(country);

@@ -19,7 +19,8 @@ from eProc_Basic.Utilities.constants.constants import *
 from eProc_Basic.Utilities.functions.get_db_query import get_user_id_by_email_id, update_user_roles_to_session
 from eProc_Basic.Utilities.functions.guid_generator import guid_generator
 from eProc_Basic.Utilities.functions.str_concatenate import concatenate_array_str, concatenate_str
-from eProc_Basic.Utilities.functions.type_casting import type_cast_array_str_to_int, type_cast_array_str_to_float
+from eProc_Basic.Utilities.functions.type_casting import type_cast_array_str_to_int, type_cast_array_str_to_float, \
+    type_cast_array_str_to_decimal
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Configuration.models import AccountingDataDesc, OrgCompanies, \
     OrgPorg, OrgPGroup, SupplierMaster
@@ -166,9 +167,12 @@ def get_sc_requester_user_name(guid):
     :param guid:
     :return:
     """
-    sc_header_data = ScHeader.objects.get(guid=guid)
-    requester_user_name = sc_header_data.requester
-
+    sc_header_data = django_query_instance.django_filter_query(ScHeader,
+                                                               {'guid':guid,
+                                                                'client':global_variables.GLOBAL_CLIENT,
+                                                                'del_ind':False},None,None)[0]
+    requester_user_name = sc_header_data['requester']
+    sc_header_data['total_value'] = format(float(sc_header_data['total_value']), '.2f')
     return sc_header_data, requester_user_name
 
 
@@ -345,10 +349,11 @@ def get_highest_item_guid(guid):
         for item_price in sc_item_price:
             price_array.append(item_price.value)
             item_guid.append(item_price.guid)
-        item_value_list = type_cast_array_str_to_int(price_array)
+        item_value_list = type_cast_array_str_to_decimal(price_array)
         max_item_price = max(item_value_list)
-        max_item_price_index = price_array.index(max_item_price)
-        max_item_guid = item_guid[max_item_price_index]
+        if max_item_price in price_array:
+            max_item_price_index = price_array.index(max_item_price)
+            max_item_guid = item_guid[max_item_price_index]
     return max_item_guid
 
 

@@ -30,12 +30,14 @@ class ScHeader(models.Model, DBQueries):
                                   verbose_name='Ref Doc Number')
     co_code = models.CharField(db_column='CO_CODE', max_length=8, blank=True, null=True, verbose_name='Company Code')
     gross_amount = models.CharField(db_column='GROSS_AMOUNT', max_length=15, blank=True, null=True,
-                                    verbose_name='Gross Amount')
+                                    verbose_name='Gross Amount') #sum(gross price in item*quantity for all the items)
     description = models.CharField(db_column='DESCRIPTION', max_length=255, blank=True, null=True,
                                    verbose_name='SC Name')
+    # total_value = sum(currency converted item value)
     total_value = models.CharField(db_column='TOTAL_VALUE', max_length=15, blank=False, null=False,
-                                   verbose_name='Total Value')
+                                   verbose_name='Total Value') # sum(value in item)
     currency = models.CharField(db_column='CURRENCY', max_length=3, blank=False, null=False, verbose_name='Currency')
+    # total_tax = sum of (tax value in scitem)
     total_tax = models.CharField(db_column='TOTAL_TAX', max_length=15, blank=True, null=True, verbose_name='Total Tax')
     total_value_appr = models.CharField(db_column='TOTAL_VALUE_APPR', max_length=15, blank=True, null=True,
                                         verbose_name='Total Value Appr')
@@ -53,6 +55,10 @@ class ScHeader(models.Model, DBQueries):
                                  verbose_name='Requester')
     approval_step = models.CharField(db_column='APPROVAL_STEP', max_length=2, blank=True, null=True,
                                      verbose_name='Approval Ind')
+    transmission_error = models.BooleanField(db_column='TRANSMISSION_ERROR', default=False, null=True,
+                                          verbose_name='PO creation error flag')
+    transmission_error_type = models.CharField(db_column='TRANSMISSION_ERROR_TYPE',max_length=30, blank=True, null=True,
+                                             verbose_name='PO creation error type eg:PO_SPLIT,TRANSACTION_TYPE ')
     status = models.CharField(db_column='STATUS', max_length=20, blank=False, null=False, verbose_name='Status')
     created_at = models.DateTimeField(db_column='CREATED_AT', blank=False, null=False, verbose_name='Created At')
     created_by = models.CharField(db_column='CREATED_BY', max_length=12, blank=False, null=False,
@@ -150,52 +156,74 @@ class ScItem(models.Model):
                                  verbose_name='Purchasing Organization')
     supplier_id = models.CharField(db_column='SUPPLIER_ID', max_length=12, blank=True, null=True,
                                    verbose_name='Supplier ID')
-    sup_addr_no = models.PositiveIntegerField(db_column='SUP_ADDR_NO', null=True)
+    ship_from_addr_num = models.CharField(db_column='SHIP_FROM_ADDR_NUM', max_length=10, blank=True, null=True, verbose_name='ship from addr num')
     pref_supplier = models.CharField(db_column='PREF_SUPPLIER', max_length=10, null=True,
                                      verbose_name='preferred supplier ')
     process_flow = models.CharField(db_column='PROCESS_FLOW', max_length=20, blank=True, null=True,
                                 verbose_name='Item Category')
-    prod_cat = models.CharField(db_column='PROD_CAT', max_length=20, blank=False, null=False,
+    prod_cat_id = models.CharField(db_column='PROD_CAT_ID', max_length=20, blank=False, null=False,default=None,
                                 verbose_name='Product Category')
-    ext_product_id = models.PositiveIntegerField(db_column='EXT_PRODUCT_ID', null=True, blank=True)
-    prod_type = models.CharField(db_column='PROD_TYPE', max_length=10, blank=False, null=False,
+    prod_type = models.CharField(db_column='PROD_TYPE', max_length=2, blank=False, null=True,
                                  verbose_name='Product Type')
     catalog_id = models.CharField(db_column='CATALOG_ID', max_length=20, blank=True, null=True,
                                   verbose_name='Catalog ID')
     ctr_num = models.CharField(db_column='CTR_NUM', max_length=50, blank=True, null=True, verbose_name='ctr num')
     ctr_item_num = models.CharField(db_column='CTR_ITEM_NUM', max_length=50, blank=True, null=True,
                                     verbose_name='ctr num')
-    unspsc = models.CharField(db_column='UNSPSC', max_length=10, blank=True, null=True, verbose_name='UNSPSC')
+    cust_prod_cat_id = models.CharField(db_column='CUST_PROD_CAT_ID', max_length=20, blank=True, null=True, verbose_name='UNSPSC')
     fin_entry_ind = models.BooleanField(db_column='FIN_ENTRY_IND', blank=True, null=True, verbose_name='Fin entry ind')
     item_del_date = models.DateTimeField(db_column='ITEM_DEL_DATE', blank=False, null=True, verbose_name='Delivery Date')
-    process_type = models.CharField(db_column='PROCESS_TYPE', null=True, max_length=8)
-    start_date = models.DateField(db_column='START_DATE', null=True, verbose_name='Start Date')
-    end_date = models.DateField(db_column='END_DATE', null=True, verbose_name='End date')
-    quantity = models.CharField(db_column='QUANTITY', max_length=16, blank=True, null=True, verbose_name='Quantity')
+    start_date = models.DateTimeField(db_column='START_DATE', null=True, verbose_name='Start Date')
+    end_date = models.DateTimeField(db_column='END_DATE', null=True, verbose_name='End date')
+    quantity = models.PositiveIntegerField(db_column='QUANTITY', null=True, verbose_name='Quantity')
     quantity_min = models.PositiveIntegerField(db_column='QUANTITY_MIN', null=True, verbose_name='Quantity Min')
     quantity_max = models.PositiveIntegerField(db_column='QUANTITY_MAX', null=True, verbose_name='Quantity Max')
     value_min = models.PositiveIntegerField(db_column='VALUE_MIN', null=True, verbose_name='Value Min')
+    min_order_value = models.DecimalField(db_column='MIN_ORDER_VALUE', max_digits=15, decimal_places=2, blank=True,
+                                          null=True, verbose_name='Value')
     tiered_flag = models.BooleanField(default=False, null=False, db_column='TIERED_FLAG')
     bundle_flag = models.CharField(db_column='BUNDLE_FLAG', null=True, max_length=1)
-    int_prod_id = models.CharField(db_column='INT_PROD_ID', max_length=20, null=True)
+    int_product_id  = models.CharField(db_column='INT_PRODUCT_ID', max_length=20, null=True)
     tax_code = models.CharField(db_column='TAX_CODE', max_length=5, null=True, verbose_name='Tax Code')
-    price = models.DecimalField(db_column='PRICE', max_digits=13, decimal_places=2, blank=True, null=True,
+    base_price = models.DecimalField(db_column='BASE_PRICE', max_digits=15, decimal_places=2, blank=True, null=True,
+                                     verbose_name='base price of the item')
+    additional_price = models.DecimalField(db_column='ADDITIONAL_PRICE', max_digits=15, decimal_places=2, blank=True,
+                                           null=True,
+                                           verbose_name='additionalprice of the item')
+    actual_price = models.DecimalField(db_column='ACTUAL_PRICE', max_digits=15, decimal_places=2, blank=True, null=True,
+                                       verbose_name='Price without discount')  # base price+ additional price
+    discount_percentage = models.DecimalField(db_column='DISCOUNT_PERCENTAGE', max_digits=15, decimal_places=2,
+                                              blank=True, null=True,
+                                              verbose_name='Discount percentage')
+    discount_value = models.DecimalField(db_column='DISCOUNT_VALUE', max_digits=15, decimal_places=2, blank=True,
+                                         null=True,
+                                         verbose_name='Discount value')  # (base_price)*discount_percentage
+    price = models.DecimalField(db_column='PRICE', max_digits=15, decimal_places=2, blank=True, null=True,
                                 verbose_name='Price')
-    currency = models.CharField(db_column='CURRENCY', null=True, max_length=5, verbose_name='Currency')
+    gross_price = models.DecimalField(db_column='GROSS_PRICE', max_digits=15, decimal_places=2, blank=False, null=True,
+                                      verbose_name='Gross Price')  # price + sales tax
+    value = models.DecimalField(db_column='VALUE', max_digits=15, decimal_places=2, blank=True, null=True,
+                                verbose_name='Value') # (float(quantity) * float(price)) / int(price_unit)
+    tax_value = models.DecimalField(db_column='TAX_VALUE', max_digits=15, decimal_places=2, blank=True, null=True,
+                                verbose_name='tax Value') # (SGST *quantity)+(CGST *quantity)
+    currency = models.CharField(db_column='CURRENCY', null=True, max_length=3, verbose_name='Currency')
     price_unit = models.CharField(db_column='PRICE_UNIT', max_length=5, blank=True, null=True,
                                   verbose_name='Price Unit')
-    unit = models.CharField(db_column='UNIT', max_length=30, blank=False, null=False, verbose_name='Unit')
-    gross_price = models.DecimalField(db_column='GROSS_PRICE', max_digits=13, decimal_places=2, blank=False, null=True,
-                                      verbose_name='Gross Price')
+    unit = models.CharField(db_column='UNIT', max_length=3, blank=False, null=False, verbose_name='Unit')
     overall_limit = models.DecimalField(db_column='OVERALL_LIMIT', max_digits=15, decimal_places=2, blank=True,
                                         null=True, verbose_name='overall limit')
     expected_value = models.DecimalField(db_column='EXPECTED_VALUE', max_digits=15, decimal_places=2, blank=True,
                                          null=True, verbose_name='expected value')
+    ir_gr_ind_limi = models.BooleanField(db_column='IR_GR_IND_LIMI', null=True) # only for limit order
+    gr_ind_limi = models.BooleanField(db_column='GR_IND_LIMI', null=True, verbose_name='Gr ind')# only for limit order
     undef_limit = models.BooleanField(default=False, null=False, db_column='UNDEF_LIMIT')
     gr_ind = models.BooleanField(db_column='GR_IND', null=True, verbose_name='Gr ind')
+    ir_ind = models.BooleanField(db_column='IR_IND', null=True)
     ir_gr_ind = models.BooleanField(db_column='IR_GR_IND', null=True)
+    po_resp = models.BooleanField(db_column='PO_RESP', null=True, verbose_name='PO Response')
+    asn_ind = models.BooleanField(db_column='ASN_IND', null=True, verbose_name='Advance shipment Notice')
     dis_rej_ind = models.BooleanField(default=False, null=False, db_column='DIS_REJ_IND')
-    supp_prod_num = models.CharField(db_column='SUPP_PROD_NUM', max_length=40, blank=True, null=True,
+    supp_product_id = models.CharField(db_column='supp_product_id', max_length=40, blank=True, null=True,
                                      verbose_name='Supplier Product Number')
     manu_part_num = models.CharField(db_column='MANU_PART_NUM', max_length=40, blank=True, null=True,
                                      verbose_name='manu part num')
@@ -209,20 +237,19 @@ class ScItem(models.Model):
                                         verbose_name='bill to addr num')
     ship_to_addr_num = models.CharField(db_column='SHIP_TO_ADDR_NUM', max_length=10, blank=False, null=False,
                                         verbose_name='ship to addr num')
-    manu_name = models.CharField(db_column='MANU_NAME', max_length=50, blank=True, null=True, verbose_name='manu name')
+    manufacturer = models.CharField(db_column='MANUFACTURER', max_length=15, null=True)
     created_at = models.DateTimeField(null=True, db_column='CREATED_AT', blank=True)
     created_by = models.CharField(max_length=10, db_column='CREATED_BY', null=True, blank=True)
     changed_at = models.DateTimeField(null=True, db_column='CHANGED_AT', blank=True)
     changed_by = models.CharField(max_length=10, db_column='CHANGED_BY', null=True, blank=True)
-    doc_type = models.CharField(max_length=10, db_column='DOC_TYPE', null=True, blank=True)
+    document_type = models.CharField(max_length=10, db_column='DOCUMENT_TYPE', null=True, blank=True)
     order_date = models.DateTimeField(db_column='ORDER_DATE', null=True, blank=True)
     catalog_name = models.CharField(max_length=40, blank=True, null=True, db_column='CATALOG_NAME')
-    lead_time = models.CharField(max_length=5, db_column='LEAD_TIME', null=True, blank=True)
+    lead_time = models.PositiveIntegerField(db_column='LEAD_TIME', null=True, blank=True,verbose_name='Lead time')
     price_origin = models.CharField(max_length=1, db_column='PRICE_ORIGIN', null=True, blank=True)
-    value = models.PositiveIntegerField(db_column='VALUE', null=True, blank=True)
-    final_inv = models.CharField(db_column='FINAL_INV', null=True, blank=True, max_length=1)
-    val_cf_f = models.PositiveIntegerField(db_column='VAL_CF_F', null=True, blank=True)
-    val_cf = models.PositiveIntegerField(db_column='VAL_CF', null=True, blank=True)
+    final_inv =  models.BooleanField(default=False, null=False, db_column='FINAL_INV')
+    val_cf_e = models.DecimalField(db_column='VAL_CF_E', max_digits=15, decimal_places=2, blank=True, null=True, verbose_name='Value of Entered Confirmations')
+    val_cf =  models.DecimalField(db_column='VAL_CF', max_digits=15, decimal_places=2, blank=True, null=True, verbose_name='Value of Confirmations Released')
     val_iv_e = models.PositiveIntegerField(db_column='VAL_IV_E', null=True, blank=True)
     val_iv = models.PositiveIntegerField(db_column='VAL_IV', null=True, blank=True)
     val_po_e = models.PositiveIntegerField(db_column='VAL_PO_E', null=True, blank=True)
@@ -242,19 +269,18 @@ class ScItem(models.Model):
     be_stge_loc = models.CharField(max_length=4, db_column='BE_STGE_LOC', blank=True, null=True)
     be_plant = models.CharField(max_length=4, db_column='BE_PLANT', blank=True, null=True)
     be_doc_type = models.CharField(max_length=4, db_column='BE_doc_type', blank=True, null=True)
-    good_marking = models.CharField(max_length=60, db_column='GOODS_MARKING', blank=True, null=True)
+    goods_marking = models.CharField(max_length=60, db_column='GOODS_MARKING', blank=True, null=True)
     approved_by = models.CharField(max_length=16, db_column='APPROVED_BY', blank=True, null=True)
     silent_po = models.BooleanField(default=False, null=False, db_column='SILENT_PO')
-    supplier_name = models.CharField(max_length=40, db_column='SUPPLIER_NAME', blank=True, null=True)
-    supplier_contact = models.CharField(max_length=40, db_column='SUPPLIER_CONTACT', blank=True, null=True)
+    supplier_username = models.CharField(max_length=40, db_column='SUPPLIER_USERNAME', blank=True, null=True)
+    supplier_mobile_num = models.CharField(max_length=40, db_column='SUPPLIER_MOBILE_NUM', blank=True, null=True)
     supplier_fax_no = models.CharField(max_length=30, db_column='SUPPLIER_FAX_NO', blank=True, null=True)
     supplier_email = models.CharField(max_length=100, db_column='SUPPLIER_EMAIL', blank=True, null=True)
     delivery_days = models.CharField(db_column='DELIVERY_DAYS', max_length=20, null=True, blank=True)
-    transaction_type = models.CharField(db_column='TRANSACTION_TYPE', null=False, max_length=10) # Transaction number of PO eg SHC1,SHC2
+    po_transaction_type = models.CharField(db_column='PO_TRANSACTION_TYPE', null=True,blank=True, max_length=10) # Transaction number of PO eg SHC1,SHC2
     blocked_supplier = models.CharField(max_length=10, db_column='BLOCKED_SUPPLIER', blank=True, null=True)
-    service_item = models.BooleanField(default=False, null=False, db_column='SERVICE_ITEM')
     required_on = models.DateField(null=True, blank=True, db_column='REQUIRED_ON')
-    description = models.CharField(db_column='DESCRIPTION', max_length=255, blank=False, null=False)
+    description = models.CharField(db_column='DESCRIPTION', max_length=1000, blank=False, null=False)
     long_desc = models.CharField(db_column='LONG_DESC', max_length=3000, blank=True, null=True,
                                  verbose_name='Product Long desc')
     stock_keeping_unit = models.CharField(db_column='STOCK_KEEPING_UNIT', max_length=32, null=True, blank=True)
@@ -279,10 +305,14 @@ class ScItem(models.Model):
                                 verbose_name='Contract Name')
     confirmed_qty = models.PositiveIntegerField(db_column='CONFIRMED_QTY', null=True, blank=True,
                                                 verbose_name='Qunatity to be updated upon creation of confirmation')
-    sgst = models.PositiveIntegerField(db_column='SGST', blank=True, null=True, verbose_name='State GST')
-    cgst = models.PositiveIntegerField(db_column='CGST', blank=True, null=True, verbose_name='Central GST')
-    vat = models.PositiveIntegerField(db_column='VAT', blank=True, null=True,
-                                      verbose_name='Value Added Tax - VAT code (%age as decimal) returned from catalogue ')
+    sgst = models.DecimalField(db_column='SGST', max_digits=15, decimal_places=2, blank=True, null=True,
+                               verbose_name='State GST')
+    cgst = models.DecimalField(db_column='CGST', max_digits=15, decimal_places=2, blank=True, null=True,
+                               verbose_name='Central GST')
+    vat = models.DecimalField(db_column='VAT', max_digits=15, decimal_places=2, blank=True, null=True,
+                              verbose_name='Value Added Tax - VAT code (%age as decimal) returned from catalogue ')
+
+
     cash_disc1 = models.PositiveIntegerField(db_column='CASH_DISC1', blank=True, null=True,
                                              verbose_name='Discount % value to be filled (from eform table - qty based discount)')
     cash_disc2 = models.PositiveIntegerField(db_column='CASH_DISC2', blank=True, null=True,
@@ -303,6 +333,8 @@ class ScItem(models.Model):
     client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False)
     header_guid = models.ForeignKey('eProc_Shopping_Cart.ScHeader', models.DO_NOTHING, db_column='HEADER_GUID',
                                     blank=True, null=True)
+    po_item_guid = models.ForeignKey('eProc_Purchase_Order.PoItem', models.DO_NOTHING, db_column='ITEM_GUID',
+                                     blank=True, null=True)
 
     class Meta:
         managed = True
@@ -449,7 +481,7 @@ class ScAddresses(models.Model):
     address_partner_type = models.ForeignKey('eProc_Configuration.AddressPartnerType', models.DO_NOTHING,
                                              db_column='ADDRESS_PARTNER_TYPE', null=True)
 
-    title = models.CharField(db_column='TITLE', max_length=40)
+    title = models.CharField(db_column='TITLE', max_length=40,null=True)
     name1 = models.CharField(db_column='NAME1', max_length=40, null=True, verbose_name='First Name')
     name2 = models.CharField(db_column='NAME2', max_length=40, null=True, verbose_name='Last Name')
     street = models.CharField(db_column='STREET', max_length=100, null=False, verbose_name='Street')
@@ -465,7 +497,7 @@ class ScAddresses(models.Model):
                                      blank=True)
     telephone_number = models.CharField(db_column='TELEPHONE_NUMBER', max_length=20, verbose_name='Telephone',
                                         null=True, blank=True)
-    fax_number = models.CharField(db_column='FAX_NUMBER', max_length=30, null=True, blank=False, verbose_name='Fax')
+    fax_number = models.CharField(db_column='FAX_NUMBER', max_length=30, null=True, blank=True, verbose_name='Fax')
     email = models.EmailField(db_column='EMAIL', max_length=100, null=True)
     time_zone = models.CharField(db_column='TIME_ZONE', max_length=6, null=True)
     sc_addr_created_at = models.DateTimeField(db_column='SC_ADDR_CREATED_AT', blank=False, null=True)
@@ -518,6 +550,11 @@ class PurchasingData(models.Model):
     purchasing_data_destination_system = models.CharField(db_column='PURCHASING_DATA_DESTINATION_SYSTEM', max_length=20)
     del_ind = models.BooleanField(default=False, null=True)
     client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT)
+    po_header_guid = models.ForeignKey('eProc_Purchase_Order.PoHeader', models.DO_NOTHING, db_column='PO_HEADER_GUID',
+                                       blank=True, null=True)
+    po_item_guid = models.ForeignKey('eProc_Purchase_Order.PoItem', models.DO_NOTHING, db_column='PO_ITEM_GUID',
+                                     blank=True,
+                                     null=True)
     sc_header_guid = models.ForeignKey('eProc_Shopping_Cart.ScHeader', models.DO_NOTHING, db_column='SC_HEADER_GUID',
                                        null=True)
     sc_item_guid = models.ForeignKey('eProc_Shopping_Cart.ScItem', models.DO_NOTHING, db_column='SC_ITEM_GUID')
@@ -530,6 +567,7 @@ class PurchasingUser(models.Model):
     purchasing_user_guid = models.CharField(db_column='PURCHASING_USER_GUID', primary_key=True, max_length=32)
     purchaser_user_id = models.CharField(db_column='PURCHASER_USER_ID', null=True, max_length=16)
     status = models.CharField(db_column='STATUS', max_length=20, blank=False, null=False, verbose_name='Status')
+    document_type = models.CharField(max_length=10, db_column='DOC_TYPE', null=True, blank=True)
     purchasing_user_created_at = models.DateTimeField(db_column='PURCHASING_USER_CREATED_AT', blank=False, null=True,
                                                       verbose_name='Created At')
 
@@ -543,6 +581,11 @@ class PurchasingUser(models.Model):
                                                   verbose_name='Changed By')
     del_ind = models.BooleanField(default=False, null=False)
     client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False)
+    po_header_guid = models.ForeignKey('eProc_Purchase_Order.PoHeader', models.DO_NOTHING, db_column='PO_HEADER_GUID',
+                                       blank=True, null=True)
+    po_item_guid = models.ForeignKey('eProc_Purchase_Order.PoItem', models.DO_NOTHING, db_column='PO_ITEM_GUID',
+                                     blank=True,
+                                     null=True)
     sc_header_guid = models.ForeignKey('eProc_Shopping_Cart.ScHeader', models.DO_NOTHING, db_column='SC_HEADER_GUID',
                                        null=True)
     sc_item_guid = models.ForeignKey('eProc_Shopping_Cart.ScItem', models.DO_NOTHING, db_column='SC_ITEM_GUID',null=True)

@@ -297,13 +297,13 @@ function update(item_number, item_call_off, item_guid_number) {
     document.getElementById("update_pr_form").style.display = "none"; 
     document.getElementById("update_catalog_form").style.display = "none"; 
     $('#update_modal_popup').modal('show');
-    if (call_off == 'Limit') {
+    if (call_off == '04') {
         document.getElementById("update_limit_form").style.display = "block";
     }
-    if (call_off == 'Freetext') {
+    if (call_off == '02') {
         document.getElementById("update_freetext_form").style.display = "block";
     }
-    if (call_off == 'PR') {
+    if (call_off == '03') {
         document.getElementById("update_pr_form").style.display = "block";
         if(update_item_guid in update_item_details) {
             item_update_details = update_item_details[update_item_guid]
@@ -330,7 +330,7 @@ function update(item_number, item_call_off, item_guid_number) {
             item_guid_number = ''
             item_number = ''
             // To get limit item details
-            if (call_off == 'Limit') {
+            if (call_off == '04') {
                 document.getElementById("id_description").value = response.item_name
                 document.getElementById('upl_prod_cat').value = response.prod_cat;
                 document.getElementById('currency').value = response.currency;
@@ -359,7 +359,7 @@ function update(item_number, item_call_off, item_guid_number) {
                 }
             }
             // To get Purchase requisition update form with values
-            if (call_off == 'PR') {
+            if (call_off == '03') {
                 document.getElementById("update-pr-item_name").value = response.item_name
                 document.getElementById("update-pr-prod_desc").value = response.prod_desc
                 document.getElementById("update-pr-product_id").value = response.prod_id
@@ -370,7 +370,7 @@ function update(item_number, item_call_off, item_guid_number) {
                 document.getElementById("update-pr-lead_time").value = response.lead_time
                 document.getElementById("update-pr-quantity").value = response.quantity
             }
-            if (call_off == 'Catalog'){
+            if (call_off == '01'){
                 $('#update_pop_up').modal('show');
                 var cat_qnt = "item_quantity-"+guid
                 var value = $("#"+cat_qnt).text()
@@ -379,7 +379,7 @@ function update(item_number, item_call_off, item_guid_number) {
                 document.getElementById("update_catalog_form").style.display = "block";
             }
             // To get freetext form with values
-            if (call_off == 'Freetext') {
+            if (call_off == '02') {
                 $('#eform_card_details').empty();
                 display_configured_fields(response.configured_eform_fields, response.free_text_context)
                 if (document_detail_mode == 'True'){
@@ -424,29 +424,38 @@ function delete_cart_item() {
     delete_sc_data.del_item_guid = delete_item_guid;
     delete_sc_data.total_value = total_value;
     delete_sc_data.header_guid = header_guid;
+    
+    OpenLoaderPopup();
 
     if(delete_item_guid != ''){
-
-        var delete_sc_result = ajax_my_order_delete_sc(delete_sc_data);
-        location.reload();
-        if(delete_sc_result){
-            item_guid_number = ''
-            if (response.count === 0) {
-                window.opener.location.reload();
-                window.close()
-            } else {
-                $('#total_items').html(response.count)
-                document.getElementById("ScHeader-total_value-" + GLOBAL_HEADER_GUID).innerHTML = response.total_value
-                var get_item_number = $("[id^=item_number_]")
-                var row = document.getElementById(delete_item_guid);
-                row.parentNode.removeChild(row);
-                get_update_count = document.getElementsByClassName('update_item_count')
-                for(i = 0; i < get_update_count.length; i++){
-                    get_update_count[i].innerHTML = i + 1
+        $.ajax({
+            type: 'POST',
+            url: delete_my_order_sc_item_url,
+            data: delete_sc_data,
+            success: function(response){
+                item_guid_number = ''
+                if (response.count === 0) {
+                    window.opener.location.reload();
+                    window.close()
+                } else {
+                    $('#total_items').html(response.count)
+                    document.getElementById("ScHeader-total_value-" + GLOBAL_HEADER_GUID).innerHTML = response.total_value
+                    var get_item_number = $("[id^=item_number_]")
+                    var row = document.getElementById(delete_item_guid);
+                    row.parentNode.removeChild(row);
+                    get_update_count = document.getElementsByClassName('update_item_count')
+                    for(i = 0; i < get_update_count.length; i++){
+                        get_update_count[i].innerHTML = i + 1
+                    }
+                    CloseLoaderPopup();
                 }
-            }
-            
-        }
+            },
+            error: function(error) {
+                console.log(error);
+                CloseLoaderPopup();
+
+            },
+        });
     }
     
 }

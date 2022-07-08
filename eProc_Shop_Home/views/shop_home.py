@@ -55,7 +55,7 @@ def shopping_cart_home(request):
     freetext_supp_id = []
     freetext_item_flag = ''
     freetext_price = []
-    delete_all_shopping_carts({}, global_variables.GLOBAL_CLIENT)
+    # delete_all_shopping_carts({'client':global_variables.GLOBAL_CLIENT}, global_variables.GLOBAL_CLIENT)
     context = {
         'inc_nav': True,
         'inc_footer': True,
@@ -99,8 +99,8 @@ def shopping_cart_home(request):
 
     product_id = django_query_instance.django_filter_value_list_query(ScItem, {
         'client': client, 'comp_code': default_company_code, 'header_guid__in': get_sc_header_guid,
-        'call_off': CONST_CO01, 'del_ind': False
-    }, 'int_prod_id')
+        'call_off': CONST_CATALOG_CALLOFF, 'del_ind': False
+    }, 'int_product_id')
     product_id_list = []
     product_id_data = distinct_list(product_id)
     for product in product_id_data:
@@ -177,13 +177,13 @@ def shopping_cart_home(request):
         for cart_items_prod_id in fav_cart_detail:
             freetext_price.append(cart_items_prod_id['price'])
             fav_cart_product_id.append(cart_items_prod_id['int_product_id'])
-            freetext_prodcat.append(cart_items_prod_id['prod_cat'])
+            freetext_prodcat.append(cart_items_prod_id['prod_cat_id'])
             freetext_supp_id.append(cart_items_prod_id['supplier_id'])
 
             catalog_product_flag = django_query_instance.django_existence_check(ProductsDetail, {
                 'product_id': cart_items_prod_id['int_product_id'], 'client': client, 'del_ind': False})
             freetext_formid = django_query_instance.django_filter_value_list_query(FreeTextForm, {
-                'prod_cat_id': cart_items_prod_id['prod_cat'], 'client': client, 'del_ind': False}, 'form_id')
+                'prod_cat_id': cart_items_prod_id['prod_cat_id'], 'client': client, 'del_ind': False}, 'form_id')
             # print(freetext_formid)
             freetext_item_flag = django_query_instance.django_existence_check(FreeTextForm, {
                 'form_id__in': freetext_formid, 'client': client, 'del_ind': False})
@@ -306,9 +306,9 @@ def add_favourite_shopping_cart(request):
                     'item_num': items_details['item_num'],
                     'description': items_details['description'],
                     'prod_cat_desc': items_details['prod_cat_desc'],
-                    'prod_cat': items_details['prod_cat'],
+                    'prod_cat_id': items_details['prod_cat_id'],
                     'int_product_id': items_details['int_product_id'],
-                    'ext_product_id': items_details['ext_product_id'],
+                    'supp_product_id': items_details['supp_product_id'],
                     'quantity': items_details['quantity'],
                     'unit': items_details['unit'],
                     'price': items_details['price'],
@@ -319,12 +319,10 @@ def add_favourite_shopping_cart(request):
                     'pref_supplier': items_details['pref_supplier'],
                     'lead_time': items_details['lead_time'],
                     'value': items_details['value'],
-                    'supp_txt': items_details['supp_txt'],
                     'manu_part_num': items_details['manu_part_num'],
                     'manu_code_num': items_details['manu_code_num'],
-                    'supp_prod_num': items_details['supp_prod_num'],
                     'call_off': items_details['call_off'],
-                    'supplier_contact': items_details['supplier_contact'],
+                    'supplier_mobile_num': items_details['supplier_mobile_num'],
                     'supplier_fax_no': items_details['supplier_fax_no'],
                     'supplier_email': items_details['supplier_email'],
                     'quantity_min': items_details['quantity_min'],
@@ -336,14 +334,14 @@ def add_favourite_shopping_cart(request):
                     'catalog_id': items_details['catalog_id'],
                     'catalog_item': items_details['catalog_item'],
                     'ctr_num': items_details['ctr_num'],
-                    'contract': items_details['contract'],
+                    'ctr_name': items_details['ctr_name'],
                     'prod_type': items_details['prod_type'],
                     'item_del_date': items_details['item_del_date'],
                     'process_type': items_details['process_type'],
                     'start_date': items_details['start_date'],
                     'end_date': items_details['end_date'],
-                    'ir_gr_ind': items_details['ir_gr_ind'],
-                    'gr_ind': items_details['gr_ind'],
+                    'ir_gr_ind_limi': items_details['ir_gr_ind_limi'],
+                    'gr_ind_limi': items_details['gr_ind_limi'],
                     'overall_limit': items_details['overall_limit'],
                     'expected_value': items_details['expected_value'],
                     'username': items_details['username'],
@@ -378,7 +376,7 @@ def add_favourite_shopping_cart(request):
                                             'eform_id': eform_transaction['eform_id'],
                                             'favourite_cart_guid': guid,
                                             'product_eform_pricing_guid': product_eform_pricing_guid,
-                                            'eform_type': CONST_CATALOG_ITEM_EFORM,
+                                            'eform_type': CONST_CATALOG_ITEM_VARIANT,
                                             'eform_field_count': int(eform_transaction['eform_field_count']),
                                             'eform_field_name': eform_transaction['eform_field_name'],
                                             'client': global_variables.GLOBAL_CLIENT,
@@ -458,9 +456,8 @@ def add_fav_sc_to_cart(request):
                 'item_num': items_details['item_num'],
                 'description': items_details['description'],
                 'prod_cat_desc': items_details['prod_cat_desc'],
-                'prod_cat': items_details['prod_cat'],
+                'prod_cat_id': items_details['prod_cat_id'],
                 'int_product_id': items_details['int_product_id'],
-                'ext_product_id': items_details['ext_product_id'],
                 'quantity': items_details['quantity'],
                 'unit': items_details['unit'],
                 'price': items_details['price'],
@@ -471,12 +468,11 @@ def add_fav_sc_to_cart(request):
                 'pref_supplier': items_details['pref_supplier'],
                 'lead_time': items_details['lead_time'],
                 'value': items_details['value'],
-                'supp_txt': items_details['supp_txt'],
                 'manu_part_num': items_details['manu_part_num'],
                 'manu_code_num': items_details['manu_code_num'],
-                'supp_prod_num': items_details['supp_prod_num'],
+                'supp_product_id': items_details['supp_product_id'],
                 'call_off': items_details['call_off'],
-                'supplier_contact': items_details['supplier_contact'],
+                'supplier_mobile_num': items_details['supplier_mobile_num'],
                 'supplier_fax_no': items_details['supplier_fax_no'],
                 'supplier_email': items_details['supplier_email'],
                 'quantity_min': items_details['quantity_min'],
@@ -488,14 +484,13 @@ def add_fav_sc_to_cart(request):
                 'catalog_id': items_details['catalog_id'],
                 'catalog_item': items_details['catalog_item'],
                 'ctr_num': items_details['ctr_num'],
-                'contract': items_details['contract'],
                 'prod_type': items_details['prod_type'],
                 'item_del_date': items_details['item_del_date'],
                 'process_type': items_details['process_type'],
                 'start_date': items_details['start_date'],
                 'end_date': items_details['end_date'],
-                'ir_gr_ind': items_details['ir_gr_ind'],
-                'gr_ind': items_details['gr_ind'],
+                'ir_gr_ind_limi': items_details['ir_gr_ind_limi'],
+                'gr_ind_limi': items_details['gr_ind_limi'],
                 'overall_limit': items_details['overall_limit'],
                 'expected_value': items_details['expected_value'],
                 'username': items_details['username'],

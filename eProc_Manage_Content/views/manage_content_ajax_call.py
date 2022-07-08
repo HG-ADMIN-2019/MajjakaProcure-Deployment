@@ -9,8 +9,9 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from eProc_Basic.Utilities.constants.constants import CONST_FT_ITEM_EFORM
+from eProc_Basic.Utilities.constants.constants import CONST_FT_ITEM_EFORM, CONST_QUANTITY_BASED_DISCOUNT
 from eProc_Basic.Utilities.functions.dict_check_key import checkKey
+from eProc_Basic.Utilities.functions.dictionary_key_to_list import dictionary_key_to_list
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.encryption_util import decrypt, encrypt
 from eProc_Basic.Utilities.functions.guid_generator import dynamic_guid_generator, guid_generator
@@ -122,6 +123,7 @@ def save_product_details_spec_images_eform(request):
     product_not_exist = ''
     eform_configured = {}
     product_info_id = None
+    tiered_pricing = False
     ui_data = request.POST
     attached_file = request.FILES
     converted_dict = dict(ui_data.lists())
@@ -133,6 +135,9 @@ def save_product_details_spec_images_eform(request):
     if eform_configured:
         if product_existence_flag == 0 or 'False':
             form_id = save_product_details_eform(eform_configured, data['product_id'])
+        field_type_list = dictionary_key_to_list(eform_configured, 'field_type')
+        if CONST_QUANTITY_BASED_DISCOUNT in field_type_list:
+            tiered_pricing = True
     if product_specification_data:
         if product_existence_flag == 0 or 'False':
             product_info_id = save_product_specification(product_specification_data, data['product_id'])
@@ -144,6 +149,8 @@ def save_product_details_spec_images_eform(request):
     #     default_image = [True if img_flag else False for img_flag in converted_dict['default_image_value']]
     #     save_image_to_db(prod_cat, file_name, attached_file, default_image)
     # if ProductsDetail.objects.filter(product_id=data['product_id']).exists():
+    # check for discount
+
     if django_query_instance.django_existence_check(ProductsDetail, {'client': global_variables.GLOBAL_CLIENT,
                                                                      'product_id': data['product_id']}):
         django_query_instance.django_update_query(ProductsDetail,
@@ -153,7 +160,8 @@ def save_product_details_spec_images_eform(request):
                                                    'long_desc': data['long_desc'],
                                                    'supplier_id': data['supplier_id'],
                                                    'cust_prod_cat_id': data['prod_cat_id'],
-                                                   'product_type': data['product_type'],
+                                                   'prod_type': data['product_type'],
+                                                   'value_min':data['value_min'],
                                                    'price_on_request': False,
                                                    'unit': UnitOfMeasures.objects.get(
                                                        uom_id=data['unit']),
@@ -162,7 +170,7 @@ def save_product_details_spec_images_eform(request):
                                                        currency_id=data['currency']),
                                                    'price': data['price'],
                                                    'manufacturer': data['manufacturer'],
-                                                   'manu_prod': data['manu_prod'],
+                                                   'manu_part_num': data['manu_prod'],
                                                    'prod_cat_id': UnspscCategories.objects.get(
                                                        prod_cat_id=data['unspsc']),
                                                    'brand': data['brand'],
@@ -182,9 +190,13 @@ def save_product_details_spec_images_eform(request):
                                                    'product_info_id': product_info_id,
                                                    'changed_at': datetime.date.today(),
                                                    'changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
-                                                   'supplier_product_info': data['supplier_product_number'],
+                                                   'supp_product_id': data['supplier_product_number'],
                                                    'external_link': data['product_webpage_link'],
                                                    'ctr_num': data['product_contract_num'],
+                                                   'ctr_item_num':data['ctr_item_num'],
+                                                   'ctr_name': data['product_contract_name'],
+                                                   'manu_code_num': data['prd_manu_code_no'],
+                                                   'quantity_max': data['quantity_max'],
                                                    'products_detail_source_system': data['product_source_system']
                                                    })
     else:
@@ -194,9 +206,10 @@ def save_product_details_spec_images_eform(request):
                                                    'product_id': data['product_id'],
                                                    'short_desc': data["short_desc"],
                                                    'long_desc': data['long_desc'],
+                                                   'value_min': data['value_min'],
                                                    'supplier_id': data['supplier_id'],
                                                    'cust_prod_cat_id': data['prod_cat_id'],
-                                                   'product_type': data['product_type'],
+                                                   'prod_type': data['product_type'],
                                                    'price_on_request': False,
                                                    'unit': UnitOfMeasures.objects.get(
                                                        uom_id=data['unit']),
@@ -205,7 +218,7 @@ def save_product_details_spec_images_eform(request):
                                                        currency_id=data['currency']),
                                                    'price': data['price'],
                                                    'manufacturer': data['manufacturer'],
-                                                   'manu_prod': data['manu_prod'],
+                                                   'manu_part_num': data['manu_prod'],
                                                    'prod_cat_id': UnspscCategories.objects.get(
                                                        prod_cat_id=data['unspsc']),
                                                    'brand': data['brand'],
@@ -230,6 +243,10 @@ def save_product_details_spec_images_eform(request):
                                                    'supplier_product_info': data['supplier_product_number'],
                                                    'external_link': data['product_webpage_link'],
                                                    'ctr_num': data['product_contract_num'],
+                                                   'ctr_item_num': data['ctr_item_num'],
+                                                   'ctr_name': data['product_contract_name'],
+                                                   'manu_code_num': data['prd_manu_code_no'],
+                                                   'quantity_max': data['quantity_max'],
                                                    'products_detail_source_system': data['product_source_system']
 
                                                    })
@@ -323,7 +340,7 @@ def save_data_upload(request):
                                                            currency_id=val['currency']),
                                                        'price': val['price'],
                                                        'manufacturer': val['manufacturer'],
-                                                       'manu_prod': val['manu_prod'],
+                                                       'manu_part_num': val['manu_prod'],
                                                        'prod_cat_id': UnspscCategories.objects.get(
                                                            prod_cat_id=val['unspsc']),
                                                        'brand': val['brand'],
@@ -367,7 +384,7 @@ def save_data_upload(request):
                                                            currency_id=val['currency']),
                                                        'price': val['price'],
                                                        'manufacturer': val['manufacturer'],
-                                                       'manu_prod': val['manu_prod'],
+                                                       'manu_part_num': val['manu_prod'],
                                                        'prod_cat_id': UnspscCategories.objects.get(
                                                            prod_cat_id=val['unspsc']),
                                                        'brand': val['brand'],

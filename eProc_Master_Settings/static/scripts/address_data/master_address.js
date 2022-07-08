@@ -27,119 +27,7 @@ $(".remove_upload_data").click(() => {
     $('#id_popup_table').DataTable().destroy();
 });
 
-//validate by comparing  main table values and popup table values
-function maintable_validation(validate_add_attributes, main_table_low_value) {
-    var no_duplicate_entries = 'Y'
-    var common = [];
-    var error_message =''
-    jQuery.grep(validate_add_attributes, function (el) {
-        if (jQuery.inArray(el, main_table_low_value) != -1) { common.push(el); }
-    });
-    if (common.length != 0) {
-          error_message = messageConstants["JMSG001"]
-          no_duplicate_entries = 'N'
-//        $("#id_error_msg").prop("hidden", false)
-//        document.getElementById("id_error_msg").innerHTML = messageConstants["JMSG001"];
-//        document.getElementById("id_error_msg").style.color = "Red";
-//        $('#id_save_confirm_popup').modal('show');
-//        $('#myModal').modal('show');
-//        no_duplicate_entries = 'N'
-    }
-    return [no_duplicate_entries,error_message]
-}
 
-// validating the  popup table for duplicate entries
-function compare_table_for_duplicate_entries(validate_add_attributes, address) {
-    add_attr_duplicates = false;
-    var add_attr_duplicates_list = [];
-    var add_attr_unique_list = [];
-    var error_message = ''
-    var no_duplicate_value = 'Y'
-    $.each(validate_add_attributes, function (index, value) {
-        if ($.inArray(value, add_attr_unique_list) == -1) {
-            add_attr_unique_list.push(value);
-        }
-        else {
-            if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                add_attr_duplicates_list.push(value);
-            }
-        }
-    });
-    if (add_attr_duplicates_list.length != 0) {
-        error_message = messageConstants["JMSG001"];
-        no_duplicate_value = 'N'
-    }
-    else{
-           $.each(address, function (i, item) {
-           if(item.address_number.length == 0) {
-           error_message = messageConstants["JMSG002"] + "address_number";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-           }
-          if (item.title.length == 0) {
-              error_message = messageConstants["JMSG002"] + "title";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-                 }
-          if (item.name1.length == 0) {
-              error_message = messageConstants["JMSG002"] + "name1";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-                 }
-                  if (item.name2.length == 0) {
-              error_message = messageConstants["JMSG002"] + "name2";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-                 }
-                  if (item.street.length == 0) {
-              error_message = messageConstants["JMSG002"] + "street";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-                 }
-                  if (item.area.length == 0) {
-              error_message = messageConstants["JMSG002"] + "area";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-                 }
-                  if (item.landmark.length == 0) {
-              error_message = messageConstants["JMSG002"] + "landmark";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-                 }
-                  if (item.city.length == 0) {
-              error_message = messageConstants["JMSG002"] + "city";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-                 }
-                 if (item.postal_code.length == 0) {
-              error_message = messageConstants["JMSG002"] + "postal_code";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-                 }
-                 if (item.region.length == 0) {
-              error_message = messageConstants["JMSG002"] + "region";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-                 }
-                 if (item.mobile_number.length == 0) {
-              error_message = messageConstants["JMSG002"] + "mobile_number";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-                 }
-                 if (item.telephone_number.length == 0) {
-              error_message = messageConstants["JMSG002"] + "telephone_number";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-                 }
-                 if (item.fax_number.length == 0) {
-              error_message = messageConstants["JMSG002"] + "fax_number";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-                 }
-         });
-}
-     return [no_duplicate_value,error_message]
-}
 
 // on click edit icon display the data in edit mode
 function onclick_edit_button() {
@@ -229,9 +117,9 @@ function display_error_message(error_message){
 $('#save_id').click(function () {
     $('#myModal').modal('hide');
     validate_add_attributes = [];
-    var address = {};
+
      $("#id_popup_table TBODY TR").each(function () {
-             var row = $(this);
+            var row = $(this);
             address = {};
             address.address_number = row.find("TD").eq(1).find('input[type="text"]').val();
             address.title = row.find("TD").eq(2).find('input[type="text"]').val();

@@ -27,6 +27,7 @@ class UserData(AbstractUser, DBQueriesUser):
     form_of_address = models.CharField(db_column='FORM_OF_ADDRESS', max_length=40, null=False)
     first_name = models.CharField(db_column='FIRST_NAME', max_length=30, null=False)
     last_name = models.CharField(db_column='LAST_NAME', max_length=30, null=False)
+    gender = models.CharField(db_column='GENDER', max_length=12, null=True,blank=True)
     phone_num = models.CharField(db_column='PHONE_NUM', max_length=30, null=True)
     password = models.CharField(db_column='PASSWORD', max_length=256, null=False)
     date_joined = models.DateTimeField(db_column='DATE_JOINED', null=True)

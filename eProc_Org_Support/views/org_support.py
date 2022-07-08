@@ -7,7 +7,7 @@ from django.shortcuts import render
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Basic.Utilities.messages.messages import MSG155, MSG113, MSG156, MSG157
 from eProc_Chat.Utitlities.doc_chat_specific import create_chat_participant
-from eProc_Org_Support.models import OrgAnnouncements, OrgSupport
+from eProc_Org_Support.models import OrgAnnouncements, OrgSupport, DBQueriesOrgannsmt
 from eProc_Shopping_Cart.context_processors import update_user_info
 from eProc_Basic.Utilities.functions.get_db_query import django_query_instance, get_login_obj_id
 from eProc_Configuration.models.development_data import *
@@ -16,6 +16,10 @@ from eProc_Basic.Utilities.functions.guid_generator import random_int, guid_gene
 from eProc_Basic.Utilities.functions.encryption_util import encrypt
 from eProc_Org_Model.models import OrgModel
 from eProc_Registration.models import UserData
+from django.db.models import Q
+from eProc_Basic.Utilities.functions.django_q_query import django_q_query
+from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
+from eProc_Basic.Utilities.global_defination import global_variables
 
 
 def customer_support_chat(request):
@@ -128,8 +132,6 @@ def update_org_announcement_details(request):
     return JsonResponse({'message': message})
 
 
-
-
 def org_support_save(request):
     update_user_info(request)
     client = global_variables.GLOBAL_CLIENT
@@ -214,7 +216,8 @@ def org_support_config(request):
     user_names = list()
     user_first_names = list()
     for names in user_dropdown_values:
-        user_names = {'user_name': names.username, 'user_data': names.first_name + ' ' + names.last_name + ' - ' + names.email}
+        user_names = {'user_name': names.username,
+                      'user_data': names.first_name + ' ' + names.last_name + ' - ' + names.email}
         user_first_names.append(user_names)
     print(user_first_names)
 
@@ -263,3 +266,42 @@ def get_support_data(request):
         {'call_support_data_array': call_support_data_array, 'call_support_guid_array': call_support_guid_array,
          'email_support_data_array': email_support_data_array, 'email_support_guid_array': email_support_guid_array,
          'chat_support_data_array': chat_support_data_array, 'chat_support_guid_array': chat_support_guid_array})
+
+
+def org_announcement_search(**kwargs):
+    """
+
+    """
+    status_query = Q()
+    client = global_variables.GLOBAL_CLIENT
+    subject_query = Q()
+    priority_query = Q()
+    announcement_subject = Q()
+
+    instance = OrgAnnouncements()
+    for key, value in kwargs.items():
+        value_list = []
+        if value:
+            if key == 'announcement_subject':
+                if value == '*':
+                    result = list(OrgAnnouncements.objects.filter(client=client, del_ind=False).values().order_by(
+                        'announcement_id'))
+                    annsment_query = result
+                if '*' not in value:
+                    value_list = [value]
+                subject_query = django_q_query(value, value_list, 'announcement_subject')
+            if key == 'status':
+                value_list = [value]
+                status_query = django_q_query(value, value_list, 'status')
+            if key == 'priority':
+                value_list = [value]
+                priority_query = django_q_query(value, value_list, 'priority')
+
+            annsment_query = list(instance.get_annsmt_details_by_fields(client,
+                                                                        instance,
+                                                                        subject_query,
+                                                                        status_query,
+                                                                        priority_query
+                                                                        ))
+
+    return annsment_query

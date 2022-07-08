@@ -200,16 +200,17 @@ function application_settings_delete_Row(myTable) {
 
 // Function to save edited supplier basic details data
 function save_basic_details() {
-     var name1_val= $('#name1').val();
-     var city_val = $('#city_id').val();
-     var email_val = $('#email_id').val();
-      is_save_form_valid = save_basic_form_validation(name1_val, city_val, email_val)
-        if (is_save_form_valid != '') {
-            $('#save_error_div').html(is_save_form_valid)
-            $('#save_error_div').show()
-            scroll_top()
-            return
-        }
+    OpenLoaderPopup();
+    var name1_val= $('#name1').val();
+    var city_val = $('#city_id').val();
+    var email_val = $('#email_id').val();
+    is_save_form_valid = save_basic_form_validation(name1_val, city_val, email_val)
+    if (is_save_form_valid != '') {
+        $('#save_error_div').html(is_save_form_valid)
+        $('#save_error_div').show()
+        scroll_top()
+        return
+    }
 
     formdata = new FormData();
     formdata.append("supplier_image",  $('#supplier_image_id').prop('files')[0]);
@@ -246,7 +247,8 @@ function save_basic_details() {
     if(message.success){
         document.getElementById('supplier_basic_update_success').innerHTML = message.success;
         $('#supplier_basic_update_success').show();
-        $('#save_error_div').hide()
+        $('#save_error_div').hide();
+        CloseLoaderPopup();
     }
     if(message.error){
         document.getElementById('save_error_div').innerHTML = message.error;
@@ -265,6 +267,7 @@ function save_basic_details() {
 
 // Function to save edited or updated supplier organizational details data
 function supp_org_data_save(){
+    OpenLoaderPopup();
     var supplierid = global_supplier_id
     var save_supplier_purch_details = new Array();
 
@@ -288,19 +291,31 @@ function supp_org_data_save(){
     })
     console.log(save_supplier_purch_details)
 
-    response = ajax_update_supplier_org_details(save_supplier_purch_details);
-    document.getElementById('supplier_org_update_success').innerHTML = response.message;
-    $('#supplier_org_update_success').show();
-    if (save_supplier_purch_details.length==0){
-        edit_supp_org()
-    } else{
-        supplier_org_data = []
-        for (i = 0; i < save_supplier_purch_details.length; i++){
-            supplier_org_data.push(save_supplier_purch_details[i])
+    $.ajax({
+        type: 'POST',
+        url: ajax_update_supplier_org_details_url,
+        data: JSON.stringify(save_supplier_purch_details),
+        dataType: 'json',
+        success: function (response) {
+            document.getElementById('supplier_org_update_success').innerHTML = response.message;
+            $('#supplier_org_update_success').show();
+            if (save_supplier_purch_details.length==0){
+                edit_supp_org();
+            } else{
+                supplier_org_data = []
+                for (i = 0; i < save_supplier_purch_details.length; i++){
+                    supplier_org_data.push(save_supplier_purch_details[i])
+                }
+                cancel_supp_org_data();
+                delete_supp_purch_data = []
+            }
+            CloseLoaderPopup();
+        },
+        error: function (error) {
+            console.log(error);
         }
-        cancel_supp_org_data();
-        delete_supp_purch_data = []
-    }
+    })
+    
 }
    // Validation function
    const save_basic_form_validation = (name1, city_id, email_id) => {

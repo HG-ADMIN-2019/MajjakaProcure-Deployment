@@ -2,7 +2,7 @@ from django.db.models import Q
 
 from eProc_Attributes.Utilities.attributes_generic import OrgAttributeValues
 from eProc_Attributes.Utilities.attributes_specific import append_description_atrr_value_exists
-from eProc_Basic.Utilities.constants.constants import CONST_GLACC
+from eProc_Basic.Utilities.constants.constants import CONST_GLACC, CONST_DEFAULT_LANGUAGE
 from eProc_Basic.Utilities.functions.insert_remove import list_remove_insert_first
 from eProc_Basic.Utilities.functions.str_concatenate import concatenate_str, concatenate_array_str
 from eProc_Basic.Utilities.global_defination import global_variables
@@ -130,9 +130,9 @@ class ACCValueDesc:
         acc_asg_value_desc = ACCValueDesc.get_acc_value_desc(acc_drop_down_list, company_code_id, acc_asg_cat)
         if acc_asg_value_desc:
             acc_drop_down_list = append_description_atrr_value_exists(acc_asg_value_desc,
-                                                                 acc_drop_down_list,
-                                                                 'account_assign_value',
-                                                                 'description')[1]
+                                                                      acc_drop_down_list,
+                                                                      'account_assign_value',
+                                                                      'description')[1]
             default_acc_val_desc = ACCValueDesc.get_acc_value_desc([default_acc_list], company_code_id, acc_asg_cat)
             default_acc_list = append_description_atrr_value_exists(default_acc_val_desc,
                                                                     [default_acc_list],
@@ -168,6 +168,18 @@ class ACCValueDesc:
                                                                 Q(company_id=company_code) &
                                                                 Q(client=global_variables.GLOBAL_CLIENT) &
                                                                 Q(del_ind=False)).values()
+        elif AccountingDataDesc.objects.filter(Q(account_assign_value__in=attr_value_list) &
+                                             Q(account_assign_cat=account_assign_cat) &
+                                             Q(language_id=CONST_DEFAULT_LANGUAGE) &
+                                             Q(company_id=company_code) &
+                                             Q(client=global_variables.GLOBAL_CLIENT) &
+                                             Q(del_ind=False)).exists():
+            acc_description = AccountingDataDesc.objects.filter(Q(account_assign_value__in=attr_value_list) &
+                                                                Q(account_assign_cat=account_assign_cat) &
+                                                                Q(language_id=CONST_DEFAULT_LANGUAGE) &
+                                                                Q(company_id=company_code) &
+                                                                Q(client=global_variables.GLOBAL_CLIENT) &
+                                                                Q(del_ind=False)).values()
         return acc_description
 
     @staticmethod
@@ -185,6 +197,18 @@ class ACCValueDesc:
             acc_description = AccountingDataDesc.objects.filter(Q(account_assign_value=attr_value) &
                                                                 Q(account_assign_cat=account_assign_cat) &
                                                                 Q(language_id=language_id) &
+                                                                Q(company_id=company_code) &
+                                                                Q(client=global_variables.GLOBAL_CLIENT) &
+                                                                Q(del_ind=False)).values()
+        elif AccountingDataDesc.objects.filter(Q(account_assign_value=attr_value) &
+                                             Q(account_assign_cat=account_assign_cat) &
+                                             Q(language_id=CONST_DEFAULT_LANGUAGE) &
+                                             Q(company_id=company_code) &
+                                             Q(client=global_variables.GLOBAL_CLIENT) &
+                                             Q(del_ind=False)).exists():
+            acc_description = AccountingDataDesc.objects.filter(Q(account_assign_value=attr_value) &
+                                                                Q(account_assign_cat=account_assign_cat) &
+                                                                Q(language_id=CONST_DEFAULT_LANGUAGE) &
                                                                 Q(company_id=company_code) &
                                                                 Q(client=global_variables.GLOBAL_CLIENT) &
                                                                 Q(del_ind=False)).values()

@@ -59,9 +59,7 @@
                         <a class="dropdown-item user-dropdown-item" href="{% url 'eProc_User_Settings:personal_settings_display' %}">
                             <span class="material-icons-outlined user-dropdown-item__icons">tune</span> Personalize
                         </a>
-                        <a class="dropdown-item user-dropdown-item" href="{% url 'eProc_Purchase_Order:view_purchase_order' %}">
-                            <span class="material-icons-outlined user-dropdown-item__icons">description</span>Purchase Order
-                        </a>
+
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item user-dropdown-item" href="{% url 'eProc_Login:logout_page' %}" title="Sign out" onclick="clear_session_data()">
                             <span class="material-icons-outlined user-dropdown-item__icons">logout</span>Sign Out
@@ -81,7 +79,7 @@
     $(document).ready(function(){
         // Loader implementation on search button
         $('#shopping-cart-icon').click(function () {
-            $('#hg_loader').modal('show');
+            OpenLoaderPopup();
         });
         show_notif_add_to_cart()
     });

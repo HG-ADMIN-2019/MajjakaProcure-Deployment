@@ -244,9 +244,9 @@
     var edit_basic_data = '';
     var GLOBAL_ACTION = '';
     var no_duplicate_entries = 'Y'
-    var Tablename = uiConstants["CONST_TABLENAME_COUNTRY"]
+    var Tablename = uiConstants["CONST_TABLENAME_ADDRESS"]
     var appname = uiConstants["CONST_APPNAME01"]
-    var db_header_data = uiConstants["CONST_HEADER_DATA_COUNTRY"]
+    var db_header_data = uiConstants["CONST_HEADER_DATA_ADDRESS"]
     //console.log(rendered_address_data);
     // validate and save for add,copy,update and upload data
 
@@ -309,32 +309,10 @@
         if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
             var add_basic_data = '';
             var address_data_array = address_data;
-<!--            $("#id_popup_table tbody tr").each(function (index) {-->
-<!--                var row = $(this);-->
-<!--                var address_object = {};-->
-<!--                address_object.address_number = row.find("TD").eq(1).find('select[type="text"]').val();-->
-<!--                address_object.title = row.find("TD").eq(2).find('input[type="text"]').val();-->
-<!--                address_object.name1 = row.find("TD").eq(3).find('input[type="text"]').val();-->
-<!--                address_object.name2 = row.find("TD").eq(4).find('input[type="text"]').val();-->
-<!--                address_object.street = row.find("TD").eq(5).find('input[type="text"]').val();-->
-<!--                address_object.area = row.find("TD").eq(6).find('input[type="text"]').val();-->
-<!--                address_object.landmark = row.find("TD").eq(7).find('input[type="text"]').val();-->
-<!--                address_object.city = row.find("TD").eq(8).find('input[type="text"]').val();-->
-<!--                address_object.postal_code = row.find("TD").eq(9).find('input[type="text"]').val();-->
-<!--                address_object.region = row.find("TD").eq(10).find('input[type="text"]').val();-->
-<!--                address_object.mobile_number = row.find("TD").eq(11).find('input[type="text"]').val();-->
-<!--                address_object.telephone_number = row.find("TD").eq(12).find('input[type="text"]').val();-->
-<!--                address_object.fax_number = row.find("TD").eq(13).find('input[type="text"]').val();-->
-<!--                address_object.email = row.find("TD").eq(14).find('input[type="text"]').val();-->
-<!--                address_object.country_code = row.find("TD").eq(15).find('select[type="text"]').val();-->
-<!--                address_object.language_id = row.find("TD").eq(16).find('select[type="text"]').val();-->
-<!--                address_object.time_zone = row.find("TD").eq(17).find('select[type="text"]').val();-->
-<!--                address_object.address_guid = row.find("TD").eq(19).find('input[type="text"]').val();-->
-<!--                address_object.del_ind = row.find("TD").eq(18).find('input[type="checkbox"]').is(':checked');-->
-<!--                address_data_array.push(address_object);-->
-<!--            });-->
+
             $('#id_save_confirm_popup').modal('hide');
             data = {'data':address_data,'table_name':'OrgAddress','action':GLOBAL_ACTION}
+            OpenLoaderPopup();
             $.ajax({
                 type: 'POST',
                 url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
@@ -345,12 +323,16 @@
                     rendered_address_data = Response[0];
                     display_basic_db_data();
                     $('#myModal').modal('hide');
-                    $('#id_error_msg').text(messageConstants["JMSG001"])
+                    //$('#id_error_msg').text(messageConstants["JMSG001"])
                     $('#success_msg_id').text(Response[1])
+                     if(Response[1].message_type[0]== 'SUCCESS'){
+                         $('#success_msg_id').text(Response[1].message_desc[0])
+                    }
                     $("#err_msg_app_settings_t").prop("hidden", false)
-                    //document.getElementById("err_msg_app_settings_t").innerHTML = Response[1]
+                    table_sort_filter('id_popup_table');
                     setTimeout(function () { $("#err_msg_app_settings_t").prop("hidden", true); }, 5000)
                     table_sort_filter('id_popup_table');
+                    CloseLoaderPopup();
                 }
             });
 
@@ -364,6 +346,7 @@
 }
     // on click add icon display the row in to add the new entries
     function add_popup_row() {
+     $("#error_msg_id").css("display", "none")
         basic_add_new_html = '';
         var display_db_data = '';
         $('#id_popup_table').DataTable().destroy();
@@ -371,7 +354,7 @@
             $("#id_error_msg").html("");
         });
         basic_add_new_html = '<tr><td><input type="checkbox" required></td>' +
-            '<td><input class="form-control"  type="text"   name="address_number"></td>' +
+            '<td><input class="form-control"  type="text" minlength="5" maxlength="10"  name="address_number"></td>' +
             '<td><input class="form-control"  type="text"   name="title"></td>' +
             '<td><input class="form-control"  type="text"   name="name1"></td>' +
             '<td><input class="form-control"  type="text"   name="name2"></td>' +
@@ -414,10 +397,9 @@
     //delete the selected row in db................
     var main_table_address_checked = [];
     function main_table_delete() {
-           $('#success_msg_id').empty()
+        $('#success_msg_id').empty()
         GLOBAL_ACTION = 'DELETE'
         main_table_address_checked = [];
-<!--        var Tabledata = { "Dbl_clck_tbl_id": 'OrgAddress' };-->
         $('#display_basic_table').DataTable().destroy();
         $("#display_basic_table TBODY TR").each(function () {
             var row = $(this);
@@ -470,6 +452,7 @@
        // document.getElementById('id_delete_confirm_popup').style.display = "none"
        $('#id_delete_confirm_popup').modal('hide');
         data = {'data':main_table_address_checked,'table_name':'OrgAddress','action':GLOBAL_ACTION}
+        OpenLoaderPopup();
         $.ajax({
             type: 'POST',
             url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
@@ -482,9 +465,14 @@
                 rendered_address_data = Response[0];
                 display_basic_db_data();
                  $('#success_msg_id').text(Response[1])
+                  if(Response[1].message_type[0]== 'SUCCESS'){
+                         $('#success_msg_id').text(Response[1].message_desc[0])
+                  }
                 $("#err_msg_app_settings_t").prop("hidden", false)
-               // document.getElementById("err_msg_app_settings_t").innerHTML = Response[2];
+                     table_sort_filter('id_popup_table');
                 setTimeout(function () { $("#err_msg_app_settings_t").prop("hidden", true); }, 5000)
+                 table_sort_filter('id_popup_table');
+                 CloseLoaderPopup();
             }
         });
     }
@@ -498,7 +486,7 @@
         $("#id_popup_tbody").empty();
         $('#myModal').modal('show');
         basic_add_new_html = '<tr><td><input type="checkbox" required></td>' +
-            '<td><input class="form-control"  type="text"   name="address_number"></td>'+
+            '<td><input class="form-control"  type="text"   minlength="5" maxlength="10" name="address_number"></td>'+
             '<td><input class="form-control"  type="text"   maxlength="40"  name="title"></td>' +
             '<td><input class="form-control"  type="text"   maxlength="40"  name="name1"></td>' +
             '<td><input class="form-control"  type="text"   maxlength="40"  name="name2"></td>' +
@@ -635,6 +623,7 @@
     }
 
 function onclick_display_csv_data() {
+       $("#error_msg_id").css("display", "none")
     $('#id_popup_table').DataTable().destroy();
     formdata = new FormData();
          attached_file = $('#id_file_data_upload').prop('files')[0]
@@ -647,6 +636,7 @@ function onclick_display_csv_data() {
     $('#id_data_upload').modal('hide');
     //$('#myModal').modal('show');$('#myModal').modal('show');
     $('#id_popup_tbody').empty();
+    OpenLoaderPopup();
     $.ajax({
         type: 'POST',
         url: "{% url 'eProc_Configuration:data_upload_fk' %}",
@@ -724,9 +714,10 @@ function onclick_display_csv_data() {
                   $("#id_popup_table TBODY TR").each(function() {
                     var row = $(this);
 
-                        var company_id = dropdown_array[i][0]
-                        var langauge_id = dropdown_array[i][1]
-                        var time_zone = dropdown_array[i][2]
+                        var company_id = dropdown_array[i][1]
+                        var langauge_id = dropdown_array[i][2]
+                        var time_zone = dropdown_array[i][3]
+
                         $(row.find("TD").eq(1).find("select option[value="+address_number+"]")).attr('selected','selected');
                         var address_val = address_number_value_find(address_number)
                         row.find("TD").eq(14).find("select").append(address_val.company_dropdwn)
@@ -760,6 +751,7 @@ function onclick_display_csv_data() {
                     $("#save_id").prop("hidden", true);
                     table_sort_filter_popup_pagination('id_popup_table')
             }
+            CloseLoaderPopup();
         },
         cache: false,
         processData: false,
@@ -768,7 +760,25 @@ function onclick_display_csv_data() {
 }
  else{
         $("#id_error_msg_upload").prop("hidden",false)
-        document.getElementById("id_error_msg_upload").innerHTML = messageConstants["JMSG110"];
+             
+                    var msg = "JMSG110";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display = msg_type.messages_id_desc[0];
+                  document.getElementById("id_error_msg_upload").innerHTML = display;
+
+
         document.getElementById("id_error_msg_upload").style.color = "Red";
         $('#id_data_upload').modal('show');
     }
@@ -798,6 +808,343 @@ function onclick_update_button() {
                else
                      return preUrl;
        }
+
+
+// validating the  popup table for duplicate entries
+function compare_table_for_duplicate_entries(validate_add_attributes, address) {
+    add_attr_duplicates = false;
+    var add_attr_duplicates_list = [];
+    var add_attr_unique_list = [];
+    var error_message = ''
+    var no_duplicate_value = 'Y'
+    $.each(validate_add_attributes, function (index, value) {
+        if ($.inArray(value, add_attr_unique_list) == -1) {
+            add_attr_unique_list.push(value);
+        }
+        else {
+            if ($.inArray(value, add_attr_duplicates_list) == -1) {
+                add_attr_duplicates_list.push(value);
+            }
+        }
+    });
+    if (add_attr_duplicates_list.length != 0) {
+            //error_message = messageConstants["JMSG001"];
+              
+                var msg = "JMSG001";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
+    else{
+           $.each(address, function (i, item) {
+           if(item.address_number.length == 0) {
+           //error_message = messageConstants["JMSG002"] + "address_number";
+               
+                var msg = "JMSG002";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
+          if (item.title.length == 0) {
+             //error_message = messageConstants["JMSG002"] + "title";
+              
+                var msg = "JMSG002";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
+          if (item.name1.length == 0) {
+              //error_message = messageConstants["JMSG002"] + "name1";
+              
+                var msg = "JMSG002";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
+          if (item.name2.length == 0) {
+            //error_message = messageConstants["JMSG002"] + "name2";
+              
+                var msg = "JMSG002";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
+          if (item.street.length == 0) {
+            //error_message = messageConstants["JMSG002"] + "street";
+              
+                var msg = "JMSG002";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
+          if (item.area.length == 0) {
+                //error_message = messageConstants["JMSG002"] + "area";
+              
+                var msg = "JMSG002";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
+          if (item.landmark.length == 0) {
+            //error_message = messageConstants["JMSG002"] + "landmark";
+              
+                var msg = "JMSG002";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
+          if (item.city.length == 0) {
+            //error_message = messageConstants["JMSG002"] + "city";
+            
+                var msg = "JMSG002";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
+         if (item.postal_code.length == 0) {
+            //error_message = messageConstants["JMSG002"] + "postal_code";
+          
+                var msg = "JMSG002";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
+         if (item.region.length == 0) {
+            //error_message = messageConstants["JMSG002"] + "region";
+              
+                var msg = "JMSG002";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
+         if (item.mobile_number.length == 0) {
+            //error_message = messageConstants["JMSG002"] + "mobile_number";
+              
+                var msg = "JMSG002";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
+         if (item.telephone_number.length == 0) {
+            //error_message = messageConstants["JMSG002"] + "telephone_number";
+              
+                var msg = "JMSG002";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
+         if (item.fax_number.length == 0) {
+            //error_message = messageConstants["JMSG002"] + "fax_number";
+              
+                var msg = "JMSG002";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
+         });
+}
+     return [no_duplicate_value,error_message]
+}
+
+//validate by comparing  main table values and popup table values
+function maintable_validation(validate_add_attributes, main_table_low_value) {
+    var no_duplicate_entries = 'Y'
+    var common = [];
+    var error_message =''
+    jQuery.grep(validate_add_attributes, function (el) {
+        if (jQuery.inArray(el, main_table_low_value) != -1) { common.push(el); }
+    });
+    if (common.length != 0) {
+          //error_message = messageConstants["JMSG001"]
+              
+                var msg = "JMSG001";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+    }
+    return [no_duplicate_entries,error_message]
+}
+
 </script>
 <script src="{% static 'scripts/address_data/master_address.js' %}"></script>
 

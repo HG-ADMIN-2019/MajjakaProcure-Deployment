@@ -21,7 +21,7 @@ def filter_based_on_sc_item_field(client, order_list):
         for scheader_detail in scheader_details:
             sc_header_item_detail = [scheader_detail['doc_number'], sc_item.prod_cat_desc, sc_item.supplier_id,
                                      sc_item.comp_code, sc_item.item_del_date, sc_item.unit, sc_item.quantity,
-                                     sc_item.prod_cat]
+                                     sc_item.prod_cat_id]
 
             sc_header_item_details.append(sc_header_item_detail)
     return sc_header_item_details

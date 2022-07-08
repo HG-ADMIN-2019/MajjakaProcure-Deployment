@@ -4,168 +4,172 @@
 {% block title %} Supplier Management (Admin Tool) {% endblock %}
 {% block maincontent %}
 <style>
-.toggle {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  display: block;
-  height: auto;
-  width: 7.5rem;
-  margin: auto;
-  cursor: pointer;
-}
-.toggle-input {
-  display: none;
-  margin: 0;
-}
-.toggle-off,
-.toggle-on {
-  height: 1.8125rem;
-  width: 1.8125rem;
-  color: rgba(46, 45, 44, 0.1);
-  vertical-align: top;
-  text-align: center;
-  line-height: 1.8125rem !important;
-}
-.toggle-input:checked + .toggle-controller.default-success {
-  border: 0.125rem solid rgba(108, 211, 61, 0.75);
-  background: rgba(108, 211, 61, 0.375);
-}
-.toggle-input:checked + .toggle-controller.default-success:after {
-  left: 1.5625rem;
-}
-.toggle-controller.default-success {
-  position: relative;
-  display: inline-block;
-  height: 1.5625rem;
-  width: 3.125rem;
-  border: 0.125rem solid rgba(46, 45, 44, 0.05);
-  -webkit-border-radius: 1.5625rem;
-  -moz-border-radius: 1.5625rem;
-  border-radius: 1.5625rem;
-  -webkit-box-shadow: inset 0 0 0.1875rem rgba(46, 45, 44, 0.25);
-  -moz-box-shadow: inset 0 0 0.1875rem rgba(46, 45, 44, 0.25);
-  box-shadow: inset 0 0 0.1875rem rgba(46, 45, 44, 0.25);
-  background: rgba(46, 45, 44, 0.025);
-  -webkit-transition: all 0.25s ease;
-  -moz-transition: all 0.25s ease;
-  -o-transition: all 0.25s ease;
-  transition: all 0.25s ease;
-}
-.toggle-controller.default-success:after {
-  position: absolute;
-  top: 0;
-  left: 0;
-  content: '';
-  display: block;
-  height: 1.5625rem;
-  width: 1.5625rem;
-  -webkit-border-radius: 1.5625rem;
-  -moz-border-radius: 1.5625rem;
-  border-radius: 1.5625rem;
-  -webkit-box-shadow: 0 0.0625rem 0.125rem rgba(46, 45, 44, 0.2);
-  -moz-box-shadow: 0 0.0625rem 0.125rem rgba(46, 45, 44, 0.2);
-  box-shadow: 0 0.0625rem 0.125rem rgba(46, 45, 44, 0.2);
-  background: white;
-  -webkit-transition: all 0.25s ease;
-  -moz-transition: all 0.25s ease;
-  -o-transition: all 0.25s ease;
-  transition: all 0.25s ease;
-}
-.toggle-off.active {color:red;}
-.toggle-on.active {color:blue;}
+    .toggle {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    display: block;
+    height: auto;
+    width: 7.5rem;
+    margin: auto;
+    cursor: pointer;
+    }
+    .toggle-input {
+    display: none;
+    margin: 0;
+    }
+    .toggle-off,
+    .toggle-on {
+    height: 1.8125rem;
+    width: 1.8125rem;
+    color: rgba(46, 45, 44, 0.1);
+    vertical-align: top;
+    text-align: center;
+    line-height: 1.8125rem !important;
+    }
+    .toggle-input:checked + .toggle-controller.default-success {
+    border: 0.125rem solid rgba(108, 211, 61, 0.75);
+    background: rgba(108, 211, 61, 0.375);
+    }
+    .toggle-input:checked + .toggle-controller.default-success:after {
+    left: 1.5625rem;
+    }
+    .toggle-controller.default-success {
+    position: relative;
+    display: inline-block;
+    height: 1.5625rem;
+    width: 3.125rem;
+    border: 0.125rem solid rgba(46, 45, 44, 0.05);
+    -webkit-border-radius: 1.5625rem;
+    -moz-border-radius: 1.5625rem;
+    border-radius: 1.5625rem;
+    -webkit-box-shadow: inset 0 0 0.1875rem rgba(46, 45, 44, 0.25);
+    -moz-box-shadow: inset 0 0 0.1875rem rgba(46, 45, 44, 0.25);
+    box-shadow: inset 0 0 0.1875rem rgba(46, 45, 44, 0.25);
+    background: rgba(46, 45, 44, 0.025);
+    -webkit-transition: all 0.25s ease;
+    -moz-transition: all 0.25s ease;
+    -o-transition: all 0.25s ease;
+    transition: all 0.25s ease;
+    }
+    .toggle-controller.default-success:after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: '';
+    display: block;
+    height: 1.5625rem;
+    width: 1.5625rem;
+    -webkit-border-radius: 1.5625rem;
+    -moz-border-radius: 1.5625rem;
+    border-radius: 1.5625rem;
+    -webkit-box-shadow: 0 0.0625rem 0.125rem rgba(46, 45, 44, 0.2);
+    -moz-box-shadow: 0 0.0625rem 0.125rem rgba(46, 45, 44, 0.2);
+    box-shadow: 0 0.0625rem 0.125rem rgba(46, 45, 44, 0.2);
+    background: white;
+    -webkit-transition: all 0.25s ease;
+    -moz-transition: all 0.25s ease;
+    -o-transition: all 0.25s ease;
+    transition: all 0.25s ease;
+    }
+    .toggle-off.active {color:red;}
+    .toggle-on.active {color:blue;}
 
 </style>
-<div class="container-fluid">
-    <div class="hg_wrapper">
 
-        <div class="elements-space-between">
-            <span class="hg_head1">Supplier Management</span>
+<div class="container-fluid">
+    <div class="mep-form_wrapper">
+
+        <div class="d-flex justify-content-between">
+            <h3>Supplier Management</h3>
             <div>
+                <button class="btn btn-outline-primary" id="basic_save_upld_redirect" onclick="onclick_upload_button()">
+                    <i class="fas fa-cloud-upload-alt"></i> 
+                    upload data
+                </button>
                 <button class="btn btn-primary" onclick="window.open(href = '{% url 'eProc_Admin_Tool:sup_details_page' None %}')">
                     <i class="fas fa-user-plus"></i> 
                     Create Supplier
                 </button>
-                <button class="btn btn-primary" id="basic_save_upld_redirect" onclick="onclick_upload_button()">
-                    <i class="fas fa-cloud-upload-alt"></i> 
-                    upload data
-                </button>
+                
             </div>
         </div>
 
-        <hr class="hg_heading_hrborder">
+        <hr>
 
-        <div>
-            <form method="POST">
-                {% csrf_token %}
-                <div class="row">
-                    <div class="col-md">
-                        <label for="">First Name</label>
-                        <input type="text" class="form-control" id="name1" name="name1" >
-                    </div>
-                    <div class="col-md">
-                        <label for="">Last Name</label>
-                        <input type="text" class="form-control" id="name2" name="name2">
-                    </div>
-                    <div class="col-md">
-                        <label for="">Supplier Number</label>
-                        <input type="text" class="form-control" id="supplier_id" name='supplier_id'>
-                    </div>
-                    <div class="col-auto my-1">
-                        <button class="button-search-users btn btn-primary" type="submit"
-                                title="Please click to get the search details!" onclick="reload()"><i class="fas fa-search"></i> search
-                        </button>
-                    </div>
-                </div>
-                <hr>
-                <div class="elements-space-between" data-toggle="collapse" data-target="#supplier_adv_search">
-                    <span class="h5">Advanced Search</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div id="supplier_adv_search" class="advanced-search-collapse collapse">
+        <div class="card card-shadow-1">
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
                     <div class="row">
                         <div class="col-md">
-                            <label for="">Search Term 1</label>
-                            <input type="text" class="form-control" id="search_term1" name="search_term1">
+                            <label for="">First Name</label>
+                            <input type="text" class="form-control" id="name1" name="name1" >
                         </div>
                         <div class="col-md">
-                            <label for="">Search Term 2</label>
-                            <input type="text" class="form-control" id="search_term2" name="search_term2">
+                            <label for="">Last Name</label>
+                            <input type="text" class="form-control" id="name2" name="name2">
                         </div>
                         <div class="col-md">
-                            <label for="">Country</label>
-                            <select name="country_code" id="country_code" class="form-control">
-                                <option value="">select</option>
-                                {% for countries in get_country_id %}
-                                <option value="{{countries.country_code}}">{{countries.country_code}} - {{countries.country_name}}</option>
-                                {% endfor %}
-                            </select>
+                            <label for="">Supplier Number</label>
+                            <input type="text" class="form-control" id="supplier_id" name='supplier_id'>
                         </div>
-                        <div class="col-md">
-                            <label for="">City</label>
-                            <input type="text" class="form-control" id="city" name="city">
+                        <div class="col-auto my-1">
+                            <button class="button-search-users btn btn-primary" type="submit"
+                                    title="Please click to get the search details!" onclick="reload()"><i class="fas fa-search"></i> search
+                            </button>
                         </div>
-                        <div class="col-md">
-                            <label for="">Purchasing Organization</label>
-                            <input type="text" class="form-control" id="porg" name="purchasing_org">
-                        </div>
-                        <div class="col-md">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="block">
-                                <label class="form-check-label" for="">
-                                    Purchase Block
-                                </label>
+                    </div>
+                    <hr>
+                    <div class="elements-space-between" data-toggle="collapse" data-target="#supplier_adv_search">
+                        <span class="h5">Advanced Search</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div id="supplier_adv_search" class="advanced-search-collapse collapse">
+                        <div class="row">
+                            <div class="col-md">
+                                <label for="">Search Term 1</label>
+                                <input type="text" class="form-control" id="search_term1" name="search_term1">
+                            </div>
+                            <div class="col-md">
+                                <label for="">Search Term 2</label>
+                                <input type="text" class="form-control" id="search_term2" name="search_term2">
+                            </div>
+                            <div class="col-md">
+                                <label for="">Country</label>
+                                <select name="country_code" id="country_code" class="form-control">
+                                    <option value="">select</option>
+                                    {% for countries in get_country_id %}
+                                    <option value="{{countries.country_code}}">{{countries.country_code}} - {{countries.country_name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md">
+                                <label for="">City</label>
+                                <input type="text" class="form-control" id="city" name="city">
+                            </div>
+                            <div class="col-md">
+                                <label for="">Purchasing Organization</label>
+                                <input type="text" class="form-control" id="porg" name="purchasing_org">
+                            </div>
+                            <div class="col-md">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="block">
+                                    <label class="form-check-label" for="">
+                                        Purchase Block
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col">
-                        <input type="reset" value="Clear filters" class="ip-form-clear-filters">
+                    <br>
+                    <div class="row">
+                        <div class="col">
+                            <input type="reset" value="Clear filters" class="ip-form-clear-filters">
+                        </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
 
         {% if supplier_results.count > 0 %}
@@ -182,70 +186,76 @@
             </div>
         </div>
         {% endif %}
-    </div>
-    <div id="error_msg_div" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
-    {% if supplier_results %}
-    <button class="btn btn-primary  btn-sm"  title="Delete" id="id_delete_supplier" value="product_delete" data-toggle="modal" data-target="#id_delete_confirm_popup" style="display:none;">
-            <i class="fa fa-trash"></i> Delete
-        </button>
-    <div class="hg_wrapper">
-        <table id="sup_tab" class="table hg-striped-table table_sort_filter_export_excel">
-            <thead class="thead-light">
-            <tr>
-                <th scope="col"> <input type="checkbox" onclick="checkAll(this)"></th>
-                <th> Supplier Number  </th>
-                <th> First Name </th>
-                <th> Last Name </th>
-                <th> City </th>
-                <th> Email</th>
-                <th> Supplier Status</th>
-                <th> Country</th>
-                <th> Registration Number</th>
-                <th> Purchase Block</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-            <tbody id="supplier_detail_tbody">
-            {% for results in supplier_results %}
-            <tr id="table-{{results.supplier_id}}">
-                <td><input type="checkbox" class="supplier_checkbox" onclick="valueChanged();"></td>
-                <td><a href="{% url 'eProc_Admin_Tool:sup_details_page' results.supplier_id_encrypted %}" id="{{results.supplier_id}}" class="deletepop" target="_blank">{{results.supplier_id}}</a></td>
-                <td>{{results.name1}}</td>
-                <td>{{results.name2}}</td>
-                <td>{{results.city}}</td>
-                <td>{{results.email}}</td>
-                <td>
-                    {% if results.is_active %}
-                    Active
-                    {% else %}
-                    Inactive
-                    {% endif %}
-                    </td>
-                <td>{{results.country_code_id}}</td>
-                <td>{{results.registration_number}}</td>
-                <td>
-                    <label class="switch">
-                            <label class="toggle">
-                                {% if results.block %}
-                                <input type="checkbox" id="{{results.supplier_id}}-block" class="toggle-input" checked>
+
+        <div id="error_msg_div" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
+
+        {% if supplier_results %}
+        
+        <div class="card mt-5">
+            <div>
+                <button class="btn btn-primary btn-sm mt-2 ml-2" title="Delete" id="id_delete_supplier" value="product_delete" data-toggle="modal" data-target="#id_delete_confirm_popup" style="display:none;">
+                    <i class="fa fa-trash"></i> Delete
+                </button>
+                <div>
+                    <table id="sup_tab" class="table table_sort_filter_export_excel">
+                        <thead class="thead-light">
+                        <tr>
+                            <th scope="col"> <input type="checkbox" onclick="checkAll(this)"></th>
+                            <th> Supplier Number  </th>
+                            <th> First Name </th>
+                            <th> Last Name </th>
+                            <th> City </th>
+                            <th> Email</th>
+                            <th> Supplier Status</th>
+                            <th> Country</th>
+                            <th> Registration Number</th>
+                            <th> Purchase Block</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody id="supplier_detail_tbody">
+                        {% for results in supplier_results %}
+                        <tr id="table-{{results.supplier_id}}">
+                            <td><input type="checkbox" class="supplier_checkbox" onclick="valueChanged();"></td>
+                            <td><a href="{% url 'eProc_Admin_Tool:sup_details_page' results.supplier_id_encrypted %}" id="{{results.supplier_id}}" class="deletepop" target="_blank">{{results.supplier_id}}</a></td>
+                            <td>{{results.name1}}</td>
+                            <td>{{results.name2}}</td>
+                            <td>{{results.city}}</td>
+                            <td>{{results.email}}</td>
+                            <td>
+                                {% if results.is_active %}
+                                Active
                                 {% else %}
-                                <input type="checkbox" id="{{results.supplier_id}}-unblock" class="toggle-input">
+                                Inactive
                                 {% endif %}
-                                <div class="toggle-controller default-success"></div>
-                            </label>
-                        </label>
-                </td>
-                <td><i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete User" id="{{results.supp_guid}}-{{results.supplier_id}}"
-                          data-toggle="modal"  data-target="#confirm_delete_pop_up" onclick="get_supplier_detail_to_delete(this.id)" ></i></td>
-
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                            </td>
+                            <td>{{results.country_code_id}}</td>
+                            <td>{{results.registration_number}}</td>
+                            <td>
+                                <label class="switch">
+                                    <label class="toggle">
+                                        {% if results.block %}
+                                        <input type="checkbox" id="{{results.supplier_id}}-block" class="toggle-input" checked>
+                                        {% else %}
+                                        <input type="checkbox" id="{{results.supplier_id}}-unblock" class="toggle-input">
+                                        {% endif %}
+                                        <div class="toggle-controller default-success"></div>
+                                    </label>
+                                </label>
+                            </td>
+                            <td> <i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete User" id="{{results.supp_guid}}-{{results.supplier_id}}" onclick="get_supplier_detail_to_delete(this.id)"></i></td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
+</div>
 
-    {% endif %}
-     <!--modal popup for user delete-->
+<!--modal popup for user delete-->
 <div class="modal fade" id="confirm_delete_pop_up" tabindex="-1" role="dialog"
      aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -267,23 +277,22 @@
     </div>
 </div>
 
-</div>
 <div class="modal fade" id="id_block_confirm_popup" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header" >
-                    <h5 class="modal-title">Please Confirm</h5>
-                </div>
-                <div class="modal-body">
-                    <p>Are You Sure You Want To Block Supplier?</p>
-
-                    <button type="button" onclick="block_unblock_supplier()" class="btn btn-primary"><i class="fas fa-check"></i> yes </button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="toggle()"><i class="fas fa-times"></i> No</button>
-                </div>
-
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" >
+                <h5 class="modal-title">Please Confirm</h5>
             </div>
+            <div class="modal-body">
+                <p>Are You Sure You Want To Block Supplier?</p>
+
+                <button type="button" onclick="block_unblock_supplier()" class="btn btn-primary"><i class="fas fa-check"></i> yes </button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="toggle()"><i class="fas fa-times"></i> No</button>
+            </div>
+
         </div>
     </div>
+</div>
 
 <!--delete confirmation popup-->
 <div class="modal fade" id="id_delete_confirm_popup">
@@ -299,199 +308,208 @@
                 <p>Are you sure you want to delete?.</p>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                 <button type="button" onclick="delete_supplier()" class="btn btn-primary"><i class="fas fa-check"></i> yes </button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fas fa-times"></i> Cancel</button>
             </div>
         </div>
     </div>
 </div>
 <script src="{% static 'scripts/supplier-search.js' %}"> </script>
 <script>
-var GLOBAL_SUPPLIER_GUID = '';
-function reload()
-{
-localStorage.setItem("name1", document.getElementById("name1").value);
-localStorage.setItem("name2", document.getElementById("name2").value);
-localStorage.setItem("supplier_id", document.getElementById("supplier_id").value);
-localStorage.setItem("search_term1", document.getElementById("search_term1").value);
-localStorage.setItem("search_term2", document.getElementById("search_term2").value);
-console.log(document.getElementById("city").value);
-localStorage.setItem("city", document.getElementById("city").value);
-localStorage.setItem("country_code", document.getElementById("country_code").value);
-}
+    var GLOBAL_SUPPLIER_GUID = '';
 
-//onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
-function onclick_upload_button() {
-    GLOBAL_ACTION = "supplier_upload"
-    $("#id_popup_tbody").empty();
-    $('#id_data_upload').modal('show');
-}
+    function reload(){
+        localStorage.setItem("name1", document.getElementById("name1").value);
+        localStorage.setItem("name2", document.getElementById("name2").value);
+        localStorage.setItem("supplier_id", document.getElementById("supplier_id").value);
+        localStorage.setItem("search_term1", document.getElementById("search_term1").value);
+        localStorage.setItem("search_term2", document.getElementById("search_term2").value);
+        console.log(document.getElementById("city").value);
+        localStorage.setItem("city", document.getElementById("city").value);
+        localStorage.setItem("country_code", document.getElementById("country_code").value);
+        OpenLoaderPopup();
+    }
 
-function get_supplier_detail_to_delete(element) {
+    //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
+    function onclick_upload_button() {
+        GLOBAL_ACTION = "supplier_upload"
+        $("#id_popup_tbody").empty();
+        $('#id_data_upload').modal('show');
+    }
+
+    function get_supplier_detail_to_delete(element) {
         data_delete = element.split('-');
         GLOBAL_SUPPLIER_GUID = data_delete[0]
         document.getElementById("form_id_del").innerHTML = data_delete[1];
         $('#confirm_delete_pop_up').modal('show')
     }
 
-// Function to delete User
-function delete_supplier(action) {
-    if(action == 'individual'){
-        var user_data = [data_delete[1]]
+    // Function to delete User
+    function delete_supplier(action) {
+        $('#confirm_delete_pop_up').modal('hide');
+        if(action == 'individual'){
+            var user_data = [data_delete[1]]
 
-        data = {'data':user_data}
+            data = {'data':user_data}
 
-    }else{
-         main_table_product_checked = [];
-        $("#sup_tab TBODY TR").each(function () {
-            var row = $(this);
-            var abc = row[0].id
-            var supplier_id = abc.split('-')[1]
-            var country_arr_obj ={};
-            var check_status = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-            if(check_status){
-                main_table_product_checked.push(supplier_id);
-            }
-        });
-    data = {'data':main_table_product_checked}
-    }
-    $.ajax({
-        type: 'POST',
-        url: "{% url 'eProc_Suppliers:delete_supplier' %}",
-        data:JSON.stringify(data),
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function (Response) {
-            display_supplier_data(Response.supplier_results);
-            $('#confirm_delete_pop_up').modal('hide');
-            $('#success_msg_id').text(Response.success_message)
-            //document.getElementById("success_msg_id").text = Response.success_message;
-            $("#error_msg_div").prop("hidden",false)
-            setTimeout(function(){$("#error_msg_div").prop("hidden",true);},5000)
+        }else{
+            main_table_product_checked = [];
+            $("#sup_tab TBODY TR").each(function () {
+                var row = $(this);
+                var abc = row[0].id
+                var supplier_id = abc.split('-')[1]
+                var country_arr_obj ={};
+                var check_status = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+                if(check_status){
+                    main_table_product_checked.push(supplier_id);
+                }
+            });
+            data = {'data':main_table_product_checked}
         }
-    });
-
-}
-var data = {}
-var block_id = '';
- $('.toggle-input').change(function() {
-
-
-    if($(this).is(':checked')) {
-        console.log('This is firing');
-        $('.toggle-off').removeClass('active');
-        $('.toggle-on').addClass('active');
-        data.flag = true
-    } else {
-        $('.toggle-off').addClass('active');
-        $('.toggle-on').removeClass('active');
-        data.flag = false
-    }
-    var id = this.id
-    block_id = id
-    data.supplier_id = id.split('-')[0]
-    $('#id_block_confirm_popup').modal('show');
-
-});
-
-function block_unblock_supplier(){
-    jQuery.ajax({
-           type: 'POST',
-           url: "{% url 'eProc_Suppliers:supplier_blocking' %}",
-           dataType :'json',
-           data: JSON.stringify(data),
-           success: function(result){
-                $('#id_block_confirm_popup').modal('hide');
-           },
-           error: function(xhr, resp, text) {
-           },
-           cache: false,
-           processData: false,
-           contentType: false,
-    });
-}
-function toggle(){
-    var abc = $('#'+block_id)
-    if($('#'+block_id).is(':checked')) {
-        $('#'+block_id).prop("checked", false);
-    }
-    else{
-        $('#'+block_id).prop("checked", true);
-    }
-}
-
-//onclick of select all checkbox
-function checkAll(ele) {
-    if (ele.checked) {
-        $('.supplier_checkbox').each(function() {
-            var disable_check = this.disabled
-            if(disable_check == false){
-                this.checked = true;
-                $("#id_delete_supplier").show();
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Suppliers:delete_supplier' %}",
+            data:JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (Response) {
+                display_supplier_data(Response.supplier_results);
+                $('#success_msg_id').text(Response.success_message)
+                //document.getElementById("success_msg_id").text = Response.success_message;
+                $("#error_msg_div").prop("hidden",false)
+                setTimeout(function(){$("#error_msg_div").prop("hidden",true);},5000)
+                CloseLoaderPopup();
             }
         });
-    }
-    else{
-        $('.supplier_checkbox').each(function() {
-            var disable_check = this.disabled
-            if(disable_check == false){
-                this.checked = false;
-                $("#id_delete_supplier").hide();
-            }
+    };
+
+
+    var data = {}
+    var block_id = '';
+    $('.toggle-input').change(function() {
+
+
+        if($(this).is(':checked')) {
+            console.log('This is firing');
+            $('.toggle-off').removeClass('active');
+            $('.toggle-on').addClass('active');
+            data.flag = true
+        } else {
+            $('.toggle-off').addClass('active');
+            $('.toggle-on').removeClass('active');
+            data.flag = false
+        }
+        var id = this.id
+        block_id = id
+        data.supplier_id = id.split('-')[0]
+        $('#id_block_confirm_popup').modal('show');
+
+    });
+
+    function block_unblock_supplier(){
+        jQuery.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Suppliers:supplier_blocking' %}",
+            dataType :'json',
+            data: JSON.stringify(data),
+            success: function(result){
+                    $('#id_block_confirm_popup').modal('hide');
+            },
+            error: function(xhr, resp, text) {
+            },
+            cache: false,
+            processData: false,
+            contentType: false,
         });
     }
-}
-function valueChanged() {
-    if ($('.supplier_checkbox').is(":checked")) {
-        $("#id_delete_supplier").show();
-    } else {
-        $("#id_delete_supplier").hide();
-    }
-}
 
-function display_supplier_data(supplier_data){
-    var supplier_detail_html = '';
-    var is_active = '';
-    var block_input = '';
-    $('#sup_tab').DataTable().destroy();
-    $("#supplier_detail_tbody").empty();
-    $.each(supplier_data, function (i, supplier_detail) {
-        if(supplier_detail.is_active){
-            is_active = 'Active'
+
+    function toggle(){
+        var abc = $('#'+block_id)
+        if($('#'+block_id).is(':checked')) {
+            $('#'+block_id).prop("checked", false);
         }
         else{
-            is_active = 'Inactive'
+            $('#'+block_id).prop("checked", true);
         }
-        if(supplier_detail.block){
-            block_input = '<input type="checkbox" id="'+ supplier_detail.supplier_id +'-block" class="toggle-input" checked>'
+    }
+
+    //onclick of select all checkbox
+    function checkAll(ele) {
+        if (ele.checked) {
+            $('.supplier_checkbox').each(function() {
+                var disable_check = this.disabled
+                if(disable_check == false){
+                    this.checked = true;
+                    $("#id_delete_supplier").show();
+                }
+            });
         }
         else{
-            block_input = '<input type="checkbox" id="'+ supplier_detail.supplier_id +'-unblock" class="toggle-input">'
+            $('.supplier_checkbox').each(function() {
+                var disable_check = this.disabled
+                if(disable_check == false){
+                    this.checked = false;
+                    $("#id_delete_supplier").hide();
+                }
+            });
         }
+    }
 
-        supplier_detail_html += '<tr id="table-'+ supplier_detail.supplier_id +'">'+
-                '<td><input type="checkbox" class="supplier_checkbox" onclick="valueChanged();"></td>'+
-                '<td><a href="#" class="dummy_supplier_detail"  id=" '+supplier_detail.supplier_id_encrypted+' " target="_blank">'+ supplier_detail.supplier_id +'</a></td>'+
-                '<td>'+ supplier_detail.name1 +'</td>'+
-                '<td> '+ supplier_detail.name2 +'</td>'+
-                '<td>'+ supplier_detail.city +'</td>'+
-                '<td>'+ supplier_detail.email +'</td>'+
-                '<td>'+ is_active +'</td>'+
-                '<td> '+ supplier_detail.country_code_id +'</td>'+
-                '<td>'+ supplier_detail.registration_number +'</td>'+
-                '<td><label class="switch"><label class="toggle">'+ block_input +'<div class="toggle-controller default-success"></div></label></label></td>'+
-                '<td><i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete User" id="'+ supplier_detail.supp_guid +'-'+ supplier_detail.supplier_id +'"data-toggle="modal"  data-target="#confirm_delete_pop_up" onclick="get_supplier_detail_to_delete(this.id)" ></i></td>'+
-                 '</tr> '
+
+    function valueChanged() {
+        if ($('.supplier_checkbox').is(":checked")) {
+            $("#id_delete_supplier").show();
+        } else {
+            $("#id_delete_supplier").hide();
+        }
+    }
+
+    function display_supplier_data(supplier_data){
+        var supplier_detail_html = '';
+        var is_active = '';
+        var block_input = '';
+        $('#sup_tab').DataTable().destroy();
+        $("#supplier_detail_tbody").empty();
+        $.each(supplier_data, function (i, supplier_detail) {
+            if(supplier_detail.is_active){
+                is_active = 'Active'
+            }
+            else{
+                is_active = 'Inactive'
+            }
+            if(supplier_detail.block){
+                block_input = '<input type="checkbox" id="'+ supplier_detail.supplier_id +'-block" class="toggle-input" checked>'
+            }
+            else{
+                block_input = '<input type="checkbox" id="'+ supplier_detail.supplier_id +'-unblock" class="toggle-input">'
+            }
+
+            supplier_detail_html += '<tr id="table-'+ supplier_detail.supplier_id +'">'+
+                    '<td><input type="checkbox" class="supplier_checkbox" onclick="valueChanged();"></td>'+
+                    '<td><a href="#" class="dummy_supplier_detail"  id=" '+supplier_detail.supplier_id_encrypted+' " target="_blank">'+ supplier_detail.supplier_id +'</a></td>'+
+                    '<td>'+ supplier_detail.name1 +'</td>'+
+                    '<td> '+ supplier_detail.name2 +'</td>'+
+                    '<td>'+ supplier_detail.city +'</td>'+
+                    '<td>'+ supplier_detail.email +'</td>'+
+                    '<td>'+ is_active +'</td>'+
+                    '<td> '+ supplier_detail.country_code_id +'</td>'+
+                    '<td>'+ supplier_detail.registration_number +'</td>'+
+                    '<td><label class="switch"><label class="toggle">'+ block_input +'<div class="toggle-controller default-success"></div></label></label></td>'+
+                    '<td><i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete User" id="'+ supplier_detail.supp_guid +'-'+ supplier_detail.supplier_id +'"data-toggle="modal"  data-target="#confirm_delete_pop_up" onclick="get_supplier_detail_to_delete(this.id)" ></i></td>'+
+                    '</tr> '
+        });
+        $("#supplier_detail_tbody").append(supplier_detail_html);
+        table_sort_filter('sup_tab');
+    }
+
+    $(document).on('click', '.dummy_supplier_detail', function () {
+        var url = "{% url 'eProc_Admin_Tool:sup_details_page' 123 %}";
+        var id = $(this).attr('id');
+        var href_link = url.replace('123', id)
+        window.open(href_link,'_blank');
     });
-    $("#supplier_detail_tbody").append(supplier_detail_html);
-    table_sort_filter('sup_tab');
-}
-$(document).on('click', '.dummy_supplier_detail', function () {
-    var url = "{% url 'eProc_Admin_Tool:sup_details_page' 123 %}";
-    var id = $(this).attr('id');
-    var href_link = url.replace('123', id)
-    window.open(href_link,'_blank');
-});
 </script>
 
 {% endblock %}

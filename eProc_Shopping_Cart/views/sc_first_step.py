@@ -13,7 +13,7 @@ from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render
 
 from eProc_Attributes.Utilities.attributes_generic import OrgAttributeValues
-from eProc_Basic.Utilities.constants.constants import CONST_CO04, CONST_CO01, CONST_CALENDAR_ID, CONST_CO02
+from eProc_Basic.Utilities.constants.constants import CONST_LIMIT_ORDER_CALLOFF, CONST_CATALOG_CALLOFF, CONST_CALENDAR_ID, CONST_FREETEXT_CALLOFF
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.get_db_query import get_currency_list, get_country_data, get_requester_currency, \
     get_login_obj_id
@@ -52,6 +52,10 @@ def sc_first_step(request):
     client = global_variables.GLOBAL_CLIENT
     login_user_obj_id = get_login_obj_id(request)
     total_value = 0
+    actual_price_list = []
+    discount_value_list = []
+    tax_value_list = []
+    gross_price_list = []
     catalog_qty = None
     total_item_value = []
     holiday_list = []
@@ -86,14 +90,25 @@ def sc_first_step(request):
         call_off = items['call_off']
         lead_time = items['lead_time']
 
-        if call_off == CONST_CO01:
+        if call_off == CONST_CATALOG_CALLOFF:
             supplier_id = items['supplier_id']
         else:
             supplier_id = items['pref_supplier']
 
         requester_user_id = items['username']
+        if item_currency != user_currency:
+            actual_price_list.append(convert_currency(float(items['actual_price'])*items['quantity'], str(item_currency), str(user_currency)))
+            discount_value_list.append(
+                convert_currency(items['discount_value'], str(item_currency), str(user_currency)))
+            tax_value_list.append(convert_currency(items['tax_value'], str(item_currency), str(user_currency)))
+            # gross_price_list.append(convert_currency(float(items['gross_price'])*items['quantity'], str(item_currency), str(user_currency)))
+        else:
+            actual_price_list.append(float(items['actual_price'])*items['quantity'])
+            discount_value_list.append(items['discount_value'])
+            tax_value_list.append(items['tax_value'])
+            # gross_price_list.append(float(items['gross_price'])*items['quantity'])
 
-        if call_off not in [CONST_CO02, CONST_CO04]:
+        if call_off not in [CONST_FREETEXT_CALLOFF, CONST_LIMIT_ORDER_CALLOFF]:
             calculate_delivery_date(items['guid'],
                                     lead_time,
                                     supplier_id,
@@ -101,7 +116,7 @@ def sc_first_step(request):
                                     client,
                                     CartItemDetails)
 
-        if call_off == CONST_CO04:
+        if call_off == CONST_LIMIT_ORDER_CALLOFF:
             is_limit_item = True
             limit_item_details = get_limit_item_details(items['guid'])
             overall_limit = items['overall_limit']
@@ -111,7 +126,8 @@ def sc_first_step(request):
             price = 0
             prod_desc = get_prod_by_id(prod_id=prod_id)
             value = calculate_item_total_value(call_off, quantity, catalog_qty, price_unit, price, overall_limit)
-            value = convert_currency(value, str(item_currency), str(user_currency))
+            if item_currency != user_currency:
+                value = convert_currency(value, str(item_currency), str(user_currency))
             if value:
                 total_item_value.append(float(format(value, '2f')))
             else:
@@ -138,15 +154,21 @@ def sc_first_step(request):
         'username': global_variables.GLOBAL_LOGIN_USERNAME,
         'client': client
     })
+    # total price detail
+    actual_price = round(sum(actual_price_list), 2)
+    discount_value = round(sum(discount_value_list), 2)
+    tax_value = round(sum(tax_value_list), 2)
+    # gross_price = round(sum(gross_price_list), 2)
 
     product_category = get_prod_cat(request, prod_det=None)
     requester_currency = get_requester_currency(requester_user_id)
 
     cart_items = list(django_query_instance.django_filter_only_query(CartItemDetails,
-                                                                     {'username': global_variables.GLOBAL_LOGIN_USERNAME,
-                                                                      'client': client}).values())
+                                                                     {
+                                                                         'username': global_variables.GLOBAL_LOGIN_USERNAME,
+                                                                         'client': client}).values())
     for items in cart_items:
-        if items['call_off'] == CONST_CO01:
+        if items['call_off'] == CONST_CATALOG_CALLOFF:
             items['image_url'] = get_image_url(items['int_product_id'])
         else:
             items['image_url'] = ''
@@ -172,7 +194,12 @@ def sc_first_step(request):
         'currency': django_query_instance.django_filter_only_query(Currency, {'del_ind': False}),
         'unit': django_query_instance.django_filter_only_query(UnitOfMeasures, {'del_ind': False}),
         'total_item_value': total_item_value,
+        # total price detail
         'total_value': format(total_value, '.2f'),
+        'actual_price': format(actual_price, '.2f'),
+        'discount_value': format(discount_value, '.2f'),
+        'tax_value': format(tax_value, '.2f'),
+        # 'gross_price': gross_price,
         'supplier_details': get_supplier_first_second_name(global_variables.GLOBAL_CLIENT),
         'date_today': datetime.datetime.today(),
         'display_update_delete': True,

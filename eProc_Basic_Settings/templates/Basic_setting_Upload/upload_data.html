@@ -2159,7 +2159,23 @@
                     country_data.country_code = (row.find("TD").eq(1).find('input[type="text"]').val()).toUpperCase();
                     if (country_data.country_code.length == 0) {
                         Error_msg = "";
-                        Error_msg = messageConstants["JMSG002"] + "Country Code";
+                          var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+                            var msg = "JMSG003";
+                            var msg_type ;
+                          msg_type = message_config_details(msg);
+                          $("#error_msg_id").prop("hidden", false)
+
+                          if(msg_type.message_type[0] == "ERROR"){
+                                display_message("error_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "WARNING"){
+                             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "INFORMATION"){
+                             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          var display4 = msg_type.messages_id_desc[0];
+                          Error_msg = display4 + "Country Code";
                         document.getElementById("err_msg_app_settings").innerHTML = Error_msg;
                         document.getElementById("err_msg_app_settings").style.color = "Red";
 
@@ -2167,7 +2183,24 @@
                     }
                     if (pattern.test(country_data.country_code)) {
                         Error_msg = "";
-                        Error_msg = messageConstants["JMSG003"] + "Country Code";
+                           var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+                            var msg = "JMSG003";
+                            var msg_type ;
+                          msg_type = message_config_details(msg);
+                          $("#error_msg_id").prop("hidden", false)
+
+                          if(msg_type.message_type[0] == "ERROR"){
+                                display_message("error_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "WARNING"){
+                             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "INFORMATION"){
+                             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          var display4 = msg_type.messages_id_desc[0];
+                          Error_msg = display4 + "Country Code";
+
                         document.getElementById("err_msg_app_settings").innerHTML = Error_msg;
                         document.getElementById("err_msg_app_settings").style.color = "Red";
 
@@ -2185,7 +2218,24 @@
 
                 if (country_data.country_name.length == 0) {
                     Error_msg = "";
-                    Error_msg = messageConstants["JMSG002"] + "Country Name";
+                          var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+                            var msg = "JMSG002";
+                            var msg_type ;
+                          msg_type = message_config_details(msg);
+                          $("#error_msg_id").prop("hidden", false)
+
+                          if(msg_type.message_type[0] == "ERROR"){
+                                display_message("error_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "WARNING"){
+                             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "INFORMATION"){
+                             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                          }
+                           var display5 = msg_type.messages_id_desc[0];
+                     Error_msg = display5 + "Country Name";
+
                     document.getElementById("err_msg_app_settings").innerHTML = Error_msg;
                     document.getElementById("err_msg_app_settings").style.color = "Red";
 
@@ -2193,7 +2243,25 @@
                 }
                 if (pattern.test(country_data.country_name)) {
                     Error_msg = "";
-                    Error_msg = messageConstants["JMSG003"] + "Country Name";
+                         var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+                            var msg = "JMSG003";
+                            var msg_type ;
+                          msg_type = message_config_details(msg);
+                          $("#error_msg_id").prop("hidden", false)
+
+                          if(msg_type.message_type[0] == "ERROR"){
+                                display_message("error_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "WARNING"){
+                             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "INFORMATION"){
+                             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                          }
+
+                           var display5 = msg_type.messages_id_desc[0];
+                       Error_msg = display5 + "Country Name";
+
                     document.getElementById("err_msg_app_settings").innerHTML = Error_msg;
                     document.getElementById("err_msg_app_settings").style.color = "Red";
 
@@ -2214,7 +2282,25 @@
                     success: function (Response) {
                         display_db_data = Response;
                         display_basic_db_data();
-                        document.getElementById("err_msg_app_settings_t").innerHTML = messageConstants["JMSG039"];
+                             
+                                var msg = "JMSG039";
+                                var msg_type ;
+                              msg_type = message_config_details(msg);
+                              $("#error_msg_id").prop("hidden", false)
+
+                              if(msg_type.message_type[0] == "ERROR"){
+                                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+                              }
+                              else if(msg_type.message_type[0] == "WARNING"){
+                                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                              }
+                              else if(msg_type.message_type[0] == "INFORMATION"){
+                                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                              }
+                                    var display =  msg_type.messages_id_desc[0];
+                                 document.getElementById("err_msg_app_settings_t").innerHTML = display;
+
+
                         document.getElementById("err_msg_app_settings_t").style.color = "Green";
 
                     }
@@ -2247,7 +2333,23 @@
                     }
                     if (pattern.test(currency_data.currency_id)) {
                         Error_msg = "";
-                        Error_msg = messageConstants["JMSG003"] + "Currency Code";
+                              var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+                            var msg = "JMSG003";
+                            var msg_type ;
+                          msg_type = message_config_details(msg);
+                          $("#error_msg_id").prop("hidden", false)
+
+                          if(msg_type.message_type[0] == "ERROR"){
+                                display_message("error_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "WARNING"){
+                             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "INFORMATION"){
+                             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                          }
+                         var display5 = msg_type.messages_id_desc[0];
+                        Error_msg = display5 + "Currency Code";
                         document.getElementById("err_msg_app_settings").innerHTML = Error_msg;
                         document.getElementById("err_msg_app_settings").style.color = "Red";
 
@@ -2265,15 +2367,47 @@
 
                 if (currency_data.description.length == 0) {
                     Error_msg = "";
-                    Error_msg = messageConstants["JMSG002"] + "Description";
-                    document.getElementById("err_msg_app_settings").innerHTML = Error_msg;
+                            var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+                            var msg = "JMSG003";
+                            var msg_type ;
+                          msg_type = message_config_details(msg);
+                          $("#error_msg_id").prop("hidden", false)
+
+                          if(msg_type.message_type[0] == "ERROR"){
+                                display_message("error_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "WARNING"){
+                             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "INFORMATION"){
+                             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          var display4 = msg_type.messages_id_desc[0];
+                          error_message += display4 + "Description";
+                   document.getElementById("err_msg_app_settings").innerHTML = Error_msg;
                     document.getElementById("err_msg_app_settings").style.color = "Red";
 
                     secondary_fields_chk_curr = 'N';
                 }
                 if (pattern.test(currency_data.description)) {
                     Error_msg = "";
-                    Error_msg = messageConstants["JMSG003"] + "Description";
+                  var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+                            var msg = "JMSG003";
+                            var msg_type ;
+                          msg_type = message_config_details(msg);
+                          $("#error_msg_id").prop("hidden", false)
+
+                          if(msg_type.message_type[0] == "ERROR"){
+                                display_message("error_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "WARNING"){
+                             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "INFORMATION"){
+                             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          var display4 = msg_type.messages_id_desc[0];
+                          error_message += display4 + "Description";
                     document.getElementById("err_msg_app_settings").innerHTML = Error_msg;
                     document.getElementById("err_msg_app_settings").style.color = "Red";
 
@@ -2295,7 +2429,24 @@
                     success: function (Response) {
                         display_db_data = Response;
                         display_basic_db_data();
-                        document.getElementById("err_msg_app_settings_t").innerHTML = messageConstants["JMSG039"];
+                           
+                            var msg = "JMSG039";
+                            var msg_type ;
+                          msg_type = message_config_details(msg);
+                          $("#error_msg_id").prop("hidden", false)
+
+                          if(msg_type.message_type[0] == "ERROR"){
+                                display_message("error_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "WARNING"){
+                             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "INFORMATION"){
+                             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                          }
+                           var display5 = msg_type.messages_id_desc[0];
+                          document.getElementById("err_msg_app_settings_t").innerHTML = display5;
+
                         document.getElementById("err_msg_app_settings_t").style.color = "Green";
 
                     }
@@ -2320,14 +2471,48 @@
                     language_data.language_id = (row.find("TD").eq(1).find('input[type="text"]').val()).toUpperCase();
                     if (language_data.language_id.length == 0) {
                         Error_msg = "";
-                        Error_msg = messageConstants["JMSG002"] + "Language ID";
+
+                                var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+                            var msg = "JMSG002";
+                            var msg_type ;
+                          msg_type = message_config_details(msg);
+                          $("#error_msg_id").prop("hidden", false)
+
+                          if(msg_type.message_type[0] == "ERROR"){
+                                display_message("error_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "WARNING"){
+                             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "INFORMATION"){
+                             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          var display5 = msg_type.messages_id_desc[0];
+                          Error_msg = display5 + "Language ID";
                         document.getElementById("err_msg_app_settings").innerHTML = Error_msg;
                         document.getElementById("err_msg_app_settings").style.color = "Red";
                         no_input_error_lang = 'N';
                     }
                     if (pattern.test(language_data.language_id)) {
                         Error_msg = "";
-                        Error_msg = messageConstants["JMSG003"] + "Language Id";
+                            var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+                            var msg = "JMSG003";
+                            var msg_type ;
+                          msg_type = message_config_details(msg);
+                          $("#error_msg_id").prop("hidden", false)
+
+                          if(msg_type.message_type[0] == "ERROR"){
+                                display_message("error_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "WARNING"){
+                             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "INFORMATION"){
+                             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                          }
+                            var display5 = msg_type.messages_id_desc[0];
+                          Error_msg = display5 + "Language Id";
+
                         document.getElementById("err_msg_app_settings").innerHTML = Error_msg;
                         document.getElementById("err_msg_app_settings").style.color = "Red";
                         no_input_error_lang = 'N';
@@ -2344,14 +2529,46 @@
 
                 if (language_data.description.length == 0) {
                     Error_msg = "";
-                    Error_msg = messageConstants["JMSG002"] + "Description";
+                        var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+                        var msg = "JMSG003";
+                        var msg_type ;
+                      msg_type = message_config_details(msg);
+                      $("#error_msg_id").prop("hidden", false)
+
+                      if(msg_type.message_type[0] == "ERROR"){
+                            display_message("error_msg_id", msg_type.messages_id_desc[0])
+                      }
+                      else if(msg_type.message_type[0] == "WARNING"){
+                         display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                      }
+                      else if(msg_type.message_type[0] == "INFORMATION"){
+                         display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                      }
+                    var display5 = msg_type.messages_id_desc[0];
+                    Error_msg = display5 + "Description";
                     document.getElementById("err_msg_app_settings").innerHTML = Error_msg;
                     document.getElementById("err_msg_app_settings").style.color = "Red";
                     secondary_fields_chk_lang = 'N';
                 }
                 if (pattern.test(language_data.description)) {
                     Error_msg = "";
-                    Error_msg = messageConstants["JMSG003"] + "Description";
+                        var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+                        var msg = "JMSG003";
+                        var msg_type ;
+                      msg_type = message_config_details(msg);
+                      $("#error_msg_id").prop("hidden", false)
+
+                      if(msg_type.message_type[0] == "ERROR"){
+                            display_message("error_msg_id", msg_type.messages_id_desc[0])
+                      }
+                      else if(msg_type.message_type[0] == "WARNING"){
+                         display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                      }
+                      else if(msg_type.message_type[0] == "INFORMATION"){
+                         display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                      }
+                      var display5 = msg_type.messages_id_desc[0];
+                    Error_msg = display5 + "Description";
                     document.getElementById("err_msg_app_settings").innerHTML = Error_msg;
                     document.getElementById("err_msg_app_settings").style.color = "Red";
                     secondary_fields_chk_lang = 'N';
@@ -2372,7 +2589,25 @@
                     success: function (Response) {
                         display_db_data = Response;
                         display_basic_db_data();
-                        document.getElementById("err_msg_app_settings_t").innerHTML = messageConstants["JMSG039"];
+                            
+                            var msg = "JMSG039";
+                            var msg_type ;
+                          msg_type = message_config_details(msg);
+                          $("#error_msg_id").prop("hidden", false)
+
+                          if(msg_type.message_type[0] == "ERROR"){
+                                display_message("error_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "WARNING"){
+                             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "INFORMATION"){
+                             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                          }
+                           var display5 = msg_type.messages_id_desc[0];
+                          document.getElementById("err_msg_app_settings_t").innerHTML = display5;
+
+
                         document.getElementById("err_msg_app_settings_t").style.color = "Green";
 
                     }

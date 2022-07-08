@@ -13,7 +13,24 @@
     $(document).ready(function (){
         if(is_edit){
             no_slide_menu_style()
-            $('#edit_message').html(messageConstants["JMSG033"] + document_number_decrypted + '<a href="#" onclick="go_back_to_sc()"> go back to shopping cart</a>')
+               
+                    var msg = "JMSG033";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display = msg_type.messages_id_desc[0];
+
+            $('#edit_message').html(display + document_number_decrypted + '<a href="#" onclick="go_back_to_sc()"> go back to shopping cart</a>')
             $('#edit_message').show()
         }
     })

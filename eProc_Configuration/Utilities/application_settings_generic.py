@@ -44,3 +44,16 @@ class FieldTypeDescription:
         result = django_query_instance.django_filter_query(db_name, filter_query, None, value_list)
         return result
 
+    @staticmethod
+    def reset_used_flag(field_type_id,field_name):
+        django_query_instance.django_filter_only_query(FieldTypeDesc,
+                                                       {'del_ind': False,
+                                                        'field_type_id': field_type_id,
+                                                        'field_name':field_name}).update(used_flag=False)
+
+    @staticmethod
+    def update_used_flag(field_type_id,field_name):
+        django_query_instance.django_filter_only_query(FieldTypeDesc, {
+            'del_ind': False, 'field_type_id': field_type_id,'field_name':field_name
+        }).update(used_flag=True)
+

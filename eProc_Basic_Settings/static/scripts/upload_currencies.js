@@ -10,7 +10,7 @@ function onclick_add_button(button) {
     $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
     $('#myModal').modal('show');
-    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="input form-control" type="text" pattern="[A-Z]" maxlength="3" onkeypress="return /[a-z]/i.test(event.key)" name="currencycode" style="text-transform:uppercase;" required></td><td><input class="input form-control" type="text" maxlength="100" onkeypress="return regex_char_restriction(event)" name="currencyname"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="input form-control" type="text" pattern="[A-Z]" title="Minimum length is 3" minlength="3"  maxlength="3" onkeypress="return /[a-z]/i.test(event.key)" name="currencycode" style="text-transform:uppercase;" required></td><td><input class="input form-control" type="text" maxlength="100" onkeypress="return regex_char_restriction(event)" name="currencyname"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
     $("#id_del_ind_checkbox").prop("hidden", true);
@@ -98,63 +98,8 @@ $(".remove_upload_data").click(() => {
     $('#id_popup_table').DataTable().destroy();
 });
 
-//validate by comparing  main table values and popup table values
-function maintable_validation(validate_add_attributes, main_table_low_value) {
-    var no_duplicate_entries = 'Y'
-    var error_message =''
-    var common = [];
-    jQuery.grep(validate_add_attributes, function(el) {
-        if (jQuery.inArray(el, main_table_low_value) != -1) {
-            common.push(el);
-            //console.log(common)
-        }
-    });
-    if (common.length != 0) {
-    error_message = messageConstants["JMSG001"]
 
-        no_duplicate_entries = 'N'
-    }
-    return [no_duplicate_entries,error_message]
-}
 //**************************************
-
-// validating the  popup table for duplicate entries
-function compare_table_for_duplicate_entries(validate_add_attributes, currency) {
-    add_attr_duplicates = false;
-    var error_message = ''
-    var add_attr_duplicates_list = [];
-    var add_attr_unique_list = [];
-    var no_duplicate_value = 'Y'
-    $.each(validate_add_attributes, function(index, value) {
-        if ($.inArray(value, add_attr_unique_list) == -1) {
-            add_attr_unique_list.push(value);
-        } else {
-            if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                add_attr_duplicates_list.push(value);
-            }
-        }
-    });
-    if (add_attr_duplicates_list.length != 0) {
-        
-       error_message = messageConstants["JMSG001"];
-      
-        no_duplicate_value = 'N'
-    } else {
-         $.each(currency, function (i, item) {
-            if (item.currency_id.length == 0) {
-                error_message = messageConstants["JMSG002"] + "Currency Id ";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
-         if (item.description.length == 0) {      
-            error_message = messageConstants["JMSG002"] +  "Currency Name";       
-                    no_duplicate_value = 'N'
-            return [no_duplicate_value,error_message]
-            }
-         });
-    }
-       return [no_duplicate_value,error_message]
-}
 function display_error_message(error_message){
         $("#error_msg_id").css("display", "none")
         $('#error_message').text(error_message);
@@ -162,9 +107,11 @@ function display_error_message(error_message){
         $("#error_msg_id").css("display", "block")
         $('#id_save_confirm_popup').modal('hide');
         $('#myModal').modal('show');
-  
+
 }
 //*******************************************************
+
+
 
 // on click add icon display the row in to add the new entries
 function add_popup_row() {
@@ -175,7 +122,7 @@ function add_popup_row() {
     $(".modal").on("hidden.bs.modal", function() {
         $("#id_error_msg").html(" ");
     });
-    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="input form-control" type="text" pattern="[A-Z]" maxlength="3" onkeypress="return /[a-z]/i.test(event.key)" name="currencycode" style="text-transform:uppercase;" required></td><td><input class="input form-control" type="text" maxlength="100" onkeypress="return regex_char_restriction(event)" name="currencyname"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="input form-control" type="text" pattern="[A-Z]" title="Minimum length is 3" minlength="3" maxlength="3" onkeypress="return /[a-z]/i.test(event.key)" name="currencycode" style="text-transform:uppercase;" required></td><td><input class="input form-control" type="text" maxlength="100" onkeypress="return regex_char_restriction(event)" name="currencyname"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     if (GLOBAL_ACTION == "currency_upload") {
         $(".class_del_checkbox").prop("hidden", false);

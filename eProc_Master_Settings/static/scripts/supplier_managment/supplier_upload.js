@@ -96,7 +96,13 @@ function maintable_validation(validate_add_attributes, main_table_low_value) {
     });
     if (common.length != 0) {
         $("#id_error_msg").prop("hidden", false)
-        document.getElementById("id_error_msg").innerHTML = messageConstants["JMSG001"] + "for Supplier Id";
+      
+         var msg = "JMSG001";
+         var msg_type ;
+         msg_type = message_config_details(msg);
+         $("#error_msg_id").prop("hidden", false)
+         var display1 = msg_type.messages_id_desc[0];
+        document.getElementById("id_error_msg").innerHTML = display1 + "for Supplier Id";
         document.getElementById("id_error_msg").style.color = "Red";
         // document.getElementById("supplier_id").style.border = "1px solid #FF0000";
 
@@ -118,13 +124,30 @@ function maintable_validation_email(validate_email_attributes, main_table_email_
     });
     if (common.length != 0) {
         $("#id_error_msg").prop("hidden", false)
-        document.getElementById("id_error_msg").innerHTML = messageConstants["JMSG024"];
+                 
+                    var msg = "JMSG024";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display2 =  msg_type.messages_id_desc[0];
+                  document.getElementById("id_error_msg").innerHTML = display2;
+
         document.getElementById("id_error_msg").style.color = "Red";
         $('#id_save_confirm_popup').modal('hide');
         $('#myModal').modal('show');;
         no_duplicate_email = 'N'
     }
-    return no_duplicate_email
+    return no_duplicate_email,display2
 }
 
 function maintable_validation_reg_num(validate_email_attributes, main_table_reg_num) {
@@ -143,44 +166,6 @@ function maintable_validation_reg_num(validate_email_attributes, main_table_reg_
         no_duplicate_regnum = 'N'
     }
     return no_duplicate_regnum
-}
-
-// validating the  popup table for duplicate entries
-function compare_table_for_duplicate_entries(validate_add_attributes, supplier) {
-    add_attr_duplicates = false;
-    var add_attr_duplicates_list = [];
-    var add_attr_unique_list = [];
-    var no_duplicate_value = 'Y'
-    $.each(validate_add_attributes, function (index, value) {
-        if ($.inArray(value, add_attr_unique_list) == -1) {
-            add_attr_unique_list.push(value);
-        }
-        else {
-            if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                add_attr_duplicates_list.push(value);
-            }
-        }
-    });
-    if (add_attr_duplicates_list.length != 0) {
-        $("#id_error_msg").prop("hidden", false)
-        document.getElementById("id_error_msg").innerHTML = messageConstants["JMSG001"];
-        document.getElementById("id_error_msg").style.color = "Red";
-        $('#id_save_confirm_popup').modal('hide');
-        $('#myModal').modal('show');;
-        no_duplicate_value = 'N'
-    }
-    else if (supplier.supplier_id.length == 0) {
-        $("#id_error_msg").prop("hidden", false)
-        Error_msg = "";
-        Error_msg = messageConstants["JMSG002"] + "Supplier Id";
-        document.getElementById("id_error_msg").innerHTML = Error_msg;
-        document.getElementById("id_error_msg").style.color = "Red";
-        $('#id_save_confirm_popup').modal('hide');
-        $('#myModal').modal('show');;
-        no_duplicate_value = 'N'
-    }
-
-    return no_duplicate_value
 }
 
 // on click add icon display the row in to add the new entries
@@ -345,7 +330,23 @@ function check_data() {
 
         //*************** checking for max length for country code (max length = 15) ***************
         if (supplier_id.length > 15) {
-            document.getElementById("id_error_msg_supplier_length").innerHTML = messageConstants["JMSG004"]  + "Country Code";
+           
+            var msg = "JMSG004";
+            var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+            var display8 = msg_type.messages_id_desc[0];
+            document.getElementById("id_error_msg_supplier_length").innerHTML = display8+ "Country Code";
             $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
             count = count + 1;
         }

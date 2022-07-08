@@ -37,3 +37,7 @@ function displayToggle(element) {
     id = element.id.split('-')[1]
     element.dataset.target = '#collapseSearch'+id
 }
+
+$('#search_button_id').click(function () {
+    OpenLoaderPopup();
+})

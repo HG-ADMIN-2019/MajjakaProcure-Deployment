@@ -6,12 +6,13 @@ from eProc_Basic.Utilities.functions.camel_case import convert_to_camel_case
 from eProc_Basic.Utilities.functions.get_db_query import getClients
 from eProc_Basic.Utilities.constants.constants import CONST_ACTION_DELETE, CONST_SC_TRANS_TYPE
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries, bulk_create_entry_db
+from eProc_Basic.Utilities.functions.messages_config import get_msg_desc
 from eProc_Basic.Utilities.functions.range_check import range_check
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Configuration.Utilities.application_settings_generic import get_configuration_data, FieldTypeDescription
 from eProc_Configuration.models import NumberRanges, \
     Country, CalenderHolidays, Incoterms, \
-    SystemSettingsConfig, CalenderConfig, Languages
+    SystemSettingsConfig, CalenderConfig, Languages, PoSplitType, PoSplitCriteria
 from eProc_Configuration.models.development_data import *
 from eProc_Configuration.models.development_data import OrgClients
 from eProc_Configuration.models.development_data import DocumentType
@@ -37,14 +38,15 @@ def save_client_data_into_db(client_data):
                                                        'org_clients_changed_at': datetime.datetime.now(),
                                                        'org_clients_changed_by': global_variables.GLOBAL_LOGIN_USERNAME}
                                                       )
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for client_detail in client_data['data']:
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(OrgClients,
                                                                 {'client': client_detail['client']}):
                 client_db_dictionary = {'client': client_detail['client'],
-                                        'description':convert_to_camel_case( client_detail['description']),
+                                        'description': convert_to_camel_case(client_detail['description']),
                                         'org_clients_created_at': datetime.datetime.now(),
                                         'org_clients_created_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                         }
@@ -53,12 +55,14 @@ def save_client_data_into_db(client_data):
                 django_query_instance.django_update_query(OrgClients,
                                                           {'client': client_detail['client']},
                                                           {'client': client_detail['client'],
-                                                           'description':convert_to_camel_case( client_detail['description']),
+                                                           'description': convert_to_camel_case(
+                                                               client_detail['description']),
                                                            'org_clients_changed_at': datetime.datetime.now(),
                                                            'org_clients_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                                            'del_ind': False})
         bulk_create_entry_db(OrgClients, client_db_list)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(OrgClients, {'del_ind': False}, ['client', 'description'])
 
     return upload_response, message
@@ -71,7 +75,7 @@ def save_number_range_data_into_db(number_range_data):
     number_range_db_list = []
     range_check_flag = False
     client = global_variables.GLOBAL_CLIENT
-    abc = range_check(6,3,6)
+    abc = range_check(6, 3, 6)
     doc_type = ''
     if number_range_data['action'] == CONST_ACTION_DELETE:
         for number_range_detail in number_range_data['data']:
@@ -89,7 +93,8 @@ def save_number_range_data_into_db(number_range_data):
                                                            'number_ranges_changed_at': datetime.datetime.now(),
                                                            'number_ranges_changed_by': global_variables.GLOBAL_LOGIN_USERNAME}
                                                           )
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for number_range_detail in number_range_data['data']:
             doc_type = number_range_detail['document_type']
@@ -102,16 +107,18 @@ def save_number_range_data_into_db(number_range_data):
                                                                      'document_type'],
                                                                  }):
                 number_ranges = django_query_instance.django_filter_query(NumberRanges,
-                                                                         {'client': client,
-                                                                          'del_ind':False,
-                                                                         'document_type': number_range_detail['document_type']},None,None)
+                                                                          {'client': client,
+                                                                           'del_ind': False,
+                                                                           'document_type': number_range_detail[
+                                                                               'document_type']}, None, None)
                 for number_range in number_ranges:
-                    range_check_flag = range_check(number_range_detail['starting'],number_range['starting'],number_range['ending'])
+                    range_check_flag = range_check(number_range_detail['starting'], number_range['starting'],
+                                                   number_range['ending'])
                     if range_check_flag:
                         break
                     else:
                         range_check_flag = range_check(number_range_detail['ending'], number_range['starting'],
-                                                  number_range['ending'])
+                                                       number_range['ending'])
                         if range_check_flag:
                             break
                 if not range_check_flag:
@@ -163,7 +170,8 @@ def save_number_range_data_into_db(number_range_data):
                                                                'del_ind': False})
 
         bulk_create_entry_db(NumberRanges, number_range_db_list)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(NumberRanges,
                                              {'del_ind': False, 'document_type': doc_type, 'client': client},
                                              ['guid', 'sequence', 'starting', 'ending',
@@ -747,7 +755,8 @@ def save_documenttype_data_into_db(documenttype_data):
                                                        'document_type_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
 
         fieldtypedesc_instance.reset_usedFlag(doc_type_field)
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for documenttype_detail in documenttype_data['data']:
             # if entry is not exists in db
@@ -756,7 +765,8 @@ def save_documenttype_data_into_db(documenttype_data):
                                                                 {'document_type': documenttype_detail[
                                                                     'document_type']}):
                 documenttype_db_dictionary = {'document_type': (documenttype_detail['document_type']).upper(),
-                                              'document_type_desc': convert_to_camel_case(documenttype_detail['document_type_desc']),
+                                              'document_type_desc': convert_to_camel_case(
+                                                  documenttype_detail['document_type_desc']),
                                               'document_type_created_at': datetime.datetime.now(),
                                               'document_type_created_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                               'document_type_changed_at': datetime.datetime.now(),
@@ -766,14 +776,16 @@ def save_documenttype_data_into_db(documenttype_data):
                 django_query_instance.django_update_query(DocumentType,
                                                           {'document_type': documenttype_detail['document_type']},
                                                           {'document_type': documenttype_detail['document_type'],
-                                                           'document_type_desc': convert_to_camel_case(documenttype_detail[
-                                                               'document_type_desc']),
+                                                           'document_type_desc': convert_to_camel_case(
+                                                               documenttype_detail[
+                                                                   'document_type_desc']),
                                                            'document_type_changed_at': datetime.datetime.now(),
                                                            'document_type_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                                            'del_ind': False})
         bulk_create_entry_db(DocumentType, documenttype_db_list)
         fieldtypedesc_instance.update_usedFlag(doc_type_field)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(DocumentType, {'del_ind': False},
                                              ['document_type', 'document_type_desc'])
     upload_fieldtypedesc = fieldtypedesc_instance.get_field_type_desc_values(FieldTypeDesc,
@@ -787,25 +799,27 @@ def save_documenttype_data_into_db(documenttype_data):
 def save_transactiontype_data_into_db(transactiontype_data):
     transactiontype_db_list = []
     fieldtypedesc_instance = FieldTypeDescription()
-    active_inactive_field = ''
+    # active_inactive_field = ''
     doc_type = ''
     client = global_variables.GLOBAL_CLIENT
     if transactiontype_data['action'] == CONST_ACTION_DELETE:
         for transactiontype_detail in transactiontype_data['data']:
             doc_type = transactiontype_detail['document_type']
-            active_inactive_field = transactiontype_detail['active_inactive']
+            # active_inactive_field = transactiontype_detail['active_inactive']
             if not django_query_instance.django_existence_check(OrgAttributesLevel,
-                                                            {'client': global_variables.GLOBAL_CLIENT,
-                                                             'low': transactiontype_detail['transaction_type'],
-                                                             'del_ind': False,
-                                                             'attribute_id':CONST_SC_TRANS_TYPE}):
+                                                                {'client': global_variables.GLOBAL_CLIENT,
+                                                                 'low': transactiontype_detail['transaction_type'],
+                                                                 'del_ind': False,
+                                                                 'attribute_id': CONST_SC_TRANS_TYPE}):
                 django_query_instance.django_update_query(TransactionTypes,
-                                                          {'transaction_type': transactiontype_detail['transaction_type']},
+                                                          {'transaction_type': transactiontype_detail[
+                                                              'transaction_type']},
                                                           {'del_ind': True,
                                                            'transaction_types_changed_at': datetime.datetime.now(),
                                                            'transaction_types_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
-                fieldtypedesc_instance.reset_usedFlag(active_inactive_field)
-        message = MSG113
+                # fieldtypedesc_instance.reset_usedFlag(active_inactive_field)
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for transactiontype_detail in transactiontype_data['data']:
             doc_type = transactiontype_detail['document_type']
@@ -818,8 +832,10 @@ def save_transactiontype_data_into_db(transactiontype_data):
                                                                  }):
                 guid = guid_generator()
                 transactiontype_db_dictionary = {'guid': guid,
-                                                 'transaction_type': (transactiontype_detail['transaction_type']).upper(),
-                                                 'description': convert_to_camel_case(transactiontype_detail['description']),
+                                                 'transaction_type': (
+                                                 transactiontype_detail['transaction_type']).upper(),
+                                                 'description': convert_to_camel_case(
+                                                     transactiontype_detail['description']),
                                                  'sequence': transactiontype_detail['sequence'],
                                                  'active_inactive': transactiontype_detail['active_inactive'],
                                                  'document_type': DocumentType.objects.get(
@@ -835,33 +851,38 @@ def save_transactiontype_data_into_db(transactiontype_data):
             else:
                 delete_flag = True
                 if django_query_instance.django_existence_check(OrgAttributesLevel,
-                                                                    {'client': global_variables.GLOBAL_CLIENT,
-                                                                     'low': transactiontype_detail['transaction_type'],
-                                                                     'del_ind': False,
-                                                                     'attribute_id': CONST_SC_TRANS_TYPE}):
+                                                                {'client': global_variables.GLOBAL_CLIENT,
+                                                                 'low': transactiontype_detail['transaction_type'],
+                                                                 'del_ind': False,
+                                                                 'attribute_id': CONST_SC_TRANS_TYPE}):
                     delete_flag = False
                 if delete_flag:
                     django_query_instance.django_update_query(TransactionTypes,
                                                               {'transaction_type': transactiontype_detail[
-                                                                  'transaction_type'],'sequence': transactiontype_detail['sequence']},
+                                                                  'transaction_type'],
+                                                               'sequence': transactiontype_detail['sequence']},
                                                               {'transaction_type': transactiontype_detail[
-                                                                   'transaction_type'],
-                                                               'description': convert_to_camel_case(transactiontype_detail[
-                                                                   'description']),
+                                                                  'transaction_type'],
+                                                               'description': convert_to_camel_case(
+                                                                   transactiontype_detail[
+                                                                       'description']),
                                                                'sequence': transactiontype_detail['sequence'],
-                                                               'active_inactive': transactiontype_detail['active_inactive'],
+                                                               'active_inactive': transactiontype_detail[
+                                                                   'active_inactive'],
                                                                'document_type': DocumentType.objects.get(
-                                                                   document_type=transactiontype_detail['document_type']),
+                                                                   document_type=transactiontype_detail[
+                                                                       'document_type']),
                                                                'transaction_types_changed_at': datetime.datetime.now(),
                                                                'transaction_types_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                                                'client': client,
                                                                'del_ind': False})
-        bulk_create_entry_db(TransactionTypes,transactiontype_db_list)
-        fieldtypedesc_instance.update_usedFlag(active_inactive_field)
-        message = MSG112
-    upload_response = get_configuration_data(TransactionTypes, {'del_ind': False,'document_type':doc_type,
-                                                                'client':global_variables.GLOBAL_CLIENT},
-                                             ['guid', 'transaction_type', 'description', 'document_type','sequence',
+        bulk_create_entry_db(TransactionTypes, transactiontype_db_list)
+        # fieldtypedesc_instance.update_usedFlag(active_inactive_field)
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
+    upload_response = get_configuration_data(TransactionTypes, {'del_ind': False, 'document_type': doc_type,
+                                                                'client': global_variables.GLOBAL_CLIENT},
+                                             ['guid', 'transaction_type', 'description', 'document_type', 'sequence',
                                               'active_inactive'])
 
     upload_fieldtypedesc = fieldtypedesc_instance.get_field_type_desc_values(FieldTypeDesc,
@@ -869,7 +890,7 @@ def save_transactiontype_data_into_db(transactiontype_data):
                                                                               'field_name': 'document_type'},
                                                                              ['field_type_id', 'field_type_desc'])
 
-    return upload_response, message,upload_fieldtypedesc
+    return upload_response, message, upload_fieldtypedesc
 
 
 def save_calendar_data_into_db(calendar_data):
@@ -885,7 +906,8 @@ def save_calendar_data_into_db(calendar_data):
                                                       {'del_ind': True,
                                                        'calender_config_changed_at': datetime.datetime.now(),
                                                        'calender_config_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for calendar_detail in calendar_data['data']:
             # if entry is not exists in db
@@ -915,7 +937,8 @@ def save_calendar_data_into_db(calendar_data):
                                                           {'calender_id': calendar_detail[
                                                               'calender_id']},
                                                           {'calender_id': calendar_detail['calender_id'],
-                                                           'description': convert_to_camel_case(calendar_detail['description']),
+                                                           'description': convert_to_camel_case(
+                                                               calendar_detail['description']),
                                                            'year': calendar_detail['year'],
                                                            'working_days': calendar_detail['working_days'],
                                                            'country_code': Country.objects.get(
@@ -926,7 +949,8 @@ def save_calendar_data_into_db(calendar_data):
                                                            'del_ind': False})
 
         bulk_create_entry_db(CalenderConfig, calendar_db_list)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(CalenderConfig, {'del_ind': False},
                                              ['calender_config_guid', 'calender_id', 'description',
                                               'year', 'working_days', 'country_code'])
@@ -947,7 +971,8 @@ def save_calendarholiday_data_into_db(calendar_data):
                                                       {'del_ind': True,
                                                        'changed_at': datetime.datetime.now(),
                                                        'changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for calendar_detail in calendar_data['data']:
             # if entry is not exists in db
@@ -957,7 +982,8 @@ def save_calendarholiday_data_into_db(calendar_data):
                 guid = guid_generator()
                 calendar_db_dictionary = {'calender_holiday_guid': guid,
                                           'calender_id': calendar_detail['calender_id'],
-                                          'holiday_description': convert_to_camel_case(calendar_detail['holiday_description']),
+                                          'holiday_description': convert_to_camel_case(
+                                              calendar_detail['holiday_description']),
                                           'from_date': calendar_detail['from_date'],
                                           'to_date': calendar_detail['to_date'],
                                           'del_ind': False,
@@ -976,7 +1002,7 @@ def save_calendarholiday_data_into_db(calendar_data):
                                                               'calender_holiday_guid'],
                                                            'calender_id': calendar_detail['calender_id'],
                                                            'holiday_description': convert_to_camel_case(calendar_detail[
-                                                               'holiday_description']),
+                                                                                                            'holiday_description']),
                                                            'from_date': calendar_detail['from_date'],
                                                            'to_date': calendar_detail['to_date'],
                                                            'changed_at': datetime.datetime.now(),
@@ -984,7 +1010,8 @@ def save_calendarholiday_data_into_db(calendar_data):
                                                            'client': client,
                                                            'del_ind': False})
         bulk_create_entry_db(CalenderHolidays, calendar_db_list)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(CalenderHolidays, {'del_ind': False},
                                              ['calender_holiday_guid', 'calender_id', 'holiday_description',
                                               'from_date', 'to_date'])
@@ -1007,7 +1034,8 @@ def save_actasmt_data_into_db(accasscat_data):
                                                        'account_assignment_category_changed_at': datetime.datetime.now(),
                                                        'account_assignment_category_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
             fieldtypedesc_instance.reset_usedFlag(acct_assmt_field)
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for accasscat_detail in accasscat_data['data']:
             acct_assmt_field = accasscat_detail['account_assign_cat']
@@ -1030,13 +1058,15 @@ def save_actasmt_data_into_db(accasscat_data):
                                                               'account_assign_cat']},
                                                           {'account_assign_cat': accasscat_detail[
                                                               'account_assign_cat'],
-                                                           'description': convert_to_camel_case(accasscat_detail['description']),
+                                                           'description': convert_to_camel_case(
+                                                               accasscat_detail['description']),
                                                            'account_assignment_category_changed_at': datetime.datetime.now(),
                                                            'account_assignment_category_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                                            'del_ind': False})
         bulk_create_entry_db(AccountAssignmentCategory, accasscat_db_list)
         fieldtypedesc_instance.update_usedFlag(acct_assmt_field)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(AccountAssignmentCategory, {'del_ind': False},
                                              ['account_assign_cat', 'description'])
     upload_fieldtypedesc = fieldtypedesc_instance.get_field_type_desc_values(FieldTypeDesc,
@@ -1046,6 +1076,125 @@ def save_actasmt_data_into_db(accasscat_data):
 
     return upload_response, message, upload_fieldtypedesc
 
+
+def save_po_split_type_into_db(accasscat_data):
+    """
+
+    """
+    accasscat_db_list = []
+    fieldtypedesc_instance = FieldTypeDescription()
+    acct_assmt_field = ''
+    if accasscat_data['action'] == CONST_ACTION_DELETE:
+        for accasscat_detail in accasscat_data['data']:
+            acct_assmt_field = accasscat_detail['po_split_type']
+            django_query_instance.django_update_query(PoSplitType,
+                                                      {'po_split_type': accasscat_detail['po_split_type']},
+                                                      {'del_ind': True,
+                                                       'po_split_type_changed_at': datetime.datetime.now(),
+                                                       'po_split_type_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
+            fieldtypedesc_instance.reset_used_flag(acct_assmt_field, 'split_type')
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
+    else:
+        for accasscat_detail in accasscat_data['data']:
+            acct_assmt_field = accasscat_detail['po_split_type']
+            # if entry is not exists in db
+            if not django_query_instance.django_existence_check(PoSplitType,
+                                                                {'po_split_type': accasscat_detail[
+                                                                    'po_split_type']}):
+                accasscat_db_dictionary = {'po_split_type': (accasscat_detail['po_split_type']).upper(),
+                                           'po_split_type_desc': convert_to_camel_case(accasscat_detail['description']),
+                                           'del_ind': False,
+                                           'po_split_type_created_at': datetime.datetime.now(),
+                                           'po_split_type_created_by': global_variables.GLOBAL_LOGIN_USERNAME,
+                                           'po_split_type_changed_at': datetime.datetime.now(),
+                                           'po_split_type_changed_by': global_variables.GLOBAL_LOGIN_USERNAME
+                                           }
+                accasscat_db_list.append(accasscat_db_dictionary)
+            else:
+                django_query_instance.django_update_query(PoSplitType,
+                                                          {'po_split_type': accasscat_detail[
+                                                              'po_split_type']},
+                                                          {'po_split_type': accasscat_detail[
+                                                              'po_split_type'],
+                                                           'po_split_type_desc': convert_to_camel_case(
+                                                               accasscat_detail['po_split_type_desc']),
+                                                           'po_split_type_changed_at': datetime.datetime.now(),
+                                                           'po_split_type_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
+                                                           'del_ind': False})
+        bulk_create_entry_db(AccountAssignmentCategory, accasscat_db_list)
+        fieldtypedesc_instance.update_used_flag(acct_assmt_field,'split_type')
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
+    upload_response = get_configuration_data(PoSplitType,
+                                             {'del_ind': False},
+                                             ['po_split_type', 'po_split_type_desc'])
+    upload_fieldtypedesc = fieldtypedesc_instance.get_field_type_desc_values(FieldTypeDesc,
+                                                                             {'del_ind': False, 'used_flag': False,
+                                                                              'field_name': 'split_type'},
+                                                                             ['field_type_id', 'field_type_desc'])
+
+    return upload_response, message, upload_fieldtypedesc
+
+
+def save_po_split_criteria_into_db(accasscat_data):
+    """
+
+    """
+    accasscat_db_list = []
+    fieldtypedesc_instance = FieldTypeDescription()
+    acct_assmt_field = ''
+    if accasscat_data['action'] == CONST_ACTION_DELETE:
+        for accasscat_detail in accasscat_data['data']:
+            acct_assmt_field = accasscat_detail['po_split_type']
+            django_query_instance.django_update_query(PoSplitCriteria,
+                                                      {'po_split_type': accasscat_detail['po_split_type']},
+                                                      {'del_ind': True,
+                                                       'po_split_type_changed_at': datetime.datetime.now(),
+                                                       'po_split_type_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
+            fieldtypedesc_instance.reset_used_flag(acct_assmt_field, 'split_type')
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
+    else:
+        for accasscat_detail in accasscat_data['data']:
+            acct_assmt_field = accasscat_detail['po_split_type']
+            # if entry is not exists in db
+            if not django_query_instance.django_existence_check(PoSplitCriteria,
+                                                                {'po_split_type': accasscat_detail[
+                                                                    'po_split_type']}):
+                accasscat_db_dictionary = {'po_split_type': (accasscat_detail['po_split_type']).upper(),
+                                           'po_split_type_desc': convert_to_camel_case(accasscat_detail['description']),
+                                           'del_ind': False,
+                                           'po_split_type_created_at': datetime.datetime.now(),
+                                           'po_split_type_created_by': global_variables.GLOBAL_LOGIN_USERNAME,
+                                           'po_split_type_changed_at': datetime.datetime.now(),
+                                           'po_split_type_changed_by': global_variables.GLOBAL_LOGIN_USERNAME
+                                           }
+                accasscat_db_list.append(accasscat_db_dictionary)
+            else:
+                django_query_instance.django_update_query(PoSplitCriteria,
+                                                          {'po_split_type': accasscat_detail[
+                                                              'po_split_type']},
+                                                          {'po_split_type': accasscat_detail[
+                                                              'po_split_type'],
+                                                           'po_split_type_desc': convert_to_camel_case(
+                                                               accasscat_detail['po_split_type_desc']),
+                                                           'po_split_type_changed_at': datetime.datetime.now(),
+                                                           'po_split_type_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
+                                                           'del_ind': False})
+        bulk_create_entry_db(AccountAssignmentCategory, accasscat_db_list)
+        fieldtypedesc_instance.update_used_flag(acct_assmt_field,'split_type')
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
+    upload_response = get_configuration_data(PoSplitCriteria,
+                                             {'del_ind': False},
+                                             ['po_split_type', 'po_split_type_desc'])
+    upload_fieldtypedesc = fieldtypedesc_instance.get_field_type_desc_values(FieldTypeDesc,
+                                                                             {'del_ind': False, 'used_flag': False,
+                                                                              'field_name': 'split_type'},
+                                                                             ['field_type_id', 'field_type_desc'])
+
+    return upload_response, message, upload_fieldtypedesc
 
 def save_messageId_data_into_db(messageId_data):
     """
@@ -1060,7 +1209,8 @@ def save_messageId_data_into_db(messageId_data):
                                                       {'del_ind': True,
                                                        'messages_id_changed_at': datetime.datetime.now(),
                                                        'messages_id_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for messageId_detail in messageId_data['data']:
             # if entry is not exists in db
@@ -1090,7 +1240,8 @@ def save_messageId_data_into_db(messageId_data):
                                                            'del_ind': False,
                                                            'client': client})
         bulk_create_entry_db(MessagesId, messageId_db_list)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(MessagesId, {'del_ind': False},
                                              ['msg_id_guid', 'messages_id', 'messages_type'])
     return upload_response, message
@@ -1107,11 +1258,12 @@ def save_messageIdDesc_data_into_db(messageIdDesc_data):
             django_query_instance.django_update_query(MessagesIdDesc,
                                                       {'messages_id': messageIdDesc_detail['messages_id'],
                                                        'language_id': messageIdDesc_detail['language_id']
-                                                        },
+                                                       },
                                                       {'del_ind': True,
                                                        'messages_id_desc_changed_at': datetime.datetime.now(),
                                                        'messages_id_desc_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for messageIdDesc_detail in messageIdDesc_data['data']:
             # if entry is not exists in db
@@ -1123,7 +1275,8 @@ def save_messageIdDesc_data_into_db(messageIdDesc_data):
                 guid = guid_generator()
                 messageIdDesc_db_dictionary = {'msg_id_desc_guid': guid,
                                                'messages_id': messageIdDesc_detail['messages_id'],
-                                               'messages_id_desc': convert_to_camel_case(messageIdDesc_detail['message_id_desc']),
+                                               'messages_id_desc': convert_to_camel_case(
+                                                   messageIdDesc_detail['message_id_desc']),
                                                'language_id': Languages.objects.get(
                                                    language_id=messageIdDesc_detail['language_id']),
                                                'del_ind': False,
@@ -1141,7 +1294,8 @@ def save_messageIdDesc_data_into_db(messageIdDesc_data):
                                                            'language_id': messageIdDesc_detail['language_id']
                                                            },
                                                           {'messages_id': messageIdDesc_detail['messages_id'],
-                                                           'messages_id_desc': convert_to_camel_case(messageIdDesc_detail['message_id_desc']),
+                                                           'messages_id_desc': convert_to_camel_case(
+                                                               messageIdDesc_detail['message_id_desc']),
                                                            'language_id': Languages.objects.get(
                                                                language_id=messageIdDesc_detail['language_id']),
                                                            'messages_id_desc_changed_at': datetime.datetime.now(),
@@ -1149,8 +1303,8 @@ def save_messageIdDesc_data_into_db(messageIdDesc_data):
                                                            'del_ind': False,
                                                            'client': client})
         bulk_create_entry_db(MessagesIdDesc, messageIdDesc_db_list)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(MessagesIdDesc, {'del_ind': False},
                                              ['msg_id_desc_guid', 'messages_id', 'messages_id_desc', 'language_id'])
     return upload_response, message
-

@@ -229,6 +229,46 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card config-card" onclick="window.open('{% url 'eProc_Emails:email_notif' %}', '_blank');">
+
+                    <div class="card-body text-center">
+                        <div class="icon-wrapper yellow">
+                            <i class="material-icons-outlined">
+                                message
+                            </i>
+                        </div>
+
+                        <a>
+                            <div class="mt-3">
+                                <span class="upload-data-label">Emails</span>
+                            </div>
+
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card config-card " onclick="display_sub_menu('po-split-menu')">
+
+                    <div class="card-body text-center">
+                        <div class="icon-wrapper red">
+                            <i class="material-icons-outlined">
+                                format_list_numbered
+                            </i>
+                        </div>
+
+                        <a >
+                            <div class="mt-3">
+                                <span class="upload-data-label">Purchase Order Split</span>
+                            </div>
+
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
 </div>
@@ -261,6 +301,22 @@
             </div>
             <div class="col-md-9">
                 <div class="row">
+                    <div class="col-md-3">
+                            <div class="card config-card " onclick="window.open('{% url 'eProc_Application_Settings:number_range_favourite_cart' %}', '_blank');">
+                                <div class="card-body text-center">
+                                    <div class="sub-menu-icon-wrapper blue" >
+                                        <i class="material-icons-outlined small">
+                                            favourite_cart
+                                        </i>
+                                    </div>
+                                    <a>
+                                        <div class="mt-3">
+                                            <span class="upload-data-label">Favourite Carts</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-md-3">
                             <div class="card config-card " onclick="window.open('{% url 'eProc_Application_Settings:number_range_shopping_cart' %}', '_blank');">
                                 <div class="card-body text-center">
@@ -309,6 +365,75 @@
                                             <span class="upload-data-label">Confirmations</span>
                                         </div>
 
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- Sub menu for Po Split -->
+<div class="container-fluid">
+    <div id="po-split-menu" class="upload-data-tab display-none" >
+        <a class="badge badge-light hg_gb_btn" onclick="display_sub_menu('po-split-menu')"><i class="fas fa-arrow-left"></i> Go Back</a>
+
+        <div class="row mt-4">
+            <div class="col-md-3 sub-menu-main-border sub-menu-main-border">
+                <div class="card config-card ">
+
+                    <div class="card-body text-center">
+                        <div class="sub-menu-main-icon-wrapper red">
+                            <i class="material-icons-outlined big">
+                                format_list_numbered
+                            </i>
+                        </div>
+
+                        <a >
+                            <div class="mt-3">
+                                <span class="upload-data-label">Purchase Order Split</span>
+                            </div>
+
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-9">
+                <div class="row">
+                        <div class="col-md-3">
+                            <div class="card config-card " onclick="window.open('{% url 'eProc_Application_Settings:upload_po_split_type' %}', '_blank');">
+                                <div class="card-body text-center">
+                                    <div class="sub-menu-icon-wrapper blue" >
+                                        <i class="material-icons-outlined small">
+                                            shopping_cart
+                                        </i>
+                                    </div>
+                                    <a>
+                                        <div class="mt-3">
+                                            <span class="upload-data-label">Purchase Order Split Type</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card config-card " onclick="window.open('{% url 'eProc_Application_Settings:upload_po_split_criteria' %}', '_blank');">
+
+                                <div class="card-body text-center">
+                                    <div class="sub-menu-icon-wrapper orange" >
+                                        <i class="material-icons-outlined small">
+                                            inventory
+                                        </i>
+                                    </div>
+                                    <a >
+                                        <div class="mt-3">
+                                            <span class="upload-data-label">Purchase Order Split Criteria</span>
+                                        </div>
                                     </a>
                                 </div>
                             </div>
@@ -377,6 +502,23 @@
                                     <a onclick="">
                                         <div class="mt-3">
                                             <span class="upload-data-label">Attributes</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    <div class="col-md-3">
+                            <div class="card config-card pointer " onclick="window.open('{% url 'eProc_Application_Settings:org_attributes_level' %}', '_blank');">
+
+                                <div class="card-body text-center">
+                                    <div class="sub-menu-icon-wrapper orange" >
+                                        <i class="material-icons-outlined small">
+                                            attribution
+                                        </i>
+                                    </div>
+                                    <a onclick="">
+                                        <div class="mt-3">
+                                            <span class="upload-data-label">Attributes level</span>
                                         </div>
                                     </a>
                                 </div>

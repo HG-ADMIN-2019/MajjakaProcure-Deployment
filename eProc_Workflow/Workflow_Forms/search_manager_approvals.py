@@ -3,8 +3,8 @@ from django import forms
 
 class SearchManagerApprovalsForm(forms.Form):
     doc_types = (
-        ('SC', 'Shopping Cart'),
-        ('PO', 'Purchase Order')
+        ('DOC01', 'Shopping Cart'),
+        ('DOC02', 'Purchase Order')
     )
     document_type = forms.ChoiceField(label='Select Document Type', choices=doc_types,
                                       widget=forms.Select(attrs={'class': 'form-control'}))

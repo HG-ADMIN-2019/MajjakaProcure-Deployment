@@ -2,6 +2,7 @@ var numberranges_data = new Array();
 var validate_add_attributes = [];
 var number_range={};
 var seq_array= [];
+
 //onclick of add button display myModal popup and set GLOBAL_ACTION button value
 function onclick_add_button(button) {
     $("#error_msg_id").css("display", "none")
@@ -105,101 +106,6 @@ $(".remove_upload_data").click(() => {
     $('#id_popup_table').DataTable().destroy();
 });
 
-
-//validate by comparing  main table values and popup table values
-function maintable_validation(validate_add_attributes, main_table_low_value,numberranges_data,main_table_data) {
-    var no_duplicate_entries = 'Y'
-    var common = [];
-    var error_message =''
-    jQuery.grep(validate_add_attributes, function (el) {
-        if (jQuery.inArray(el, main_table_low_value) != -1) {
-            common.push(el);
-        }
-    });
-    if (common.length != 0) {
-        error_message = messageConstants["JMSG001"]
-        no_duplicate_entries = 'N'
-    }
-    validation_error = main_range_check_function(numberranges_data,main_table_data)
-    if(!validation_error){
-        error_message = messageConstants["JMSG109"] ;
-        no_duplicate_value = 'N'
-        return [no_duplicate_value,error_message]
-    }
-    return [no_duplicate_entries,error_message]
-}
-
-
-//****************************
-// validating the  popup table for duplicate entries
-function compare_table_for_duplicate_entries(validate_add_attributes, number_range) {
-    add_attr_duplicates = false;
-    var validation_error = false
-    var add_attr_duplicates_list = [];
-    var add_attr_unique_list = [];
-    var no_duplicate_value = 'Y'
-    var error_message = ''
-    $.each(validate_add_attributes, function (index, value) {
-        if ($.inArray(value, add_attr_unique_list) == -1) {
-            add_attr_unique_list.push(value);
-        } else {
-            if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                add_attr_duplicates_list.push(value);
-            }
-        }
-    });
-    if (add_attr_duplicates_list.length != 0) {
-        error_message = messageConstants["JMSG001"];
-        no_duplicate_value = 'N'
-            } else{
-           $.each(number_range, function (i, item) {
-           if (item.sequence.length == 0) {
-                error_message = messageConstants["JMSG002"] + "sequence";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
-            if (item.starting.length == 0) {
-                error_message = messageConstants["JMSG002"] + "starting";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
-             if (item.ending.length == 0) {
-                error_message = messageConstants["JMSG002"] + "ending";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
-             if (item.current.length == 0) {
-                error_message = messageConstants["JMSG002"] + "current";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
-            if (item.starting >= item.ending) {
-                error_message = messageConstants["JMSG017"];
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
-
-         });
-        var range_check = list_out_of_range(number_range)
-        if (range_check){
-            error_message = messageConstants["JMSG016"] ;
-            no_duplicate_value = 'N'
-            return [no_duplicate_value,error_message]
-
-        }
-        else{
-            check_number_range = number_range
-            validation_error = range_check_function(number_range,check_number_range)
-            if(!validation_error){
-                error_message = messageConstants["JMSG109"] ;
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
-        }
-    }
-
-    return [no_duplicate_value,error_message]
-}
 
 
 function list_out_of_range(number_range){

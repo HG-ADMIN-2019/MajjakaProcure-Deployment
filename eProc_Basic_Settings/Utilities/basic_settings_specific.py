@@ -6,6 +6,7 @@ from eProc_Basic.Utilities.constants.constants import CONST_ACTION_ADD, CONST_AC
     CONST_ACTION_DELETE
 from eProc_Basic.Utilities.functions.camel_case import convert_to_camel_case
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries, bulk_create_entry_db
+from eProc_Basic.Utilities.functions.messages_config import get_msg_desc
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Basic.Utilities.messages.messages import MSG112, MSG113
 from eProc_Basic.models import *
@@ -325,7 +326,8 @@ def save_country_data_into_db(country_data):
                                                       {'del_ind': True,
                                                        'country_changed_at': datetime.datetime.now(),
                                                        'country_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for country_detail in country_data['data']:
             # if entry is not exists in db
@@ -348,7 +350,8 @@ def save_country_data_into_db(country_data):
                                                            'country_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                                            'del_ind': country_detail['del_ind']})
         bulk_create_entry_db(Country, country_db_list)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(Country, {'del_ind': False}, ['country_code', 'country_name'])
 
     return upload_response, message
@@ -363,7 +366,8 @@ def save_language_data_into_db(language_data):
                                                       {'del_ind': True,
                                                        'languages_changed_at': datetime.datetime.now(),
                                                        'languages_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for language_detail in language_data['data']:
             # if entry is not exists in db
@@ -386,7 +390,8 @@ def save_language_data_into_db(language_data):
                                                            'languages_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                                            'del_ind': language_detail['del_ind']})
         bulk_create_entry_db(Languages, language_db_list)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(Languages, {'del_ind': False}, ['language_id', 'description'])
 
     return upload_response, message
@@ -401,7 +406,8 @@ def save_unitofmeasures_data_into_db(unitofmeasures_data):
                                                       {'del_ind': True,
                                                        'unit_of_measures_changed_at': datetime.datetime.now(),
                                                        'unit_of_measures_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for unitofmeasures_detail in unitofmeasures_data['data']:
             # if entry is not exists in db
@@ -425,7 +431,8 @@ def save_unitofmeasures_data_into_db(unitofmeasures_data):
                                                            'unit_of_measures_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                                            'del_ind': unitofmeasures_detail['del_ind']})
         bulk_create_entry_db(UnitOfMeasures, unitofmeasures_db_list)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(UnitOfMeasures, {'del_ind': False},
                                              ['uom_id', 'uom_description', 'iso_code_id'])
 
@@ -444,7 +451,8 @@ def save_currency_data_into_db(currency_data):
                                                       {'del_ind': True,
                                                        'currency_changed_at': datetime.datetime.now(),
                                                        'currency_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for currency_detail in currency_data['data']:
             # if entry is not exists in db
@@ -468,7 +476,9 @@ def save_currency_data_into_db(currency_data):
                                                            'currency_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                                            'del_ind': currency_detail['del_ind']})
         bulk_create_entry_db(Currency, currency_db_list)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
+
     upload_response = get_configuration_data(Currency, {'del_ind': False}, ['currency_id', 'description'])
 
     return upload_response, message
@@ -486,7 +496,8 @@ def save_timezone_data_into_db(timezone_data):
                                                       {'del_ind': True,
                                                        'time_zone_changed_at': datetime.datetime.now(),
                                                        'time_zone_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for timezone_detail in timezone_data['data']:
             # if entry is not exists in db
@@ -518,7 +529,8 @@ def save_timezone_data_into_db(timezone_data):
                                                            'time_zone_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                                            'del_ind': timezone_detail['del_ind']})
         bulk_create_entry_db(TimeZone, timezone_db_list)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(TimeZone, {'del_ind': False},
                                              ['time_zone', 'description', 'utc_difference', 'daylight_save_rule'])
 
@@ -537,7 +549,8 @@ def save_prodcat_data_into_db(Prodcat_data):
                                                       {'del_ind': True,
                                                        'unspsc_categories_changed_at': datetime.datetime.now(),
                                                        'unspsc_categories_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for Prodcat_detail in Prodcat_data['data']:
             # if entry is not exists in db
@@ -558,7 +571,8 @@ def save_prodcat_data_into_db(Prodcat_data):
                                                            'unspsc_categories_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                                            'del_ind': Prodcat_detail['del_ind']})
         bulk_create_entry_db(UnspscCategories, prodcat_db_list)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(UnspscCategories, {'del_ind': False}, ['prod_cat_id', 'prod_cat_desc'])
 
     return upload_response, message

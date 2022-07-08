@@ -387,8 +387,9 @@ function save_ext_resp_attr(ext_resp_attr_id,flag)
             $("#resp_msg").empty();
             document.getElementById("ext_attr_errmsg").style.color = "green";
             document.getElementById("success_msg").style.color = "green";
-            document.getElementById("ext_attr_errmsg").innerHTML = messageConstants["JMSG039"];
+
             document.getElementById("success_msg").innerHTML = messageConstants["JMSG039"];
+
             document.getElementById('success_msg_div').style.display='block';
             setTimeout(function(){
             document.getElementById("ext_attr_errmsg").innerHTML = "";
@@ -400,7 +401,10 @@ function save_ext_resp_attr(ext_resp_attr_id,flag)
 }
 $("#Responsiblity_tab").click(function(){
     if (GLOBAL_ON_DOUBLE_CLICK_NODE_TYPE != 'PGRP'){
-    document.getElementById("resp_msg").innerHTML = messageConstants["JMSG040"];
+         
+
+    document.getElementById("resp_msg").innerHTML = messageConstants["JMSG041"];
+
     document.getElementById('non_pgrp').style.display='block';
     document.getElementById('resp_pgrp').style.display='none';
     }
@@ -627,7 +631,7 @@ $(document).ready(function(){
             }
             else{
                 document.getElementById("select_err_msg").style.color = "red";
-                document.getElementById("select_err_msg").innerHTML = messageConstants["JMSG005"] + "Attribute";
+                document.getElementById("select_err_msg").innerHTML = messageConstants["JMSG004"]+ "Attribute";
                 setTimeout(function(){
                 document.getElementById("select_err_msg").innerHTML = "";
                  }, 5000);
@@ -708,7 +712,7 @@ $(function() {
             }
             });
             if(common.length != 0 || add_attr_duplicates_list.length != 0){
-            document.getElementById("add_att_error_msg").innerHTML = messageConstants["JMSG001"];
+                document.getElementById("add_att_error_msg").innerHTML = messageConstants["JMSG001"];
             }
             else{
                 $.ajax({

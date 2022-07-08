@@ -1,4 +1,3 @@
-
 {% if sc_appr %}
 <div class="workflow-overview">
 
@@ -7,7 +6,7 @@
             {% for sc_app in sc_appr %}
             {% if sc_app.header_guid_id in sc_head.guid and sc_app.step_num == '1'  %}
             {% if sc_app.app_id != 'Auto'  %}
-            {% if sc_head.status == 'AWAITING_APPROVAL'%}
+            {% if sc_head.status == 'AWAITING_APPROVAL'  or sc_head.status == 'ORDERED' %}
             <span class="h3">Approval Process Overview</span> by <span class="badge badge-secondary">{{sc_app.app_desc}}</span> 
             {% elif sc_head.status == 'SAVED' %}
             <span class="h3">Approval Process Overview</span>
@@ -110,7 +109,8 @@
                 <div class="workflow-user-bg">
                     <i class="fa fa-user fa-3x" aria-hidden="true"> </i> 
                 </div>
-                <button id="{{sc_head.guid}}" onclick="show_manager_detail(this.id);" type="button">multiple</button>
+
+                <button id="{{sc_app.guid}}" onclick="show_manager_detail(this.id);" type="button">multiple</button>
             </div>
 
             {% endif %}
@@ -124,14 +124,14 @@
                 <div class="workflow-user-bg workflow-active">
                     <i class="fas fa-user-tie fa-3x" aria-hidden="true"> </i>
                 </div>
-                <button id="{{sc_head.guid}}" onclick="show_manager_detail(this.id);" type="button" class="button-workflow-user">{{sc_app.app_id}}</button>
+                <button id="{{sc_app.guid}}" onclick="show_manager_detail(this.id);" type="button" class="button-workflow-user">{{sc_app.app_id}}</button>
             </div>
             {% elif sc_app.proc_lvl_sts == 'INITIATED' and sc_app.app_sts == 'OPEN' %}
             <div class="workflow-overview__user-icon-container">
                 <div class="workflow-user-bg workflow-inactive">
                     <i class="fas fa-user-tie fa-3x" aria-hidden="true"> </i>
                 </div>
-                <button id="{{sc_head.guid}}" onclick="show_manager_detail(this.id);" type="button" class="button-workflow-user">{{sc_app.app_id}}</button>
+                <button id="{{sc_app.guid}}" onclick="show_manager_detail(this.id);" type="button" class="button-workflow-user">{{sc_app.app_id}}</button>
             </div>
             
             {% elif sc_app.proc_lvl_sts == 'COMPLETED' and sc_app.app_sts == 'APPROVER_APPROVED' %}
@@ -139,14 +139,14 @@
                 <div class="workflow-user-bg workflow-completed">
                     <i class="fas fa-user-check fa-2x icon-workflow-completed" aria-hidden="true"> </i>
                 </div>
-                <button id="{{sc_head.guid}}" onclick="show_manager_detail(this.id);" type="button" class="button-workflow-user">{{sc_app.app_id}}</button>
+                <button id="{{sc_app.guid}}" onclick="show_manager_detail(this.id);" type="button" class="button-workflow-user">{{sc_app.app_id}}</button>
             </div>
             {% elif sc_app.proc_lvl_sts == 'COMPLETED' and sc_app.app_sts == 'APPROVER_REJECTED' %}
             <div class="workflow-overview__user-icon-container">
                 <div class="workflow-user-bg workflow-rejected">
                     <i class="fas fa-user-times fa-2x icon-workflow-rejected" aria-hidden="true"> </i>
                 </div>
-                <button id="{{sc_head.guid}}" onclick="show_manager_detail(this.id);" type="button" class="button-workflow-user">{{sc_app.app_id}}</button>
+                <button id="{{sc_app.guid}}" onclick="show_manager_detail(this.id);" type="button" class="button-workflow-user">{{sc_app.app_id}}</button>
             </div>
             {% endif %}
 

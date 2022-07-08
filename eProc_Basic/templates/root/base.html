@@ -65,6 +65,8 @@
 </head>
 
 <body {% if inc_nav %} style="padding-top: 7.3rem;" {% endif %}>
+    {% include 'root/loader-screen.html' %}
+    
     {% if is_slide_menu %}
     {% include 'root/slidemenu.html' %}
     {% endif %}
@@ -76,22 +78,11 @@
         {% endblock %}
     </div>
 
-    <div class="modal majjaka-loader" id="hg_loader" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <button class="btn btn-primary" id="hg_spinner" type="button">
-                        <span class="spinner-border spinner-border-md" role="status" aria-hidden="true"></span>
-                        Loading...
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-{% include 'root/ajax-api.html' %}
-{% include 'root/item_added_to_cart_success.html' %}
+    {% include 'root/ajax-api.html' %}
+    {% include 'root/item_added_to_cart_success.html' %}
+
+
+
+
 </body>
-
-
-
 </html>

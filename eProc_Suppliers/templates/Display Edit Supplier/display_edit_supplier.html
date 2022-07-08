@@ -7,34 +7,35 @@
 {% block maincontent %}
 
 <div class="container-fluid">
-    <div class="hg_wrapper">
+    <div class="mep-form_wrapper">
 
-        <div>
-            <div class="hg_head1">Supplier Details</div>
-            <hr class="hg_heading_hrborder">
+        <div class="elements-space-between">
+            <h3>Supplier Registration</h3>
+            <div></div>
         </div>
 
-        <!--Register type drop down-->
-        <div class="card card-margin">
+        <ul class="sub-tabs">
+            <li data-tab-target="#basic_data_tab" class="sub-tab active">
+                <div class="sub-tab-link">
+                    <i class="fas fa-info-circle"></i><span> Supplier Information</span>
+                </div>
+            </li>
+            <li data-tab-target="#org_data_tab" class="sub-tab">
+                <div class="sub-tab-link">
+                    <i class="fas fa-sitemap"></i><span> Organizational Information</span>
+                </div>
+            </li>
+            <li data-tab-target="#buisness_doc_tab" class="sub-tab">
+                <div class="sub-tab-link">
+                    <i class="fas fa-file-alt"></i><span> Business Document</span>
+                </div>
+            </li>
+        </ul>
 
-            <div class="card-header">
-                <ul class="nav nav-tabs card-header-tabs">
-                    <li class="nav-item">
-                        <a class="nav-link active" data-toggle="tab" href="#basic_data_tab">Supplier Information</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#org_data_tab">Organizational Information</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#buisness_doc_tab">Business Document</a>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="tab-content">
-
-                <div id="basic_data_tab" class="tab-pane active p-3" >
-                     <div id="save_error_div" class="alert alert-danger display-none" role="alert" ></div>
+        <div class="tab-content">
+            <div id="basic_data_tab" data-tab-content class="active">
+                <div class="mt-3">
+                    <div id="save_error_div" class="alert alert-danger display-none" role="alert" ></div>
                     {{ supplier_form.non_field_errors }}
                     <!-- Display the success message upon successful registration-->
                     <div>
@@ -51,20 +52,32 @@
                         {% csrf_token %}
                         <div class="alert alert-success display-none" id="supplier_basic_update_success" role="alert"></div>
                         <!--    Basic Data      -->
-                        <div class="card">
-                            <h5 class="card-header">Account Information</h5>
+
+                        <div class="d-flex justify-content-end">
+                            <div id="sbd_save_cancel_button" class="display-none">
+                                <button type="submit"  id="save_basic" name="save_basic" class="btn btn-primary" onclick="save_basic_details();"><i class="fas fa-save"></i> save</button>
+                                <button type="button" class="btn btn-primary" onclick="cancel_basic_details();"><i class="fas fa-times"></i> cancel</button>
+                            </div>
+                            <div id="sbd_edit_button">
+                                <button type="button" class="btn btn-primary" onclick="edit_basic_supp_data();"><i class="fas fa-edit"></i> edit</button>
+                            </div>
+                        </div>
+
+                        <div class="card card-shadow-1 mt-3">
                             <div class="card-body">
+                                <h5 class="card-title">Account Information</h5>
+
                                 <div class="row">
                                     <input value="{{supplier_info.supp_guid}}" id="supplier_guid" hidden>
 
                                     <div class="form-group col-md">
                                         <label> Supplier Number</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode" id="supplier_id" value="{{supplier_info.supplier_id}}" disabled>
+                                        <input type="text" class="form-control hg_edit_display_mode" id="supplier_id" value="{{supplier_info.supplier_id}}" required disabled>
                                     </div>
 
                                     <div class="form-group col-md">
                                         <label> Supplier Type</label><span class="hg_required"></span><br>
-                                        <select name="" id="supplier_type" class="form-control hg_edit_display_mode" disabled>
+                                        <select name="" id="supplier_type" class="form-control hg_edit_display_mode" required disabled>
                                             {% if supplier_info.supp_type %}
                                             <option value="{{supplier_info.supp_type}}">{{supplier_info.supp_type}}</option>
                                             {% else %}
@@ -78,7 +91,7 @@
 
                                     <div class="form-group col-md">
                                         <label> Registration Number</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode" id="supplier_regnum" value="{{supplier_info.registration_number}}" disabled>
+                                        <input type="text" class="form-control hg_edit_display_mode" id="supplier_regnum" value="{{supplier_info.registration_number}}" required disabled>
                                     </div>
                                 </div>
 
@@ -97,21 +110,21 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label> Currency</label><span class="hg_required"></span><br>
-                                        <select name="" id="currency_id" class="form-control hg_edit_display_mode" disabled>
+                                        <select name="" id="currency_id" class="form-control hg_edit_display_mode" required disabled>
                                             <option value="{{supplier_info.currency_id}}">{{supplier_info.currency_id}}</option>
                                         </select>
                                     </div>
 
                                     <div class="form-group col-md">
                                         <label> Language</label><span class="hg_required"></span><br>
-                                        <select name="" id="language_id" class="form-control hg_edit_display_mode" disabled>
+                                        <select name="" id="language_id" class="form-control hg_edit_display_mode" required disabled>
                                             <option value="{{supplier_info.language_id}}">{{supplier_info.language_id}}</option>
                                         </select>
                                     </div>
 
                                     <div class="form-group col-md">
                                         <label> Country</label><span class="hg_required"></span><br>
-                                        <select name="" id="country_code_id" class="form-control hg_edit_display_mode" disabled>
+                                        <select name="" id="country_code_id" class="form-control hg_edit_display_mode" required disabled>
                                             <option value="{{supplier_info.country_code}}">{{supplier_info.country_code}}</option>
                                         </select>
                                     </div>
@@ -120,7 +133,7 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label> City</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode" id="city_id" name="city_id" value="{{supplier_info.city}}" disabled>
+                                        <input type="text" class="form-control hg_edit_display_mode" id="city_id" name="city_id" value="{{supplier_info.city}}" required disabled>
                                     </div>
 
                                     <div class="form-group col-md">
@@ -149,16 +162,15 @@
                                 </div>
                             </div>
                         </div>
-
-                        <br>
+ 
                         <!--  Contact information  -->
-                        <div class="card">
-                            <h5 class="card-header">Contact information</h5>
+                        <div class="card card-shadow-1 mt-3">
                             <div class="card-body">
+                                <h5 class="card-title">Contact information</h5>
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label> E-mail</label><span class="hg_required"></span><br>
-                                        <input type="email" class="form-control hg_edit_display_mode" id="email_id" name="email_id" value="{{supplier_info.email}}" disabled>
+                                        <input type="email" class="form-control hg_edit_display_mode" id="email_id" name="email_id" value="{{supplier_info.email}}" required disabled>
                                     </div>
 
                                     <div class="form-group col-md">
@@ -179,11 +191,10 @@
                             </div>
                         </div>
 
-                        <br>
                         <!--     Extended data       -->
-                        <div class="card">
-                            <h5 class="card-header">Extended data</h5>
+                        <div class="card card-shadow-1 mt-3">
                             <div class="card-body">
+                                <h5 class="card-title">Extended data</h5>
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label> Search Term 1</label><br>
@@ -223,11 +234,11 @@
                             </div>
                         </div>
 
-                        <br>
                         <!-- Additional Contact -->
-                        <div class="card">
-                            <h5 class="card-header">Additional Contact</h5>
+                        <div class="card card-shadow-1 mt-3">
+                            
                             <div class="card-body">
+                                <h5 class="card-title">Additional Contact</h5>
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label> E-mail 1</label><br>
@@ -256,40 +267,34 @@
                                         <input type="text" class="form-control hg_edit_display_mode" id="email5_id" value="{{supplier_info.email5}}" disabled>
                                     </div>
                                 </div>
-                            </div>
-
+                            </div> 
                         </div>
-
-                        <br>
-                        <div class="d-flex justify-content-end">
-                            <div id="sbd_save_cancel_button" class="display-none">
-                                <button type="button" id="save_basic" name="save_basic" class="btn btn-primary" onclick="save_basic_details();"><i class="fas fa-save"></i> save</button>
-                                <button type="button" class="btn btn-primary" onclick="cancel_basic_details();"><i class="fas fa-times"></i> cancel</button>
-                            </div>
-                            <div id="sbd_edit_button">
-                                <button type="button" class="btn btn-primary" onclick="edit_basic_supp_data();"><i class="fas fa-pencil-alt"></i> edit</button>
-
-                            </div>
-                        </div>
-
+  
                     </form>
+
                 </div>
+            </div>
 
-
-                <div id="org_data_tab" class="tab-pane fade p-3">
+            <div id="org_data_tab" data-tab-content>
+                <div class="mt-3">
                     <div class="alert alert-success display-none" id="supplier_org_update_success" role="alert"></div>
 
-                    <div class="card">
-                        <h5 class="card-header">Organizational Details</h5>
+                    <div class="card card-shadow-1 mt-3">
+                        
                         <div class="card-body">
-                            <div id="supp_org_edit" class="mb-3" style="display: block;">
-                                <button class="btn btn-primary" onclick="edit_supp_org(this);"><i class="fas fa-edit" title="Edit Organizational data" ></i> Edit</button>
-                            </div>
-                            <div id="supp_org_add_delete_line" class="mb-3 display-none">
-                                <button class="btn btn-primary" onclick="supp_org_add_new_line()">
-                                    <i class="fa fa-plus" aria-hidden="true" id="add_line" title="Add Line"></i> Add</button>
-                                <button class="btn btn-primary" onclick="delete_supplier_purch_data()">
-                                    <i class="fa fa-trash" aria-hidden="true" id="delete_line" title="Delete Line" ></i> Delete</button>
+                            <h5 class="card-title">Organizational Details</h5>
+
+                            <div class="mt-4">
+                                <div id="supp_org_edit" class="mb-3" style="display: block;">
+                                    <button class="btn btn-primary" onclick="edit_supp_org(this);"><i class="fas fa-edit" title="Edit Organizational data" ></i> Edit</button>
+                                </div>
+                                <div id="supp_org_add_delete_line" class="mb-3 display-none">
+                                    
+                                    <button class="btn btn-outline-danger" onclick="delete_supplier_purch_data()">
+                                        <i class="fa fa-trash" aria-hidden="true" id="delete_line" title="Delete Line" ></i> Delete</button>
+                                    <button class="btn btn-primary" onclick="supp_org_add_new_line()">
+                                        <i class="fa fa-plus" aria-hidden="true" id="add_line" title="Add Line"></i> Add</button>
+                                </div>
                             </div>
                             <div>
                                 <table id="supp_org_details_table" class="org_registration_table">
@@ -316,21 +321,21 @@
                                         <td>{{data.payment_term_key}}</td>
                                         <td>{{data.incoterm_key}}</td>
                                         <td>
-                                            {% if data.gr_inv_vrf %}
+                                            {% if data.gr_ind %}
                                             <input type="checkbox" name="gr_inv_vrf" value="" checked disabled>
                                             {% else %}
                                             <input type="checkbox" name="gr_inv_vrf" value="" disabled>
                                             {% endif %}
                                         </td>
                                         <td>
-                                            {% if data.inv_conf_exp %}
+                                            {% if data.ir_ind %}
                                             <input type="checkbox" name="inv_conf_exp" value="" checked disabled>
                                             {% else %}
                                             <input type="checkbox" name="inv_conf_exp" value="" disabled>
                                             {% endif %}
                                         </td>
                                         <td>
-                                            {% if data.gr_conf_exp %}
+                                            {% if data.gr_ind %}
                                             <input type="checkbox" name="gr_conf_exp" value="" checked disabled>
                                             {% else %}
                                             <input type="checkbox" name="gr_conf_exp" value="" disabled>
@@ -366,19 +371,57 @@
                                 <button class="btn btn-primary hg_button_margin" onclick="cancel_supp_org_data()"><i class="fas fa-times"></i> cancel</button>
                                 <button id="save" name="save" onclick="supp_org_data_save()" class="btn btn-primary hg_button_margin"> <i class="fas fa-save"></i> save</button>
                             </div>
+                            
 
                         </div>
                     </div>
 
                 </div>
+            </div>
 
-                <div id="buisness_doc_tab" class="tab-pane fade p-3">
+            <div id="buisness_doc_tab" data-tab-content>
+                <div class="mt-3">
                     <h3>Business Document</h3>
                     <p>Business Document.</p>
                     <select id="testid" class="form-control"></select>
                 </div>
             </div>
         </div>
+
+        <!--Register type drop down-->
+        <!-- <div class="card card-margin">
+
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#basic_data_tab">Supplier Information</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#org_data_tab">Organizational Information</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#buisness_doc_tab">Business Document</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="tab-content">
+
+                <div id="basic_data_tab" class="tab-pane active p-3" >
+
+                </div>
+
+
+                <div id="org_data_tab" class="tab-pane fade p-3">
+
+
+                </div>
+
+                <div id="buisness_doc_tab" class="tab-pane fade p-3">
+                    
+                </div>
+            </div>
+        </div> -->
 
     </div>
 
@@ -390,11 +433,13 @@ var GLOBAL_ACTION
 $(document).ready(function(){
     $('#nav_menu_items').remove();
     $("body").css("padding-top", "4rem");
-    GLOBAL_ACTION = '{{supplier_action}}';
-        if(GLOBAL_ACTION == 'CREATE'){
-            edit_basic_supp_data();
-        }
 
+    NavigateTabs(); // Custom function to switch tabs
+
+    GLOBAL_ACTION = '{{supplier_action}}';
+    if(GLOBAL_ACTION == 'CREATE'){
+        edit_basic_supp_data();
+    }
 });
 // Global variables - master data
 var porg_list = {{purch_org_list|safe}}
@@ -440,10 +485,12 @@ function ajax_update_supplier_basic_details(data) {
     return response
 }
 
-function ajax_update_supplier_org_details(data) {
-    let urlLink = "{% url 'eProc_Suppliers:update_supplier_purch_details' %}"
-    AjaxCallAPI(urlLink, data)
-}
+// function ajax_update_supplier_org_details(data) {
+//     let urlLink = "{% url 'eProc_Suppliers:update_supplier_purch_details' %}"
+//     AjaxCallAPI(urlLink, data)
+// }
+
+const ajax_update_supplier_org_details_url = "{% url 'eProc_Suppliers:update_supplier_purch_details' %}";
 
 </script>
 

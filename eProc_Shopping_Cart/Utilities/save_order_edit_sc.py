@@ -4,7 +4,7 @@ from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.generate_document_number import generate_document_number
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Basic.Utilities.messages.messages import MSG161, MSG162, MSG163, MSG164, MSG165, MSG166, MSG167, MSG168, \
-    MSG169, MSG170, MSG171
+    MSG169, MSG170, MSG171, MSG192
 from eProc_Chat.models import ChatContent
 from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_currency
 from eProc_Form_Builder.models.form_builder import EformData, EformFieldData
@@ -21,7 +21,7 @@ from django.db.models import Max
 from eProc_Configuration.models import NumberRanges
 from eProc_Basic.Utilities.constants.constants import *
 from eProc_Basic.Utilities.functions.get_db_query import getClients, getUsername, get_login_obj_id, \
-    get_requester_currency, get_user_info
+    get_requester_currency, get_user_info, requester_field_info
 from eProc_Basic.Utilities.functions.guid_generator import guid_generator
 from eProc_Notes_Attachments.Utilities.notes_attachments_generic import save_attachment_data, save_approval_note, \
     save_internal_supplier_note
@@ -45,7 +45,9 @@ class SaveShoppingCart:
     eform_item_guid = []
 
     def __init__(self, request, sc_ui_data, attachments_data, sc_header_guid, save_type):
+        self.po_transaction_type = None
         self.save_type = save_type
+        self.cart_item_guid = []
         self.save_sc_data_to_db = SaveSoppingCartDataToDb()
         self.header_guid = sc_header_guid
         self.client = getClients(request)
@@ -93,7 +95,9 @@ class SaveShoppingCart:
                                                        self.edit_flag, CONST_DOC_TYPE_SC)
         if not get_document_number[0]:
             return False, get_document_number[1]
-
+        self.po_transaction_type = get_attr_value(self.client, CONST_PO_TRANS_TYPE, self.object_id_list, self.edit_flag)
+        if len(self.po_transaction_type) == 0:
+            return False, MSG192
         self.subtype = get_document_number[2]
         self.doc_number = get_document_number[0]
 
@@ -129,7 +133,8 @@ class SaveShoppingCart:
             'time_zone': get_timezone,
             'time_zone_difference': time_diff,
             'ordered_at': ordered_at,
-            'transaction_type': self.subtype
+            'transaction_type': self.subtype,
+            'language_id': requester_field_info(self.username, 'language_id')
         }
 
         self.save_sc_data_to_db.save_header_to_db(header_guid, sc_header_save_data)
@@ -169,6 +174,7 @@ class SaveShoppingCart:
         :param request:
         :return:
         """
+        global int_prod_id
         pref_supplier = ''
         start_date = None
         end_date = None
@@ -194,6 +200,8 @@ class SaveShoppingCart:
         blocked_supplier = None
         delivery_days = None
         catalog_id = None
+        supplier_type = ''
+        int_prod_id = ''
 
         if self.save_type == 'Order':
             order_date = datetime.datetime.now()
@@ -201,15 +209,17 @@ class SaveShoppingCart:
         is_eform = False
         cart_items = django_query_instance.django_filter_only_query(CartItemDetails, {'client': self.client,
                                                                                       'username': self.username})
+
         counter = 0
         for item in cart_items:
+            self.cart_item_guid.append(item.guid)
             cart_item_details = django_query_instance.django_get_query(CartItemDetails, {'guid': item.guid,
                                                                                          'client': self.client})
             guid = guid_generator()
 
             # Product category for free text item should be retrieved from mss_freetext_form
             # based on supplier_id and client
-            if cart_item_details.call_off != CONST_CO03:
+            if cart_item_details.call_off != CONST_PR_CALLOFF:
                 if django_query_instance.django_existence_check(SupplierMaster, {
                     'supplier_id': cart_item_details.supplier_id, 'client': self.client
                 }):
@@ -217,14 +227,15 @@ class SaveShoppingCart:
                         'supplier_id': cart_item_details.supplier_id, 'client': self.client
                     })
 
-                    supplier_name = get_supplier_detail.name1 + get_supplier_detail.name2
+                    supplier_name = get_supplier_detail.name1 + ' ' + get_supplier_detail.name2
                     supplier_contact = get_supplier_detail.mobile_num
+                    supplier_type = get_supplier_detail.supp_type
                     supplier_fax_no = get_supplier_detail.fax
                     supplier_email = get_supplier_detail.email
                     blocked_supplier = get_supplier_detail.block
-                    delivery_days = get_supplier_detail.working_days
+                    delivery_days = get_supplier_detail.delivery_days
 
-            if cart_item_details.call_off == CONST_CO02:
+            if cart_item_details.call_off == CONST_FREETEXT_CALLOFF:
                 product_cat_id = django_query_instance.django_get_query(FreeTextDetails, {
                     'freetext_id': cart_item_details.int_product_id, 'del_ind': False, 'client': self.client
                 })
@@ -232,27 +243,27 @@ class SaveShoppingCart:
                 prod_cat_desc = get_prod_by_id(product_cat_id.prod_cat_id)
                 unspsc = product_cat_id.prod_cat_id
             else:
-                product_cat_id = cart_item_details.prod_cat
+                product_cat_id = cart_item_details.prod_cat_id
                 prod_cat = product_cat_id
-                prod_cat_desc = get_prod_by_id(cart_item_details.prod_cat)
-                unspsc = cart_item_details.prod_cat
+                prod_cat_desc = get_prod_by_id(cart_item_details.prod_cat_id)
+                unspsc = cart_item_details.prod_cat_id
 
             # Supplier details
             pref_supplier = None
             supplier_id = None
 
-            if cart_item_details.call_off == CONST_CO04:
+            if cart_item_details.call_off == CONST_LIMIT_ORDER_CALLOFF:
                 pref_supplier = cart_item_details.supplier_id
 
             else:
                 supplier_id = cart_item_details.supplier_id
 
-            if cart_item_details.call_off == CONST_CO01:
+            if cart_item_details.call_off == CONST_CATALOG_CALLOFF:
                 offcatalog = False
 
-            int_prod_id = None
+            int_product_id = None
             # Call_off details
-            if cart_item_details.call_off == CONST_CO01:
+            if cart_item_details.call_off == CONST_CATALOG_CALLOFF:
                 item_cat = 'Green'
                 int_prod_id = item.int_product_id
 
@@ -264,63 +275,63 @@ class SaveShoppingCart:
                     })
                     ctr_num = get_product_detail.ctr_num
                     ctr_item_num = get_product_detail.ctr_item_num
-                    supp_prod_num = get_product_detail.supp_prod_num
+                    supp_prod_num = get_product_detail.supp_product_id
                     product_guid = get_product_detail.catalog_item
                     # catalog_id = get_product_detail.catalog_id
 
-            elif cart_item_details.call_off == CONST_CO03:
+            elif cart_item_details.call_off == CONST_PR_CALLOFF:
                 item_cat = 'Red'
             else:
                 item_cat = 'Yellow'
 
             # Product type details
-            if cart_item_details.call_off in [CONST_CO01, CONST_CO02, CONST_CO03]:
+            if cart_item_details.call_off in [CONST_CATALOG_CALLOFF, CONST_FREETEXT_CALLOFF, CONST_PR_CALLOFF]:
                 prod_type = '01'
             else:
                 prod_type = 'Limi'
 
             item_del_date = cart_item_details.item_del_date
 
-            if cart_item_details.call_off == CONST_CO04:
+            if cart_item_details.call_off == CONST_LIMIT_ORDER_CALLOFF:
                 start_date = cart_item_details.start_date
                 end_date = cart_item_details.end_date
                 required_on = cart_item_details.item_del_date
 
-            if cart_item_details.call_off == CONST_CO01:
+            if cart_item_details.call_off == CONST_CATALOG_CALLOFF:
                 # Pre-filled for catalog, price_unit also known as lot size
                 price_unit = cart_item_details.price_unit
             else:
                 # Hardcoded for other call-off's
                 price_unit = '01'
 
-            if not cart_item_details.call_off == CONST_CO04:
+            if not cart_item_details.call_off == CONST_LIMIT_ORDER_CALLOFF:
                 unit = cart_item_details.unit
 
-            if cart_item_details.call_off == CONST_CO04:
+            if cart_item_details.call_off == CONST_LIMIT_ORDER_CALLOFF:
                 overall_limit = cart_item_details.overall_limit
                 expected_value = cart_item_details.expected_value
-                ir_gr_ind = cart_item_details.ir_gr_ind
+                ir_gr_ind = cart_item_details.ir_gr_ind_limi
                 gr_ind = cart_item_details.gr_ind
 
-            if cart_item_details.call_off == CONST_CO02:
+            if cart_item_details.call_off == CONST_FREETEXT_CALLOFF:
                 supp_prod_num = product_cat_id.eform_id
 
-            if cart_item_details.call_off in [CONST_CO01, CONST_CO03]:
+            if cart_item_details.call_off in [CONST_CATALOG_CALLOFF, CONST_PR_CALLOFF,CONST_FREETEXT_CALLOFF]:
                 lead_time = cart_item_details.lead_time
             else:
                 lead_time = None
 
-            if cart_item_details.call_off == CONST_CO01:
+            if cart_item_details.call_off == CONST_CATALOG_CALLOFF:
                 catalog_qty = cart_item_details.quantity
 
-            if cart_item_details.call_off in [CONST_CO02, CONST_CO03]:
+            if cart_item_details.call_off in [CONST_FREETEXT_CALLOFF, CONST_PR_CALLOFF]:
                 quantity = cart_item_details.quantity
 
             requester_currency = get_requester_currency(self.sc_ui_data['requester'])
             item_currency = cart_item_details.currency
             if not item_currency:
                 item_currency = requester_currency
-            if not cart_item_details.call_off == CONST_CO04:
+            if not cart_item_details.call_off == CONST_LIMIT_ORDER_CALLOFF:
                 value = calculate_item_total_value(cart_item_details.call_off, cart_item_details.quantity, catalog_qty,
                                                    cart_item_details.price_unit, cart_item_details.price,
                                                    overall_limit=None)
@@ -329,7 +340,7 @@ class SaveShoppingCart:
             else:
                 value = cart_item_details.overall_limit
                 value = convert_currency(value, str(item_currency), str(requester_currency))
-            if cart_item_details.call_off == CONST_CO02:
+            if cart_item_details.call_off == CONST_FREETEXT_CALLOFF:
                 eform_check = check_for_eform(request)
                 if cart_item_details.supplier_id not in eform_check:
                     eform = 1
@@ -394,16 +405,25 @@ class SaveShoppingCart:
                     attachment_existence_flag = False
             except:
                 attachment_existence_flag = False
-
+            if django_query_instance.django_existence_check(CatalogMapping,
+                                                            {'client':global_variables.GLOBAL_CLIENT,
+                                                                               'item_id':int_prod_id,
+                                                             'del_ind':False}):
+                catalog_id = django_query_instance.django_filter_value_list_query(CatalogMapping,
+                                                                                  {'client':global_variables.GLOBAL_CLIENT,
+                                                                                   'item_id':int_prod_id,
+                                                                                   'del_ind':False},
+                                                                                  'catalog_id')[0]
             sc_item_save_data = {
                 'guid': guid,
                 'header_guid': django_query_instance.django_get_query(ScHeader,
                                                                       {'guid': self.header_guid, 'client': self.client,
                                                                        'del_ind': False}),
+                'po_transaction_type': self.po_transaction_type,
                 'item_num': item_num,
-                'prod_cat': prod_cat,
+                'cust_prod_cat_id': prod_cat,
                 'prod_cat_desc': prod_cat_desc,
-                'unspsc': unspsc,
+                'prod_cat_id': unspsc,
                 'comp_code': self.company_code,
                 'pref_supplier': pref_supplier,
                 'supplier_id': supplier_id,
@@ -413,8 +433,19 @@ class SaveShoppingCart:
                 'item_del_date': item_del_date,
                 'start_date': start_date,
                 'end_date': end_date,
+                'catalog_id':catalog_id,
                 'required_on': required_on,
                 'price': cart_item_details.price,
+                'base_price': cart_item_details.base_price,
+                'additional_price': cart_item_details.additional_price,
+                'actual_price': cart_item_details.actual_price,
+                'discount_percentage': cart_item_details.discount_percentage,
+                'discount_value': cart_item_details.discount_value,
+                'cgst': cart_item_details.cgst,
+                'sgst': cart_item_details.sgst,
+                'vat': cart_item_details.vat,
+                'tax_value': cart_item_details.tax_value,
+                'gross_price': cart_item_details.gross_price,
                 'currency': currency,
                 'price_unit': price_unit,
                 'unit': unit,
@@ -430,7 +461,7 @@ class SaveShoppingCart:
                 'created_by': self.username,
                 'lead_time': lead_time,
                 'catalog_qty': catalog_qty,
-                'quantity': quantity,
+                'quantity': cart_item_details.quantity,
                 'value': value,
                 # 'eform': eform,
                 'eform_id': cart_item_details.eform_id,
@@ -438,18 +469,18 @@ class SaveShoppingCart:
                 'description': cart_item_details.description,
                 'silent_po': silent_po,
                 'goods_recep': self.sc_ui_data['receiver'],
-                'int_prod_id': int_prod_id,
+                'int_product_id': int_prod_id,
                 'ctr_num': ctr_num,
                 'ctr_item_num': ctr_item_num,
-                'supp_prod_num': supp_prod_num,
-                'transaction_type': self.subtype,
-                'doc_type': CONST_BUS_TYPE_SC,
+                'supp_product_id': supp_prod_num,
+                'document_type': CONST_BUS_TYPE_SC,
                 'order_date': order_date,
                 'offcatalog': offcatalog,
                 # 'product_guid': product_guid,
-                'supplier_name': supplier_name,
+                'supplier_username': supplier_name,
+                'supp_type':supplier_type,
                 'supplier_email': supplier_email,
-                'supplier_contact': supplier_contact,
+                'supplier_mobile_num': supplier_contact,
                 'supplier_fax_no': supplier_fax_no,
                 'blocked_supplier': blocked_supplier,
                 'delivery_days': delivery_days,
@@ -460,6 +491,7 @@ class SaveShoppingCart:
                 'supplier_note_existence_flag': supplier_note_existence_flag
             }
             self.save_sc_data_to_db.save_sc_item_details_to_db(guid, sc_item_save_data)
+
             if cart_item_details.eform_id:
                 EformFieldData.objects.filter(client=global_variables.GLOBAL_CLIENT,
                                               cart_guid=item.guid).update(
@@ -474,7 +506,7 @@ class SaveShoppingCart:
                 #                                                                                                          'guid':guid})})
 
             if is_eform:
-                if cart_item_details.call_off == CONST_CO02:
+                if cart_item_details.call_off == CONST_FREETEXT_CALLOFF:
                     eform = zip(SaveShoppingCart.cart_guid, SaveShoppingCart.eform_item_guid)
                     SaveShoppingCart.link_eform(self, eform)
                     is_eform = False
@@ -711,6 +743,7 @@ class SaveShoppingCart:
             object_id = details.object_id_id
             low = int(details.low)
             high = int(details.high) + 1
+            incoterm_desc = ''
             if int(prod_cat_id) in range(int(low), int(high)):
                 p_org = django_query_instance.django_get_query(OrgPorg, {
                     'object_id': object_id, 'company_id': self.company_code, 'client': self.client, 'del_ind': False
@@ -743,9 +776,18 @@ class SaveShoppingCart:
                                 })
 
                                 incoterm_key = get_supplier_org_info.incoterm_key
+                                if django_query_instance.django_existence_check(Incoterms,
+                                                                                           {'incoterm_key': incoterm_key,
+                                                                                            'del_ind':False}):
+                                    incoterm = django_query_instance.django_get_query(Incoterms,
+                                                                                               {'incoterm_key': incoterm_key,
+                                                                                                'del_ind':False})
+                                    incoterm_desc = incoterm.description
                                 payment_term_key = get_supplier_org_info.payment_term_key
-                                django_query_instance.django_filter_only_query(ScItem, {'guid': item_guid}).update(
+                                django_query_instance.django_filter_only_query(ScItem,
+                                                                               {'guid': item_guid}).update(
                                     incoterm=str(incoterm_key),
+                                    incoterm_loc = incoterm_desc,
                                     payment_term=str(payment_term_key),
                                     purch_org=str(p_org))
                         guid = guid_generator()
@@ -844,13 +886,11 @@ class EditShoppingCart(SaveShoppingCart):
 
         sc_instance = django_query_instance.django_get_query(ScHeader, {'guid': header_guid, 'client': self.client})
 
-
-
         document_number = sc_instance.doc_number
         requester = sc_instance.requester
         eform_guid = None
         eform = False
-        if item_data['call_off'] == CONST_CO02:
+        if item_data['call_off'] == CONST_FREETEXT_CALLOFF:
             eform_guid = item_data.get("guid")
             eform = item_data.get('eform')
         value = item_data.get('value')
@@ -869,7 +909,7 @@ class EditShoppingCart(SaveShoppingCart):
         item_data['guid'] = new_item_guid
         item_data['item_num'] = item_num
         save_sc_data_to_db = SaveSoppingCartDataToDb()
-        prod_cat_id = item_data.get("prod_cat")
+        prod_cat_id = item_data['prod_cat_id']
         item_data['prod_cat_desc'] = get_prod_by_id(prod_cat_id)
         item_data['comp_code'] = self.company_code
         item_data['bill_to_addr_num'] = self.invoice_address
@@ -987,12 +1027,12 @@ class EditShoppingCart(SaveShoppingCart):
         if django_query_instance.django_existence_check(ScItem, {'client': global_variables.GLOBAL_CLIENT,
                                                                  'del_ind': False,
                                                                  'header_guid': header_guid,
-                                                                 'call_off': CONST_CO03}):
+                                                                 'call_off': CONST_PR_CALLOFF}):
             sc_completion_flag = True
         save_sc_approval(approval_data[0], header_guid, CONST_SC_HEADER_SAVED, sc_completion_flag)
         # end of save Approver detail
         # purch_worklist_flag = False
-        # if item_data['call_off'] == CONST_CO03:
+        # if item_data['call_off'] == CONST_PR_CALLOFF:
         #     purch_worklist_flag = True
         # save_sc_approval(approval_data[0], header_guid, CONST_SC_HEADER_SAVED, purch_worklist_flag)
         return True, ''
@@ -1355,7 +1395,8 @@ class CheckForScErrors:
                                                              'del_ind': False,
                                                              'eform_id': get_product_detail.eform_id,
                                                              'dropdown_pricetype__in': pricing_list}):
-                current_price = calculate_item_price(item_guid, quantity)
+                current_price, discount_percentage, base_price, additional_pricing = calculate_item_price(item_guid,
+                                                                                                          quantity)
             else:
                 current_price = get_product_detail.price
         else:
@@ -1371,12 +1412,20 @@ class CheckForScErrors:
             self.data.append(check_catalog_errors)
             return False, self.data
 
-    def document_number_check(self, object_id_list):
+    def document_sc_transaction_check(self, object_id_list):
         document_number_errors = {}
         document_number = generate_document_number(CONST_SC_TRANS_TYPE, self.client, object_id_list, False,
                                                    CONST_DOC_TYPE_SC)
         if not document_number[0]:
             document_number_errors['0'] = document_number[1]
+            self.data.append(document_number_errors)
+            return False, self.data
+
+    def po_transaction_check(self, object_id_list):
+        document_number_errors = {}
+        po_transaction_type = get_attr_value(self.client, CONST_PO_TRANS_TYPE, object_id_list, False)
+        if len(po_transaction_type) == 0:
+            document_number_errors['0'] = MSG192
             self.data.append(document_number_errors)
             return False, self.data
 

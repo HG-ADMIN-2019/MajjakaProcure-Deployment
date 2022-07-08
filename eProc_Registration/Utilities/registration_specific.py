@@ -33,7 +33,15 @@ class RegFncts(ModelForm):
         new_user.client = client
         new_user.save()
         variant_name = CONST_USER_REG
-        email_notify(request, variant_name, client)
+        username = request.POST['username']
+        email = request.POST['email']
+        first_name = request.POST['first_name']
+        email_data = {
+            'username': username,
+            'email': email,
+            'first_name': first_name
+        }
+        email_notify(email_data, variant_name, client)
         return True
 
 
@@ -61,7 +69,7 @@ def save_supplier_registration(request):
         'search_term1': request.POST['search_term1'],
         'search_term2': request.POST['search_term2'],
         'duns_number': request.POST['duns_number'],
-        'working_days': request.POST['working_days'],
+        'delivery_days': request.POST['working_days'],
         'registration_number': request.POST['registration_number'],
         'language_id': django_query_instance.django_get_query(Languages, {'language_id': request.POST['language_id']}),
         'country_code': django_query_instance.django_get_query(Country, {'country_code': request.POST['country_code']}),

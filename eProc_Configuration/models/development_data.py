@@ -239,7 +239,9 @@ class MessagesIdDesc(models.Model):
     """
     msg_id_desc_guid = models.CharField(db_column='MSG_ID_DESC_GUID', primary_key=True, max_length=32)
     messages_id_desc = models.CharField(db_column='MESSAGES_ID_DESC', max_length=700, null=False)
+    messages_category = models.CharField(db_column='MESSAGES_CATEGORY', max_length=1, null=True,blank=True)
     messages_id = models.CharField(db_column='MESSAGES_ID', max_length=10, null=False)
+    messages_category = models.CharField(db_column='MESSAGES_CATEGORY', max_length=1, null=True, blank=True)
     messages_id_desc_created_by = models.CharField(db_column='MESSAGES_ID_DESC_CREATED_BY', max_length=30, null=True)
     messages_id_desc_created_at = models.DateTimeField(db_column='MESSAGES_ID_DESC_CREATED_AT', max_length=50,
                                                        null=True)

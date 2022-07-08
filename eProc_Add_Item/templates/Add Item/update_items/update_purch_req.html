@@ -88,6 +88,7 @@
     $('#save_pr_form_data').click(function (e) {
         e.preventDefault();
         e.stopPropagation();
+        OpenLoaderPopup();
         $('#pr_form_errors').hide();
         $('#pr_form_errors').html('');
         item_name = document.getElementById("update-pr-item_name").value
@@ -113,14 +114,14 @@
         item_data = {
                 guid: update_item_guid,
                 description: item_name,
-                int_prod_id: prod_id,
+                int_product_id: prod_id,
                 price: price,
                 prod_cat: prod_cat,
                 currency: currency,
                 unit: unit,
                 lead_time: lead_time,
                 quantity: quantity,
-                call_off: 'PR'
+                call_off: '03'
         }
 
         if (is_first_step != 'True') {
@@ -142,7 +143,6 @@
         $.ajax({
             type: 'POST',
             dataType: 'json',
-            async: false,
             url: update_url,
             data: JSON.stringify(item_data),
             success: function (response) {
@@ -152,8 +152,10 @@
                     update_pr_item_info_at_doc_detail(response)
                 }
                 $('#update_modal_popup').modal('hide');
+                CloseLoaderPopup();
             },
             error: function (response) {
+                CloseLoaderPopup();
                 $('#pr_form_errors').html(response.responseJSON.error_message);
                 $('#pr_form_errors').show();
                 document.getElementById('pr_form_errors').scrollIntoView()

@@ -1,8 +1,28 @@
 {% load static %}
+<style>
+    .po-header-label {
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 600;
+    }
 
+    .po-header-desc {
+        font-style: normal;
+        font-weight: 600;
+        font-size: 18px;
+    }
+
+    .sub-tabs .sub-tab-link.text-size-x-small {
+        font-size: 1em;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+</style>
 <div class="mo-items-table">
 
-    <div>
+    <div class="table-responsive-lg">
         <!--  Defining table for displaying cart items in 1st step of shopping cart wizard  -->
         <table id="cart_details" class="table mo-item-table">
             <thead class="thead-light">
@@ -13,7 +33,7 @@
                 <th>No</th>
                 <th>Item</th>
                 <th hidden>item call _off2</td>
-                <th>Description</th>
+                <th style="width: 20%;">Description</th>
                 <th>Call-Off</th>
                 <th>Delivery Date</th>
                 <th>Price Unit</th>
@@ -33,11 +53,11 @@
                 <!--                <td><input onchange="checkbox_onchange(this)" type="checkbox" name="select_item" id="select_item-{{items.call_off}}-{{items.guid}}-{% if items.call_off == 'Freetext' %}{% if  items.eform %}eform{% endif %}{% endif %}-{{forloop.counter}}"></td>-->
                 <td hidden>{{items.call_off}}</td>
                 <td hidden class="{{items.guid}}">{{items.guid}}</td>
-                <td id="prod_cat-{{items.guid}}" hidden>{{items.prod_cat}}</td>
+                <td id="prod_cat_id-{{items.guid}}" hidden>{{items.prod_cat_id}}</td>
                 <td scope="row" class="hg_scw_ti  update_item_count" id="item_number-{{items.guid}}">
                     {{ forloop.counter }}</td>
                 <td>
-                    <a href="#" onclick="view_detail('{{ items.int_prod_id}}','{{items.guid}}')">
+                    <a href="#" onclick="view_detail('{{ items.int_product_id}}','{{items.guid}}')">
                         <img class="sc-item-table__item-img" onerror='this.src="/static/images/no-image-cropped.png"' src="/media/{{items.image_url}}">
                     </a>
                 </td>
@@ -45,13 +65,13 @@
                 <td>
                     <div class="desc-section-top">
                         <div id="desc-{{items.guid}}">
-                            {% if items.call_off == 'Catalog'%}
-                            <a href="#" onclick="view_detail('{{ items.int_prod_id}}','{{items.guid}}')">{{ items.description }}</a>
+                            {% if items.call_off == '01'%}
+                            <a href="#" onclick="view_detail('{{ items.int_product_id}}','{{items.guid}}')">{{ items.description }}</a>
                             {% else %}
                             <a  >{{ items.description }}</a>
                             {% endif %}
                         </div>
-                        {% if items.call_off == 'Catalog' or items.call_off == 'Freetext' or items.call_off == 'PR' %}
+                        {% if items.call_off == '01' or items.call_off == '02' or items.call_off == '03' %}
                         <div class="mo-item-table__supplier-desc" >by - <span id="supp-{{items.guid}}" hidden>{{ items.supplier_id }}</span><span >{{ items.supplier_desc }}</span></div>
                         {% else %}
                         <div class="mo-item-table__supplier-desc" id="supp-{{items.guid}}">by - {{ items.pref_supplier }}</div>
@@ -61,19 +81,18 @@
                     <!-- Section to display change action icon, eform View Additional details button -->
                     <div class="desc-section-bottom">
                         {% if items.eform_id %}
-                        {% if items.call_off == 'Limit' or items.call_off == 'Freetext' or items.call_off == 'PR' %}
+                        {% if items.call_off == '04' or items.call_off == '02' or items.call_off == '03' %}
                         <button class="hg_button_edit" onclick="display_eform('{{items.guid}}','{{ forloop.counter }}')"> View Additional details</button>
                         {% endif %}
                         {% endif %}
-
-                        <button type="button" class="hg_button_round notes badge_status_await_approval" id="notes_added-{{items.guid}}" title="Notes Added" {% if items.supplier_note_existence_flag or items.internal_note_existence_flag %} style="display: block;" {% else %} style="display: none;" {% endif %}> 
+                        <button type="button" class="hg_button_round notes badge_status_await_approval" id="notes_added-{{items.guid}}" title="Notes Added" {% if items.supplier_note_existence_flag or items.internal_note_existence_flag %} style="display: block;" {% else %} style="display: none;" {% endif %}>
                             <i class="material-icons-outlined">description</i>
                         </button>
 
                         <button type="button" class="hg_button_round attachment badge_status_purch_wrkl" id="attachment_added-{{items.guid}}" title="Attachments Added" {% if items.attachment_existence_flag %} style="display: block;" {% else %} style="display: none;" {% endif %}>
                             <i class="material-icons-outlined">attach_file</i>
                         </button>
-                        
+
                         <button type="button" class="hg_button_round ship-address badge_status_save" id="shippingAddress_added-{{items.guid}}" title="Shipping Address Changed" {% if items.address_change_flag %} style="display: block;" {% else %} style="display: none;" {% endif %}>
                             <i class="material-icons-outlined">local_shipping</i>
                         </button>
@@ -85,22 +104,22 @@
                     </div>
                 </td>
                 <td>{{ items.call_off }}</td>
-                <td id="del_date-{{items.guid}}">{% if items.call_off == 'Limit' %}-{% if items.item_del_date %}<span id="del_date-limit-{{items.guid}}" style="display: none;">limit-{{items.item_del_date|date:"Y-m-d"}}</span>{% else %}<span id="del_date-limit-{{items.guid}}" style="display: none;">limit-{{items.start_date|date:"Y-m-d"}}</span>{% endif %}{% else %}{{ items.item_del_date|date:"Y-m-d" }}{% endif %}</td>
+                <td id="del_date-{{items.guid}}">{% if items.call_off == '04' %}-{% if items.item_del_date %}<span id="del_date-limit-{{items.guid}}" style="display: none;">limit-{{items.item_del_date|date:"Y-m-d"}}</span>{% else %}<span id="del_date-limit-{{items.guid}}" style="display: none;">limit-{{items.start_date|date:"Y-m-d"}}</span>{% endif %}{% else %}{{ items.item_del_date|date:"Y-m-d" }}{% endif %}</td>
                 <td id="price_unit-{{items.guid}}">{{ items.price_unit }}</td>
                 <td id="unit-{{items.guid}}">
-                    {% if items.call_off == 'Limit' %}-{% else %}{{ items.unit_desc }}{% endif %}</td>
+                    {% if items.call_off == '04' %}-{% else %}{{ items.unit_desc }}{% endif %}</td>
                 <td><span id="ScIem-price-{{items.guid}}"
-                          class="hg_total_value">{% if items.call_off == 'Limit' %}-{% else %}{{ items.price }}</span>&nbsp;&nbsp;&nbsp;/&nbsp{% if items.call_off == 'Freetext' %}<span
+                          class="hg_total_value">{% if items.call_off == '04' %}-{% else %}{{ items.price }}</span>&nbsp;&nbsp;&nbsp;/&nbsp{% if items.call_off == '02' %}<span
                         id="currency">{{request.user.currency_id}}</span>{% else %}<span
                         id="currency-{{items.guid}}">{{items.currency}}</span>{% endif %}{% endif %}</td>
-                <td>{% if items.call_off == 'Limit' %}<span id="overall_limit-{{items.guid}}"
-                                                            class="hg_item_total_value">{{items.value}}</span>{% else %} <span
+                <td>{% if items.call_off == '04' %}<span id="overall_limit-{{items.guid}}"
+                                                         class="hg_item_total_value">{{items.value}}</span>{% else %} <span
                         id="ScIem-value-{{items.guid}}"
                         class="hg_item_total_value update_converted_value">{{items.value}}</span>&nbsp;{% endif %}/&nbsp;{{request.user.currency_id}}
                 </td>
                 <td>
-                    {% if items.call_off == 'Catalog' %}
-                    <span id="product_id-{{forloop.counter}}-{{items.int_prod_id}}-{{items.lead_time}}-{{items.price}}" hidden></span>
+                    {% if items.call_off == '01' %}
+                    <span id="product_id-{{forloop.counter}}-{{items.int_product_id}}-{{items.lead_time}}-{{items.price}}" hidden></span>
                     <span id="item_quantity-{{items.guid}}">{{ items.catalog_qty }}</span>
                     {% else %}
                     <span id="item_quantity-{{items.guid}}">{{ items.quantity }}</span>
@@ -116,10 +135,10 @@
                         </span>
                         <div class="action_dropdown dropdown">
                             <a  type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="material-icons action_dropdown-icon item-action-icons">more_vert</i> 
+                                <i class="material-icons action_dropdown-icon item-action-icons">more_vert</i>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-    
+
                                 <a class="dropdown-item notes{{ forloop.counter }}"
                                    onclick="showSection(this, 'notes{{ forloop.counter }}')">Notes</a>
                                 <a class="dropdown-item attachments{{ forloop.counter }}"
@@ -129,10 +148,15 @@
                                 <a class="dropdown-item accoutingData{{ forloop.counter }}"
                                    onclick="showSection(this, 'accoutingData{{ forloop.counter }}')">Cost
                                     Assignment</a>
+                                {% if items.related_documents %}
+                                <a class="dropdown-item related_documents{{ forloop.counter }}"
+                                   onclick="showSection(this, 'related_documents{{ forloop.counter }}')">Related
+                                    Documents</a>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
-                    
+
                 </td>
             </tr>
 
@@ -148,7 +172,7 @@
                             </span>
                         </div>
                         <div class="card-body">
-                            {% if items.call_off == 'Catalog'%}
+                            {% if items.call_off == '01'%}
                             {% if items.eform_id %}
                             {% for eform_details in items.eform_data %}
                             <div style="padding-bottom:5px;">
@@ -160,7 +184,7 @@
                         </div>
                     </div>
 
-                    <!--start of hideable content which lets the user add notes -->
+                    <!--start of hidable content which lets the user add notes -->
                     <div id="notes{{ forloop.counter }}" class="item{{ forloop.counter }} card item-table-action__item-notes" style="display: none;">
                         <div class="card-header item-table-action__header">
                             <span>Notes</span>
@@ -261,7 +285,7 @@
                                             <td>{{attachments.file_name}}</td>
                                             <td class="hg_is_hidden" hidden>
                                                 <i id="{{forloop.parentloop.counter}}-{{attachments.attachment_guid}}-{{attachments.item_guid}}"
-                                                onclick="delete_attachments(this)" class="fas fa-trash-alt attachment-icon"></i>
+                                                   onclick="delete_attachments(this)" class="fas fa-trash-alt attachment-icon"></i>
                                             </td>
                                         </tr>
                                         {% endif %}
@@ -363,7 +387,45 @@
                         {% endfor %}
                     </div>
                     <!-- end of hideable content which lets the user change shipping address -->
-
+                    <div id="related_documents{{ forloop.counter }}" style="display:none;" class="item{{ forloop.counter }} card">
+                        <div class="card-header item-table-action__header">
+                            <span>History</span>
+                        </div>
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>Document</th>
+                                    <th>Name</th>
+                                    <th>Document Number</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Quantity</th>
+                                    <th>Unit</th>
+                                    <th>Net Value</th>
+                                    <th>Currency</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for related_document in items.related_documents%}
+                                {% if related_document.sc_item_guid_id == items.guid %}
+                                <tr>
+                                    <td>{{related_document.document}}</td>
+                                    <td>{{related_document.po_name}}</td>
+                                    <td><a href="{% url 'eProc_Purchase_Order:po_doc_details' related_document.encrypt_header_guid %}" target="_blank">{{ related_document.document_number }}</a></td>
+                                    <td>{{related_document.status}}</td>
+                                    <td>{{related_document.created_at|date:'Y-m-d'}}</td>
+                                    <td>{{related_document.quantity}}</td>
+                                    <td>{{related_document.unit}}</td>
+                                    <td>{{related_document.price}}</td>
+                                    <td>{{related_document.currency}}</td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </td>
             </tr>
 
@@ -501,12 +563,40 @@
             </div>
         </div>
     </div>
-    <!-- Limit order display div ends -->
 
-    <div id="total_value" class="d-flex justify-content-end item-table-cart-value-section mr-3">
-        <p>Total for <span id="total_items">{{ itm_det|length }}</span> items: <span id="ScHeader-total_value-{{sc_header_data.guid}}" class="item-table-total-cart-value">{{sc_header_data.total_value}}</span> <span>{{request.user.currency_id}}</span></p>
-
+    <!-- Cart value section -->
+    <div class="row no-gutters justify-content-end">
+        <div class="col-lg-4">
+            <div class="card cart-value-card">
+                <div class="card-body">
+                    <div class="cart-value-section">
+                        <span class="cart-value-label">Total Value (Net)</span>
+                        <span class="cart-value-desc" ><span id="actual_price">{{actual_price}}</span> {{request.user.currency_id}}</span>
+                    </div>
+                    <div class="cart-value-section">
+                        <span class="cart-value-label">Total Discount</span>
+                        <span class="cart-value-desc" >- <span id="discount_value">{{discount_value}}</span> {{request.user.currency_id}}</span>
+                    </div>
+                    <div class="cart-value-section">
+                        <span class="cart-value-label">Total Tax</span>
+                        <span class="cart-value-desc" > + <span id="tax_value">{{tax_value}}</span> {{request.user.currency_id}}</span>
+                    </div>
+    
+                    <hr>
+                    <div id="total_value" class="cart-value-section">
+                        <span class="cart-value-label">Total Value (Gross) For <span id="total_items">{{ itm_det|length }}</span> items </span>
+                        <span  class="cart-value-desc" ><span id="ScHeader-total_value-{{sc_header_data.guid}}">{{sc_header_data.total_value}}</span> <span id="total_cart_currency"> {{request.user.currency_id}}</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+    <!-- Limit order display div ends -->
+    
+    <!--    <div id="total_value" class="d-flex justify-content-end item-table-cart-value-section mr-3">-->
+    <!--        <p>Total for <span id="total_items">{{ itm_det|length }}</span> items: <span id="ScHeader-total_value-{{sc_header_data.guid}}" class="item-table-total-cart-value">{{sc_header_data.total_value}}</span> <span>{{request.user.currency_id}}</span></p>-->
+
+    <!--    </div>-->
 </div>
 
 {% include 'ProductDetailPopup/basic_product_detail_popup.html' %}
@@ -517,7 +607,7 @@
 var rendered_call_off = [];
 // Display limit order details
 {% for data in itm_det %}
-    follow_up_action = "{{data.ir_gr_ind}}"
+    follow_up_action = "{{data.ir_gr_ind_limi}}"
     on_date = "{{data.item_del_date}}"
     from_date = "{{data.start_date}}"
     end_date = "{{ data.end_date }}"
@@ -591,6 +681,8 @@ function ajax_my_order_delete_sc(data) {
     location.reload();
     return result;
 }
+
+const delete_my_order_sc_item_url = "{% url 'eProc_Shopping_Cart:edit_saved_shopping_cart' %}";
 
 
 {% for item in itm_det %}

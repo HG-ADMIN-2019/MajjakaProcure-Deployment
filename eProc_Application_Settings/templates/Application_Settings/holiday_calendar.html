@@ -253,7 +253,6 @@
           $('#success_msg_id').empty();
 
         $('#id_popup_table').DataTable().destroy();
-        var Tabledata = { "Dbl_clck_tbl_id": 'CalenderHolidays' };
         var calendar_data = new Array();
         var main_table_low_value = [];
 
@@ -287,6 +286,7 @@
 
             $('#id_save_confirm_popup').modal('hide');
             data = {'data':calendar_data,'table_name':'CalenderHolidays','action':GLOBAL_ACTION}
+            OpenLoaderPopup();
             $.ajax({
                 type: 'POST',
                 url: "{% url 'eProc_Configuration:create_update_application_data' %}",
@@ -298,14 +298,18 @@
                     render_holiday_data = Response[0];
                     display_basic_db_data();
                     $('#myModal').modal('hide');
-                    $('#id_error_msg').text(messageConstants["JMSG001"])
+                    //$('#id_error_msg').text(messageConstants["JMSG001"])
                     $('#success_msg_id').text(Response[1])
+                    if(Response[1].message_type[0]== 'SUCCESS'){
+                         $('#success_msg_id').text(Response[1].message_desc[0])
+                    }
                      $("#err_msg_app_settings_t").prop("hidden", false)
                     setTimeout(function () { $("#err_msg_app_settings_t").prop("hidden", true); }, 5000)
                     table_sort_filter('render_holiday_data');
                     DatePicker();
                     MultipleSelect();
                     HolidayDatePicker();
+                    CloseLoaderPopup();
                 }
             });
 
@@ -342,6 +346,7 @@
         }); 
         $('#id_delete_confirm_popup').modal('hide');
          data = {'data':main_table_calendar_checked,'table_name':'CalenderHolidays','action':GLOBAL_ACTION}
+         OpenLoaderPopup();
         $.ajax({
             type: 'POST',
             url: "{% url 'eProc_Configuration:create_update_application_data' %}",
@@ -354,11 +359,14 @@
                 render_holiday_data = Response[0];
                  display_basic_db_data();
                    $('#success_msg_id').text(Response[1])
+                     if(Response[1].message_type[0]== 'SUCCESS'){
+                         $('#success_msg_id').text(Response[1].message_desc[0])
+                    }
                 $('#myModal').modal('hide');
                 $("#err_msg_app_settings_t").prop("hidden", false)
-
                 setTimeout(function () { $("#err_msg_app_settings_t").prop("hidden", true); }, 5000)
                 table_sort_filter('render_holiday_data');
+                CloseLoaderPopup();
             }
         });
     }
@@ -392,6 +400,108 @@
                else
                      return preUrl;
        }
+
+ // validating the  popup table for duplicate entries
+function compare_table_for_duplicate_entries(validate_add_attributes, calendar) {
+    add_attr_duplicates = false;
+    var error_message = ''
+    var add_attr_duplicates_list = [];
+    var add_attr_unique_list = [];
+    var no_duplicate_value = 'Y'
+    var validDate = 'Y';
+    $.each(validate_add_attributes, function (index, value) {
+        if ($.inArray(value, add_attr_unique_list) == -1) {
+            add_attr_unique_list.push(value);
+        }
+        else {
+            if ($.inArray(value, add_attr_duplicates_list) == -1) {
+                add_attr_duplicates_list.push(value);
+            }
+        }
+    });
+    if (add_attr_duplicates_list.length != 0) {
+          //error_message = messageConstants["JMSG001"];
+
+            
+                var msg = "JMSG001";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+    }
+    else {
+            $.each(calendar, function (i, item) {
+             if (item.holiday_description.length == 0) {
+                //error_message  = messageConstants["JMSG002"] + "Description";
+
+                  
+                    var msg = "JMSG002";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+             }
+
+           });
+    }
+
+    return [no_duplicate_value,error_message]
+}
+
+//validate by comparing  main table values and popup table values
+function maintable_validation(validate_add_attributes, main_table_low_value) {
+    var no_duplicate_entries = 'Y'
+    var common = [];
+     var error_message =''
+    jQuery.grep(validate_add_attributes, function (el) {
+        if (jQuery.inArray(el, main_table_low_value) != -1) { common.push(el); }
+    });
+    if (common.length != 0) {
+       //error_message = messageConstants["JMSG001"]
+      
+                var msg = "JMSG001";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+
+    }
+    return [no_duplicate_entries,error_message]
+}
+
 </script>
 <script src="{% static 'scripts/holiday_calendar.js' %}"></script>
 {% endblock %}

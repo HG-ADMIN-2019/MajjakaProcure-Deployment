@@ -17,13 +17,7 @@
         sessionStorage.setItem("LANG", $('#id_language').val());
     }
 
-    // Function to retrieve data from session storage
-    window.onload = function () {
-        comp_code = sessionStorage.getItem("COMP_CODE");
-        acc_assgn_cat = sessionStorage.getItem("ACC_ASSGN_CAT");
-        lang = sessionStorage.getItem("LANG");
-
-        $('#id_comp_code_app').val(comp_code).attr('selected', 'selected');
-        $('#id_acc_assgn_cat').val(acc_assgn_cat).attr('selected', 'selected');
-        $('#id_language').val(lang).attr('selected', 'selected');
-    }
+    
+    $('#hg_accnt_report_search').click(function () {
+        OpenLoaderPopup();
+    })

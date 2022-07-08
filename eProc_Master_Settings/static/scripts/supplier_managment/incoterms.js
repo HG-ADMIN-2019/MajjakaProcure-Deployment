@@ -10,7 +10,7 @@ function onclick_add_button(button) {
     $("#id_popup_tbody").empty();
     $('#myModal').modal('show');
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-    '<td><input class="input form-control" maxlength="3" name="incoterm_key" type="text" pattern="[A-Z]" style="text-transform:uppercase;" onkeypress="return /[a-z]/i.test(event.key)"></td>'+
+    '<td><input class="input form-control" minlength="3" maxlength="3" name="incoterm_key" type="text" pattern="[A-Z]" style="text-transform:uppercase;" onkeypress="return /[a-z]/i.test(event.key)"></td>'+
     '<td><input  class="form-control"  maxlength="50" name="description" type="text"></td>'+
     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
@@ -55,27 +55,27 @@ function onclick_copy_update_button(data) {
     var edit_basic_data = "";
     var dropdown_values = [];
     //Loop through the CheckBoxes.
-    for (var i = 1; i < checkBoxes.length; i++) {
-        if (checkBoxes[i].checked) {
+   for (var i = 1; i < checkBoxes.length; i++) {
+       if (checkBoxes[i].checked) {
             var row = checkBoxes[i].parentNode.parentNode;
            if(GLOBAL_ACTION == "UPDATE"){
-           unique_input = '<input class="form-control" value = "'+ row.cells[1].innerHTML +'" name="incoterm_key" maxlength="3"  type="text" readonly>'
-             edit_basic_data += '<tr><td hidden><input type="checkbox"></td>'+
-             '<td>'+ unique_input +'</td>'+
-              '<td><input class="form-control" value="' + row.cells[2].innerHTML + '" name="description" maxlength="50" type="text"  onkeypress="return /[a-z]/i.test(event.key)"></td>'+
-            '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-            $("#header_select").prop("hidden", true);
-                }
-                else{
+               unique_input = '<input class="form-control" value = "'+ row.cells[1].innerHTML +'" name="incoterm_key" maxlength="3"  type="text" readonly>'
+                 edit_basic_data += '<tr><td hidden><input type="checkbox"></td>'+
+                 '<td>'+ unique_input +'</td>'+
+                  '<td><input class="form-control" value="' + row.cells[2].innerHTML + '" name="description" maxlength="50" type="text"  onkeypress="return /[a-z]/i.test(event.key)"></td>'+
+                '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                $("#header_select").prop("hidden", true);
+          }
+          else{
                 unique_input = '<input class="form-control" value = "'+ row.cells[1].innerHTML +'" name="incoterm_key" maxlength="3" type="text" pattern="[A-Z]" style="text-transform:uppercase;" onkeypress="return /[a-z]/i.test(event.key)">'
-             edit_basic_data += '<tr><td><input type="checkbox" required></td>'+
-             '<td>'+ unique_input +'</td>'+
-              '<td><input class="form-control" value="' + row.cells[2].innerHTML + '" maxlength="50" name="description" type="text"  onkeypress="return /[a-z]/i.test(event.key)"></td>'+
-            '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-            $("#header_select").prop("hidden", false);
-                }
-    }
-    }
+                 edit_basic_data += '<tr><td><input type="checkbox" required></td>'+
+                 '<td>'+ unique_input +'</td>'+
+                  '<td><input class="form-control" value="' + row.cells[2].innerHTML + '" maxlength="50" name="description" type="text"  onkeypress="return /[a-z]/i.test(event.key)"></td>'+
+                '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                $("#header_select").prop("hidden", false);
+          }
+       }
+   }
     $('#id_popup_tbody').append(edit_basic_data);
     $("#id_del_ind_checkbox").prop("hidden", true);
 
@@ -101,60 +101,8 @@ $(".remove_upload_data").click(() => {
     $('#id_popup_table').DataTable().destroy();
 });
 
-//validate by comparing  main table values and popup table values
-function maintable_validation(validate_add_attributes, main_table_low_value) {
-    var no_duplicate_entries = 'Y'
-    var error_message =''
-    var common = [];
-    jQuery.grep(validate_add_attributes, function (el) {
-        if (jQuery.inArray(el, main_table_low_value) != -1) { common.push(el); }
-    });
-    if (common.length != 0) {
-        error_message = messageConstants["JMSG001"]
-        no_duplicate_entries = 'N'
-    }
-    return [no_duplicate_entries,error_message]
-}
 
-// validating the  popup table for duplicate entries
-function compare_table_for_duplicate_entries(validate_add_attributes, incoterm) {
-    add_attr_duplicates = false;
-    var error_message = ''
-    var add_attr_duplicates_list = [];
-    var add_attr_unique_list = [];
-    var no_duplicate_value = 'Y'
-    $.each(validate_add_attributes, function (index, value) {
-        if ($.inArray(value, add_attr_unique_list) == -1) {
-            add_attr_unique_list.push(value);
-        }
-        else {
-            if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                add_attr_duplicates_list.push(value);
-            }
-        }
-    });
-    if (add_attr_duplicates_list.length != 0) {
-        
-        error_message = messageConstants["JMSG001"];
-        no_duplicate_value = 'N'
 
-        }
-    else {
-         $.each(incoterm, function (i, item) {
-            if (item.incoterm_key.length == 0) {
-                error_message = messageConstants["JMSG002"] + "Incoterm Key";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
-            if (item.description.length == 0) {
-                error_message = messageConstants["JMSG002"] + "Description";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
-         });
-    }
-    return [no_duplicate_value,error_message]
-}
 function display_error_message(error_message){
 
         $('#error_message').text(error_message);
@@ -174,7 +122,7 @@ function add_popup_row() {
         $("#id_error_msg").html("");
     });
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-    '<td><input class="form-control" name="incoterm_key" maxlength="3" type="text" pattern="[A-Z]" style="text-transform:uppercase;" onkeypress="return /[a-z]/i.test(event.key)"></td>'+
+    '<td><input class="form-control" name="incoterm_key" minlength="3" maxlength="3" type="text" pattern="[A-Z]" style="text-transform:uppercase;" onkeypress="return /[a-z]/i.test(event.key)"></td>'+
     '<td><input class="form-control" name="description" maxlength="50" type="text"></td>'+
     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);

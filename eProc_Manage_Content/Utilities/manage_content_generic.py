@@ -1,6 +1,6 @@
-from eProc_Basic.Utilities.constants.constants import CONST_CATALOG_IMAGE_TYPE, CONST_CATALOG_ITEM_EFORM, \
+from eProc_Basic.Utilities.constants.constants import CONST_CATALOG_IMAGE_TYPE, CONST_CATALOG_ITEM_VARIANT, \
     CONST_VARIANT_ADDITIONAL_PRICING, CONST_QUANTITY_BASED_DISCOUNT, CONST_VARIANT_BASE_PRICING, \
-    CONST_VARIANT_WITHOUT_PRICING, CONST_CO01
+    CONST_VARIANT_WITHOUT_PRICING, CONST_CATALOG_CALLOFF
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Configuration.models import ImagesUpload, ProductsDetail, EformFieldConfig, ProductEformPricing, ProductInfo, \
@@ -44,7 +44,7 @@ def get_eform_details(eform_id):
     product_eform_data = DjangoQueries().django_filter_query(EformFieldConfig,
                                                              {'client': global_variables.GLOBAL_CLIENT,
                                                               'eform_id': eform_id,
-                                                              'eform_type': CONST_CATALOG_ITEM_EFORM},
+                                                              'eform_type': CONST_CATALOG_ITEM_VARIANT},
                                                              None,
                                                              ['eform_id', 'eform_field_count', 'eform_field_name',
                                                               'required_flag', 'eform_field_datatype',
@@ -103,7 +103,7 @@ def product_eform_ui_dictionary_list(eform_id):
     product_eform_data = DjangoQueries().django_filter_query(EformFieldConfig,
                                                              {'client': global_variables.GLOBAL_CLIENT,
                                                               'eform_id': eform_id,
-                                                              'eform_type': CONST_CATALOG_ITEM_EFORM},
+                                                              'eform_type': CONST_CATALOG_ITEM_VARIANT},
                                                              None,
                                                              ['eform_id', 'eform_field_count', 'eform_field_name',
                                                               'required_flag', 'eform_field_datatype',
@@ -166,7 +166,7 @@ def get_catalog_mapping_product_id_list(catalog_id):
     product_id_list = django_query_instance.django_filter_value_list_ordered_by_distinct_query(CatalogMapping,
                                                                                                {'catalog_id__in':catalog_id,
                                                                                                 'client':global_variables.GLOBAL_CLIENT,
-                                                                                                'call_off':CONST_CO01,},
+                                                                                                'call_off':CONST_CATALOG_CALLOFF,},
                                                                                                'item_id',
                                                                                                None)
     return product_id_list

@@ -11,3 +11,7 @@
     } );
 
     $('.multiple_select').selectpicker();
+
+    $('#search_button_id').click(function () {
+        OpenLoaderPopup();
+    })

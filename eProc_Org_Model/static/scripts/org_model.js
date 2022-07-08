@@ -621,7 +621,10 @@ function create_main_table(attr_level_detail)
          $("#limitOuter").removeClass("d-none")
         // if prod cat not present in attr level table
         if (GLOBAL_ON_DOUBLE_CLICK_NODE_TYPE != 'PORG'){
-            document.getElementById("ext_attr_errmsg").innerHTML = messageConstants["JMSG051"];
+                
+
+                   document.getElementById("ext_attr_errmsg").innerHTML = messageConstants["JMSG051"];
+
             document.getElementById('ext_error_div').style.display='block';
             document.getElementById('ext_porg_id').style.display='none';
         }
@@ -636,7 +639,10 @@ function create_main_table(attr_level_detail)
             document.getElementById('ext_error_div').style.display='none';
         }
         if (GLOBAL_ON_DOUBLE_CLICK_NODE_TYPE != 'PGRP'){
-            document.getElementById("resp_msg").innerHTML = messageConstants["JMSG040"];
+                
+
+                  document.getElementById("resp_msg").innerHTML = messageConstants["JMSG040"];
+
             document.getElementById('non_pgrp').style.display='block';
             document.getElementById('resp_pgrp').style.display='none';
         }

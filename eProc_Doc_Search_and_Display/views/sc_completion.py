@@ -1,4 +1,6 @@
 from django.shortcuts import render
+
+from eProc_Basic.Utilities.constants.constants import CONST_DOC_TYPE_SC
 from eProc_Basic.Utilities.functions.encryption_util import encrypt
 from eProc_Basic.Utilities.functions.get_db_query import requester_field_info
 from eProc_Doc_Search_and_Display.Utilities.search_display_specific import get_header_based_on_calloff, DocumentSearch
@@ -52,7 +54,7 @@ def sc_completion_doc_search(request):
         search_fields['document_number'] = document_number
         search_fields['created_by'] = created_by
         search_fields['timeframe'] = timeframe
-
+        search_fields['document_type'] = CONST_DOC_TYPE_SC
         encrypted_header_guid = []
         # get header detail which has PR, limit order, free text
         search_criteria = document_search_instance.define_search_criteria(search_fields, 'sc_completion')

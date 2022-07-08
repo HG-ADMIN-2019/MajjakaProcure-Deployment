@@ -31,7 +31,7 @@ function change_account_assignment_category() {
             for(i=0; i< get_all_item_level_ids.length; i++){
                 item_detail = {}
                 item_detail.item_value = $('#ScIem-value-'+rendered_item_guid[i]).text();
-                item_detail.prod_cat = document.getElementById('prod_cat-'+rendered_item_guid[i]).innerHTML
+                item_detail.prod_cat = document.getElementById('prod_cat_id-'+rendered_item_guid[i]).innerHTML
                 item_details.push(item_detail)
                 account_assignment_guid = get_all_item_level_ids[i].id.split('-')[2]
                 $('#ScAccounting-acc_cat-' + account_assignment_guid).html(primary_account_assignment_type)

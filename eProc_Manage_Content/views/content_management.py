@@ -1,8 +1,8 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from eProc_Basic.Utilities.constants.constants import CONST_UNSPSC_IMAGE_TYPE, CONST_SEARCH_COUNT, CONST_CO02, \
-    CONST_CO01
+from eProc_Basic.Utilities.constants.constants import CONST_UNSPSC_IMAGE_TYPE, CONST_SEARCH_COUNT, CONST_FREETEXT_CALLOFF, \
+    CONST_CATALOG_CALLOFF
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.encryption_util import encrypt
 from eProc_Basic.Utilities.functions.get_db_query import getClients
@@ -44,7 +44,7 @@ def upload_product_cattegories(request):
                                                                            'lead_time', 'unit', 'price', 'currency',
                                                                            'long_desc', 'catalog_item', 'catalog_id',
                                                                            'product_type', 'price_on_request',
-                                                                           'price_unit', 'manufacturer', 'manu_prod',
+                                                                           'price_unit', 'manufacturer', 'manu_part_num',
                                                                            'brand', 'quantity_avail', 'quantity_min',
                                                                            'offer_key', 'country_of_origin', 'language',
                                                                            'unspsc', 'search_term1', 'search_term2',

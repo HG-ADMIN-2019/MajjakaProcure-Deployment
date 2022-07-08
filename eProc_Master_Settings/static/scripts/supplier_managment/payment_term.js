@@ -1,4 +1,3 @@
-
 var payment_term_data = new Array();
 var validate_add_attributes = [];
 var payment_term={};//onclick of add button display myModal popup and set GLOBAL_ACTION button value
@@ -8,7 +7,7 @@ function onclick_add_button(button) {
     GLOBAL_ACTION = button.value
     $("#id_popup_tbody").empty();
     $('#myModal').modal('show');
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="form-control" type="number" onkeypress="return /[a-zA-Z0-9]/i.test(event.key)" name="payment_term_key" style="text-transform:uppercase;" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td hidden><input  type="text"  name="guid"></td></tr>';
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="form-control" type="number" minlength="3" maxlenght="4" onkeypress="return /[a-zA-Z0-9]/i.test(event.key)" name="payment_term_key" style="text-transform:uppercase;" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td hidden><input  type="text"  name="guid"></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
     $("#id_del_ind_checkbox").prop("hidden", true);
@@ -83,59 +82,6 @@ $(".remove_upload_data").click(() => {
 });
 
 
-//validate by comparing  main table values and popup table values
-function maintable_validation(validate_add_attributes, main_table_low_value) {
-    var no_duplicate_entries = 'Y'
-    var error_message =''
-    var common = [];
-    jQuery.grep(validate_add_attributes, function (el) {
-        if (jQuery.inArray(el, main_table_low_value) != -1) { common.push(el); }
-    });
-    if (common.length != 0) {
-//        $("#id_error_msg").prop("hidden", false)
-//        document.getElementById("id_error_msg").innerHTML = messageConstants["JMSG001"];
-//        document.getElementById("id_error_msg").style.color = "Red";
-//        $('#id_save_confirm_popup').modal('hide');
-//        $('#myModal').modal('show');
-        error_message = messageConstants["JMSG001"]
-        no_duplicate_entries = 'N'
-    }
-      return [no_duplicate_entries,error_message]
-}
-
-
-// validating the  popup table for duplicate entries
-function compare_table_for_duplicate_entries(validate_add_attributes, payment_term) {
-    add_attr_duplicates = false;
-    var add_attr_duplicates_list = [];
-    var add_attr_unique_list = [];
-    var error_message = ''
-    var no_duplicate_value = 'Y'
-    $.each(validate_add_attributes, function (index, value) {
-        if ($.inArray(value, add_attr_unique_list) == -1) {
-            add_attr_unique_list.push(value);
-        }
-        else {
-            if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                add_attr_duplicates_list.push(value);
-            }
-        }
-    });
-    if (add_attr_duplicates_list.length != 0) {
-          error_message = messageConstants["JMSG001"];
-        no_duplicate_value = 'N'
-    }
-    else{
-         $.each(payment_term, function (i, item) {
-             if (payment_term.payment_term_key.length == 0) {
-                error_message = messageConstants["JMSG002"] + "Payment Term Key ";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-        }
-    });
-}
-    return no_duplicate_value
-}
 
 // on click add icon display the row in to add the new entries
 function add_popup_row() {
@@ -146,7 +92,7 @@ function add_popup_row() {
     $(".modal").on("hidden.bs.modal", function () {
         $("#id_error_msg").html("");
     });
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="form-control" type="number" name="payment_term_key"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td hidden><input  type="text"  name="guid"></td></tr>';
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="form-control" type="number" minlength="3" minlength="4" name="payment_term_key"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td hidden><input  type="text"  name="guid"></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     if (GLOBAL_ACTION == "payment_term_upload") {
         $(".class_del_checkbox").prop("hidden", false);

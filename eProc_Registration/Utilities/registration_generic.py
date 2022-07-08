@@ -67,7 +67,7 @@ def save_supplier_data(request):
     supplier_details['email'] = request.POST.get('email_id')
     supplier_details['search_term1'] = request.POST.get('search_term1_id')
     supplier_details['search_term2'] = request.POST.get('search_term2_id')
-    supplier_details['working_days'] = request.POST.get('working_days_id')
+    supplier_details['delivery_days'] = request.POST.get('working_days_id')
     supplier_details['duns_number'] = request.POST.get('duns_number_id')
     supplier_details['email1'] = request.POST.get('email1_id')
     supplier_details['email2'] = request.POST.get('email2_id')

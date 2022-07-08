@@ -5,86 +5,86 @@
 
 {% block maincontent %}
 
+{% include 'root/loader.html' %}
 
+<div class="container-fluid" >
+    <div class="mep-form_wrapper">
 
+        <div class="d-flex justify-content-between">
+            <h3>Approvals Report</h3>
+            <div></div>
+        </div>
 
-    {% include 'root/loader.html' %}
-
-    <div class="container-fluid" >
-        <div class="hg_wrapper">
-            <div>
-                <div class="hg_head1">Approvals Report</div>
-                <hr class="hg_heading_hrborder">
-            </div>
-
-            <div>
+        <hr>
+        
+        <div class="card card-shadow-1">
+            <div class="card-body">
                 <form method="post" action="{% url 'eProc_Admin_Tool:approval_report' %}">
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-md">
                             <label>Company Number </label>
-
+    
                             <select name="comp_code_app" id="id_comp_code_app" class="form-control">
-                                <option value="null" selected="true" disabled="disabled">Select </option>
+                                <!--         <option value="null" selected="true" disabled="disabled">Select </option>-->
                                 {% for comp in comp_list %}<option value="{{ comp.company_id }}"> {{ comp.company_id}} - {{comp.name1 }} </option>{% endfor %}
                             </select>
                         </div>
-
+    
                         <div class="col-md">
                             <label>Account Assignment Category</label>
-                            <select name="acc_assgn_cat" id="id_acc_assgn_cat" class="form-control">
-                                <option value="null" selected="true" disabled="disabled">Select </option>
+                            <select name="acc_assgn_cat" id="acc_assgn_cat" class="multiple_select form-control"  data-selected-text-format="count" multiple data-actions-box="true" title="Select..">
+                                <!--  <option value="null" selected="true" disabled="disabled">Select </option>-->
                                 {% for acc_cat in acct_val_list %}<option value="{{ acc_cat.account_assign_cat }}"> {{acc_cat.account_assign_cat}}-{{acc_cat.description}} </option>
                                 {% endfor %}
                             </select>
                         </div>
-                        
-                    </div> 
-                    <br> 
 
-                    <div>
-                        <button class="btn btn-primary" type="reset" value="Reset"><i class="fas fa-sync-alt"></i>
-                            reset</button>
-                        <button id="hg_approval_report_search" class="btn btn-primary" type="submit"
-                            title="Please click to get the search details!"><i class="fas fa-search"></i> search
-                        </button>
+                        <div class="col-auto my-1">
+                            <button id="hg_approval_report_search" class="btn btn-primary button-search-users" type="submit"
+                                title="Please click to get the search details!"><i class="fas fa-search"></i> search
+                            </button>
+                        </div>
+                
                     </div>
+                    <br>
+                    <button class="btn btn-link" type="reset" value="Reset">clear filters</button>
+    
                     
                 </form>
             </div>
-            <br>
-
-            <div class="search_result_count_card card">
-                {% if t_count > 0 %}
-                <div class="card-body">
-                    <h6 class="card-title">Total number of results found :{{t_count}}</h6>
-                </div>
-                {% endif %}
-                {% if t_count == 0 %}
-                <div class="card-body">
-                    <h6 class="card-title">No Results Found</h6>
-                </div>
-                {% endif %}
-            </div>
         </div>
+
+        <!-- <div class="search_result_count_card card">
+            {% if t_count > 0 %}
+            <div class="card-body">
+                <h6 class="card-title">Total number of results found :{{t_count}}</h6>
+            </div>
+            {% endif %}
+            {% if t_count == 0 %}
+            <div class="card-body">
+                <h6 class="card-title">No Results Found</h6>
+            </div>
+            {% endif %}
+        </div> -->
 
         <!--    To Display Header Details only if there are any results-->
         {% if t_count > 0 %}
 
         {% if final_list %}
-        <div class="hg_wrapper">
-            <table id="accounting_tab" class="table hg-striped-table table_sort_filter_export_excel">
+        <div class="card mt-5">
+            <table id="approval_report_table" class="table table_sort_filter_export_excel">
                 <thead class="thead-light">
                     <tr>
-                        <th scope="col"> COMPANY CODE </th>
-                        <th scope="col"> ACCOUNT ASSIGNMENT CATEGORY </th>
-                        <th scope="col"> ACCOUNT ASSIGNMENT VALUE </th>
-                        <th scope="col"> APPROVER </th>
-                        <th scope="col"> APPROVER CODE</th>
-                        <th scope="col"> APPROVAL LIMIT </th>
-                        <th scope="col"> APPROVER CURRENCY KEY </th>
-                        <th scope="col"> SUPERIOR COMPANY CODE</th>
-                        <th scope="col"> SUPERIOR ACCOUNT ASSIGNMENT VALUE</th>
+                        <th scope="col"> company code </th>
+                        <th scope="col"> account assignment category </th>
+                        <th scope="col"> account assignment value </th>
+                        <th scope="col"> approver </th>
+                        <th scope="col"> approver code</th>
+                        <th scope="col"> approval limit </th>
+                        <th scope="col"> approver currency key </th>
+                        <th scope="col"> superior company code</th>
+                        <th scope="col"> superior account assignment value</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -93,8 +93,8 @@
                         <td scope="row">{{ acc.0 }}</td>
                         <td scope="row">{{ acc.1 }}</td>
                         <td scope="row">{{ acc.2 }}</td>
-                        <td scope="row">{{ acc.9 }}</td>
-                        <td scope="row"> {{acc.11}} </td>
+                        <td scope="row">{{ acc.3 }}</td>
+                        <td scope="row"> {{acc.9}} </td>
                         <td scope="row"> {{acc.7}} </td>
                         <td scope="row"> {{ acc.8}} </td>
                         <td scope="row">{{ acc.5 }}</td>
@@ -106,11 +106,33 @@
         </div>
         {% endif %}
         {% endif %}
-        
     </div>
-
+    
+</div>
 
 <div class="hg_spacer2"> &nbsp; </div>
+<script>
+     var selected_status_value = '';
+      selected_status_value = '{{inp_acc_assgn_cat | safe}}';
+     var selected_comp_value = {{inp_comp_code | safe}};
+
+    // Script to generate sort and filter feature for tables
+    $(document).ready(function () {
+        nav_bar_admin();
+        table_sort_filter_export_excel();
+
+        // Loader implementation on search button
+        $('#hg_approval_report_search').click(function () {
+            $('#hg_loader').modal('show');
+        });
+        // Bootstrap-select plugin being called to render multiselect dropdown
+    $('.multiple_select').selectpicker();
+    $('.multiple_select').selectpicker('val', selected_status_value);
+
+    $('select option:first-child').attr("selected", "selected");
+
+    });
+</script>
 
 <script src="{% static 'scripts/approval_report.js'%}"> </script>
 

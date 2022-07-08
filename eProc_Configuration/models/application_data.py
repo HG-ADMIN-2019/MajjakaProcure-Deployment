@@ -234,6 +234,123 @@ class EformFieldConfig(models.Model):
         db_table = "MAD_EFORM_FIELD_CONFIG"
 
 
+class EmailObjectTypes(models.Model):
+    """
+    Contains keywords based on object type
+    """
+    email_object_types_guid = models.CharField(primary_key=True, db_column='EMAIL_OBJECT_TYPES_GUID', max_length=32)
+    object_type = models.CharField(db_column='OBJECT_TYPE', max_length=20, null=False)
+    email_object_types_created_by = models.CharField(db_column='EMAIL_OBJECT_TYPES_CREATED_BY', max_length=30,
+                                                     null=True)
+    email_object_types_created_at = models.DateTimeField(db_column='EMAIL_OBJECT_TYPES_CREATED_AT', max_length=50,
+                                                         null=True)
+    email_object_types_changed_by = models.CharField(db_column='EMAIL_OBJECT_TYPES_CHANGED_BY', max_length=30,
+                                                     null=True)
+    email_object_types_changed_at = models.DateTimeField(db_column='EMAIL_OBJECT_TYPES_CHANGED_AT', max_length=50,
+                                                         null=True)
+    del_ind = models.BooleanField(default=False, null=False)
+    client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False)
+
+    class Meta:
+        unique_together = ('object_type', 'client')
+        db_table = "MAD_EMAIL_OBJECT_TYPES"
+        managed = True
+
+
+class EmailKeywords(models.Model):
+    """
+    Contains keywords based on object type
+    """
+    email_keywords_guid = models.CharField(primary_key=True, db_column='EMAIL_KEYWORDS_GUID', max_length=32)
+    object_type = models.CharField(db_column='OBJECT_TYPE', max_length=20, null=False)
+    keyword = models.CharField(db_column='KEYWORD', max_length=30, null=False)
+    email_keywords_created_by = models.CharField(db_column='EMAIL_KEYWORDS_CREATED_BY', max_length=30,
+                                                 null=True)
+    email_keywords_created_at = models.DateTimeField(db_column='EMAIL_KEYWORDS_CREATED_AT', max_length=50,
+                                                     null=True)
+    email_keywords_changed_by = models.CharField(db_column='EMAIL_KEYWORDS_CHANGED_BY', max_length=30,
+                                                 null=True)
+    email_keywords_changed_at = models.DateTimeField(db_column='EMAIL_KEYWORDS_CHANGED_AT', max_length=50,
+                                                     null=True)
+    del_ind = models.BooleanField(default=False, null=False)
+    client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False)
+
+    class Meta:
+        db_table = "MAD_EMAIL_KEYWORDS"
+        managed = True
+
+
+class EmailContents(models.Model):
+    """
+    Contains notification & email format data
+    """
+    email_contents_guid = models.CharField(primary_key=True, db_column='EMAIL_CONTENTS_GUID', max_length=32)
+    object_type = models.CharField(db_column='OBJECT_TYPE', max_length=20, null=False)
+    subject = models.TextField(db_column='SUBJECT', null=False)
+    header = models.TextField(db_column='HEADER', null=True, blank=True)
+    body = models.TextField(db_column='BODY', null=False)
+    footer = models.TextField(db_column='FOOTER', null=True, blank=True)
+    email_contents_created_by = models.CharField(db_column='EMAIL_CONTENTS_CREATED_BY', max_length=30,
+                                                 null=True)
+    email_contents_created_at = models.DateTimeField(db_column='EMAIL_CONTENTS_CREATED_AT', max_length=50,
+                                                     null=True)
+    email_contents_changed_by = models.CharField(db_column='EMAIL_CONTENTS_CHANGED_BY', max_length=30,
+                                                 null=True)
+    email_contents_changed_at = models.DateTimeField(db_column='EMAIL_CONTENTS_CHANGED_AT', max_length=50,
+                                                     null=True)
+    del_ind = models.BooleanField(default=False, null=False)
+    client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False)
+    language_id = models.ForeignKey('eProc_Configuration.Languages', db_column='LANGUAGE_ID', on_delete=models.PROTECT,
+                                    null=False)
+
+    class Meta:
+        db_table = "MAD_EMAIL_CONTENTS"
+        unique_together = ('object_type', 'language_id', 'client')
+        managed = True
+
+
+class PoSplitType(models.Model):
+    po_split_type = models.PositiveIntegerField(db_column='PO_SPLIT_TYPE', primary_key=True)
+    # 01 - Supplier,02 - Currency,03 - Ship to address,04 - Purchasing Group, 05 - CallOff, 06 - Limit Order,
+    # 07 - Purchase Requision,08- Incoterm,09 - Payment Terms,10 - product type
+    po_split_type_desc = models.CharField(db_column='PO_SPLIT_TYPE_DESC', max_length=30, null=False)
+    po_split_type_created_by = models.CharField(db_column='PO_SPLIT_TYPE_CREATED_BY', max_length=30,
+                                                 null=True)
+    po_split_type_created_at = models.DateTimeField(db_column='PO_SPLIT_TYPE_CREATED_AT', max_length=50,
+                                                     null=True)
+    po_split_type_changed_by = models.CharField(db_column='PO_SPLIT_TYPE_CHANGED_BY', max_length=30,
+                                                 null=True)
+    po_split_type_changed_at = models.DateTimeField(db_column='PO_SPLIT_TYPE_CHANGED_AT', max_length=50,
+                                                     null=True)
+    del_ind = models.BooleanField(default=False, null=False)
+
+
+    class Meta:
+        db_table = "MAD_PO_SPLIT_TYPE"
+        managed = True
+
+
+class PoSplitCriteria(models.Model):
+    po_split_criteria_guid = models.CharField(db_column='PO_SPLIT_CRITERIA_GUID', max_length=32, primary_key=True)
+    company_code_id = models.CharField(db_column='COMPANY_CODE_ID', max_length=20, null=False)
+    activate = models.BooleanField(db_column='ACTIVATE', default=False, null=False)
+    del_ind = models.BooleanField(default=False, null=False)
+    po_split_criteria_created_by = models.CharField(db_column='PO_SPLIT_CRITERIA_CREATED_BY', max_length=30,
+                                                null=True)
+    po_split_criteria_created_at = models.DateTimeField(db_column='PO_SPLIT_CRITERIA_CREATED_AT', max_length=50,
+                                                    null=True)
+    po_split_criteria_changed_by = models.CharField(db_column='PO_SPLIT_CRITERIA_CHANGED_BY', max_length=30,
+                                                null=True)
+    po_split_criteria_changed_at = models.DateTimeField(db_column='PO_SPLIT_CRITERIA_CHANGED_AT', max_length=50,
+                                                    null=True)
+    client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False)
+    po_split_type = models.ForeignKey('eProc_Configuration.PoSplitType', on_delete=models.PROTECT, null=False)
+
+    class Meta:
+        db_table = "MAD_PO_SPLIT_CRITERIA"
+        managed = True
+
+
 class ProductInfo(models.Model):
     product_info_guid = models.CharField(db_column='PRODUCT_INFO_GUID', primary_key=True, max_length=40, blank=False,
                                          null=False)
@@ -357,8 +474,8 @@ class FreeTextDetails(models.Model):
     freetext_id = models.CharField(db_column='FREETEXT_ID', max_length=40, blank=False, null=False)
     supplier_id = models.CharField(db_column='SUPPLIER_ID', max_length=10, verbose_name='Vendor Id', null=True)
     prod_cat_id = models.CharField(db_column='PROD_CAT_ID', max_length=50, null=True, default=None)
-    supp_art_no = models.CharField(db_column='SUPP_ART_NO', max_length=40, blank=False,
-                                   null=True)  # supplier gives article no
+    supp_product_id = models.CharField(db_column='SUPP_PRODUCT_ID', max_length=40, blank=False,
+                                       null=True)  # supplier gives article no
     lead_time = models.CharField(db_column='LEAD_TIME', null=True, max_length=20)
     description = models.CharField(db_column='DESCRIPTION', max_length=255, null=True, default=None)
     eform_id = models.CharField(db_column='EFORM_ID', max_length=40, blank=False, null=True)
@@ -594,3 +711,4 @@ class WorkflowSchema(models.Model):
     class Meta:
         managed = True
         db_table = 'MAD_WF_SCHEMA'
+

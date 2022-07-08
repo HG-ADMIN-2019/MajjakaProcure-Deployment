@@ -170,7 +170,22 @@
                 return sequence.indexOf(item) != idx
             });
             if (is_sequence) {
-                document.getElementById("sc_num_errors").innerHTML = messageConstants["JMSG001"];
+                //document.getElementById("sc_num_errors").innerHTML = messageConstants["JMSG001"];
+                
+                        var msg = "JMSG001";
+                        var msg_type ;
+                      msg_type = message_config_details(msg);
+                      $("#error_msg_id").prop("hidden", false)
+
+                      if(msg_type.message_type[0] == "ERROR"){
+                            display_message("error_msg_id", msg_type.messages_id_desc[0])
+                      }
+                      else if(msg_type.message_type[0] == "WARNING"){
+                         display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                      }
+                      else if(msg_type.message_type[0] == "INFORMATION"){
+                         display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                      }
                 return false;
             }
             var starting = sc_number_ranges.map(function (item) { return item.starting });
@@ -216,14 +231,65 @@
                 current = sc_number_ranges[i]['current']
 
                 if (parseInt(ending) < parseInt(starting)) {
-                    document.getElementById("sc_num_errors").innerHTML = messageConstants["JMSG035"];
-                    return false;
+                    
+                            var msg = "JMSG035";
+                            var msg_type ;
+                          msg_type = message_config_details(msg);
+                          $("#error_msg_id").prop("hidden", false)
+
+                          if(msg_type.message_type[0] == "ERROR"){
+                                display_message("error_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "WARNING"){
+                             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "INFORMATION"){
+                             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          var display = msg_type.messages_id_desc[0];
+                          document.getElementById("sc_num_errors").innerHTML = display;
+
+                            return false;
                 } else if (parseInt(current) < parseInt(starting)) {
-                    document.getElementById("sc_num_errors").innerHTML = messageConstants["JMSG036"];
-                    return false;
+                     
+                            var msg = "JMSG036";
+                            var msg_type ;
+                          msg_type = message_config_details(msg);
+                          $("#error_msg_id").prop("hidden", false)
+
+                          if(msg_type.message_type[0] == "ERROR"){
+                                display_message("error_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "WARNING"){
+                             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "INFORMATION"){
+                             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                          }
+                           var display = msg_type.messages_id_desc[0];
+                          document.getElementById("sc_num_errors").innerHTML = display;
+
+                            return false;
                 } else if (parseInt(current) > parseInt(ending)) {
-                    document.getElementById("sc_num_errors").innerHTML = messageConstants["JMSG037"];
-                    return false;
+                         
+                            var msg = "JMSG037";
+                            var msg_type ;
+                          msg_type = message_config_details(msg);
+                          $("#error_msg_id").prop("hidden", false)
+
+                          if(msg_type.message_type[0] == "ERROR"){
+                                display_message("error_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "WARNING"){
+                             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "INFORMATION"){
+                             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                          }
+                           var display = msg_type.messages_id_desc[0];
+                            document.getElementById("sc_num_errors").innerHTML = display;
+
+                            return false;
                 } else {
                     document.getElementById("sc_num_errors").innerHTML = ''
                 }

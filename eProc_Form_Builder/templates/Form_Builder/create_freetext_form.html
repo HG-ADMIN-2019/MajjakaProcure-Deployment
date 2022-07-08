@@ -26,15 +26,16 @@
 
 
                     <div>
+                        <button type="reset" id="ft_cancel" class="btn btn-outline-primary dummy_ft_button_class" onclick="enable_disable('CANCEL')">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
                         <button type="button" id="ft_save" class="btn btn-primary dummy_ft_button_class" onclick="save_configured_form();">
                             <i class="fas fa-check" title="Update"></i> Save
                         </button>
                         <button type="button" id="ft_edit" class="btn btn-primary dummy_ft_button_class" onclick="enable_disable('EDIT')">
-                            <i class="fas fa-edit"></i>Edit
+                            <i class="fas fa-edit"></i> Edit
                         </button>
-                        <button type="reset" id="ft_cancel" class="btn btn-primary dummy_ft_button_class" onclick="enable_disable('CANCEL')">
-                            <i class="fas fa-times"></i>Cancel
-                        </button>
+                        
                     </div>
                 </div>
             </div>
@@ -73,7 +74,7 @@
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label>Currency<span class="hg_required"></span></label>
-                                        <select class="form-control" id="currency_id">
+                                        <select class="form-control toggle_mode" id="currency_id">
                                             {% if not freetext_details.currency_id_id %}
                                             <option value="">select</option>
                                             {% endif %}
@@ -97,8 +98,8 @@
                                         <input type="number" name="lead_time" id="lead_time" value="{{freetext_details.lead_time}}" class="form-control toggle_mode" required>
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <label>Supplier article number<span class="hg_required"></span></label>
-                                        <input type="text" name="supp_art_no" class="form-control toggle_mode" value="{{freetext_details.supp_art_no}}" id="supplier_article_number" required>
+                                        <label>Supplier Product Number<span class="hg_required"></span></label>
+                                        <input type="text" name="supp_art_no" class="form-control toggle_mode" value="{{freetext_details.supp_product_id }}" id="supplier_article_number" required>
                                     </div>
                                 </div>
 
@@ -349,7 +350,7 @@
 </div>
 
 <!-- Loader pop up -->
-{% include 'root/loader.html' %}
+<!-- {% include 'root/loader.html' %} -->
 
 <!--Select Product category popup -->
 {% include 'Shopping_Cart/select_product_category_modal/select_product_category.html' %}
@@ -412,12 +413,13 @@
             eform_id:'{{freetext_details.eform_id|safe}}',
             type: GLOBAL_ACTION
         }
-
+        OpenLoaderPopup();
         $.ajax({
             type: 'POST',
             url: '{% url "eProc_Form_Builder:create_update_freetext_form"%}',
             data: JSON.stringify(form_data),
             success: function (response) {
+                CloseLoaderPopup();
                 enable_disable('SAVE')
                 $('#save_success_div').html(response.success_message)
                 $('#save_success_div').show()
@@ -429,6 +431,7 @@
                 }
             },
             error: function (response) {
+                CloseLoaderPopup();
                 $('#save_error_div').html(response.responseJSON['error_message'])
                 $('#save_error_div').show()
             }

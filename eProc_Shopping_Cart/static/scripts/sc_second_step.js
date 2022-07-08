@@ -4,7 +4,7 @@ $(document).ready(function () {
     $('body').css('padding-top', '7rem');
 
 });
-
+var CONST_MULTIPLE = ''
 var manager_detail_initial = shopping_cart_errors.manager_detail.length
 var sc_errors_initial = shopping_cart_errors.sc_error
 var sc_info_messsages = shopping_cart_errors.sc_info
@@ -26,23 +26,40 @@ if (sc_info_messsages.length > 0){
     $('#sc_info_messages').show()
 }
 
-if(sc_errors_initial.length == 0 && manager_detail_initial != 0){
-    $('#sc_success_messages').html(messageConstants["JMSG042"])
+if (sc_errors_initial.length == 0 && manager_detail_initial != 0) {
+
+                    var msg = "JMSG042";
+                    var msg_type ;
+                  msg_type = get_message_desc(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display3 = msg_type.messages_id_desc[0];
+                  $('#sc_success_messages').html(display3)
+
     $('#sc_success_messages').show()
     document.getElementById('sc_error_msg').style.display = 'none';
     $('#sc_error_msg').html('');
 } else {
-    for( i = 0; i < sc_errors_initial.length; i++ ){
+    for (i = 0; i < sc_errors_initial.length; i++) {
         dict_obj = sc_errors_initial[i]
         for (var key in dict_obj) {
-            if (key == '0'){
+            if (key == '0') {
                 error_messages_initial += 'Error: ' + dict_obj[key] + '<br>'
             } else {
                 error_messages_initial += 'Error at item ' + key + ': ' + dict_obj[key] + '<br>'
             }
         }
     }
-    if (shopping_cart_errors['msg_info']){
+    if (shopping_cart_errors['msg_info']) {
         error_messages_initial += shopping_cart_errors['msg_info']
     }
 
@@ -84,8 +101,25 @@ window.IDBTransaction = window.IDBTransaction ||
 window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange ||
     window.msIDBKeyRange
 
+
 if (!window.indexedDB) {
-    window.alert(messageConstants["JMSG044"])
+
+        var msg = "JMSG044";
+        var msg_type ;
+      msg_type = get_message_desc(msg);
+      $("#error_msg_id").prop("hidden", false)
+
+      if(msg_type.message_type[0] == "ERROR"){
+            display_message("error_msg_id", msg_type.messages_id_desc[0])
+      }
+      else if(msg_type.message_type[0] == "WARNING"){
+         display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+      }
+      else if(msg_type.message_type[0] == "INFORMATION"){
+         display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+      }
+      var display8 = msg_type.messages_id_desc[0];
+        window.alert(display8)
 }
 
 var db;
@@ -296,71 +330,107 @@ const toBase64 = file => new Promise((resolve, reject) => {
 });
 
 
+
 // Function to upload attachments to session
 async function upload_attachments(id) {
     item_number = id.slice(-1)
     item_number_attached = item_number
     file_number = 0;
-    last_added_file_number = sessionStorage.getItem('last_added_file_number-'+item_number)
-    if(last_added_file_number != null){
+    last_added_file_number = sessionStorage.getItem('last_added_file_number-' + item_number)
+    if (last_added_file_number != null) {
         file_number = parseInt(last_added_file_number)
     }
-    input_id    = id.split('-')[1]
-    $('#attachment_tbody_id-'+item_number).empty()
-    const file  = document.querySelector('#'+input_id)
-    internal_radio_check = document.getElementById("internal"+item_number).checked
-    external_radio_check = document.getElementById("external"+item_number).checked
+    input_id = id.split('-')[1]
+    $('#attachment_tbody_id-' + item_number).empty()
+    const file = document.querySelector('#' + input_id)
+    internal_radio_check = document.getElementById("internal" + item_number).checked
+    external_radio_check = document.getElementById("external" + item_number).checked
     type = '';
-    if(!(internal_radio_check || external_radio_check)){
-        $('#attachment_error'+item_number).html(messageConstants["JMSG005"] + "attachment type")
-        $('#attachment_error'+item_number).show()
+    if (!(internal_radio_check || external_radio_check)) {
+
+                            var msg = "JMSG004";
+                            var msg_type ;
+                          msg_type = message_config_details(msg);
+                          $("#error_msg_id").prop("hidden", false)
+
+                          if(msg_type.message_type[0] == "ERROR"){
+                                display_message("error_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "WARNING"){
+                             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "INFORMATION"){
+                             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                          }
+
+                         var display8 = msg_type.messages_id_desc[0];
+        $('#attachment_error' + item_number).html(display8 + "attachment type")
+        $('#attachment_error' + item_number).show()
         return false;
     } else {
-        $('#attachment_error'+item_number).html('')
-        $('#attachment_error'+item_number).hide()
-        if(internal_radio_check){
+        $('#attachment_error' + item_number).html('')
+        $('#attachment_error' + item_number).hide()
+        if (internal_radio_check) {
             type = 'Internal Use';
         } else {
             type = 'External Use'
         }
     }
-    attachment_value = document.getElementById('attachment_data'+item_number).value
-    attachment_name = document.getElementById('attachment_name'+item_number).value
+    attachment_value = document.getElementById('attachment_data' + item_number).value
+    attachment_name = document.getElementById('attachment_name' + item_number).value
     is_special_character = check_for_special_char(attachment_name)
-    if(!is_special_character){
-        $('#attachment_error'+item_number).html(messageConstants["JMSG003"] + "Attachment Name")
-        $('#attachment_error'+item_number).show()
+    if (!is_special_character) {
+
+         var msg = "JMSG003";
+         var msg_type ;
+         msg_type = message_config_details(msg);
+         $("#error_msg_id").prop("hidden", false)
+         var display5 = msg_type.messages_id_desc[0];
+        $('#attachment_error' + item_number).html(display5 + "Attachment Name")
+        $('#attachment_error' + item_number).show()
         return false;
     }
-    if(!attachment_value){
-        $('#attachment_error'+item_number).html(messageConstants["JMSG005"] + "Files to upload")
-        $('#attachment_error'+item_number).show()
+    if (!attachment_value) {
+
+         var msg = "JMSG005";
+         var msg_type ;
+         msg_type = get_message_desc(msg);
+         $("#error_msg_id").prop("hidden", false)
+         var display3 = msg_type.messages_id_desc[0];
+        $('#attachment_error' + item_number).html(display3 + "Files to upload")
+        $('#attachment_error' + item_number).show()
         return false;
     } else {
-        $('#attachment_error'+item_number).html('')
-        $('#attachment_error'+item_number).hide()
-        }
-    if(!attachment_name){
-        $('#attachment_error'+item_number).html(messageConstants["JMSG007"] + "Attachment Name" )
-        $('#attachment_error'+item_number).show()
+        $('#attachment_error' + item_number).html('')
+        $('#attachment_error' + item_number).hide()
+    }
+    if (!attachment_name) {
+
+         var msg = "JMSG005";
+         var msg_type ;
+         msg_type = get_message_desc(msg);
+         $("#error_msg_id").prop("hidden", false)
+         var display5 = msg_type.messages_id_desc[0];
+        $('#attachment_error' + item_number).html(display5 + "Attachment Name")
+        $('#attachment_error' + item_number).show()
         return false;
-    } else{
-        $('#attachment_error'+item_number).html('')
-        $('#attachment_error'+item_number).hide()
+    } else {
+        $('#attachment_error' + item_number).html('')
+        $('#attachment_error' + item_number).hide()
     }
 
     for (i = 0; i < file.files.length; i++) {
         attached_file = file.files[i];
-        if(attached_file){
-            incremented_i = file_number + (i+1);
+        if (attached_file) {
+            incremented_i = file_number + (i + 1);
             var attachment_id = 'attachment_data' + item_number + '_' + incremented_i;
             no_attachments = file.files.length
-            file_extension_id = 'file_extension'+ item_number + '_' + incremented_i;
+            file_extension_id = 'file_extension' + item_number + '_' + incremented_i;
             file_extension = (attached_file.name).split(".")[1]
             base64_converted = await toBase64(attached_file);
             var request = db.transaction(["attachments"], "readwrite")
                 .objectStore("attachments")
-                .add({ attachment_data: attachment_id, dataUrl: base64_converted, attachment_name: attachment_name, no_attachments: no_attachments, file_name: attached_file.name, file_extension_id:file_extension, type: type});
+                .add({ attachment_data: attachment_id, dataUrl: base64_converted, attachment_name: attachment_name, no_attachments: no_attachments, file_name: attached_file.name, file_extension_id: file_extension, type: type });
 
             request.onsuccess = function (event) {
                 $('#attachment_name' + item_number).val('')
@@ -371,7 +441,24 @@ async function upload_attachments(id) {
             };
 
             request.onerror = function (event) {
-                alert(messageConstants["JMSG046"]);
+
+                    var msg = "JMSG046";
+                    var msg_type ;
+                  msg_type = get_message_desc(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display5 = msg_type.messages_id_desc[0];
+                  alert(display5);
+
             }
         }
     }
@@ -379,7 +466,6 @@ async function upload_attachments(id) {
     display_attachment_icon(item_number, "UPLOAD");
     get_attachment_data().then((value) => null)
 }
-
 
 // Function convert base64 converted url to File type
 function dataURLtoFile(dataUrl, filename) {
@@ -389,15 +475,15 @@ function dataURLtoFile(dataUrl, filename) {
         atob_length = converted_to_atob.length,
         u8arr = new Uint8Array(atob_length);
 
-    while(atob_length--){
+    while (atob_length--) {
         u8arr[atob_length] = converted_to_atob.charCodeAt(atob_length);
     }
-    file_data = new File([u8arr], filename, {type:mime})
+    file_data = new File([u8arr], filename, { type: mime })
     return file_data;
 }
 
 // Function to delete attachments from session
-function delete_attachments(element){
+function delete_attachments(element) {
     element_id = element.id
     item_file_number = element_id.split('-')[1]
     item_number = item_file_number.split('_')[0]
@@ -407,24 +493,24 @@ function delete_attachments(element){
         .objectStore("attachments")
         .delete(attachment_id);
 
-        request.onsuccess = function(event) {
-            $(element).parent().parent().remove();
-            var rowCount = $('#attachment_tbody_id-'+item_number).children('tr').length;
-            if(rowCount == 0){
-                document.getElementById('added_attachments_display-'+item_number).style.display = 'none';
-                sessionStorage.removeItem('last_added_file_number-'+item_number)
-            }
-        };
-        display_attachment_icon(item_number, "DELETE");
-        get_attachment_data().then((value) => null)
+    request.onsuccess = function (event) {
+        $(element).parent().parent().remove();
+        var rowCount = $('#attachment_tbody_id-' + item_number).children('tr').length;
+        if (rowCount == 0) {
+            document.getElementById('added_attachments_display-' + item_number).style.display = 'none';
+            sessionStorage.removeItem('last_added_file_number-' + item_number)
+        }
+    };
+    display_attachment_icon(item_number, "DELETE");
+    get_attachment_data().then((value) => null)
 }
 
 // function to show or hide attachment existence icon based on action
 const display_attachment_icon = (item_number, action) => {
-    if(action=='UPLOAD') {
-        $('#attachment_added-'+item_number).prop("hidden", false);
-    } else if (action=='DELETE') {
-        $('#attachment_added-'+item_number).prop("hidden", true);
+    if (action == 'UPLOAD') {
+        $('#attachment_added-' + item_number).prop("hidden", false);
+    } else if (action == 'DELETE') {
+        $('#attachment_added-' + item_number).prop("hidden", true);
     }
 }
 
@@ -434,117 +520,223 @@ function changeAccCat(acc_id) {
     var gl_acc_value = '';
     acc_level = acc_id.split('-')[1]
     $('#select_gl_acc_num').empty();
-    if (acc_level == "header"){
-        $('#gl_acc_change_id').css('display','none');
+    if (acc_level == "header") {
+        $('#gl_acc_change_id').css('display', 'none');
         var account_assignment_category = $('#change_acc_type').html().trim()
         var account_assignment_value = $('#change_acc_value').html().trim()
-        update_accounting_popup_data(account_assignment_category,account_assignment_value,gl_acc_value)
+        update_accounting_popup_data(account_assignment_category, account_assignment_value, gl_acc_value)
     }
-    else{
+    else {
         //var gl_acc_id = 'gl_acc_val_'+edit_account_assignment_cat
-        var acc_cat = $('#change_acc_type_'+edit_account_assignment_cat).text().trim();
-        var acc_cat_val = $('#change_acc_value_'+edit_account_assignment_cat).text().trim();
-        var gl_acc_value = $('#gl_acc_val_'+edit_account_assignment_cat).text().trim();
+        var acc_cat = $('#change_acc_type_' + edit_account_assignment_cat).text().trim();
+        var acc_cat_val = $('#change_acc_value_' + edit_account_assignment_cat).text().trim();
+        var gl_acc_value = $('#gl_acc_val_' + edit_account_assignment_cat).text().trim();
         var html_option = ''
         var html_option_default = '';
 
         // based on item acc type,put option in first place
         $('#select_acc_type option[value="' + acc_cat + '"]').remove()
-        html_option_default = '<option value="'+ acc_cat +'" selected>' + acc_cat + '</option>'
+        html_option_default = '<option value="' + acc_cat + '" selected>' + acc_cat + '</option>'
         $("#select_acc_type").prepend(html_option_default);
         $("#select_acc_type")[0].options[0].selected = true;
 
         var acc_assign_value_field_class = document.getElementsByClassName('account_assignment_secondary');
-        for(i=0; i<acc_assign_value_field_class.length; i++){
+        for (i = 0; i < acc_assign_value_field_class.length; i++) {
             acc_assign_value_field_id = acc_assign_value_field_class[i].id;
-            if(acc_cat !=  acc_assign_value_field_id){
+            if (acc_cat != acc_assign_value_field_id) {
                 document.getElementById(acc_assign_value_field_id).value = ''
             } else {
                 document.getElementById(acc_assign_value_field_id).value = acc_cat_val
             }
         }
         $('#select_gl_acc_num').val(gl_acc_value)
-        $('#gl_acc_change_id').css('display','block');
+        $('#gl_acc_change_id').css('display', 'block');
     }
     //$('#change_acc_cat').modal('show');
 }
 
 const check_ui_errors_warnings = (error_messages) => {
-    var warning_messages = ''
-    var error_messages = ''
-     var msg_type ;
-    check_address_number = document.getElementsByClassName('check_address_number')
+    var warning_messages = '';
+    var error_messages = '';
+    var msg_type;
+    check_address_number = document.getElementsByClassName('check_address_number');
     address_number_array = new Array();
-    for(i = 0; i < check_address_number.length; i++) {
-        address_number_array.push(check_address_number[i].innerHTML)
+    for (i = 0; i < check_address_number.length; i++) {
+        address_number_array.push(check_address_number[i].innerHTML);
     }
-//    var msg_address = "JMSG049";
-//    msg_type = message_config_details(msg_address, url_new);
+    //    var msg_address = "JMSG049";
+    //    msg_type = message_config_details(msg_address, url_new);
 
-    is_multiple_delivery_addresses = address_number_array.every( (val, i, arr) => val === arr[0] )
-    if(!is_multiple_delivery_addresses){
-        warning_messages += messageConstants["JMSG026"];
+    is_multiple_delivery_addresses = address_number_array.every((val, i, arr) => val === arr[0])
+    if (!is_multiple_delivery_addresses) {
+
+                    var msg = "JMSG026";
+                    var msg_type ;
+                  msg_type = get_message_desc(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display9 =  msg_type.messages_id_desc[0];
+                  warning_messages += display9;
+
         $('#sc_warning_messages').html(warning_messages)
         $('#sc_warning_messages').show()
     } else $('sc_warning_messages').hide()
-    
+
     // Check for Multiple Acct Assignment Values
     check_account_assignment_type = document.getElementsByClassName('change_account_type')
     change_acc_type_array = new Array();
-    for(i = 0; i < check_account_assignment_type.length; i++) {
+    for (i = 0; i < check_account_assignment_type.length; i++) {
         change_acc_type_array.push(check_account_assignment_type[i].innerHTML)
     }
-    
-    is_multiple_account_assignment = change_acc_type_array.every( (val, i, arr) => val === arr[0] )
-    if(!is_multiple_account_assignment && (acct_assignment_cat == '0') ){
-        error_messages += messageConstants["JMSG047"];
-        $('#sc_error_msg').html(error_messages)
-        $('#sc_error_msg').show()
-    } else if(!is_multiple_account_assignment && (acct_assignment_cat == '1')){
-         warning_messages += messageConstants["JMSG047"];
-        $('#sc_warning_messages').html(warning_messages)
-        $('#sc_warning_messages').show()
-        check_account_assignment_value = document.getElementsByClassName('check_account_assignment_values')
-        change_acc_value_array = new Array();
-        for(i = 0; i < check_account_assignment_value.length; i++) {
-            change_acc_value_array.push(check_account_assignment_value[i].innerHTML)
-        }
-        is_multiple_account_assignment_value = change_acc_value_array.every( (val, i, arr) => val === arr[0] )
 
-        if(!is_multiple_account_assignment_value && (acct_assignment_cat == '0') ){
-                error_messages += messageConstants["JMSG047"];
-        $('#sc_error_msg').html(error_messages)
-        $('#sc_error_msg').show()
-        } else if(!is_multiple_account_assignment_value && (acct_assignment_cat == '1')){
-            warning_messages += messageConstants["JMSG048"];
-            $('#sc_warning_messages').html(warning_messages)
-            $('#sc_warning_messages').show()
-        } else $('sc_warning_messages').hide()
+    is_multiple_account_assignment = change_acc_type_array.every((val, i, arr) => val === arr[0])
+    if (!is_multiple_account_assignment && (acct_assignment_cat == '0')) {
+
+                    var msg = "JMSG047";
+                    var msg_type ;
+                  msg_type = get_message_desc(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display2 = msg_type.messages_id_desc[0];
+                  error_messages += display2;
+
+        $('#sc_error_msg').html(error_messages);
+        $('#sc_error_msg').show();
+    } else if (!is_multiple_account_assignment && (acct_assignment_cat == '1')) {
+
+                    var msg = "JMSG047";
+                    var msg_type ;
+                  msg_type = get_message_desc(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display1 = msg_type.messages_id_desc[0] ;
+                  warning_messages += display1;
+
+        $('#sc_warning_messages').html(warning_messages);
+        $('#sc_warning_messages').show();
+        check_account_assignment_value = document.getElementsByClassName('check_account_assignment_values');
+        change_acc_value_array = new Array();
+        for (i = 0; i < check_account_assignment_value.length; i++) {
+            change_acc_value_array.push(check_account_assignment_value[i].innerHTML);
+        }
+        is_multiple_account_assignment_value = change_acc_value_array.every((val, i, arr) => val === arr[0]);
+
+        if (!is_multiple_account_assignment_value && (acct_assignment_cat == '0')) {
+
+                    var msg = "JMSG047";
+                    var msg_type ;
+                  msg_type = get_message_desc(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display4 = messages_id_desc[0];
+                   error_messages += display4;
+
+            $('#sc_error_msg').html(error_messages);
+            $('#sc_error_msg').show();
+        } else if (!is_multiple_account_assignment_value && (acct_assignment_cat == '1')) {
+
+                    var msg = "JMSG048";
+                    var msg_type ;
+                  msg_type = get_message_desc(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display9 = msg_type.messages_id_desc[0];
+                  warning_messages += display9;
+
+            $('#sc_warning_messages').html(warning_messages);
+            $('#sc_warning_messages').show();
+        } else $('sc_warning_messages').hide();
     }
 
     // Checking for multiple purchasing group
     var msg = "JMSG049";
 
-     msg_type = message_config_details(msg, url_new);
-    if(multiple_purch_group[0] == CONST_MULTIPLE && (purchase_group==0))
-    {
-        error_messages += msg_type.messages_id_desc[0];
-//        $('#sc_error_msg').html(error_messages);
-//        $('#sc_error_msg').show();
-        message_type_check("sc_error_msg", msg_type.messages_id_desc[0])
-    } else $('sc_error_msg').hide()
-    if(multiple_purch_group[0] == CONST_MULTIPLE && (purchase_group==1)){
-         warning_messages += msg_type.messages_id_desc[0];
-          message_type_check("sc_warning_messages", msg_type.messages_id_desc[0])
-//        $('#sc_warning_messages').html(warning_messages)
-//        $('#sc_warning_messages').show()
+    msg_type = message_config_details(msg);
+    if (multiple_purch_group.length != 0) {
+        if (multiple_purch_group[0] == CONST_MULTIPLE && (purchase_group == 0)) {
+            error_messages += msg_type.messages_id_desc[0];
+            //        $('#sc_error_msg').html(error_messages);
+            //        $('#sc_error_msg').show();
+            message_type_check("sc_error_msg", msg_type.messages_id_desc[0])
+        } else $('sc_error_msg').hide()
+        if (multiple_purch_group[0] == CONST_MULTIPLE && (purchase_group == 1)) {
+            warning_messages += msg_type.messages_id_desc[0];
+            message_type_check("sc_warning_messages", msg_type.messages_id_desc[0])
+            //        $('#sc_warning_messages').html(warning_messages)
+            //        $('#sc_warning_messages').show()
+        }
     }
 
-    for(j = 0; j < internal_supplier_error_itemNumber.length; j++ ) {
-        error_messages += 'Error at item ' + internal_supplier_error_itemNumber[j] + ': ' + messageConstants["JMSG003"] + "Internal or Supplier Note" + '<br>'
-    }
+    for (j = 0; j < internal_supplier_error_itemNumber.length; j++) {
+        var url_new = "{% url 'eProc_Basic:get_message_description' %}";
 
-    return error_messages
+                var msg = "JMSG003";
+                var msg_type ;
+              msg_type = get_message_desc(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+
+              var display4 = msg_type.messages_id_desc[0];
+                 error_messages += 'Error at item ' + internal_supplier_error_itemNumber[j] + ': ' + display4 + "Internal or Supplier Note" + '<br>'
+
+    }
+	 return error_messages
+
+
 }
 
 const check_manager_detail = (response) => {
@@ -553,38 +745,58 @@ const check_manager_detail = (response) => {
     var manager_icon = '';
     error_message = '';
     $('#id_dynamic').empty();
-    if (response.manager_detail){
+    if (response.manager_detail) {
         $.each(response.manager_detail, function (i, item) {
-            if (item == 'Auto'){
+            if (item == 'Auto') {
                 double_angular = '<div class="approval-overview__next-icon-container"><i class="fas fa-angle-double-right fa-3x"></i></div>';
                 manager_icon += '' + double_angular + '<div class="approval-overview__user-icon-container ao-workflow-user"><div class="workflow-user-bg"><i class="fas fa-user-check fa-2x icon-workflow-auto" aria-hidden="true"></i></div><button type="button" class="button-workflow-user">' + item.first_name + '</button></div>';
             }
-            else{
+            else {
                 double_angular = '<div class="approval-overview__next-icon-container"><i class="fas fa-angle-double-right fa-3x"></i></div>';
                 manager_icon += '' + double_angular + '<div class="approval-overview__user-icon-container ao-workflow-user"><div class="workflow-user-bg"><i class="fa fa-user-tie fa-3x" aria-hidden="true"> </i></div><button type="button" class="button-workflow-user">' + item.first_name + '</button></div>';
             }
         });
-        }
-    if (response.msg_info){
+    }
+    if (response.msg_info) {
         error_message = response.msg_info + '<br>'
     }
     $('#div_manager_detail').append(manager_icon);
     return error_message
 }
 
+
+
 // Funtion to clear session storage
-function clear_session_data(){
+function clear_session_data() {
     sessionStorage.clear();
     localStorage.clear();
     var req = window.indexedDB.deleteDatabase('store_attachments');
     req.onsuccess = function () {
-        alert(messageConstants["JMSG050"]);
+
+                    var msg = "JMSG050";
+                    var msg_type ;
+                  msg_type = get_message_desc(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display5 = msg_type.messages_id_desc[0] ;
+                    alert(display5);
+
     };
 }
 
 
+
 // Function to get attachment data from session and display based on item
-function get_attachment_IDB(item_number){
+function get_attachment_IDB(item_number) {
     var item_number_check;
     var total_keys_available = []
     attachment_data_array = new Array();
@@ -594,10 +806,10 @@ function get_attachment_IDB(item_number){
         if (cursor) {
             attachment_data_object = {}
             attachment_pk = cursor.value.attachment_data
-            if(attachment_pk.includes('attachment_data'+item_number)){
+            if (attachment_pk.includes('attachment_data' + item_number)) {
                 attachment_data_object.id = attachment_pk
                 item_number_check = cursor.value.attachment_data.substr(-3).split('_')[0]
-                if(item_number_check.includes(item_number_attached)){
+                if (item_number_check.includes(item_number_attached)) {
                     total_keys_available.push(parseInt(cursor.value.attachment_data.substr(-1)))
                 }
                 attachment_data_object.dataUrl = cursor.value.dataUrl
@@ -611,24 +823,25 @@ function get_attachment_IDB(item_number){
             cursor.continue();
         } else {
             max_number_of_file_attached = Math.max.apply(Math, total_keys_available)
-            if(typeof item_number_check != 'undefined'){sessionStorage.setItem('last_added_file_number-'+item_number_check,max_number_of_file_attached)}
-            var attachment_tbody_content = '' ;
-            $('#attachment_tbody_id-'+ item_number).empty()
-            for(i=0;i<attachment_data_array.length;i++){
+            if (typeof item_number_check != 'undefined') { sessionStorage.setItem('last_added_file_number-' + item_number_check, max_number_of_file_attached) }
+            var attachment_tbody_content = '';
+            $('#attachment_tbody_id-' + item_number).empty()
+            for (i = 0; i < attachment_data_array.length; i++) {
                 array_data = attachment_data_array[i]
                 item_file_number = array_data.id.substr(-3)
                 file_name = array_data.file_name
                 attachment_name = array_data.attachment_name
                 attachment_data = array_data.dataUrl
                 type = array_data.type
-                attachment_tbody_content += '<tr><td>' +'<a href="'+ attachment_data +'" download="'+ file_name +'">' + attachment_name +'</a>' + '</td><td>'+ type +'</td><td>' + file_name + '<td class="hg_display"><i style="color: #F0B64D;" id="delete_attachment-'+ item_file_number +'" onclick="delete_attachments(this)" class="fas fa-trash-alt"></td></tr>'
-                document.getElementById('added_attachments_display-'+item_number).style.display='block';
+                attachment_tbody_content += '<tr><td>' + '<a href="' + attachment_data + '" download="' + file_name + '">' + attachment_name + '</a>' + '</td><td>' + type + '</td><td>' + file_name + '<td class="hg_display"><i style="color: #F0B64D;" id="delete_attachment-' + item_file_number + '" onclick="delete_attachments(this)" class="fas fa-trash-alt"></td></tr>'
+                document.getElementById('added_attachments_display-' + item_number).style.display = 'block';
             }
-            $('#attachment_tbody_id-'+item_number).append(attachment_tbody_content)
+            $('#attachment_tbody_id-' + item_number).append(attachment_tbody_content)
             attachment_tbody_content = ''
         }
     };
 }
+
 
 
 // Function to get all the attachments from session and update to an array
@@ -642,9 +855,9 @@ let get_attachment_data = async () => {
     let store = tx.objectStore('attachments')
 
     let allSavedItems = await store.getAll()
-    allSavedItems.onsuccess = function(event) {
+    allSavedItems.onsuccess = function (event) {
         attachment_array = event.target.result
-        for(i=0;i<attachment_array.length;i++){
+        for (i = 0; i < attachment_array.length; i++) {
             data = attachment_array[i]
             indexed_db_keys.push(data.attachment_data)
             final_attachment_array.push(attachment_array[i])
@@ -652,8 +865,9 @@ let get_attachment_data = async () => {
     }
 }
 
+
 /* Function to change goods reciever */
-function select_goods_reciever(){
+function select_goods_reciever() {
     var reciever_value = document.getElementById('search_receiver').value
     var split_name = reciever_value.split(' ');
     var first_name = split_name[0];
@@ -664,40 +878,40 @@ function select_goods_reciever(){
     goods_reciever_email.email_id = email_id;
     var goods_reciever_data = ajax_update_goods_reciever(goods_reciever_email);
 
-    if(goods_reciever_data) {
+    if (goods_reciever_data) {
         var empty_space = " "
         var reciever_name = first_name.concat(empty_space, last_name);
         document.getElementById('receiver').innerHTML = reciever_name
         $('#receiver').addClass(response.user_name)
     }
 
-}  
+}
 
 // Order shopping cart function ajax call
 var shopping_cart_number = '';
-function order_shopping_cart_ajax(sc_data){
+function order_shopping_cart_ajax(sc_data) {
 
     var order_sc_response = ajax_order_shopping_cart(sc_data);
 
-    if(order_sc_response){
+    if (order_sc_response) {
         shopping_cart_number = response.sc_details[0]
         clear_session_data()
         display_third_step("ORDER_SC")
         success_message = 'Shopping cart ' + response.sc_details[1] + ' with number ' + response.sc_details[0] + ' ordered successfully'
         $('#sc_success_messages').html(success_message);
         document.getElementById('sc_success_messages').style.display = 'block';
-        $('#hg_loader').modal('hide');
 
     }
 }
 
 
+
 // Save shopping cart function ajax call
-function save_shopping_cart_ajax(sc_data){
+function save_shopping_cart_ajax(sc_data) {
 
     var save_sc_response = ajax_save_shopping_cart(sc_data);
 
-    if(save_sc_response.sc_details) {
+    if (save_sc_response.sc_details) {
         success_message = 'Shopping cart ' + response.sc_details[1] + ' with number ' + response.sc_details[0] + ' saved successfully';
         $('#sc_success_messages').html(success_message);
         document.getElementById('sc_success_messages').style.display = 'block';
@@ -705,16 +919,35 @@ function save_shopping_cart_ajax(sc_data){
         window.indexedDB.deleteDatabase('store_attachments');
         display_third_step("SAVE_SC");
         $('#hg_loder').modal('hide');
-    } else if(save_sc_response.error_ms) {
+    } else if (save_sc_response.error_ms) {
         sc_detail = document.getElementById("sc_details");
-        if(data.responseJSON.error_ms){
+        if (data.responseJSON.error_ms) {
             $('#sc_error_msg').html(data.responseJSON.error_ms)
         } else {
-            $('#sc_error_msg').html(messageConstants["JMSG018"]);
+
+                    var msg = "JMSG018";
+                    var msg_type ;
+                  msg_type = get_message_desc(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display2 = msg_type.messages_id_desc[0];
+                  $('#sc_error_msg').html(display2);
+
         }
         document.getElementById('sc_error_msg').style.display = 'block';
     }
 }
+
+
     
 
 // Funtion to print PDF of sc in 3rd step

@@ -16,16 +16,19 @@ from eProc_Attributes.Utilities.attributes_generic import OrgAttributeValues
 from eProc_Attributes.Utilities.attributes_specific import CONST_CAT_ID, CONST_FREE_TEXT_ID
 from eProc_Attributes.models.org_attribute_models import OrgAttributesLevel
 from eProc_Basic.Utilities.constants.constants import CONST_SUPPLIER_IMAGE_TYPE, CONST_UNSPSC_IMAGE_TYPE, \
-    CONST_VARIANT_BASE_PRICING, CONST_VARIANT_ADDITIONAL_PRICING, CONST_CATALOG_ITEM_EFORM
+    CONST_VARIANT_BASE_PRICING, CONST_VARIANT_ADDITIONAL_PRICING, CONST_CATALOG_ITEM_VARIANT
 from eProc_Basic.Utilities.functions.dict_check_key import list_value_count
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
+from eProc_Basic.Utilities.functions.encryption_util import encrypt, decrypt
 from eProc_Basic.Utilities.functions.get_db_query import display_cart_counter
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Catalog.Utilities import catalog_global_variables
 from eProc_Configuration.models import ImagesUpload, Catalogs, ProductsDetail, FreeTextForm, EformFieldConfig
 from eProc_Form_Builder.Utilities.form_builder_generic import get_freetext_detail_by_catalog
 from eProc_Manage_Content.Utilities.manage_content_generic import get_catalog_mapping_product_id_list
-from eProc_Price_Calculator.Utilities.price_calculator_generic import  get_product_price_from_eform
+from eProc_Price_Calculator.Utilities.price_calculator_generic import get_product_price_from_eform
+from eProc_Registration.models import UserData
+from eProc_Shopping_Cart.models import ScHeader
 from eProc_User_Settings.Utilities.user_settings_generic import get_supp_desc_count, get_prod_cat_desc_count, \
     get_object_id_list_user
 
@@ -51,10 +54,10 @@ def append_image_into_catalog_list(catalog_list, image_info):
             queue_query = Q()
             queue_query = ~Q(dropdown_pricetype__in=[CONST_VARIANT_BASE_PRICING, CONST_VARIANT_ADDITIONAL_PRICING])
             if not django_query_instance.django_queue_existence_check(EformFieldConfig,
-                                                                      {'client':global_variables.GLOBAL_CLIENT,
-                                                                       'del_ind':False,
-                                                                       'eform_id':catalog_item['eform_id'],
-                                                                       'eform_type':CONST_CATALOG_ITEM_EFORM},
+                                                                      {'client': global_variables.GLOBAL_CLIENT,
+                                                                       'del_ind': False,
+                                                                       'eform_id': catalog_item['eform_id'],
+                                                                       'eform_type': CONST_CATALOG_ITEM_VARIANT},
                                                                       queue_query):
                 catalog_dic['price'] = get_product_price_from_eform(catalog_item['eform_id'])
 
@@ -90,7 +93,7 @@ class CatalogGenericMethods:
 
         get_list = django_query_instance.django_filter_query(Catalogs,
                                                              {'client': global_variables.GLOBAL_CLIENT,
-                                                                     'is_active_flag':True,
+                                                              'is_active_flag': True,
                                                               'del_ind': False},
                                                              None,
                                                              ['catalog_id', 'name'])
@@ -122,7 +125,8 @@ class CatalogGenericMethods:
                 unique_supp_list = set(list(get_cat.values_list('supplier_id', flat=True).distinct()))
         else:
             catalog_supp_list = list(assigned_free_texts_querry_set.values_list('supplier_id', flat=True))
-            unique_supp_list = set(list(assigned_free_texts_querry_set.values_list('supplier_id', flat=True).distinct()))
+            unique_supp_list = set(
+                list(assigned_free_texts_querry_set.values_list('supplier_id', flat=True).distinct()))
         supp_id_count = list_value_count(catalog_supp_list)
         supp_id_desc_count = get_supp_desc_count(supp_id_count)
         total_supp = len(list(dict.fromkeys(unique_supp_list)))
@@ -212,11 +216,10 @@ class CatalogGenericMethods:
                                                                       'del_ind': False})
         filter_values = {
             'client': global_variables.GLOBAL_CLIENT,
-            'del_ind':False
+            'del_ind': False
         }
         assigned_free_texts_querry_set = get_freetext_detail_by_catalog(get_list_of_assigned_catalogs, filter_values)
         # assigned_free_texts_querry_set = CatalogGenericMethods.get_logged_in_user_Free_texts(obj_id_list)
-
 
         """Get the suppliers and its count for catalog products data"""
         get_unique_suppliers, supp_info, total_supp = CatalogGenericMethods.get_supp_list_count(get_cat,
@@ -243,16 +246,17 @@ class CatalogGenericMethods:
         """
         catalog_id_list = OrgAttributeValues.get_user_attr_value_list_by_attr_id(
             obj_id_list, CONST_CAT_ID)
-        catalog_global_variables.USER_ASSIGNED_CATALOGS_LIST = django_query_instance.django_filter_value_list_query(Catalogs,
-                                                                                                                    {'client':global_variables.GLOBAL_CLIENT,
-                                                                                                                     'del_ind':False,
-                                                                                                                     'catalog_id__in':catalog_id_list,
-                                                                                                                     'is_active_flag':True}
-                                                                                                                    ,'catalog_id')
+        catalog_global_variables.USER_ASSIGNED_CATALOGS_LIST = django_query_instance.django_filter_value_list_query(
+            Catalogs,
+            {'client': global_variables.GLOBAL_CLIENT,
+             'del_ind': False,
+             'catalog_id__in': catalog_id_list,
+             'is_active_flag': True}
+            , 'catalog_id')
         assigned_catalogs = django_query_instance.django_filter_only_query(Catalogs, {
             'client': str(global_variables.GLOBAL_CLIENT),
             'catalog_id__in': catalog_global_variables.USER_ASSIGNED_CATALOGS_LIST,
-                                                                     'is_active_flag':True
+            'is_active_flag': True
         })
         return assigned_catalogs
 
@@ -262,10 +266,11 @@ class CatalogGenericMethods:
         Get the list of free texts assigned to the logged in user
         :return: The list of Free texts
         """
-        catalog_global_variables.USER_ASSIGNED_FREE_TEXTS_LIST = django_query_instance.django_filter_value_list_query(OrgAttributesLevel, {
-            'client': str(global_variables.GLOBAL_CLIENT), 'object_id__in': obj_id_list,
-            'attribute_id': CONST_FREE_TEXT_ID, 'del_ind': False
-        }, 'low')
+        catalog_global_variables.USER_ASSIGNED_FREE_TEXTS_LIST = django_query_instance.django_filter_value_list_query(
+            OrgAttributesLevel, {
+                'client': str(global_variables.GLOBAL_CLIENT), 'object_id__in': obj_id_list,
+                'attribute_id': CONST_FREE_TEXT_ID, 'del_ind': False
+            }, 'low')
 
         assigned_free_texts = django_query_instance.django_filter_only_query(FreeTextForm, {
             'client': str(global_variables.GLOBAL_CLIENT),
@@ -305,3 +310,22 @@ def get_prod_cat_info(prod_detail):
         prod_cat_info = get_prod_cat_desc_count(prod_cat_count)
         total_prod_count = len(list(dict.fromkeys(unique_prod_cat_list)))
     return unique_prod_cat_list, prod_cat_info, total_prod_count
+
+
+def update_requester_object_id(document_number):
+    """
+
+    """
+    print(global_variables.GLOBAL_REQUESTER_OBJECT_ID)
+    if django_query_instance.django_existence_check(ScHeader,{'doc_number': document_number,
+                                                                           'client': global_variables.GLOBAL_CLIENT,
+                                                                           'del_ind': False}):
+        document_requester = django_query_instance.django_get_query(ScHeader, {'doc_number': document_number,
+                                                                               'client': global_variables.GLOBAL_CLIENT,
+                                                                               'del_ind': False}).requester
+
+        user_object_id = django_query_instance.django_get_query(UserData, {'username': document_requester,
+                                                                           'client': global_variables.GLOBAL_CLIENT}).object_id_id
+        global_variables.GLOBAL_REQUESTER_OBJECT_ID = user_object_id
+
+    return user_object_id

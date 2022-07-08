@@ -42,18 +42,31 @@ function TriggerOutlook() {
     $("#fav_sc_card_"+fav_cart_num).remove();
 }
 
- // Delete recently viewed items
- function RviDelete(item_prod_id) {
+// Delete recently viewed items
+function RviDelete(item_prod_id) {
+    event.preventDefault();
+   
     let data = {}
     data.item_prod_id = item_prod_id
-    response = ajax_delete_rvi(data)
-
-    $("#rvi_card_"+item_prod_id).remove();
-    if(response.recently_viewed_count == 0){
-        document.getElementById("recently_viewed_product").style.display = "none";
-    }
+    OpenLoaderPopup();
+    $.ajax({
+        type: 'POST',
+        url: ajax_delete_rvi_url,
+        data: data,
+        success: function (response) {
+            $("#rvi_card_"+item_prod_id).remove();
+            if(response.recently_viewed_count == 0){
+                document.getElementById("recently_viewed_product").style.display = "none";
+            }
+            CloseLoaderPopup()
+        }, 
+        error: function(response) {
+            console.log(response);
+        }
+    });
 
 }
+
 var GLOBAL_QUANTITY = 0;
 var GLOBAL_FROM_ID = '';
 var GLOBAL_EFORM_GUID = []
@@ -63,7 +76,7 @@ var GLOBAL_EFORM_GUID = []
 function add_freetext(supplier_id,prd_id, price){
  let catalog_item = {};
     catalog_item["prod_cat"] = prd_id;
-    catalog_item['call_off'] = 'Freetext';
+    catalog_item['call_off'] = '02';
     catalog_item["quantity"] = 1;
     catalog_item["document_number"] = document_number;
     catalog_item["supplier_id"] = supplier_id;
@@ -93,7 +106,7 @@ function add_freetext(supplier_id,prd_id, price){
 function add_catalog_popup(){
     let catalog_item = {};
     catalog_item["prod_id"] = GLOBAL_PRODUCT_ID;
-    catalog_item["call_off"] = 'Catalog'
+    catalog_item["call_off"] = '01'
     catalog_item["quantity"] = document.getElementById("id_quantity").value;
     catalog_item['eform_id'] = ''
     catalog_item['eform_detail'] = ''

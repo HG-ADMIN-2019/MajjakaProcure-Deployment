@@ -1,0 +1,161 @@
+{% extends 'root/base.html' %}
+{% load static %}
+
+{% block title %} Application Monitoring (Admin Tool) {% endblock %}
+
+{% block maincontent %}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+
+{% include 'root/loader.html' %}
+
+<div class="container-fluid">
+    <div class="mep-form_wrapper">
+        <div class="d-flex justify-content-between">
+            <h3>Application Monitoring</h3>
+            <div></div>
+        </div>
+
+        <hr>
+
+        <div class="card card-shadow-1">
+            <div class="card-body">
+                <form method="post" action="{% url 'eProc_Admin_Tool:user_report' %}">
+                    {% csrf_token %}
+                    {{ user_rep_form.non_field_errors }}
+
+                    <!-- The new set up UI changes-->
+                    <div class="row" id="{{ user_rep_form.name }}" title="{{ user_rep_form.label }}">
+
+                        <div class="col-md">
+                            <label>Document Type </label>
+                            {{ application_monitoring_form.doc_type }}
+                        </div>
+                        <div class="col-md">
+                            <label>Company Number</label>
+                            {{ application_monitoring_form.company_code }}
+                        </div>
+                        <div class="col-md">
+                            <label>From Date</label>
+                            {{ application_monitoring_form.from_date }}
+                        </div>
+                        <div class="col-md">
+                            <label>To Date</label>
+                            {{ application_monitoring_form.to_date }}
+                        </div>
+                        <div class="col-md">
+                            <label>Created By</label>
+                            {{ application_monitoring_form.created_by }}
+                        </div>
+                        <div class="col-md">
+                            <label>Requested By</label>
+                            {{ application_monitoring_form.requester }}
+                        </div>
+                        <div class="col-md">
+                            <label>Error Type</label>
+                            {{ application_monitoring_form.doc_types }}
+                        </div>
+
+                        <div class="col-auto my-1">
+                            <button class="btn btn-primary button-search-users" id="hg_user_report_search" type="submit"
+                                    title="Please click to get the search details!"><i class="fas fa-search"></i> search
+                            </button>
+                        </div>
+                    </div>
+                    <br>
+
+                    <div>
+                        <button class="btn btn-link" type="reset" value="Reset">clear filters</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!--    To Display Header Details only if there are any results-->
+        {% if sc_header_list|length >= 1 %}
+        {% if sc_header_list %}
+        <div class="card mt-5">
+            <!--Company code, Company name, Username, Last name, First name,
+                Email address, Ship to address, user lock status -->
+            <table class="table table_sort_filter_export_excel" id="doc_list" >
+                <thead class="thead-light">
+                <tr>
+                    {% if inp_doc_type == 'SC' %}
+                    <th scope="col">SC Number</th>
+                    {% endif %}
+                    {% if inp_doc_type == 'PO' %}
+                    <th scope="col">PO Number</th>
+                    {% endif %}
+                    {% if inp_doc_type == 'SC' %}
+                    <th scope="col">SC Name</th>
+                    {% endif %}
+                    {% if inp_doc_type == 'PO' %}
+                    <th scope="col">PO Name</th>
+                    {% endif %}
+                    <th scope="col">Status</th>
+                    <th scope="col">Total Value</th>
+                    <th scope="col">Currency</th>
+                    <th scope="col">Requested By</th>
+
+                    <th scope="col">Created By</th>
+                    <th scope="col">Created At</th>
+                    <th scope="col">Ordered At</th>
+                    <th scope="col" hidden>Changed At</th>
+                    <th scope="col" hidden>Changed By</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!--   Looping over the cart_items to get individual fields         -->
+                {% for items in sc_header_list %}
+                    {% if items.status != 'SAVED' %}
+                    {% if inp_doc_type == 'SC' %}
+                <tr>
+                    <td scope="row"><a href="{% url 'eProc_Doc_Details:my_order_doc_details' sc_completion_flag 'SC' items.encrypted_header_guid 'display' 'my_order' %}" target="_blank">{{ items.doc_number }}</a></td>
+                    <td scope="row">{{ items.description }}</td>
+                    {% if items.status == 'AWAITING_APPROVAL'%}
+                        <td scope="row"> <span >WAITING FOR APPROVAL</span></td>
+                        {% elif items.status == 'SAVED' %}
+                        <td scope="row"> <span>SAVED</span></td>
+                        {% elif items.status == 'APPROVED' %}
+                        <td scope="row"> <span>APPROVED</span></td>
+                        {% elif items.status == 'PURCHASER_WORKLIST' %}
+                        <td scope="row"> <span>IN PURCHASER's WORK LIST</span></td>
+                        {% elif items.status == 'REJECTED' %}
+                        <td scope="row"> <span>REJECTED</span></td>
+                    {% endif %}
+                    <td scope="row">{{ items.total_value }}</td>
+                    <td scope="row">{{ items.currency }}</td>
+                    <td scope="row">{{ items.requester }}</td>
+                    <td scope="row">{{ items.created_by }}</td>
+                    <td scope="row">{{ items.created_at }}</td>
+                    <td scope="row">{{ items.ordered_at }}</td>
+                    <td scope="row" hidden>{{ items.changed_at }}</td>
+                    <td scope="row" hidden>{{ items.changed_by }}</td>
+                </tr>
+                {% endif %}
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+        {% endif %}
+    </div>
+</div>
+
+<div class="hg_spacer2"> &nbsp; </div>
+
+<script src="{% static 'scripts/user_report.js' %}"></script>
+<script>
+    // Funtion to get username
+
+$(document).ready(function () {
+
+    nav_bar_admin();
+});
+
+</script>
+
+{% if inc_footer %}
+{% include 'root/footer.html' %}
+{% endif %}
+{% endblock %}

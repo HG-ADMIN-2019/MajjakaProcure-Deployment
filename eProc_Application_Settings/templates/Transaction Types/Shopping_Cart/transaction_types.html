@@ -178,9 +178,26 @@
             transaction_type = row.find("td:eq(2) input[type='text']").val();
             is_valid = check_for_special_char(transaction_type)
             if (!is_valid) {
-                document.getElementById("sc_trans_errors").innerHTML = messageConstants["JMSG003"] + "Transaction Type";
+                        
+                            var msg = "JMSG003";
+                            var msg_type ;
+                          msg_type = message_config_details(msg);
+                          $("#error_msg_id").prop("hidden", false)
+
+                          if(msg_type.message_type[0] == "ERROR"){
+                                display_message("error_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "WARNING"){
+                             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "INFORMATION"){
+                             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                          }
+                      var display4 = msg_type.messages_id_desc[0];
+                    document.getElementById("sc_trans_errors").innerHTML = display4+ "Transaction Type";
+
             } else {
-                document.getElementById("sc_trans_errors").innerHTML = ''
+                //document.getElementById("sc_trans_errors").innerHTML = ''
             }
             available_transaction_types.document_type = row.find("td:eq(1) input[type='text']").val();
             available_transaction_types.transaction_type = transaction_type

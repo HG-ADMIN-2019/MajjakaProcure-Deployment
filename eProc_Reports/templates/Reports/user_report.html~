@@ -1,0 +1,150 @@
+{% extends 'root/base.html' %}
+{% load static %}
+
+{% block title %} Users Report (Admin Tool) {% endblock %}
+
+{% block maincontent %}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+
+    {% include 'root/loader.html' %}
+
+    <div class="container-fluid">
+        <div class="mep-form_wrapper">
+            <div class="d-flex justify-content-between">
+                <h3>Users Report</h3>
+                <div></div>
+            </div>
+            
+            <hr>
+
+            <div class="card card-shadow-1">
+                <div class="card-body">
+                    <form method="post" action="{% url 'eProc_Admin_Tool:user_report' %}">
+                        {% csrf_token %}
+                        {{ user_rep_form.non_field_errors }}
+    
+                        <!-- The new set up UI changes-->
+                        <div class="row" id="{{ user_rep_form.name }}" title="{{ user_rep_form.label }}">
+    
+                            <div class="col-md">
+                                <label>User Report Type</label>
+                                {{ user_rep_form.userrep_type }}
+                            </div>
+    
+                            <div class="col-md">
+                                <label>Company Number</label>
+                                {{ user_rep_form.company_code }}
+                            </div>
+    
+                            <div class="col-md">
+                                <label>Username</label>
+                                {{ user_rep_form.username }}
+                            </div>
+    
+                            <div class="col-auto">
+                                <label>User Status</label>
+                                {{ user_rep_form.active }}
+                            </div>
+
+                            <div class="col-auto my-1">
+                                <button class="btn btn-primary button-search-users" id="hg_user_report_search" type="submit"
+                                    title="Please click to get the search details!"><i class="fas fa-search"></i> search
+                                </button>
+                            </div>
+                        </div>
+                        <br>
+                        
+                        <div>
+                            <button class="btn btn-link" type="reset" value="Reset">clear filters</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- <br>
+
+            <div class="search_result_count_card card">
+                {% if t_count > 0 %}
+                <div class="card-body">
+                    <h6 class="card-title">Total number of results found
+                        :{{t_count}}</h6>
+                </div>
+                {% endif %}
+                {% if t_count == 0 %}
+                <div class="card-body">
+                    <h6 class="card-title">No Results Found</h6>
+                </div>
+                {% endif %}
+            </div> -->
+
+            <!--    To Display Header Details only if there are any results-->
+            {% if t_count > 0 %}
+            {% if final_list %}
+            <div class="card mt-5">
+            <!--Company code, Company name, Username, Last name, First name,
+                Email address, Ship to address, user lock status -->
+                <table id="user_report_table" class="table table_sort_filter_export_excel">
+                    <thead class="thead-light">
+                        <tr>
+
+                            <th > username </th>
+                            <th > first name </th>
+                            <th > last name </th>
+                            <th > email </th>
+                            <th > company Number </th>
+                            <th > Company Name </th>
+                            <th> user lock status </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for acc in final_list %}
+                        <tr>
+                            <td scope="row"> {{ acc.2 }}</td>
+                            <td scope="row"> {{acc.4}} </td>
+                            <td scope="row">{{ acc.3 }}</td>
+                            <td scope="row"> {{acc.5}} </td>
+                            <td scope="row">{{ acc.0 }}</td>
+                            <td scope="row">{{ acc.1 }}</td>
+                            <td scope="row">
+                                {% if acc.6 %}
+                                    <input type="checkbox" id="id_locked"  checked disabled>
+                                    {% else %}
+                                    <input type="checkbox" id="id_unlocked" disabled>
+                                    {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+            {% endif %}
+        </div>
+    </div>
+
+<div class="hg_spacer2"> &nbsp; </div>
+
+<script src="{% static 'scripts/user_report.js' %}"></script>
+<script>
+    // Funtion to get username
+
+$(document).ready(function () {
+
+    nav_bar_admin();
+    $('#id_username').attr('type', 'search');
+    // Script to generate sort and filter feature for tables
+    table_sort_filter_export_excel();
+
+    // Loader implementation on search button
+    $('#hg_user_report_search').click(function () {
+        $('#hg_loader').modal('show');
+    });
+    });
+
+</script>
+
+{% if inc_footer %}
+{% include 'root/footer.html' %}
+{% endif %}
+{% endblock %}

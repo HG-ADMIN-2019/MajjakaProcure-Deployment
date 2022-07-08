@@ -8,19 +8,46 @@ Usage:
 Author:
 Soni Vydyula
 """
-from django.core.mail import send_mail
+import smtplib
+import ssl
+import traceback
+from functools import lru_cache
+from django.core.mail import send_mail, EmailMultiAlternatives, DEFAULT_ATTACHMENT_MIME_TYPE
+import imaplib
 import re
+import time
+
+from django.conf import settings
+from django.core.mail import EmailMessage
+from django.core.mail import send_mail
+from django.http import BadHeaderError
+from django.template.loader import render_to_string
+from pyasn1.compat.octets import null
+from pyasn1.type.univ import Null
+from twisted.web.server import Site
+
 from Majjaka_eProcure import settings
+from eProc_Add_Item.views import JsonParser_obj
 from eProc_Basic.Utilities.constants.constants import *
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
-from eProc_Configuration.models import NotifSettings, NotifSettingsDesc
+from eProc_Basic.Utilities.functions.encryption_util import decrypt
+from eProc_Basic.Utilities.functions.guid_generator import guid_generator
+from eProc_Basic.Utilities.global_defination import global_variables
+from eProc_Configuration.models import NotifSettings, EmailContents, AccountAssignmentCategory, UnitOfMeasures
+from eProc_Doc_Search_and_Display.Utilities.search_display_specific import get_sc_header_app
+from eProc_Emails.models import EmailUserMonitoring
+from eProc_Notes_Attachments.models import Notes
 from eProc_Registration.models import UserData
-from eProc_Shopping_Cart.models import ScHeader, ScApproval
+from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_acc_detail
+from eProc_Shopping_Cart.Utilities.shopping_cart_specific import get_manger_detail
+from eProc_Shopping_Cart.models import ScHeader, ScApproval, ScPotentialApproval
+from email.mime.image import MIMEImage
+from django.contrib.staticfiles import finders
 
 django_query_instance = DjangoQueries()
 
 
-def email_notify(request, variant_name, client):
+def email_notify(emaildata, variant_name, client):
     """
     function to send an email for user registration
     :param client:
@@ -28,24 +55,39 @@ def email_notify(request, variant_name, client):
     :param variant_name: takes the variant name for user registration
     :return: returns Boolean value
     """
+    global email_status, error_type
+    username = emaildata['username']
+    email = emaildata['email']
+    guid = guid_generator()
     subject = ''
     body = ''
+    header = ''
+    footer = ''
+    first_name = ''
     # gets the email content based on the variant name
-    emailDetail = django_query_instance.django_filter_only_query(NotifSettingsDesc, {
-        'variant_name': variant_name, 'client': client
-    }).values('notif_subject', 'notif_body')
+    emailDetail = list(django_query_instance.django_filter_only_query(EmailContents, {
+        'object_type': variant_name, 'client': client
+    }).values())
 
     # loop to separate the subject and body from query set
     for subValue in emailDetail:
-        subject = subValue['notif_subject']
+        subject = subValue['subject']
 
     for bodyValue in emailDetail:
-        body = bodyValue['notif_body']
-    #  this function separates the keywords from the content.
+        body = bodyValue['body']
+    for headerValue in emailDetail:
+        header = headerValue['header']
+    for footerValue in emailDetail:
+        footer = footerValue['footer']
 
-    subjectKeys = re.findall('\&.*?\&', subject)
-    bodyKeys = re.findall('\&.*?\&', body)
-    keys = subjectKeys + bodyKeys
+    #  this function separates the keywords from the content.
+    subjectKeys = re.findall('\@.*?\@', subject)
+    bodyKeys = re.findall('\@.*?\@', body)
+    headerKeys = re.findall('\@.*?\@', header)
+    footerKeys = re.findall('\@.*?\@', footer)
+    keys = subjectKeys + bodyKeys + headerKeys + footerKeys
+    # site = Si.filter(id=1)
+    # domain = site[0].domain
 
     # loop to assign the respective values based on the keywords from the email content
     for data in keys:
@@ -53,29 +95,123 @@ def email_notify(request, variant_name, client):
             client = client
             subject = subject.replace(data, client)
             body = body.replace(data, client)
+            header = header.replace(data, client)
+            footer = footer.replace(data, client)
         if data == CONST_USER_NAME:
-            username = request.POST['username']
+            username = username
             subject = subject.replace(data, username)
             body = body.replace(data, username)
+            header = header.replace(data, username)
+            footer = footer.replace(data, username)
         if data == CONST_PASSWORD:
             password = CONST_PWD
             body = body.replace(data, password)
+            header = header.replace(data, password)
+            footer = footer.replace(data, password)
         if data == CONST_FIRST_NAME:
-            first_name = request.POST['first_name']
+            first_name = emaildata['first_name']
             subject = subject.replace(data, first_name)
             body = body.replace(data, first_name)
+            header = header.replace(data, first_name)
+            footer = footer.replace(data, first_name)
         if data == CONST_EMAIL:
-            email = request.POST['email']
+            email = email
             subject = subject.replace(data, email)
             body = body.replace(data, email)
+            header = header.replace(data, email)
+            footer = footer.replace(data, email)
+        if data == CONST_LOGIN_BUTTON:
+            link = ' <div style="padding: 20px; text-align: center;"> ' \
+                   '<a href="www.majjaka.com">' \
+                   '<button class="button-37" role="button" style="  background-color: #13aa52; border: 1px solid #13aa52; border-radius: 4px; box-shadow: rgba(0, 0, 0, .1) 0 2px 4px 0; box-sizing: border-box; color: #fff; cursor: pointer; font-size: 16px; font-weight: 400; outline: none; outline: 0; padding: 10px 25px; text-align: center; transform: translateY(0); user-select: none; -webkit-user-select: none; width: 50%;"> Login </button>' \
+                   '</a> ' \
+                   '</div>'
+            body = body.replace(data, link)
+        if data == CONST_MAJJAKA_LOGO:
+            link = '<img src="cid:logo" width="100px" height="40px"> '
+            body = body.replace(data, link)
+            header = header.replace(data, link)
+            footer = footer.replace(data, link)
     # assigns to and from email
-    to_mail = request.POST['email']
-    From_Email = settings.EMAIL_HOST_USER
-    To_Email = [to_mail]
-    # main function to send an email.
-    send_mail(subject, body, From_Email, To_Email, fail_silently=True)
+    to_mail = email
 
-    return True
+    context = {
+        'username': username,
+        'body': body,
+        'header': header,
+        'footer': footer,
+    }
+    # send_mail(subject, message.as_string(), From_Email, To_Email, fail_silently=True)
+    FROM = "support@hiranya-garbha.com"
+    TO = to_mail
+    html_template = 'user_registration_email.html'
+    html_message = render_to_string(html_template, {'context': context})
+
+    message = EmailMessage(subject, html_message, FROM, [TO])
+    message.content_subtype = 'html'  # this is required because there is no plain text email message
+    # message.attach_file(path="D:/mystuff/table_list.txt", mimetype=DEFAULT_ATTACHMENT_MIME_TYPE)
+    # message.send()
+
+    with open(finders.find('img/HG.jpg'), 'rb') as f:
+        logo_data1 = f.read()
+    logo = MIMEImage(logo_data1)
+    logo.add_header('Content-ID', '<logo>')
+    logo.add_header('Content-ID', '<{}>'.format('img/HG.jpg'))
+    message.mixed_subtype = 'related'
+    # message.attach_alternative(html_message, "text/html")
+    message.attach(logo)
+    email_data = {}
+    for details in emailDetail:
+        email_data['email_contents_guid'] = details['email_contents_guid']
+        email_data['object_type'] = details['object_type']
+        email_data['username'] = username
+        email_data['receiver_email'] = email
+        email_data['sender_email'] = FROM
+        email_data['email_user_monitoring_guid'] = guid
+    # Function to update the status to PROCESSING
+    update_mail_status(email_data)
+
+    email_status, error_type = error_handle(message)
+    # if email_status == 1:
+    #     error_type = 'NA'
+    # elif email_status == 2:
+    #     error_type = 'DATA ERROR'
+
+    save_email_details(email_data, email_status, error_type)
+
+    return email_status
+
+
+@lru_cache()
+def logo_data():
+    with open(finders.find('img/HG.jpg'), 'rb') as f:
+        logo_data1 = f.read()
+    logo = MIMEImage(logo_data1)
+    logo.add_header('Content-ID', '<logo>')
+    logo.add_header("Content-Disposition", "inline", filename="img/HG.jpg")
+    return logo
+
+
+def error_handle(message):
+    status = 2
+    try:
+        status = message.send()
+        error_type = 'NA'
+        return status, error_type
+    except BadHeaderError:
+        status = 2
+        error_type = 'DATA ERROR'
+        return status, error_type
+    except smtplib.SMTPException as e:
+        status = 2
+        error_type = 'DATA ERROR'
+        return status, error_type
+        # save_email_details(email_data, email_status, error_type)
+        # print('There was an error sending an email.' + e)
+    except:
+        status = 2
+        error_type = 'NETWORK'
+        return status, error_type
 
 
 # def send_mail():
@@ -94,67 +230,313 @@ def email_notify(request, variant_name, client):
 #     time.sleep(1)
 
 
-def appr_notify():
+def appr_notify(sc_header_instance, variant_name, client):
     """
     :return: return the Boolean value
     """
-    # gets the email content based on the variant name
-    emailDetail = django_query_instance.django_filter_only_query(NotifSettings,
-                                                                 {'variant_name': 'sc_approval'}).values('notif_subject'
-                                                                                                         , 'notif_body')
+    # gets the email content based on the variant name emailDetail = django_query_instance.django_filter_only_query(
+    # NotifSettings, {'variant_name': 'sc_approval'}).values('notif_subject' , 'notif_body')
+    global user_details, item_qty, item_list, guid_note, approver_array, approver_name, app_name_val
+    subject = ''
+    body = ''
+    header = ''
+    footer = ''
+    approver = ''
+    decision_status = ''
+    cost_object_val = ''
+    co_code = ''
+    total_val = ''
+    currency = ''
+    acc_val = ''
 
-    header_res = django_query_instance.django_filter_only_query(ScHeader,
-                                                                {'doc_number': '9000008372'}).values('guid',
-                                                                                                     'doc_number',
-                                                                                                     'status',
-                                                                                                     'requester',
-                                                                                                     'created_at')
-    for res in header_res:
-        guid = res['guid']
-        requester = res['requester']
+    print("sc_header_instance = ", sc_header_instance)
+    emailDetail = list(django_query_instance.django_filter_only_query(EmailContents, {
+        'object_type': variant_name, 'client': client
+    }).values())
 
-    appr_res = django_query_instance.django_filter_only_query(ScApproval, {'header_guid': guid}).values('app_id')
+    user_res = django_query_instance.django_get_query(UserData, {
+        'username': sc_header_instance['requester_first_name'], 'client': client, 'del_ind': False
+    })
+    header_res = sc_header_instance['po_header_details']
+    appr_res = sc_header_instance['po_approver_details']
+    for header in header_res:
+        val = header['guid']
+    stp_no = sc_header_instance['step_num_inc']
 
-    req_res = django_query_instance.django_filter_only_query(UserData,
-                                                             {'username': requester}).values('first_name', 'email')
+    # po_header_details, po_approver_details, sc_completion, requester_first_name = get_sc_header_app(header_res,
+    #                                                                                                 global_variables.GLOBAL_CLIENT)
+    appr_res1 = django_query_instance.django_filter_query(ScPotentialApproval,
+                                                          {'sc_header_guid': val,
+                                                           'client': client}, ['step_num'], None)
+    # appr_res1 = JsonParser_obj.get_json_from_obj(appr_res1)
+    res_name = {}
+    names = []
+    lc = 1
+    for sc in appr_res:
+        # num = int(sc['step_num'])
+        appr_step = django_query_instance.django_filter_query(ScPotentialApproval,
+                                                              {'sc_header_guid': val,
+                                                               'step_num': lc,
+                                                               'client': client}, None, None)
+        for step in appr_step:
+            first_name = django_query_instance.django_filter_value_list_query(UserData, {
+                'client': client, 'username': step['app_id']
+            }, 'first_name')[0]
+            names.append(first_name)
+            sc['mgr_name'] = names
+        names = []
+        lc = lc + 1
+
+        # print(sc.app_id, sc.step_num)
+    req_name = sc_header_instance['requester_first_name']
+    item_details = sc_header_instance['sc_item_details']
+    acct_details = sc_header_instance['sc_accounting_details']
+    mgr_details = sc_header_instance['manager_details']
+    username_array = []
+    mgr_names = []
+    guid_val = ''
+    for guid in header_res:
+        guid_val = guid['guid']
+        co_code = guid['co_code']
+        total_val = guid['total_value']
+        currency = guid['currency']
+    for acc in acct_details:
+        acc_val = acc['acc_cat']
+        acct_desc = get_acct_description(acc['acc_cat'])
+        cost_object = acc['acc_cat']
+        cost_object_val = get_acc_detail(acc['guid'])
+
+    appr_email = []
+
+    if stp_no == 1:
+        for res, mgr in zip(appr_res, mgr_details):
+            mgr_array = (mgr['app_id_detail']).split(',')
+            # username_array = mgr['app_id_detail']
+            for m in set(mgr_array):
+                first_name = django_query_instance.django_filter_value_list_query(UserData, {
+                    'client': client, 'username': m
+                }, 'first_name')[0]
+                mgr_names.append(first_name)
+                res['mgr_name'] = mgr_names
+            mgr_names = []
+
+        app_name_val = ''
+        for app in appr_res:
+            if app['step_num'] == '1':
+                app_name_val = app['mgr_name']
+
+        for name in app_name_val:
+            appr_email.append(django_query_instance.django_filter_value_list_query(UserData, {
+                'client': client, 'first_name': name
+            }, 'email')[0])
+    elif stp_no > 1:
+        app_name_val = []
+        for app in mgr_details['app_id_detail']:
+            app_name_val.append(app)
+
+        # manager_data, msg = get_manger_detail(client, req_name, acc_val, total_val, co_code, cost_object_val,
+        #                                       currency)
+
+        # mgr_names1 = []
+        # for res, mgr in zip(appr_res, appr_res1):
+        #     # mgr_array = (mgr['app_id_detail']).split(',')
+        #     # username_array = mgr['app_id_detail']
+        #     first_name = django_query_instance.django_filter_value_list_query(UserData, {
+        #         'client': client, 'username': mgr['app_id']
+        #     }, 'first_name')[0]
+        #     mgr_names1.append(first_name)
+        #     res['mgr_name'] = mgr_names1
+        #     mgr_names1 = []
+
+        appr_email = []
+        for name in app_name_val:
+            email_id = django_query_instance.django_filter_value_list_query(UserData, {
+                'client': client, 'username': name
+            }, 'email')[0]
+            appr_email.append(email_id)
 
     # loop to separate the subject and body from query set
     for subValue in emailDetail:
-        subject = subValue['notif_subject']
+        subject = subValue['subject']
 
     for bodyValue in emailDetail:
-        body = bodyValue['notif_body']
+        body = bodyValue['body']
+    for headerValue in emailDetail:
+        header = headerValue['header']
+    for footerValue in emailDetail:
+        footer = footerValue['footer']
+
         #  this function separates the keywords from the content.
-    subjectKeys = re.findall('\&.*?\&', subject)
-    bodyKeys = re.findall('\&.*?\&', body)
+    subjectKeys = re.findall('\@.*?\@', subject)
+    bodyKeys = re.findall('\@.*?\@', body)
+    headerKeys = re.findall('\@.*?\@', header)
+    footerKeys = re.findall('\@.*?\@', footer)
+    keys = subjectKeys + bodyKeys + headerKeys + footerKeys
+
     # loop to assign the respective values based on the keywords from the email content
-    for data in subjectKeys and bodyKeys:
-        if data == CONST_DOC_NUMBER:
-            for keyWord in header_res:
-                doc_number = keyWord['doc_number']
-                subject = subject.replace(data, doc_number)
-                body = body.replace(data, doc_number)
-        if data == CONST_CREATED_AT:
-            for keyWord in header_res:
-                created_at = keyWord['created_at']
-                created = str(created_at)
-                subject = subject.replace(data, created)
-                body = body.replace(data, created)
-        if data == CONST_FIRST_NAME:
-            for keyWord in req_res:
-                first_name = keyWord['first_name']
-                subject = subject.replace(data, first_name)
-                body = body.replace(data, first_name)
-        if data == CONST_APP_ID:
-            for keyWord in appr_res:
-                app_id = keyWord['app_id']
-                subject = subject.replace(data, app_id)
-                body = body.replace(data, app_id)
+    for data in keys:
+        if data == CONST_LOGIN_BUTTON:
+            link = ' <div style="padding: 20px; text-align: center;"> ' \
+                   '<a href="www.majjaka.com">' \
+                   '<button class="button-37" role="button" style="  background-color: #13aa52; border: 1px solid #13aa52; border-radius: 4px; box-shadow: rgba(0, 0, 0, .1) 0 2px 4px 0; box-sizing: border-box; color: #fff; cursor: pointer; font-size: 16px; font-weight: 400; outline: none; outline: 0; padding: 10px 25px; text-align: center; transform: translateY(0); user-select: none; -webkit-user-select: none; width: 50%;"> Login </button>' \
+                   '</a> ' \
+                   '</div>'
+            body = body.replace(data, link)
 
     From_Email = settings.EMAIL_HOST_USER
-    for mails in req_res:
-        to_email = mails['email']
-    To_Email = [to_email]
+    # for mails in req_res:
+    #     to_email = mails['email']
+    item_list = {}
+
+    if decision_status == 'AWAITING_APPROVAL':
+        decision_status = 'AWAITING APPROVAL'
+    approver_note = django_query_instance.django_filter_value_list_query(Notes, {'header_guid': guid_val,
+                                                                                 'note_type': 'Approver Note'},
+                                                                         'note_text')
+    for val in acct_details:
+        acct_desc = get_acct_description(val['acc_cat'])
+        val['acct_desc'] = acct_desc
+
+    for val in item_details:
+        unit_desc = get_unit_description(val['unit'])
+        val['unit_desc'] = unit_desc
+    for keyWord in acct_details:
+        cost_object = keyWord['acc_cat']
+        cost_object_val = get_acc_detail(keyWord['guid'])
+
+    context = {
+        'body': body,
+        'header': header,
+        'footer': footer,
+        'cost_object_val': cost_object_val,
+        'item_list': item_list,
+        'header_res': header_res,
+        'appr_res': appr_res,
+        'appr_res1': appr_res1,
+        'req_name': req_name,
+        'item_details': item_details,
+        'acct_details': acct_details,
+        'manager_details': mgr_details,
+        'approver_note': approver_note,
+        'user_lastname': user_res.last_name,
+        'user_email': user_res.email
+        # 'approver_array': approver_array
+    }
+
+    if approver != 'Multiple':
+        user_details = django_query_instance.django_get_query(UserData, {
+            'username': approver, 'client': client, 'del_ind': False
+        })
+    to_email = appr_email
+
+    FROM = "support@hiranya-garbha.com"
+    TO = to_email
+    html_template = 'sc_approval_html_email.html'
+    html_message = render_to_string(html_template, {'context': context})
+
+    message = EmailMessage(subject, html_message, FROM, TO)
+    message.content_subtype = 'html'  # this is required because there is no plain text email message
+
+    with open(finders.find('img/HG.jpg'), 'rb') as f:
+        logo_data1 = f.read()
+    logo = MIMEImage(logo_data1)
+    logo.add_header('Content-ID', '<logo>')
+    logo.add_header('Content-ID', '<{}>'.format('img/HG.jpg'))
+    message.mixed_subtype = 'related'
+    # message.attach_alternative(html_message, "text/html")
+    message.attach(logo)
     # main function to send an email.
-    send_mail(subject, body, From_Email, To_Email, fail_silently=True)
+    # sc_email_status, sc_email_error_type = error_handle(message)
+    email_data = {}
+    guid = guid_generator()
+    for details in emailDetail:
+        email_data['email_contents_guid'] = details['email_contents_guid']
+        email_data['object_type'] = details['object_type']
+        email_data['username'] = req_name
+        email_data['receiver_email'] = to_email[0]
+        email_data['sender_email'] = FROM
+        email_data['email_user_monitoring_guid'] = guid
+    # Function to update the status to PROCESSING
+    update_mail_status(email_data)
+
+    email_status, error_type = error_handle(message)
+    # if email_status == 1:
+    #     error_type = 'NA'
+    # elif email_status == 2:
+    #     error_type = 'DATA ERROR'
+
+    save_email_details(email_data, email_status, error_type)
+
     return True
+
+
+def send_po_attachment_email(output, subject, content, send_to_list, po_document_number):
+    """
+
+    """
+    mail = EmailMultiAlternatives(subject, content, settings.EMAIL_HOST_USER, send_to_list)
+    file = open(str(output), "r+")
+    attachment = file.read()
+    file.close()
+    mail.attach(str(po_document_number), attachment, "application/pdf")
+    mail.send()
+
+
+def save_email_details(emailDetail, email_status, error_type):
+    if not django_query_instance.django_existence_check(EmailUserMonitoring,
+                                                        {'email_user_monitoring_guid': emailDetail[
+                                                            'email_user_monitoring_guid']
+                                                         }):
+        guid = guid_generator()
+        django_query_instance.django_create_query(EmailUserMonitoring, {
+            'email_user_monitoring_guid': guid,
+            'client': global_variables.GLOBAL_CLIENT,
+            'object_type': emailDetail['object_type'],
+            'username': emailDetail['username'],
+            'sender_email': emailDetail['sender_email'],
+            'receiver_email': emailDetail['receiver_email'],
+            'email_status': email_status,
+            'error_type': error_type,
+            'email_contents_guid': EmailContents.objects.get(email_contents_guid=emailDetail['email_contents_guid'])
+        })
+    else:
+        django_query_instance.django_update_query(EmailUserMonitoring, {'email_user_monitoring_guid': emailDetail[
+            'email_user_monitoring_guid']
+                                                                        }, {
+                                                      'client': global_variables.GLOBAL_CLIENT,
+                                                      'object_type': emailDetail['object_type'],
+                                                      'username': emailDetail['username'],
+                                                      'sender_email': emailDetail['sender_email'],
+                                                      'receiver_email': emailDetail['receiver_email'],
+                                                      'email_status': email_status,
+                                                      'error_type': error_type,
+                                                      'email_contents_guid': EmailContents.objects.get(
+                                                          email_contents_guid=emailDetail['email_contents_guid'])
+                                                  })
+    return True
+
+
+def update_mail_status(emailDetail):
+    django_query_instance.django_update_query(EmailUserMonitoring,
+                                              {'email_user_monitoring_guid': emailDetail['email_user_monitoring_guid']
+                                               }, {'client': global_variables.GLOBAL_CLIENT,
+                                                   'email_status': 3,
+                                                   'email_contents_guid': EmailContents.objects.get(
+                                                       email_contents_guid=emailDetail[
+                                                           'email_contents_guid'])
+                                                   })
+    return True
+
+
+def get_acct_description(acct_cat):
+    acct_cat_desc = django_query_instance.django_get_query(AccountAssignmentCategory, {
+        'account_assign_cat': acct_cat
+    })
+    return acct_cat_desc.description
+
+
+def get_unit_description(unit):
+    unit_desc = django_query_instance.django_get_query(UnitOfMeasures, {
+        'uom_id': unit
+    })
+    return unit_desc.uom_description

@@ -4,7 +4,7 @@ var GLOBAL_ID_IGNORE_LIST = ['select_acc_type','catalog_quantity','CC - Cost Cen
 //on change in input, select, textarea add sc_field_change class
 $(document).ready(function () {
     $('#nav_menu_items').remove();
-    $("body").css("padding-top", "3.5rem");
+    $("body").css("padding-top", "3.7rem");
     $(".majjaka-main-navbar").css("box-shadow", "0px 0px 10px 0px rgba(0, 0, 0, 0.45)");
     $('.text-dark').hide();
     $('.editable_mode').hide();
@@ -66,7 +66,23 @@ window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange ||
     window.msIDBKeyRange
 
 if (!window.indexedDB) {
-    window.alert(messageConstants["JMSG044"])
+      
+        var msg = "JMSG044";
+        var msg_type ;
+      msg_type = message_config_details(msg);
+      $("#error_msg_id").prop("hidden", false)
+
+      if(msg_type.message_type[0] == "ERROR"){
+            display_message("error_msg_id", msg_type.messages_id_desc[0])
+      }
+      else if(msg_type.message_type[0] == "WARNING"){
+         display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+      }
+      else if(msg_type.message_type[0] == "INFORMATION"){
+         display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+      }
+      var display = msg_type.messages_id_desc[0];
+    window.alert(display)
 }
 
 var db;
@@ -286,7 +302,24 @@ async function upload_attachments(id) {
     external_radio_check = document.getElementById("external" + item_number).checked
     type = '';
     if (!(internal_radio_check || external_radio_check)) {
-        $('#attachment_error' + item_number).html(messageConstants["JMSG005"] + "attachment type")
+          
+                            var msg = "JMSG004";
+                            var msg_type ;
+                          msg_type = message_config_details(msg);
+                          $("#error_msg_id").prop("hidden", false)
+
+                          if(msg_type.message_type[0] == "ERROR"){
+                                display_message("error_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "WARNING"){
+                             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "INFORMATION"){
+                             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                          }
+
+                           var display8 = msg_type.messages_id_desc[0];
+        $('#attachment_error' + item_number).html(display8+ "attachment type")
         return false;
     } else {
         $('#attachment_error' + item_number).html('')
@@ -300,15 +333,65 @@ async function upload_attachments(id) {
     attachment_name = document.getElementById('attachment_name' + item_number).value
     is_special_character = check_for_special_char(attachment_name)
     if(!is_special_character){
-        $('#attachment_error'+item_number).html(messageConstants["JMSG005"] + "Attachment name")
+                          
+                            var msg = "JMSG004";
+                            var msg_type ;
+                          msg_type = message_config_details(msg);
+                          $("#error_msg_id").prop("hidden", false)
+
+                          if(msg_type.message_type[0] == "ERROR"){
+                                display_message("error_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "WARNING"){
+                             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "INFORMATION"){
+                             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                          }
+
+                           var display8 = msg_type.messages_id_desc[0];
+        $('#attachment_error'+item_number).html(display8+ "Attachment name")
         return false;
     }
     if (!attachment_value) {
-        $('#attachment_error' + item_number).html(messageConstants["JMSG005"] + "files to upload")
+          
+                            var msg = "JMSG004";
+                            var msg_type ;
+                          msg_type = message_config_details(msg);
+                          $("#error_msg_id").prop("hidden", false)
+
+                          if(msg_type.message_type[0] == "ERROR"){
+                                display_message("error_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "WARNING"){
+                             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "INFORMATION"){
+                             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                          }
+
+                           var display8 = msg_type.messages_id_desc[0];
+        $('#attachment_error' + item_number).html(display8+ "files to upload")
         return false;
     } else $('#attachment_error' + item_number).html('')
     if (!attachment_name) {
-        $('#attachment_error' + item_number).html(messageConstants["JMSG007"] + " attachment name")
+           
+                    var msg = "JMSG007";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                   var display5 = msg_type.messages_id_desc[0];
+        $('#attachment_error' + item_number).html(display5+ " attachment name")
         return false;
     } else $('#attachment_error' + item_number).html('')
 
@@ -334,7 +417,24 @@ async function upload_attachments(id) {
             };
 
             request.onerror = function (event) {
-                alert(messageConstants["JMSG046"]);
+                  
+                    var msg = "JMSG046";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display = msg_type.messages_id_desc[0];
+                  alert(display);
+
             }
         }
     }
@@ -504,7 +604,24 @@ const check_ui_errors_warnings = (error_messages) => {
     }
     is_multiple_delivery_addresses = address_number_array.every( (val, i, arr) => val === arr[0] )
     if(!is_multiple_delivery_addresses){
-        warning_messages += messageConstants["JMSG026"] ;
+                 
+                    var msg = "JMSG026";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display = msg_type.messages_id_desc[0];
+                  warning_messages += display ;
+
         $('#sc_warning_messages').html(warning_messages)
         $('#sc_warning_messages').show()
     } else $('sc_warning_messages').hide()
@@ -516,7 +633,24 @@ const check_ui_errors_warnings = (error_messages) => {
     }
     is_multiple_account_assignment = change_acc_type_array.every( (val, i, arr) => val === arr[0] )
     if(!is_multiple_account_assignment){
-        warning_messages += messageConstants["JMSG047"];
+                  
+                    var msg = "JMSG047";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display = msg_type.messages_id_desc[0];
+                  warning_messages += display;
+
         $('#sc_warning_messages').html(warning_messages)
         $('#sc_warning_messages').show()
     } else $('sc_warning_messages').hide() 
@@ -528,14 +662,48 @@ const check_ui_errors_warnings = (error_messages) => {
         }
         is_multiple_account_assignment_value = change_acc_value_array.every( (val, i, arr) => val === arr[0] )
         if(!is_multiple_account_assignment_value){
-            warning_messages += messageConstants["JMSG048"];
+                
+                    var msg = "JMSG048";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display = msg_type.messages_id_desc[0];
+                 warning_messages += display;
+
             $('#sc_warning_messages').html(warning_messages)
             $('#sc_warning_messages').show()
         } else $('sc_warning_messages').hide() 
     }
 
     for(j = 0; j < internal_supplier_error_itemNumber.length; j++ ) {
-        error_messages += 'Error at item ' + internal_supplier_error_itemNumber[j] + ': ' +  messageConstants["JMSG003"] + "Internal or supplier note" + '<br>'
+           var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+            var msg = "JMSG003";
+            var msg_type ;
+          msg_type = message_config_details(msg);
+          $("#error_msg_id").prop("hidden", false)
+
+          if(msg_type.message_type[0] == "ERROR"){
+                display_message("error_msg_id", msg_type.messages_id_desc[0])
+          }
+          else if(msg_type.message_type[0] == "WARNING"){
+             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+          }
+          else if(msg_type.message_type[0] == "INFORMATION"){
+             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+          }
+          var display4 = msg_type.messages_id_desc[0];
+          error_messages += 'Error at item ' + internal_supplier_error_itemNumber[j] + ': ' +  display4 + "Internal or supplier note" + '<br>'
+
     }
 
     return error_messages
@@ -554,10 +722,10 @@ function get_data_for_check() {
         var supp_id = supplier[i].id;
         var address_info = 'ScAddresses-address_number-' + rendered_addr_guid[i];
         var acc_info = 'ScAccounting-acc_cat-' + rendered_acc_guid[i];
-        var acc_acc_cat = (document.getElementById(acc_info).innerHTML).split(' - ')[0]
+        var acc_acc_cat = (document.getElementById(acc_info).innerHTML).split(' - ')[0].trim();
         data.acc_acc_cat = acc_acc_cat.replace(/\s/g, '')
         var gl_num_info = 'ScAccounting-gl_acc_num-' + rendered_acc_guid[i];
-        var prod_cat_info = 'prod_cat-' + rendered_item_guid[incremented_i - 1];
+        var prod_cat_info = 'prod_cat_id-' + rendered_item_guid[incremented_i - 1];
         supplier_info = document.getElementById(supp_id).textContent;
         var internal_note = document.getElementById("Notes-note_text-"+rendered_int_note[i] + '-I').value
         var supplier_note = document.getElementById("Notes-note_text-" + rendered_supp_note[i] + "-S").value
@@ -599,15 +767,15 @@ function add_item_to_saved_cart(item_type) {
     url_remove_display = url_remove_display.join('/')
     localStorage.setItem('opened_document-' + doc_number_encrypted, url_remove_display)
 
-    if (item_type === 'Catalog') {
+    if (item_type === '01') {
         url = '/shop/products_services/All/' + 'doc_number-' + doc_number_encrypted
         location.href = url
     }
-    if (item_type === 'Free Text') {
+    if (item_type === '02') {
         url = '/shop/products_services/All/' + 'doc_number-' + doc_number_encrypted
         location.href = url
     }
-    if (item_type === 'Requisition') {
+    if (item_type === '03') {
         url = '/add_item/purchase_requisition/' + 'doc_number-' + doc_number_encrypted
         location.href = url
     }

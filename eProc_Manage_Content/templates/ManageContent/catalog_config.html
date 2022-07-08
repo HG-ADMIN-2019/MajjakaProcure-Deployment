@@ -1,7 +1,7 @@
 {% extends 'root/base.html' %}
 {% load static %}
 
-{% block title %} Product and service Config {% endblock %}
+{% block title %} Catalog Configuration {% endblock %}
 {% block maincontent %}
 
 {% include 'root/loader.html' %}
@@ -76,18 +76,6 @@
 }
 .toggle-off.active {color:red;}
 .toggle-on.active {color:blue;}
-
-     #catalog_main_table_id_wrapper .row:nth-child(1) {
-        margin-right: 1px;
-        margin-left: 1px;
-        margin-top: 15px;
-    }
-
-    #catalog_main_table_id_wrapper .row:nth-child(3) {
-        margin-right: 1px;
-        margin-left: 1px;
-        margin-bottom: 15px;
-    } 
 
 </style>
 <div class="container-fluid">
@@ -177,7 +165,7 @@
                     <th >Assign Products</th>
                     <th >Unassign Products</th>
                     <th >View Assigned Products</th>
-                    <th>Action</th>
+                    <th> Activate</th>
                 </tr>
                 </thead>
 
@@ -187,7 +175,7 @@
                     <td>{{catalog_detail.catalog_id}}</td>
                     <td>{{catalog_detail.description}}</td>
                     <td>{{catalog_detail.name}}</td>
-                    <td>{{catalog_detail.product_type}}</td>
+                    <td>{{catalog_detail.prod_type}}</td>
                     <td><span class="badge badge-pill badge-button-purple"> <a id="{{catalog_detail.catalog_guid}}-UPDATE" onclick="update_catalog(this.id);" href="#">Update <i class="fas fa-edit"></i></a>  </span></td>
                     <td><span class="badge badge-pill badge-button-green"><a id="{{catalog_detail.catalog_id}}-ASSIGN" class="dummy_assign_unassign" onclick="get_assign_unassign_products(this)"   href="#">Assign <i class="fas fa-link"></i></a> </span> </td>
                     <td><span class="badge badge-pill badge-button-red"><a id="{{catalog_detail.catalog_id}}-UNASSIGN" class="dummy_assign_unassign" onclick="get_assign_unassign_products(this)" href="#">Unassign <i class="fas fa-unlink"></i></a> </span> </td>
@@ -402,7 +390,7 @@
                 <!-- Modal footer -->
                 <div class="modal-footer">
                     <button class="btn btn-primary dummy_assign_unassign_button" id="assign_button_id" onclick="assign_unassign_products_in_db()"><i class="fas fa-save"></i> assign</button>
-                    <button class="btn btn-primary dummy_assign_unassign_button" id="unassign_button_id" onclick="assign_unassign_products_in_db()"><i class="fas fa-save"></i> un assign</button>
+                    <button class="btn btn-outline-secondary dummy_assign_unassign_button" id="unassign_button_id" onclick="assign_unassign_products_in_db()"><i class="fas fa-save"></i> un assign</button>
                 </div>
             </div>
         </div>
@@ -472,7 +460,7 @@ function save_catalog(){
     get_catalog_data.name = document.getElementById('add_update_catalog_name').value;
     get_catalog_data.product_type = document.getElementById('add_update_catalog_prodtype').value;
     catalog_data.push(get_catalog_data);
-     var catalog_info = {};
+    var catalog_info = {};
        
 
     catalog_info['catalog_data'] = catalog_data
@@ -500,6 +488,7 @@ function save_catalog(){
 
 $('#submit_catalog').click(function(e){
     e.preventDefault();
+    OpenLoaderPopup();
     var catalog_data = {};
     catalog_data.catalog_id = $('#catalog_id').val();
     catalog_data.catalog_desc = $('#catalog_desc').val();
@@ -530,6 +519,7 @@ $('#submit_catalog').click(function(e){
             });
             $('#catalog_tbody').append(catalog_html);
             table_sort_filter('catalog_main_table_id');
+            CloseLoaderPopup();
        },
        error: function(xhr, resp, text) {
        },

@@ -142,7 +142,6 @@
 </div>
 
 {% include 'Doc_Details/add_item_confirmation_popup.html' %}
-{% include 'root/loader.html' %}
 
 <script>
 
@@ -151,9 +150,9 @@
 
     $('#requisition_form').submit(function (e) {
         e.preventDefault();
+        OpenLoaderPopup();
         let item_name = document.getElementById("id_prod_name").value
         let prod_desc = document.getElementById("id_prod_desc").value
-        let prod_id = document.getElementById("id_prod_id").value
         let price = document.getElementById("id_prod_prz").value
         let prod_cat = (document.getElementById("choose_product_cat").value).split(' - ')[0]
         let currency = document.getElementById("id_currency").value
@@ -179,14 +178,13 @@
             url: pr_url,
             data: JSON.stringify({
                 description: item_name,
-                int_product_id: prod_id,
                 price: price,
-                prod_cat: prod_cat,
+                prod_cat_id: prod_cat,
                 currency: currency,
                 unit: unit,
                 lead_time: lead_time,
                 quantity: quantity,
-                call_off: 'PR',
+                call_off: '03',
                 long_desc:prod_desc
             }),
             success: function (response) {
@@ -194,8 +192,10 @@
                 if (!is_edit) {
                     counter = document.getElementById('cart_counter').innerHTML
                     $('#cart_counter').html(parseInt(counter) + 1)
+                    CloseLoaderPopup();
                     item_added_to_cart_success_popup();
                 } else {
+                    CloseLoaderPopup();
                     $('#confirm_add_item').modal('show')
                 }
                 $('#pr_errors').hide()

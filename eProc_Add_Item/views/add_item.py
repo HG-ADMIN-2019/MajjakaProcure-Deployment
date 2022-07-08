@@ -4,7 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import render
-from eProc_Add_Item.Utilities.add_item_specific import update_create_free_text, CartItem, update_create_free_text_item
+from eProc_Add_Item.Utilities.add_item_specific import update_create_free_text, CartItem, update_create_free_text_item, \
+    update_supplier_detail
 from eProc_Basic.Utilities.constants.constants import *
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.encryption_util import decrypt
@@ -148,57 +149,6 @@ def add_free_text(request):
         free_text_fields = []
         eform = False
         data = JsonParser_obj.get_json_from_req(request)
-        # eform_data = data['eform_data']
-        # if data['eform_data']:
-        #     eform = True
-        #
-        # item_name = request.POST.get('item_name')
-        # prod_desc = request.POST.get('prod_desc')
-        # price = request.POST.get('price')
-        # uom = request.POST.get('uom')
-        # del_date = request.POST.get('del_date')
-        # quantity = request.POST.get('quantity')
-        # supp_id = request.POST.get('supp_id')
-        # product_category_id = request.POST.get('product_category_id')
-        #
-        # free_text_fields.append(eform)
-        # free_text_fields.append(guid)
-        # free_text_fields.append(item_name)
-        # free_text_fields.append(prod_desc)
-        # free_text_fields.append(price)
-        # free_text_fields.append(uom)
-        # free_text_fields.append(del_date)
-        # free_text_fields.append(quantity)
-        # free_text_fields.append(supp_id)
-        #
-        # if eform_data == 'eform':
-        #     # Getting eform data
-        #     form_field1 = request.POST.get('form_field1')
-        #     form_field2 = request.POST.get('form_field2')
-        #     form_field3 = request.POST.get('form_field3')
-        #     form_field4 = request.POST.get('form_field4')
-        #     form_field5 = request.POST.get('form_field5')
-        #     form_field6 = request.POST.get('form_field6')
-        #     form_field7 = request.POST.get('form_field7')
-        #     form_field8 = request.POST.get('form_field8')
-        #     form_field9 = request.POST.get('form_field9')
-        #     form_field10 = request.POST.get('form_field10')
-        #     form_id = django_query_instance.django_get_query(FreeTextForm, {'supp_id': supp_id,
-        #                                                                     'prod_cat_id': product_category_id,
-        #                                                                     'client': getClients(request)})
-        #
-        #     # Appending eform data
-        #     free_text_fields.append(form_field1)
-        #     free_text_fields.append(form_field2)
-        #     free_text_fields.append(form_field3)
-        #     free_text_fields.append(form_field4)
-        #     free_text_fields.append(form_field5)
-        #     free_text_fields.append(form_field6)
-        #     free_text_fields.append(form_field7)
-        #     free_text_fields.append(form_field8)
-        #     free_text_fields.append(form_field9)
-        #     free_text_fields.append(form_field10)
-        #     free_text_fields.append(form_id)
         is_saved = update_create_free_text_item(data)
         if not is_saved[0]:
             return JsonResponse({'error': is_saved[1]}, status=400)
@@ -229,7 +179,7 @@ def update_or_create_item(request, document_number=None):
                 if cart_item_instance.limit_order_validation(item_details['call_off']):
                     return JsonResponse({'error': MSG087}, status=400)
 
-        if item_details['call_off'] == CONST_CO04:
+        if item_details['call_off'] == CONST_LIMIT_ORDER_CALLOFF:
             guid, updated_item_details = cart_item_instance.update_item_details_for_limit(item_details)
             cart_item_instance.add_or_update_item(guid, updated_item_details)
 
@@ -241,7 +191,7 @@ def update_or_create_item(request, document_number=None):
 
                 return JsonResponse({'item_value': item_value}, status=201)
 
-        if item_details['call_off'] == CONST_CO03:
+        if item_details['call_off'] == CONST_PR_CALLOFF:
             guid, updated_item_details, item_value = cart_item_instance.update_item_details_for_pr(
                 item_details, document_number, edit_object)
 
@@ -251,15 +201,16 @@ def update_or_create_item(request, document_number=None):
                 if 'guid' in item_details:
                     return JsonResponse({'item_value': item_value, 'total_value': calculate_total_value(username)})
 
-        if item_details['call_off'] == CONST_CO02:
+        if item_details['call_off'] == CONST_FREETEXT_CALLOFF:
             if document_number != 'create':
                 guid, eform_data, updated_item_details, item_value, form_id = cart_item_instance \
                     .update_item_details_for_freetext(item_details, document_number, edit_object)
 
             if document_number == 'create':
                 item_detail = item_details['cart_item_data']
+                # update_supplier_detail(item_detail,item_detail['supplier_id'])
                 cart_item_instance.add_or_update_item(item_detail['guid'], item_detail)
-                item_value = calculate_item_total_value(CONST_CO02, item_detail['quantity'], None, 1,
+                item_value = calculate_item_total_value(CONST_FREETEXT_CALLOFF, item_detail['quantity'], None, 1,
                                                         item_detail['price'], overall_limit=None)
                 # update free text eform data
                 save_eform_data(item_details['eform_data'])
@@ -271,7 +222,7 @@ def update_or_create_item(request, document_number=None):
             # if 'guid' in item_details:
             #     return JsonResponse({'item_value': item_value, 'total_value': calculate_total_value(username)})
 
-        if item_details['call_off'] == CONST_CO01:
+        if item_details['call_off'] == CONST_CATALOG_CALLOFF:
             product_id = item_details['prod_id']
             quantity = item_details['quantity']
             document_number = item_details['document_number']

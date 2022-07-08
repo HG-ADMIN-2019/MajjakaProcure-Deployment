@@ -144,7 +144,22 @@ function check_for_special_char(string) {
         var endDate = document.getElementById("EndDate").value;
 
         if ((Date.parse(endDate) < Date.parse(startDate))) {
-            document.getElementById("limit_form_errors").innerHTML = messageConstants["JMSG030"]
+            //document.getElementById("limit_form_errors").innerHTML = messageConstants["JMSG030"]
+             
+                var msg = "JMSG030";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
             $('#limit_form_errors').show();
             $('#update_pop_up').scrollTop(0);
             document.getElementById("EndDate").value = "";
@@ -180,7 +195,24 @@ function check_for_special_char(string) {
 
         // Start of limit order validations
         if (item_name.length < 3) {
-            document.getElementById("limit_form_errors").innerHTML = messageConstants["JMSG028"]
+               
+                    var msg = "JMSG028";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display = msg_type.messages_id_desc[0];
+                 document.getElementById("limit_form_errors").innerHTML = display;
+
             $('#limit_form_errors').show();
             $('#update_pop_up').scrollTop(0);
             return false
@@ -188,20 +220,72 @@ function check_for_special_char(string) {
 
         is_valid = check_for_special_char(item_name)
         if (!is_valid) {
-            document.getElementById("limit_form_errors").innerHTML = messageConstants["JMSG003"] + "Item Name";
+                  var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+                    var msg = "JMSG003";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                   var display5 = msg_type.messages_id_desc[0];
+                  document.getElementById("limit_form_errors").innerHTML = display5+ "Item Name";
+
+
             $('#limit_form_errors').show();
             $('#update_pop_up').scrollTop(0);
             return false;
         }
 
         if (o_limit == '' || e_limit == '') {
-            document.getElementById("limit_form_errors").innerHTML = messageConstants["JMSG007"] + "overall limit or expected value";
+                 
+                    var msg = "JMSG007";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                   var display5 = msg_type.messages_id_desc[0];
+                  document.getElementById("limit_form_errors").innerHTML = display5+ "overall limit or expected value";
+
             $('#limit_form_errors').show();
             $('#update_pop_up').scrollTop(0);
             return false
         }
         if (parseFloat(e_limit) > parseFloat(o_limit)) {
-            document.getElementById("limit_form_errors").innerHTML = messageConstants["JMSG031"]
+               
+                    var msg = "JMSG031";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                   var display5 = msg_type.messages_id_desc[0];
+                 document.getElementById("limit_form_errors").innerHTML = display5
+
             $('#limit_form_errors').show();
             $('#update_pop_up').scrollTop(0);
             return false
@@ -210,21 +294,72 @@ function check_for_special_char(string) {
 
         if (required == 'Between') {
             if (start_date == '' || end_date == '') {
-                document.getElementById("limit_form_errors").innerHTML = messageConstants["JMSG005"] + "From and To Date";
+                 var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+                    var msg = "JMSG005";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                   var display5 = msg_type.messages_id_desc[0];
+                 document.getElementById("limit_form_errors").innerHTML = display5+ "From and To Date";
+
                 $('#limit_form_errors').show();
                 $('#update_pop_up').scrollTop(0);
                 return false
             }
         } else if (required == 'From') {
             if (start_date == '') {
-                document.getElementById("limit_form_errors").innerHTML = messageConstants["JMSG005"] + "From Date";
+               var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+                    var msg = "JMSG005";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                   var display5 = msg_type.messages_id_desc[0];
+                  document.getElementById("limit_form_errors").innerHTML = display5+ "From Date";
+
                 $('#limit_form_errors').show();
                 $('#update_pop_up').scrollTop(0);
                 return false
             }
         } else {
             if (on_date == '') {
-                document.getElementById("limit_form_errors").innerHTML = messageConstants["JMSG005"] + "On Date"
+               var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+                    var msg = "JMSG005";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                   var display5 = msg_type.messages_id_desc[0];
+                  document.getElementById("limit_form_errors").innerHTML = display5+ "On Date"
+
                 $('#limit_form_errors').show();
                 $('#update_pop_up').scrollTop(0);
                 return false
@@ -244,7 +379,7 @@ function check_for_special_char(string) {
             start_date: start_date,
             end_date: end_date,
             item_del_date: on_date,
-            call_off: 'Limit'
+            call_off: '04'
         };
 
         if (is_first_step != 'True') {

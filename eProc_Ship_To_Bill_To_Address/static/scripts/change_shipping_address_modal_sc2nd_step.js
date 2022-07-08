@@ -30,7 +30,24 @@ function submitAddress() {
     }
 
     if (is_special_character) {
-        $('#edit_address_error_div').html(messageConstants["JMSG003"] + "Address fields" )
+       var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+                var msg = "JMSG003";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+              var display4 = msg_type.messages_id_desc[0];
+              $('#edit_address_error_div').html(display4 + "Address fields" )
+
         $('#edit_address_error_div').show()
         return
     }
@@ -135,6 +152,13 @@ function select_address(address_id) {
             $('#shippingAddress_added-'+incremented_id).prop("hidden", true);
             $('#shipping_address_info').css("display", "none");
         }
+        document.getElementById(address_number_id).innerHTML = address_numb;
+        document.getElementById(street_output_id).innerHTML = street
+        document.getElementById(area_output_id).innerHTML = area
+        document.getElementById(landmark_output_id).innerHTML =landmark
+        document.getElementById(city_output_id).innerHTML = city
+        document.getElementById(pcode_output_id).innerHTML = postalcode
+        document.getElementById(region_output_id).innerHTML = region
     }
     $('#ChngShipAddr').modal('hide');
 }

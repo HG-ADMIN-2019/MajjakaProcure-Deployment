@@ -75,15 +75,64 @@ function cancel_user_basic_info() {
         var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         if (name1_val == '') {
             is_valid = false
-            save_form_errors +=  messageConstants["JMSG007"] + "First Name";
+             var msg = "JMSG007";
+                            var msg_type ;
+                          msg_type = message_config_details(msg);
+                          $("#error_msg_id").prop("hidden", false)
+
+                          if(msg_type.message_type[0] == "ERROR"){
+                                display_message("error_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "WARNING"){
+                             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "INFORMATION"){
+                             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                          }
+
+                           var display5 = msg_type.messages_id_desc[0];
+            save_form_errors +=  display5 + "First Name";
         }
         if (phone_num_val == '') {
             is_valid = false
-            save_form_errors += messageConstants["JMSG007"] + "Phone number";
+             var msg = "JMSG007";
+                            var msg_type ;
+                          msg_type = message_config_details(msg);
+                          $("#error_msg_id").prop("hidden", false)
+
+                          if(msg_type.message_type[0] == "ERROR"){
+                                display_message("error_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "WARNING"){
+                             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "INFORMATION"){
+                             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                          }
+
+                           var display6 = msg_type.messages_id_desc[0];
+            save_form_errors += display6 + "Phone number";
         }
         if ((email_val == '') || !(email_val.match(mailformat))) {
             is_valid = false
-            save_form_errors += messageConstants["JMSG002"] + "Email Id";
+
+                            var msg = "JMSG004";
+                            var msg_type ;
+                          msg_type = message_config_details(msg);
+                          $("#error_msg_id").prop("hidden", false)
+
+                          if(msg_type.message_type[0] == "ERROR"){
+                                display_message("error_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "WARNING"){
+                             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "INFORMATION"){
+                             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                          }
+
+                           var display8 = msg_type.messages_id_desc[0];
+            save_form_errors += display8+ "Email Id";
         }
 
 

@@ -53,6 +53,7 @@ class EformFieldData(models.Model):
     del_ind = models.BooleanField(default=False, null=False)
     client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False)
     item_guid = models.ForeignKey('eProc_Shopping_Cart.ScItem', models.DO_NOTHING, db_column='ITEM_GUID', null=True)
+    po_item_guid = models.ForeignKey('eProc_Purchase_Order.PoItem', models.DO_NOTHING, db_column='PO_ITEM_GUID',blank=True,null=True)
     product_eform_pricing_guid = models.ForeignKey('eProc_Configuration.ProductEformPricing', models.DO_NOTHING, db_column='product_eform_pricing_guid', null=True)
 
     class Meta:

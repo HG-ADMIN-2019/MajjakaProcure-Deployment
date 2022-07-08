@@ -70,6 +70,8 @@ var currency = JSON.parse(document.getElementById('currency_list').textContent)
 var eform_configured = new Array();
 // Function to update freetext item
 function update_free_text_data(){
+    event.preventDefault();
+    OpenLoaderPopup();
     item_name = document.getElementById("product_name").value
     eform     = eform
     prod_desc = document.getElementById("free_text_desc").value
@@ -82,19 +84,59 @@ function update_free_text_data(){
     update_url = "{% url 'eProc_Add_Item:update_or_create_item' 'create' %}"
     // Item name validation
     if(item_name.length < 3){
-        document.getElementById("free_text_form_errors").innerHTML = messageConstants["JMSG028"]
-        $('#free_text_form_errors').show();
+
+          
+                var msg = "JMSG028";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+              var display = msg_type.messages_id_desc[0];
+             document.getElementById("free_text_form_errors").innerHTML = display;
+
+         $('#free_text_form_errors').show();
         $('#update_pop_up').scrollTop(0);
         return false
+
     }
 
     // Item name validation
     is_valid = check_for_special_char(item_name)
     if(!is_valid){
-        document.getElementById("free_text_form_errors").innerHTML = messageConstants["JMSG003"] + "Item Name" ;
-        $('#free_text_form_errors').show();
+               var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+                var msg = "JMSG003";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+
+               var display5 = msg_type.messages_id_desc[0];
+              document.getElementById("free_text_form_errors").innerHTML = display5+ "Item Name" ;
+
+
+              $('#free_text_form_errors').show();
+
         $('#update_pop_up').scrollTop(0);
         return false;
+
     }
     var data = {};
     cart_item_data = {
@@ -108,7 +150,7 @@ function update_free_text_data(){
             quantity    : quantity
         }
      data.cart_item_data = cart_item_data
-     data.call_off = 'Freetext'
+     data.call_off = '02'
     // If the item has eform data then get the field values
     data.eform_data = get_eform_data(eform_configured)
 
@@ -142,9 +184,11 @@ function update_free_text_data(){
                 update_freetext_at_doc_detail(response)
             }
             eform = false;
-            $('#update_pop_up').modal('hide')
+            $('#update_pop_up').modal('hide');
+            CloseLoaderPopup();
         },
         error: function (response) {
+            CloseLoaderPopup();
             $('#free_text_form_errors').html(response.responseJSON.error_message);
             $('#free_text_form_errors').show();
             document.getElementById('free_text_form_errors').scrollIntoView()

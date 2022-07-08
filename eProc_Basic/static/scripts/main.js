@@ -345,6 +345,10 @@ function clear_session_data() {
     localStorage.clear();
 }
 
+function table_sort_filter_basic(class_name) {
+    $('.' + class_name).DataTable();
+}
+
 // Datatables script to generate sort and filter feature for tables
 function table_sort_filter(id_name) {
     $('#' + id_name).DataTable();
@@ -373,7 +377,6 @@ function table_sort_filter_popup_pagination(id_name){
     });
 }
 
-
 // Datatables script to generate sort filter & export to excel feature for tables
 function table_sort_filter_export_excel() {
     $('.table_sort_filter_export_excel').DataTable({
@@ -384,7 +387,11 @@ function table_sort_filter_export_excel() {
                 title: 'Data export',
                 text: 'Export to Excel',
             },
-        ]
+        ],
+        // columnDefs: [ {
+        //     targets: 10,
+        //     visible: false
+        // } ]
     });
 }
 
@@ -555,29 +562,12 @@ function display_sub_menu(id) {
     }
 }
 
-// Function to get message details
-function message_config_details(msgId, url_new){
-var msg_type;
- $.ajax({
-            async: false,
-            type: 'POST',
-            url: url_new,
-          data: JSON.stringify(msgId),
-          dataType: 'json',
-            success: function (response) {
-               data = response;
-            },
-            error: function (error) {
-
-            }
-        })
-       return  data;
-}
 
 // Function to display Description based on element Id
 function message_type_check(id, description){
                 $('#'+id).html(description);
-                $('#'+id).show();
+                $('#'+id).css("display", "block");
+                $('#myModal').modal('show');
 
 }
 // Function to display Description based on element Id for UI messages
@@ -614,4 +604,13 @@ function regex_char_restriction(event){
         event.preventDefault();
         return false;
     }
+}
+
+// Function to display Description based on element Id
+function display_message(id, description){
+                $('#'+id).html(description);
+                $('#'+id).css("display", "block");
+                $('#id_save_confirm_popup').modal('hide');
+                $('#myModal').modal('show');
+
 }

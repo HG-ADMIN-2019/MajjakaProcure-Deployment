@@ -14,7 +14,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import render
 from eProc_Basic.Utilities.constants.constants import CONST_CATALOG, CONST_CATALOG_IMAGE_TYPE, \
-    CONST_USER_RECENTLY_VIEWED, CONST_CO01
+    CONST_USER_RECENTLY_VIEWED, CONST_CATALOG_CALLOFF
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.encryption_util import decrypt, encrypt
 from eProc_Basic.Utilities.functions.guid_generator import guid_generator
@@ -25,7 +25,7 @@ from itertools import chain
 from eProc_Basic.decorators import authorize_view
 from eProc_Catalog.Utilities import catalog_global_variables
 from eProc_Catalog.Utilities.catalog_generic import CatalogGenericMethods, append_image_into_catalog_list, \
-    get_supplier_info, get_prod_cat_info
+    get_supplier_info, get_prod_cat_info, update_requester_object_id
 from eProc_Catalog.Utilities.catalog_specific import *
 from eProc_Configuration.models import UnspscCategoriesCustDesc, ImagesUpload, Catalogs, ProductsDetail, SupplierMaster, \
     CatalogMapping
@@ -58,7 +58,7 @@ def get_catalog_list(req, catalog_id, document_number=None):
         encrypt_doc_num = document_number.split('doc_number-')[1]
     # catalog_id = decrypt(catalog_id)
     if 'hg_cat_search_txt' in req.POST:
-        context = get_search_result_list(req.POST.get('hg_cat_search_txt'),catalog_id,None,None)
+        context = get_search_result_list(req.POST.get('hg_cat_search_txt'), catalog_id, None, None)
         context['encrypt_doc_num'] = encrypt_doc_num
         return render(req, 'Catalog/products_services_catalog.html', context)
     global_variables.GLOBAL_CATALOG_ID = catalog_id
@@ -71,14 +71,7 @@ def get_catalog_list(req, catalog_id, document_number=None):
 
         document_number = decrypt(document_number.split('doc_number-')[1])
         global_variables.GLOBAL_DOCUMENT_NUM = document_number
-        document_requester = django_query_instance.django_get_query(ScHeader, {'doc_number': document_number,
-                                                                               'client': global_variables.GLOBAL_CLIENT,
-                                                                               'del_ind': False}).requester
-
-        user_object_id = django_query_instance.django_get_query(UserData, {'username': document_requester,
-                                                                           'client': global_variables.GLOBAL_CLIENT}).object_id_id
-        global_variables.GLOBAL_REQUESTER_OBJECT_ID = user_object_id
-
+        user_object_id = update_requester_object_id(document_number)
     result = CatalogGenericMethods.get_supplier_prod_cat_info(catalog_id, user_object_id)
     catalog_global_variables.CATALOG_PAGE_REQUIERED_DATA = result
     result['is_slide_menu'] = True
@@ -170,7 +163,7 @@ def get_products_services_on_select(request, selected_catalog, search_type, sear
     update_user_info(request)
     encrypt_doc_num = 'create'
     if 'hg_cat_search_txt' in request.POST:
-        result = get_search_result_list(request.POST.get('hg_cat_search_txt'), selected_catalog,search_type,search_id)
+        result = get_search_result_list(request.POST.get('hg_cat_search_txt'), selected_catalog, search_type, search_id)
     else:
         if not global_variables.GLOBAL_PRODUCT_SEARCH_FLAG:
             result = CatalogSearch.get_selected_prds_data(selected_catalog, search_type, search_id)
@@ -186,9 +179,9 @@ def get_products_services_on_select(request, selected_catalog, search_type, sear
         catalogs_list = update_supplier_uom(catalogs_list)
     result['encrypt_doc_num'] = encrypt_doc_num
     result['document_number'] = document_number
-    result['search_type']= search_type
-    result['search_id']=search_id
-    result['is_slide_menu']= True
+    result['search_type'] = search_type
+    result['search_id'] = search_id
+    result['is_slide_menu'] = True
     result['is_shop_active'] = True
     return render(request, 'Catalog/products_services_catalog.html', result)
 
@@ -197,6 +190,7 @@ def get_all_catalogs(request):
     return django_query_instance.django_filter_only_query(Catalogs, {'client': global_variables.GLOBAL_CLIENT,
                                                                      'del_ind': False,
                                                                      'is_active_flag': True})
+
 
 # Render Product detail pop up
 # def get_product_service_prod_details(request):
@@ -334,18 +328,19 @@ def get_product_service_prod_details(request):
         if django_query_instance.django_existence_check(SupplierMaster,
                                                         {'client': global_variables.GLOBAL_CLIENT,
                                                          'supplier_id': product['supplier_id'],
-                                                         'del_ind':False}):
-            product['supplier_id']= django_query_instance.django_filter_value_list_query(SupplierMaster,
-                                                                                         {'client':global_variables.GLOBAL_CLIENT,
-                                                                                          'supplier_id':product['supplier_id'],
-                                                                                          'del_ind':False},
-                                                                                         'name1')[0]
+                                                         'del_ind': False}):
+            product['supplier_id'] = django_query_instance.django_filter_value_list_query(SupplierMaster,
+                                                                                          {
+                                                                                              'client': global_variables.GLOBAL_CLIENT,
+                                                                                              'supplier_id': product[
+                                                                                                  'supplier_id'],
+                                                                                              'del_ind': False},
+                                                                                          'name1')[0]
         if django_query_instance.django_existence_check(UnitOfMeasures,
-                                                        {'uom_id':product['unit_id']}):
+                                                        {'uom_id': product['unit_id']}):
             product['unit'] = django_query_instance.django_filter_value_list_query(UnitOfMeasures,
-                                                                                   {'uom_id':product['unit_id']},
+                                                                                   {'uom_id': product['unit_id']},
                                                                                    'uom_description')[0]
-
 
     if prod_detail_get_query.eform_id:
         eform_detail, item_price, quantity_dictionary = get_eform_update_price(prod_detail_get_query.eform_id)
@@ -411,8 +406,6 @@ def get_product_service_prod_details(request):
     return JsonResponse(product_details)
 
 
-
-
 def get_prod_details(request):
     """
     :param request:
@@ -431,8 +424,8 @@ def get_prod_details(request):
             'client': global_variables.GLOBAL_CLIENT,
             'product_id': prod_id['prod_id']
         }, None, None)
-        product_detail['prod_detail']  = [update_unspsc(product_detail['prod_detail'][0] , 'prod_cat_id_id')]
-        product_detail['prod_detail']  = [update_country(product_detail['prod_detail'] [0])]
+        product_detail['prod_detail'] = [update_unspsc(product_detail['prod_detail'][0], 'prod_cat_id_id')]
+        product_detail['prod_detail'] = [update_country(product_detail['prod_detail'][0])]
         product_detail['prod_detail'] = [update_supplier_uom(product_detail['prod_detail'][0])]
         product_detail['prod_detail'] = update_product_pricing(product_detail['prod_detail'])
     prod_detail_get_query = django_query_instance.django_get_query(ProductsDetail,
@@ -448,9 +441,10 @@ def get_prod_details(request):
     }, None, None)
 
     if prod_detail_get_query.eform_id:
-        filter_queue = Q(cart_guid= prod_id['prod_item_guid']) | Q(item_guid= prod_id['prod_item_guid'])
+        filter_queue = Q(cart_guid=prod_id['prod_item_guid']) | Q(item_guid=prod_id['prod_item_guid']) | Q(po_item_guid=prod_id['prod_item_guid'])
         product_detail['variant_data'] = django_query_instance.django_queue_query(EformFieldData,
-                                                                                  {'client': global_variables.GLOBAL_CLIENT},
+                                                                                  {
+                                                                                      'client': global_variables.GLOBAL_CLIENT},
                                                                                   filter_queue,
                                                                                   None, None)
 
@@ -495,6 +489,7 @@ def get_prod_details(request):
     print(product_detail)
     return JsonResponse(product_detail, safe=False)
 
+
 def get_image_detail(request):
     """
 
@@ -528,12 +523,14 @@ def auto_completion_search(request):
         selected_catalog = request.GET.get('selected_catalog')
         login_user_catalog_id_list = get_catalog_id_list(selected_catalog)
         product_id_list = get_catalog_mapping_product_id_list(login_user_catalog_id_list)
-        if global_variables.GLOBAL_PROD_SEARCH_TYPE in  ['PRODUCTS','ALL']:
-            prod_detail_search = get_product_based_product_details_search_type(login_user_catalog_id_list, search_value,search_type,search_id)
+        if global_variables.GLOBAL_PROD_SEARCH_TYPE in ['PRODUCTS', 'ALL']:
+            prod_detail_search = get_product_based_product_details_search_type(login_user_catalog_id_list, search_value,
+                                                                               search_type, search_id)
             for product in prod_detail_search:
                 titles.append(product['short_desc'])
             if global_variables.GLOBAL_PROD_SEARCH_TYPE == 'ALL':
-                prod_detail_search = get_freetext_detail(login_user_catalog_id_list, search_value, search_type, search_id)
+                prod_detail_search = get_freetext_detail(login_user_catalog_id_list, search_value, search_type,
+                                                         search_id)
                 for product in prod_detail_search:
                     titles.append(product['description'])
         if global_variables.GLOBAL_PROD_SEARCH_TYPE == 'CATEGORIES':
@@ -556,7 +553,7 @@ def auto_completion_search(request):
             for product in prod_detail_search:
                 titles.append(product.name1)
         if global_variables.GLOBAL_PROD_SEARCH_TYPE == 'FREETEXT':
-            prod_detail_search = get_freetext_detail(login_user_catalog_id_list, search_value,search_type,search_id)
+            prod_detail_search = get_freetext_detail(login_user_catalog_id_list, search_value, search_type, search_id)
             for product in prod_detail_search:
                 titles.append(product['description'])
         # titles = [product.title for product in prod_detail_search]

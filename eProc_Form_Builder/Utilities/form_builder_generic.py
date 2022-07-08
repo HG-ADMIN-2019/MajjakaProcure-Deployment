@@ -7,10 +7,10 @@ from eProc_Basic.Utilities.functions.dict_check_key import checkKey
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries, bulk_create_entry_db
 import re
 from django.db.models import Max
-from eProc_Basic.Utilities.constants.constants import CONST_SF01, CONST_CATALOG_ITEM_EFORM, CONST_VARIANT_BASE_PRICING, \
+from eProc_Basic.Utilities.constants.constants import CONST_SF01, CONST_CATALOG_ITEM_VARIANT, CONST_VARIANT_BASE_PRICING, \
     CONST_DROPDOWN_DATA_TYPE, CONST_VARIANT_WITHOUT_PRICING, CONST_VARIANT_BASE_PRICING, \
     CONST_VARIANT_ADDITIONAL_PRICING, CONST_QUANTITY_BASED_DISCOUNT, CONST_OPERATOR_PLUS, CONST_OPERATOR_PERCENTAGE, \
-    CONST_FT_ITEM_EFORM, CONST_CO02, CONST_CO01
+    CONST_FT_ITEM_EFORM, CONST_FREETEXT_CALLOFF, CONST_CATALOG_CALLOFF
 from eProc_Basic.Utilities.functions.encryption_util import decrypt, encrypt
 from eProc_Basic.Utilities.functions.guid_generator import random_int, guid_generator
 from eProc_Basic.Utilities.functions.insert_remove import remove_dictionary_from_list, get_uncommon_elements_from_lists
@@ -21,7 +21,7 @@ from eProc_Configuration.models import SupplierMaster, FreeTextForm, Currency, U
 from eProc_Form_Builder.models import *
 from eProc_Manage_Content.Utilities.manage_content_specific import get_product_detail_config
 from eProc_Price_Calculator.Utilities.price_calculator_generic import get_product_price_from_eform
-from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_supp_name_by_id
+from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_supp_name_by_id, get_prod_by_id
 from eProc_Shopping_Cart.models import CartItemDetails, ScItem
 
 django_query_instance = DjangoQueries()
@@ -45,7 +45,7 @@ class FormBuilder:
                                                        'freetext_id': data_dictionary['freetext_id']},
                                                       {'freetext_details_guid': guid_generator(),
                                                        'supplier_id': data_dictionary['supplier_id'],
-                                                       'supp_art_no': data_dictionary['supplier_article_number'],
+                                                       'supp_product_id': data_dictionary['supplier_article_number'],
                                                        'lead_time': data_dictionary['lead_time'],
                                                        'currency_id': django_query_instance.django_get_query(Currency,
                                                                                                              {
@@ -63,7 +63,7 @@ class FormBuilder:
                                                        'freetext_details_guid': guid_generator(),
                                                        'freetext_id': data_dictionary['freetext_id'],
                                                        'supplier_id': data_dictionary['supplier_id'],
-                                                       'supp_art_no': data_dictionary['supplier_article_number'],
+                                                       'supp_product_id': data_dictionary['supplier_article_number'],
                                                        'lead_time': data_dictionary['lead_time'],
                                                        'prod_cat_id': data_dictionary['product_category'],
                                                        'description': data_dictionary['supplier_description'],
@@ -192,7 +192,7 @@ class FormBuilder:
                                                                             freetext_form['supplier_id'])
             configured_freetext_form['supplier_firstname'] = first_name
             configured_freetext_form['supplier_lastname'] = last_name
-            configured_freetext_form['supplier_article_number'] = freetext_form['supp_art_no']
+            configured_freetext_form['supplier_article_number'] = freetext_form['supp_product_id']
             configured_freetext_form['supplier_email'] = supplier_info.email
             configured_freetext_form['lead_time'] = freetext_form['lead_time']
             # configured_freetext_form['catalog_id'] = freetext_form['catalog_id']
@@ -201,6 +201,7 @@ class FormBuilder:
             configured_freetext_form['description'] = freetext_form['description']
             configured_freetext_form['freetext_id'] = freetext_form['freetext_id']
             configured_freetext_form['currency_id'] = freetext_form['currency_id_id']
+            configured_freetext_form['prod_cat_desc'] = get_prod_by_id(freetext_form['prod_cat_id'])
             eform_configured = get_freetext_eform_detail(freetext_form['eform_id'])
             if eform_configured:
                 eform_flag = 1
@@ -298,20 +299,20 @@ class FormBuilder:
             # if freetext exists in CartItemDetails or sc item then perform soft delete by setting del_ind = True
             if django_query_instance.django_existence_check(CartItemDetails,
                                                             {'int_product_id': freetext_detail['freetext_id'],
-                                                             'call_off': CONST_CO02,
+                                                             'call_off': CONST_FREETEXT_CALLOFF,
                                                              'client': global_variables.GLOBAL_CLIENT}
                                                             ) or django_query_instance.django_existence_check(ScItem,
                                                                                                               {
-                                                                                                                  'int_prod_id':
+                                                                                                                  'int_product_id':
                                                                                                                       freetext_detail[
                                                                                                                           'freetext_id'],
-                                                                                                                  'call_off': CONST_CO02,
+                                                                                                                  'call_off': CONST_FREETEXT_CALLOFF,
                                                                                                                   'client': global_variables.GLOBAL_CLIENT}
                                                                                                               ):
                 if not django_query_instance.django_existence_check(CatalogMapping,
                                                                     {'item_id': freetext_detail['freetext_id'],
                                                                      'client': global_variables.GLOBAL_CLIENT,
-                                                                     'call_off': CONST_CO02,
+                                                                     'call_off': CONST_FREETEXT_CALLOFF,
                                                                      'del_ind': False}):
                     django_query_instance.django_update_query(FreeTextDetails,
                                                               {'freetext_id': freetext_detail['freetext_id'],
@@ -333,7 +334,7 @@ class FormBuilder:
                 django_query_instance.django_filter_delete_query(CatalogMapping,
                                                                  {'item_id': freetext_detail['freetext_id'],
                                                                   'client': global_variables.GLOBAL_CLIENT,
-                                                                  'call_off': CONST_CO02,
+                                                                  'call_off': CONST_FREETEXT_CALLOFF,
                                                                   'del_ind': False})
         freetext_info = get_ft_data()
         return freetext_info
@@ -354,20 +355,20 @@ class FormBuilder:
             # if product exists in CartItemDetails or sc item then perform soft delete by setting del_ind = True
             if django_query_instance.django_existence_check(CartItemDetails,
                                                             {'int_product_id': product_detail['product_id'],
-                                                             'call_off': CONST_CO01,
+                                                             'call_off': CONST_CATALOG_CALLOFF,
                                                              'client': global_variables.GLOBAL_CLIENT}
                                                             ) or django_query_instance.django_existence_check(ScItem,
                                                                                                               {
-                                                                                                                  'int_prod_id':
+                                                                                                                  'int_product_id':
                                                                                                                       product_detail[
                                                                                                                           'product_id'],
-                                                                                                                  'call_off': CONST_CO01,
+                                                                                                                  'call_off': CONST_CATALOG_CALLOFF,
                                                                                                                   'client': global_variables.GLOBAL_CLIENT}
                                                                                                               ):
                 if not django_query_instance.django_existence_check(CatalogMapping,
                                                                     {'item_id': product_detail['product_id'],
                                                                      'client': global_variables.GLOBAL_CLIENT,
-                                                                     'call_off': CONST_CO01,
+                                                                     'call_off': CONST_CATALOG_CALLOFF,
                                                                      'del_ind': False}):
                     django_query_instance.django_update_query(ProductsDetail,
                                                               {'product_id': product_detail['product_id'],
@@ -376,20 +377,20 @@ class FormBuilder:
                     django_query_instance.django_update_query(EformFieldConfig,
                                                               {'eform_id': product_detail['eform_id'],
                                                                'client': global_variables.GLOBAL_CLIENT,
-                                                               'eform_type': CONST_CATALOG_ITEM_EFORM},
+                                                               'eform_type': CONST_CATALOG_ITEM_VARIANT},
                                                               {'del_ind': True})
             else:
                 django_query_instance.django_filter_delete_query(EformFieldConfig,
                                                                  {'eform_id': product_detail['eform_id'],
                                                                   'client': global_variables.GLOBAL_CLIENT,
-                                                                  'eform_type': CONST_CATALOG_ITEM_EFORM})
+                                                                  'eform_type': CONST_CATALOG_ITEM_VARIANT})
                 django_query_instance.django_filter_delete_query(ProductsDetail,
                                                                  {'product_id': product_detail['product_id'],
                                                                   'client': global_variables.GLOBAL_CLIENT})
                 django_query_instance.django_filter_delete_query(CatalogMapping,
                                                                  {'item_id': product_detail['product_id'],
                                                                   'client': global_variables.GLOBAL_CLIENT,
-                                                                  'call_off': CONST_CO01,
+                                                                  'call_off': CONST_CATALOG_CALLOFF,
                                                                   'del_ind': False})
         product_info = get_product_detail_config()
         return product_info
@@ -434,7 +435,7 @@ def product_eform_into_query_dictionary_list(eform_configured, eform_field_confi
     # loop the ui entered data
     for eform_configured in eform_configured_data:
         eform_guid = guid_generator()
-        converted_model_fields = {'pk': eform_guid, 'eform_type': CONST_CATALOG_ITEM_EFORM, 'price_flag': False}
+        converted_model_fields = {'pk': eform_guid, 'eform_type': CONST_CATALOG_ITEM_VARIANT, 'price_flag': False}
         get_each_field = eform_configured
         if get_each_field['dropdown_pricetype'] == "QUANTITY":
             eform_field_count = "0"
@@ -602,7 +603,7 @@ def get_freetext_detail_by_catalog(catalog_id_list, filter_query):
                                                                                             {
                                                                                                 'client': global_variables.GLOBAL_CLIENT,
                                                                                                 'catalog_id__in': catalog_id_list,
-                                                                                                'call_off': CONST_CO02,
+                                                                                                'call_off': CONST_FREETEXT_CALLOFF,
                                                                                                 'del_ind': False},
                                                                                             'item_id')
     filter_query['freetext_id__in'] = catalog_mapping_freetext_id_list
@@ -635,14 +636,14 @@ def update_ft(freetext_details):
         freetext_detail['ft_transaction'] = False
         if django_query_instance.django_existence_check(CartItemDetails,
                                                         {'int_product_id': freetext_detail['freetext_id'],
-                                                         'call_off': CONST_CO02,
+                                                         'call_off': CONST_FREETEXT_CALLOFF,
                                                          'client': global_variables.GLOBAL_CLIENT}
                                                         ) or django_query_instance.django_existence_check(ScItem,
                                                                                                           {
-                                                                                                              'int_prod_id':
+                                                                                                              'int_product_id':
                                                                                                                   freetext_detail[
                                                                                                                       'freetext_id'],
-                                                                                                              'call_off': CONST_CO02,
+                                                                                                              'call_off': CONST_FREETEXT_CALLOFF,
                                                                                                               'client': global_variables.GLOBAL_CLIENT}
                                                                                                           ):
             if django_query_instance.django_existence_check(CatalogMapping,

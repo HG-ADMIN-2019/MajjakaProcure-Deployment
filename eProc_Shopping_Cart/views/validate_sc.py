@@ -44,8 +44,8 @@ def check_shopping_cart(request):
         company_code = django_query_instance.django_get_query(ScHeader, {'guid': sc_header_guid}).co_code
     else:
         company_code = get_attr_value(client, CONST_CO_CODE, object_id_list, False)
-        sc_check_instance.document_number_check(object_id_list)
-
+        sc_check_instance.document_sc_transaction_check(object_id_list)
+        sc_check_instance.po_transaction_check(object_id_list)
     acc_default = sc_check_data['acc_default']
     acc_default_val = sc_check_data['acc_default_val']
     total_val = sc_check_data['total_val']

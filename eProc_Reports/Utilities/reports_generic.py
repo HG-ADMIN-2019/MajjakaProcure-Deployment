@@ -11,8 +11,8 @@ django_query_instance = DjangoQueries()
 def get_companylist(req):
     client = getClients(req)
 
-    return django_query_instance.django_filter_value_list_query(OrgCompanies, {'client': client, 'del_ind': False},
-                                                                'company_id')
+    return django_query_instance.django_filter_query(OrgCompanies, {'client': client, 'del_ind': False},
+                                                     ['company_id'], ['company_id'])
 
 
 def get_companyDetails(req):
@@ -26,7 +26,9 @@ def get_account_assignlist(req):
 
 
 def get_account_assignvalues(req):
-    return django_query_instance.django_filter_only_query(AccountAssignmentCategory, {'del_ind': False})
+    result = django_query_instance.django_filter_query(AccountAssignmentCategory, {'del_ind': False},
+                                                       None, ['account_assign_cat', 'description'])
+    return result
 
 
 def get_langlist(req):

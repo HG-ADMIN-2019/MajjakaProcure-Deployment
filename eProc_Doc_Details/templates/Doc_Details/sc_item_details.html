@@ -11,19 +11,26 @@
     .sc-completion__supplier-desc {
         color: #007bff;
     }
+
+    .sub-tabs .sub-tab-link.text-size-x-small {
+        font-size: 1em;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
 </style>
 
 <!--  Defining table for displaying cart items in 1st step of shopping cart wizard  -->
-<div>
+<div class="table-responsive-lg">
     <table id="cart_details" class="table" >
         <thead class="thead-light">
         <tr>
             <!-- <th></th> -->
             <th>No</th>
             <th>Item</th>
-            <th>Description</th>
+            <th style="width: 20%;">Description</th>
             <th>Call Off</th>
-            <th>Supplier Article Number</th>
+            <th>Supplier Product Number</th>
             <th>Delivery Date</th>
             <th>Price Unit</th>
             <th>Unit</th>
@@ -42,36 +49,58 @@
             </td> -->
             <td id="{{itm.item_num}}_{{itm.call_off}}">{{itm.item_num}}</td>
             <td>
-                <a href="#" onclick="view_detail('{{ itm.int_prod_id}}','{{itm.guid}}')">
+                <a href="#" onclick="view_detail('{{ itm.int_product_id}}','{{itm.guid}}')">
                     <img class="sc-item-table__item-img" onerror='this.src="/static/images/no-image-cropped.png"' src="/media/{{itm.image_url}}">
                 </a>
             </td>
             <td id="description-{{itm.guid}}">
                 <!--                <span id="desc-{{items.guid}}">{{ itm.description }}</span>-->
-                <div id="desc-{{itm.guid}}">
-                    {% if itm.call_off == 'Catalog'%}
-                    <a href="#" onclick="view_detail('{{ itm.int_prod_id}}','{{itm.guid}}')">{{ itm.description }}</a>
-                    {% else %}
-                    <a  id="sc_item_description-{{itm.guid}}">{{ itm.description }}</a>
-                    {% endif %}
+                <div class="desc-section-top">
+                    <div id="desc-{{itm.guid}}">
+                        {% if itm.call_off == '01'%}
+                        <a href="#" onclick="view_detail('{{ itm.int_product_id}}','{{itm.guid}}')">{{ itm.description }}</a>
+                        {% else %}
+                        <a  id="sc_item_description-{{itm.guid}}">{{ itm.description }}</a>
+                        {% endif %}
+                    </div>
+                    <div class="sc-completion__supplier-desc" id="supp-{{itm.guid}}">by - {% if itm.call_off == '04' %}{{ itm.pref_supplier }}{% else %}{{ itm.supplier_id }}{% endif %}</div>
                 </div>
-                <div class="sc-completion__supplier-desc" id="supp-{{itm.guid}}">by - {% if itm.call_off == 'Limit' %}{{ itm.pref_supplier }}{% else %}{{ itm.supplier_id }}{% endif %}</div>
+
+                <!-- Section to display change action icon, eform View Additional details button -->
+                <div class="desc-section-bottom">
+                    <button type="button" class="hg_button_round notes badge_status_await_approval" id="notes_added-{{itm.guid}}" title="Notes Added" {% if itm.supplier_note_existence_flag or itm.internal_note_existence_flag %} style="display: block;" {% else %} style="display: none;" {% endif %}>
+                        <i class="material-icons-outlined">description</i>
+                    </button>
+
+                    <button type="button" class="hg_button_round attachment badge_status_purch_wrkl" id="attachment_added-{{itm.guid}}" title="Attachments Added" {% if itm.attachment_existence_flag %} style="display: block;" {% else %} style="display: none;" {% endif %}>
+                        <i class="material-icons-outlined">attach_file</i>
+                    </button>
+
+                    <button type="button" class="hg_button_round ship-address badge_status_save" id="shippingAddress_added-{{itm.guid}}" title="Shipping Address Changed" {% if itm.address_change_flag %} style="display: block;" {% else %} style="display: none;" {% endif %}>
+                        <i class="material-icons-outlined">local_shipping</i>
+                    </button>
+
+                    <button type="button" class="hg_button_round acct-det badge_status_approved" id="accounting_added-{{itm.guid}}" title="Cost objects changed" {% if itm.accounting_change_flag %} style="display: block;" {% else %} style="display: none;" {% endif %}>
+                        <i class="material-icons-outlined">account_balance_wallet</i>
+                    </button>
+
+                </div>
             </td>
             <td id="call_off-{{itm.guid}}">{{itm.call_off}}</td>
-            <td id="prod_cat-{{itm.guid}}" hidden>{{itm.prod_cat}}</td>
-            <td id="supp_prod_num-{{itm.guid}}">{{itm.supp_prod_num}}</td>
+            <td id="prod_cat_id-{{itm.guid}}" hidden>{{itm.prod_cat_id}}</td>
+            <td id="supp_prod_num-{{itm.guid}}">{{itm.supp_product_id}}</td>
             <td id="item_del_date-{{itm.guid}}">{{itm.item_del_date|date:'Y-m-d'}}</td>
             <td id="price_unit-{{itm.guid}}">{{itm.price_unit}}</td>
             <td id="unit-{{itm.guid}}">{{itm.unit_desc}}</td>
             <td><span id="price-{{itm.guid}}"
-                      class="hg_total_value">{% if itm.call_off == 'Limit' %}-{% else %}{{ itm.price }}</span>&nbsp;&nbsp;&nbsp;/&nbsp{% if itm.call_off == 'Freetext' %}<span
+                      class="hg_total_value">{% if itm.call_off == '04' %}-{% else %}{{ itm.price }}</span>&nbsp;&nbsp;&nbsp;/&nbsp{% if itm.call_off == '02' %}<span
                     id="currency">{{request.user.currency_id}}</span>{% else %}<span
                     id="currency-{{items.guid}}">{{itm.currency}}</span>{% endif %}{% endif %}</td>
-            <td id="value-{{itm.guid}}">{% if itm.call_off == 'Limit' %}<span id="overall_limit-{{itm.guid}}"
+            <td id="value-{{itm.guid}}">{% if itm.call_off == '04' %}<span id="overall_limit-{{itm.guid}}"
                                                                               class="hg_item_total_value">{{itm.overall_limit}}</span>{% else %} <span
                     id="ScIem-value-{{itm.guid}}"
                     class="hg_item_total_value update_converted_value">{{itm.value}}</span>&nbsp;{% endif %}/&nbsp;{{request.user.currency_id}}</td>
-            {% if itm.call_off == "Catalog"%}
+            {% if itm.call_off == "01"%}
             <td id="catalog_qty-{{itm.guid}}">{{itm.catalog_qty}}</td>
             {% else %}
             <td id="quantity-{{itm.guid}}">{{itm.quantity}}</td>
@@ -89,9 +118,37 @@
         {% endfor %}
     </table>
 
-    <div id="total_value" class="d-flex justify-content-end item-table-cart-value-section mr-2">
-        <p>Total for <span id="total_items"></span> items: <span id="ScHeader-total_value-{{sc_header_data}}" class="item-table-total-cart-value">{{total_val}}</span> <span>{{requester_currency}}</span> </p>
+    <!-- Cart value section -->
+<div class="row no-gutters justify-content-end">
+    <div class="col-lg-4">
+        <div class="card cart-value-card">
+            <div class="card-body">
+                <div class="cart-value-section">
+                    <span class="cart-value-label">Total Value (Net)</span>
+                    <span class="cart-value-desc" >{{actual_price}} {{request.user.currency_id}}</span>
+                </div>
+                <div class="cart-value-section">
+                    <span class="cart-value-label">Total Discount</span>
+                    <span class="cart-value-desc" >- {{discount_value}} {{request.user.currency_id}}</span>
+                </div>
+                <div class="cart-value-section">
+                    <span class="cart-value-label">Total Tax</span>
+                    <span class="cart-value-desc" > + {{tax_value}} {{request.user.currency_id}}</span>
+                </div>
+
+                <hr>
+                <div id="total_value" class="cart-value-section">
+                    <span class="cart-value-label">Total Value (Gross) For <span id="total_items"></span> items:</span>
+                    <span  class="cart-value-desc" ><span id="ScHeader-total_value-{{sc_header_data.guid}}">{{total_val}}</span> <span id="total_cart_currency"> {{requester_currency}}</span></span>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
+    
+<!--    <div id="total_value" class="d-flex justify-content-end item-table-cart-value-section mr-2">-->
+<!--        <p>Total for <span id="total_items"></span> items: <span id="ScHeader-total_value-{{sc_header_data}}" class="item-table-total-cart-value">{{total_val}}</span> <span>{{requester_currency}}</span> </p>-->
+<!--    </div>-->
 </div>
 
 <!-- pop up to delete an item from your current shopping cart. -->
@@ -106,12 +163,11 @@
 
             <!-- Modal body -->
             <div class="modal-body">
-                <p>Please Confirm. </p>
                 <p>You are about to delete an item from your current shopping cart. Are you sure?</p>
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                 <button type="button" class="btn btn-primary" name="delete" onclick="delete_cart_item()"><i class="fas fa-trash-alt"></i> delete</button>
             </div>
         </div>
@@ -196,7 +252,7 @@
                                     <label class="col-4 col-form-label">Product Category</label>
                                     <div class="col-8">
                                         <input type="text" class="form-control call_off-{{itm.call_off}}-prod_cat" name="{{itm.prod_cat}}" value="{{itm.prod_cat}}"
-                                            id="ScItem-prod_cat-{{itm.guid}}" disabled>
+                                            id="ScItem-prod_cat_id-{{itm.guid}}" disabled>
                                     </div>
                                 </div>
 
@@ -233,7 +289,7 @@
                                 <div class="mt-3">
                                     <h4>Further Properties</h4>
                                     <div class="form-group row">
-                                        <label class="col-4 col-form-label">Supplier Article Number</label>
+                                        <label class="col-4 col-form-label">Supplier Product Number</label>
                                         <div class="col-8">
                                             <input type="text" class="form-control" name="{{itm.supp_prod_num}}"
                                                 value="{{itm.supp_prod_num}}" id="ScItem-supp_prod_num-{{itm.guid}}" disabled>
@@ -307,8 +363,8 @@
                                     </div>
                                 </div>
 
-                                {% if itm.call_off == "Catalog"%}
-                                <span id="product_id-{{forloop.counter}}-{{itm.int_prod_id}}-{{itm.lead_time}}-{{itm.price}}" hidden></span>
+                                {% if itm.call_off == "01"%}
+                                <span id="product_id-{{forloop.counter}}-{{itm.int_product_id}}-{{itm.lead_time}}-{{itm.price}}" hidden></span>
 
                                 <div class="form-group row">
                                     <label class="col-4 col-form-label">Quantity/Unit</label>
@@ -348,12 +404,12 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="col-4 col-form-label">Goods Receiver </label>
+                                    <label class="col-4 col-form-label">Goods/Services Recipient </label>
                                     <div class="col-8">
                                         <input type="text" class="form-control" name="{{itm.goods_recep}}" value="{{itm.goods_recep}}" id="ScItem-goods_recep-{{itm.guid}}" disabled>
                                     </div>
                                 </div>
-                                {% if itm.call_off == 'PR' %}
+                                {% if itm.call_off == '03' %}
                                 <div class="form-group row">
                                     <label class="col-4 col-form-label">Lead Time </label>
                                     <div class="col-8">
@@ -370,7 +426,7 @@
                                 <div class="form-group row">
                                     <label class="col-4 col-form-label">Goods Marking</label>
                                     <div class="col-8">
-                                        <input type="text" class="form-control" name="{{itm.good_marking}}" value="{{itm.good_marking}}" id="ScItem-good_marking-{{itm.guid}}" disabled>
+                                        <input type="text" class="form-control" name="{{itm.goods_marking}}" value="{{itm.goods_marking}}" id="ScItem-goods_marking-{{itm.guid}}" disabled>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -494,11 +550,7 @@
                                 <div class="form-group row">
                                     <label class="col-4 col-form-label">General Ledger Account </label>
                                     <div class="col-8">
-                                        {% for gl_acc_append in gl_acc_value_append %}
-                                        {% if gl_acc_append.account_assign_value == sc_acc.gl_acc_num %}
-                                        <input type="text" class="form-control" value="{{gl_acc_append.append_val}}" id="ScAccounting-gl_acc_num-{{ sc_acc.guid }}" class="hg_modal_select_field" disabled>
-                                        {% endif %}
-                                        {% endfor %}
+                                        <input type="text" class="form-control" value="{{sc_acc.gl_acc_num_desc}}" id="ScAccounting-gl_acc_num-{{ sc_acc.guid }}" class="hg_modal_select_field" disabled>
                                     </div>
                                 </div>
         
@@ -520,91 +572,94 @@
             </div>
             <div id="item_notes_and_attachments" data-tab-content >
                 <div class="m-4">
-                    <div class="card">
-                        <div class="card-header item-table-action__header">
-                            <span>Notes</span>
+                    <div class="row">
+                        <div class="col">
+                            <h4>Notes</h4>
+                            <div class="card">
+                                <div>
+                                    <div class="action-item-notes__buttons-section">
+                                        <button class="note_type add-note-internal" onclick="sup_int_note_tab(event, 'id_int_tab_content')">Internal Note</button>
+                                        <button class="note_type add-note-external" onclick="sup_int_note_tab(event, 'id_supp_tab_content')">Supplier Note</button>
+                                    </div>
+                
+                                    <div id="id_supp_tab_content" class="hg_sup_int_note">
+                                        {% for supp_note in supp_notes %}
+                                        <div id="intbtn{{ forloop.counter }}" class="hg_tabContent hg_supp_note_content action-item-notes__textarea">
+                
+                                            <textarea class="add_notes_textarea" id="Notes-note_text-{{ supp_note.guid }}-S" rows="4" disabled>{{supp_note.note_text}}</textarea>
+                
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                
+                                    <div id="id_int_tab_content" class="hg_sup_int_note" style="display:none">
+                                        {% for int_note in int_notes %}
+                                        <div id="supbtn{{ forloop.counter }}" class="hg_tabContent hg_int_note_content action-item-notes__textarea" style="display:none;">
+                
+                                            <textarea class="add_notes_textarea" id="Notes-note_text-{{int_note.guid}}-I" rows="4" disabled>{{int_note.note_text}}</textarea>
+                
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-        
-                        <div>
-                            <div class="action-item-notes__buttons-section">
-                                <button class="note_type add-note-internal" onclick="sup_int_note_tab(event, 'id_int_tab_content')">Internal Note</button>
-                                <button class="note_type add-note-external" onclick="sup_int_note_tab(event, 'id_supp_tab_content')">Supplier Note</button>
-                            </div>
-        
-                            <div id="id_supp_tab_content" class="hg_sup_int_note">
-                                {% for supp_note in supp_notes %}
-                                <div id="intbtn{{ forloop.counter }}" class="hg_tabContent hg_supp_note_content action-item-notes__textarea">
-        
-                                    <textarea class="add_notes_textarea" id="Notes-note_text-{{ supp_note.guid }}-S" rows="4" disabled>{{supp_note.note_text}}</textarea>
-        
+
+                        <div class="col">
+                            <h4>Attachments</h4>
+                            <div class="card">
+                                <div class="card-body">
+                                    {% if sc_attachements %}
+                                    {% for items in itm_det %}
+                
+                                    <div id="attachments-{{ forloop.counter }}" class="hg_tabContent hg_attachment_content action-item-notes__textarea">
+                
+                                        {% for attachments in  sc_attachments %}
+                
+                                        {% if attachments.item_guid == items.guid %}
+                                        <table class="table mt-2">
+                                            <thead class="thead-light">
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>File</th>
+                                                <th class="hg_is_hidden" hidden>Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody class="hg_attachment_table_tbody item_level_attachment-{{forloop.counter}}" id="attachment_tbody_id-{{forloop.counter}}">
+                
+                                            <tr id="available_attachments-{{attachments.attachment_guid}}">
+                                                <td><a href="{% url 'eProc_Notes_Attachments:attach_download' %}?path={{attachments.file_path}}">{{attachments.attachment_name}}</a>
+                                                </td>
+                                                <td>{% if attachments.type == 'I' %} Internal Use{% else %} External Use{% endif %}</td>
+                                                <td>{{attachments.file_name}}</td>
+                                                <td class="hg_is_hidden" hidden>
+                                                    <i id="{{forloop.parentloop.counter}}-{{attachments.attachment_guid}}-{{attachments.item_guid}}"
+                                                       onclick="delete_attachments(this)" class="fas fa-trash-alt attachment-icon"></i>
+                                                </td>
+                                            </tr>
+                
+                                            </tbody>
+                                        </table>
+                
+                                        {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    {% endfor %}
+                                    {% else %}
+                                    <div class="hg_class_attachement">
+                                        <p class="p-3 bg-light text-dark">No attachments available</p>
+                                    </div>
+                                    {% endif%}
                                 </div>
-                                {% endfor %}
-                            </div>
-        
-                            <div id="id_int_tab_content" class="hg_sup_int_note" style="display:none">
-                                {% for int_note in int_notes %}
-                                <div id="supbtn{{ forloop.counter }}" class="hg_tabContent hg_int_note_content action-item-notes__textarea" style="display:none;">
-        
-                                    <textarea class="add_notes_textarea" id="Notes-note_text-{{int_note.guid}}-I" rows="4" disabled>{{int_note.note_text}}</textarea>
-        
-                                </div>
-                                {% endfor %}
                             </div>
                         </div>
                     </div>
+                    
         
                     <br>
         
-                    <div class="card">
-                        <div class="card-header item-table-action__header">
-                            <span>Attachments</span>
-                        </div>
-        
-                        <div class="card-body">
-                            {% if sc_attachements %}
-                            {% for items in itm_det %}
-        
-                            <div id="attachments-{{ forloop.counter }}" class="hg_tabContent hg_attachment_content action-item-notes__textarea">
-        
-                                {% for attachments in  sc_attachments %}
-        
-                                {% if attachments.item_guid == items.guid %}
-                                <table>
-                                    <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Type</th>
-                                        <th>File</th>
-                                        <th class="hg_is_hidden" hidden>Action</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody class="hg_attachment_table_tbody item_level_attachment-{{forloop.counter}}" id="attachment_tbody_id-{{forloop.counter}}">
-        
-                                    <tr id="available_attachments-{{attachments.attachment_guid}}">
-                                        <td><a href="{% url 'eProc_Notes_Attachments:attach_download' %}?path={{attachments.file_path}}">{{attachments.attachment_name}}</a>
-                                        </td>
-                                        <td>{% if attachments.type == 'I' %} Internal Use{% else %} External Use{% endif %}</td>
-                                        <td>{{attachments.file_name}}</td>
-                                        <td class="hg_is_hidden" hidden>
-                                            <i id="{{forloop.parentloop.counter}}-{{attachments.attachment_guid}}-{{attachments.item_guid}}"
-                                               onclick="delete_attachments(this)" class="fas fa-trash-alt attachment-icon"></i>
-                                        </td>
-                                    </tr>
-        
-                                    </tbody>
-                                </table>
-        
-                                {% endif %}
-                                {% endfor %}
-                            </div>
-                            {% endfor %}
-                            {% else %}
-                            <div class="hg_class_attachement">
-                                <p class="p-3 bg-light text-dark">No attachments available</p>
-                            </div>
-                            {% endif%}
-                        </div>
-                    </div>
+                    
                 </div>
             </div>
             <div id="item_approval_process_overview" data-tab-content >
@@ -620,8 +675,8 @@
                     {% for item_detail in itm_det %}
                     <div class="hg_supplier_class">
                         <div class="row">
-                            <div class="col-6 m-3">
-                                {% if item_detail.call_off == "Catalog" %}
+                            <div class="col-6">
+                                {% if item_detail.call_off == "01" %}
                                 <h4 class="mt-3">Supplier Details</h4>
                                 <div class="form-group row">
                                     <label class="col-4 col-form-label">Supplier ID</label>
@@ -633,7 +688,7 @@
                                     </div>
                                     {% endif %}
                                     {% endfor %}
-        
+
                                     {% if not item_detail.supplier_id %}
                                     <div class="col-8">
                                         <input type="text" class="supplier_input form-control" name="{{item_detail.supplier_id}}"
@@ -641,7 +696,7 @@
                                     </div>
                                     {% endif %}
                                 </div>
-                                {% elif item_detail.call_off == "PR" %}
+                                {% elif item_detail.call_off == "03" %}
                                 <h4 class="mt-3">Supplier Details</h4>
                                 <div class="form-group row">
                                     <label class="col-4 col-form-label">Supplier ID</label>
@@ -657,7 +712,7 @@
                                         <input type="text" class="form-control check_supplier" value="{{item_detail.pref_supplier}}" id="ScItem-pref_supplier-{{item_detail.guid}}-drop" class="hg_modal_select_field"  onclick="open_change_supplier_modal(this.id);" disabled>
                                     </div>
                                 </div>
-                                {% elif item_detail.call_off == 'Freetext' %}
+                                {% elif item_detail.call_off == '02' %}
                                 <h4 class="mt-3">Supplier Details</h4>
                                 <div class="form-group row">
                                     <label class="col-4 col-form-label">Preferred supplier</label>
@@ -668,10 +723,10 @@
                                                value="{{supplier.supp_desc}}" id="ScItem-supplier_id-{{item_detail.guid}}" disabled>
                                         {% endif %}
                                         {% endfor %}
-                                        {% if not item_detail.pref_supplier %}
-                                        <input type="text" class="supplier_input form-control" name="{{item_detail.supplier_id}}"
-                                               value="{{item_detail.supplier_id}}" disabled></span>
-                                        {% endif %}
+<!--                                        {% if not item_detail.pref_supplier %}-->
+<!--                                        <input type="text" class="supplier_input form-control" name="{{item_detail.supplier_id}}"-->
+<!--                                               value="{{item_detail.supplier_id}}" disabled></span>-->
+<!--                                        {% endif %}-->
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -822,7 +877,7 @@
                             <span class="h5">Additional eForm Data</span>
                         </div>
                         <div class="card-body">
-                            {% if items.call_off == 'Catalog'%}
+                            {% if items.call_off == '02'%}
                             {% if items.eform_id %}
                             {% for eform_details in items.eform_data %}
                             <div style="padding-bottom:5px;">

@@ -28,7 +28,7 @@ SECRET_KEY = '-p^#04gmm3jl$93p3jx9rm+t1nj4$xl9b_#%192&e_usmw*&nr'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS =  ['www.majjaka-eprocure.com', 'majjaka-eprocure.com']
+ALLOWED_HOSTS = ['www.majjaka-eprocure.com', 'majjaka-eprocure.com']
 
 # Application definition
 
@@ -145,7 +145,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # Database engine
         'HOST': 'sg2plzcpnl489587.prod.sin2.secureserver.net',  # Database host
-        'NAME': 'MAJJAKA_ePROCURE',  # Database name
+        'NAME': 'MAJJAKA_PROCURE_DEP',  # Database name
         'USER': 'MajjakaShopEProcure',  # Database user name
         'PASSWORD': 'Project@2019',  # Database credentials
         'PORT': '3306',  # Database port number

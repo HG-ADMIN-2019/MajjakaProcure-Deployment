@@ -1,4 +1,5 @@
 const messageConstants = {
+
     JMSG001: 'Duplicate entry ',
     JMSG002: 'Please enter valid value in',
     JMSG003: 'Special Characters in ',
@@ -46,7 +47,6 @@ const messageConstants = {
     JMSG045: 'Please attach valid file extension',
     JMSG046: 'Failed to add attachments',
     JMSG047: 'You have maintained multiple account assignment categories',
-
     JMSG048: 'Your shopping cart has mixed account assignment values and can impact your approval process',
     JMSG049: 'You have maintained multiple purchasing groups',
     JMSG050: 'Deleted database successfully',
@@ -56,6 +56,5 @@ const messageConstants = {
     JMSG108: 'Please enter valid value for Year',
     JMSG109: 'Duplicate range entry ',
     JMSG110: 'Please Attach CSV file ',
-
 
 }

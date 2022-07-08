@@ -9,7 +9,7 @@ Author:
 
 from django.db.models import Q
 from django.http import JsonResponse
-from eProc_Basic.Utilities.constants.constants import CONST_CATALOG_IMAGE_TYPE, CONST_UNSPSC_IMAGE_TYPE, CONST_CO02
+from eProc_Basic.Utilities.constants.constants import CONST_CATALOG_IMAGE_TYPE, CONST_UNSPSC_IMAGE_TYPE, CONST_FREETEXT_CALLOFF
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.encryption_util import encrypt
 from eProc_Basic.Utilities.functions.guid_generator import guid_generator
@@ -233,7 +233,7 @@ class ProductServicesFunctionalities:
         new_prd_inp.currency = django_query_instance.django_get_query(Currency, {'currency_id': input['currency']})
         new_prd_inp.price = float(input['price'])
         new_prd_inp.manufacturer = input['manufacturer']
-        new_prd_inp.manu_prod = input['manu_prod']
+        new_prd_inp.manu_part_num = input['manu_prod']
         new_prd_inp.unspsc = django_query_instance.django_get_query(UnspscCategories, {'prod_cat_id': input['unspsc']})
         new_prd_inp.brand = input['brand']
         new_prd_inp.lead_time = int(input['lead_time'])
@@ -723,7 +723,7 @@ def get_freetext_detail(login_user_catalog_id_list, search_value, search_type, s
                                                                                             {
                                                                                                 'client': global_variables.GLOBAL_CLIENT,
                                                                                                 'catalog_id__in': login_user_catalog_id_list,
-                                                                                                'call_off': CONST_CO02,
+                                                                                                'call_off': CONST_FREETEXT_CALLOFF,
                                                                                                 'del_ind': False},
                                                                                             'item_id')
     freetext_detail_query = Q()

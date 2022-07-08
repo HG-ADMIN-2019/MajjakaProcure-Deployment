@@ -113,60 +113,6 @@ $(".remove_upload_data").click(() => {
     $('#id_popup_table').DataTable().destroy();
 });
 
-//validate by comparing  main table values and popup table values
-function maintable_validation(validate_add_attributes, main_table_low_value) {
-    var no_duplicate_entries = 'Y'
-    var common = [];
-    var error_message =''
-    jQuery.grep(validate_add_attributes, function(el) {
-        if (jQuery.inArray(el, main_table_low_value) != -1) {
-            common.push(el);
-        }
-    });
-    if (common.length != 0) {
-        error_message = messageConstants["JMSG001"]
-        no_duplicate_entries = 'N'
-    }
-    return [no_duplicate_entries,error_message]
-}
-
-// validating the  popup table for duplicate entries
-function compare_table_for_duplicate_entries(validate_add_attributes, alv) {
-    add_attr_duplicates = false;
-    var error_message = ''
-    var add_attr_duplicates_list = [];
-    var add_attr_unique_list = [];
-    var no_duplicate_value = 'Y'
-    $.each(validate_add_attributes, function(index, value) {
-        if ($.inArray(value, add_attr_unique_list) == -1) {
-            add_attr_unique_list.push(value);
-        } else {
-            if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                add_attr_duplicates_list.push(value);
-            }
-        }
-    });
-    if (add_attr_duplicates_list.length != 0) {
-       error_message = messageConstants["JMSG001"];
-       no_duplicate_value = 'N'
-    } else{
-           $.each(alv, function (i, item) {
-           if(item.app_code_id.length == 0) {
-           error_message = messageConstants["JMSG002"] + "Approver Code ID";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-           }
-          if (item.upper_limit_value <= 0) {
-              error_message = messageConstants["JMSG002"] + "upper_limit_value";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-                 }
-         });
-}
-return [no_duplicate_value,error_message]
-}
-//*******************************************************
-
 // on click add icon display the row in to add the new entries
 function add_popup_row() {
     basic_add_new_html = '';

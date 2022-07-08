@@ -5,7 +5,9 @@ from eProc_Basic.Utilities.functions.guid_generator import guid_generator
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Configuration.models import OrgClients
 from eProc_Configuration.models.development_data import NotificationType
+from eProc_Emails.Utilities.email_notif_generic import appr_notify
 from eProc_Notification.models import Notifications
+from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_SC_details_email
 from eProc_Shopping_Cart.models import ScApproval, ScHeader, ScPotentialApproval
 import datetime
 from eProc_Shopping_Cart.models import ScItem
@@ -52,18 +54,23 @@ def update_appr_status(appr_status):
     :param appr_status:
     :return:
     """
+    global next_level_approver
+    next_level_approver = []
+    mgr_details = {}
+    header_status = ''
     org_attr_value_instance = OrgAttributeValues()
     approval_detail = appr_status['status'].split('-')
     header_guid = approval_detail[1]
-    sc_requester = django_query_instance.django_get_query(ScHeader, {'guid': header_guid}).requester
+    sc_header_instance = django_query_instance.django_get_query(ScHeader, {'guid': header_guid})
+    sc_requester = sc_header_instance.requester
     user_object_id = get_object_id_from_username(sc_requester)
     object_id_list = get_object_id_list_user(global_variables.GLOBAL_CLIENT, user_object_id)
     default_calendar_id = org_attr_value_instance.get_user_default_attr_value_list_by_attr_id(object_id_list,
                                                                                               CONST_CALENDAR_ID)[1]
     item_details = django_query_instance.django_filter_only_query(ScItem, {'header_guid': header_guid})
     for items in item_details:
-        if items.call_off not in [CONST_CO02, CONST_CO04]:
-            if items.call_off == CONST_CO01:
+        if items.call_off not in [CONST_FREETEXT_CALLOFF, CONST_LIMIT_ORDER_CALLOFF]:
+            if items.call_off == CONST_CATALOG_CALLOFF:
                 supplier_id = items.pref_supplier
             else:
                 supplier_id = items.supplier_id
@@ -82,8 +89,8 @@ def update_appr_status(appr_status):
     }).update(app_sts=app_status_val)
     django_query_instance.django_filter_only_query(ScPotentialApproval,
                                                    {'sc_approval_guid': approver_guid,
-                                                       'client': global_variables.GLOBAL_CLIENT
-                                                   }).update(proc_lvl_sts=CONST_COMPLETED)
+                                                    'client': global_variables.GLOBAL_CLIENT
+                                                    }).update(proc_lvl_sts=CONST_COMPLETED)
 
     django_query_instance.django_filter_only_query(ScApproval,
                                                    {'guid': approver_guid,
@@ -119,6 +126,24 @@ def update_appr_status(appr_status):
                                                             'step_num': step_num_inc,
                                                             'client': global_variables.GLOBAL_CLIENT
                                                             }).update(proc_lvl_sts=CONST_ACTIVE)
+
+            next_level_approver = django_query_instance.django_filter_value_list_query(ScPotentialApproval,
+                                                                                       {'sc_header_guid':
+                                                                                            approval_detail[1],
+                                                                                        'step_num': step_num_inc,
+                                                                                        'client': global_variables.GLOBAL_CLIENT,
+                                                                                        'proc_lvl_sts': CONST_ACTIVE,
+                                                                                        'app_sts': CONST_SC_APPR_OPEN
+                                                                                        }, 'app_id')
+            if len(next_level_approver) > 1:
+                mgr_details['app_id_detail'] = next_level_approver
+            else:
+                mgr_details['app_id_detail'] = next_level_approver[0]
+            # send mail to next level approver
+            context = get_SC_details_email(approval_detail[1])
+            context['manager_details'] = mgr_details
+            context['step_num_inc'] = step_num_inc
+            appr_notify(context, 'SC_APPROVAL', global_variables.GLOBAL_CLIENT)
         else:
             header_status = get_header_status(app_status_val)
             django_query_instance.django_filter_only_query(ScHeader, {
@@ -133,6 +158,8 @@ def update_appr_status(appr_status):
         }).update(status=header_status)
 
     trigger_notification(approval_detail[2], app_status_val)
+
+    return header_status, sc_header_instance
 
 
 def increment_max_of_notif_id():

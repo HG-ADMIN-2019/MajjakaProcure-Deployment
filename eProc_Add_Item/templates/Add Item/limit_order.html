@@ -181,7 +181,6 @@
 {% include 'Shopping_Cart/select_supplier_modal/select_supplier.html' %}
 <!-- End of Select supplier popup -->
 
-    {% include 'root/loader.html' %}
 <script src="{% static 'scripts/limit_order.js' %}"></script>
 
 <script>
@@ -189,6 +188,7 @@
     // Limit order save function
     $('#limit_form').submit(function (e) {
         e.preventDefault();
+        OpenLoaderPopup();
         item_name = document.getElementById("id_item_name").value
         prod_cat = (document.getElementById("prod_cat_limit").value).split(' - ')[0]
         currency = document.getElementById("id_currency").value
@@ -226,12 +226,13 @@
                 item_del_date: on_date,
                 supplier_id: supplier_id,
                 follow_up_action: follow_up_action,
-                call_off: 'Limit'
+                call_off: '04'
             }),
             success: function (response) {
                 $('#limit_form').trigger("reset");
                 counter = document.getElementById('cart_counter').innerHTML
                 document.getElementById('limit_errors').innerHTML = '';
+                CloseLoaderPopup();
                 item_added_to_cart_success_popup();
                 $('#cart_counter').html(parseInt(counter) + 1)
                 supplier_id = ''

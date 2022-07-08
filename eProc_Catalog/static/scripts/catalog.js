@@ -226,7 +226,7 @@ function calculate_item_value_based_on_operator(differential_value,operator,item
 function add_catalog_popup(){
     let catalog_item = {};
     catalog_item["prod_id"] = GLOBAL_PRODUCT_ID;
-    catalog_item["call_off"] = 'Catalog'
+    catalog_item["call_off"] = '01'
     catalog_item["quantity"] = document.getElementById("id_quantity").value;
     catalog_item['eform_id'] = ''
     catalog_item['eform_detail'] = ''
@@ -263,7 +263,23 @@ function add_catalog_popup(){
         }
     }
     else{
-        alert(messageConstants["JMSG007"] + "all fields")
+           
+                    var msg = "JMSG007";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                   var display5 = msg_type.messages_id_desc[0];
+        alert(display5+ "all fields")
     }
 }
 

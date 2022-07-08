@@ -194,7 +194,7 @@
     var auth_type_dropdown = '';
 
       $.each(rendered_auth_type, function(i, item){
-        auth_type_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
+       auth_type_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
 
     })
 
@@ -234,7 +234,7 @@
                
                 $('#id_save_confirm_popup').modal('hide');
                 data = {'data':authobj_data,'table_name':'AuthorizationObject','action':GLOBAL_ACTION}
-
+                OpenLoaderPopup();
                 $.ajax({
                     type: 'POST',
                     url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
@@ -247,14 +247,18 @@
                         display_basic_db_data();
                         dropdown_value();
                         $('#myModal').modal('hide');
-                        $('#id_error_msg').text(messageConstants["JMSG001"])
+                        //$('#id_error_msg').text(messageConstants["JMSG001"])
                         $('#success_msg_id').text(Response[1])
+                        if(Response[1].message_type[0]== 'SUCCESS'){
+                            $('#success_msg_id').text(Response[1].message_desc[0])
+                        }
                         $("#err_msg_app_settings_t").prop("hidden", false)
                         table_sort_filter('id_popup_table');
                         setTimeout(function() {
                             $("#err_msg_app_settings_t").prop("hidden", true);
                         }, 5000)
                         table_sort_filter('id_popup_table');
+                        CloseLoaderPopup();
                     }
                 });
             }
@@ -288,7 +292,7 @@
         });
         $('#id_delete_confirm_popup').modal('hide');
         data = {'data':main_table_auth_obj_checked,'table_name':'AuthorizationObject','action':GLOBAL_ACTION}
-
+         OpenLoaderPopup();
         $.ajax({
             type: 'POST',
             url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
@@ -297,18 +301,33 @@
             dataType: "json",
             success: function(Response) {
                 rendered_auth_obj_data = Response[0];
-                 rendered_dropdown_values = Response[2];
+                 rendered_auth_obj_id = Response[2];
                     display_basic_db_data();
-                    dropdown_value();
-                    $('#myModal').modal('hide');
-                    $('#id_error_msg').text(messageConstants["JMSG001"])
-                    $('#success_msg_id').text(Response[1])
-                 $("#err_msg_app_settings_t").prop("hidden",false)
-                setTimeout(function() {
-                    $("#err_msg_app_settings_t").prop("hidden", true);
-                }, 5000)
+                     $('#success_msg_id').text(Response[1])
+                      if(Response[1].message_type[0]== 'SUCCESS'){
+                         $('#success_msg_id').text(Response[1].message_desc[0])
+                      }
+                    $("#err_msg_app_settings_t").prop("hidden", false)
+                     table_sort_filter('id_popup_table');
+                    setTimeout(function() {
+                        $("#err_msg_app_settings_t").prop("hidden", true);
+                    }, 5000)
+                     table_sort_filter('id_popup_table');
+                     CloseLoaderPopup();
             }
         });
+    }
+
+    function GetSelectedTextValue(authobject) {
+        var selectedText = authobject.options[authobject.selectedIndex].innerHTML;
+        var selectedValue = authobject.value;
+        var selectedId = (authobject.id).split('-')[1];
+         $.each(rendered_auth_obj_id, function(i, item){
+            if(selectedValue == item.field_type_id){
+                $('#description-'+selectedId).val(item.field_type_desc);
+            }
+        });
+
     }
     
          function GetReferrer() {
@@ -323,6 +342,125 @@
                else
                      return preUrl;
        }
+
+  // validating the  popup table for duplicate entries
+function compare_table_for_duplicate_entries(validate_add_attributes, auth_obj) {
+    add_attr_duplicates = false;
+    var error_message = ''
+    var add_attr_duplicates_list = [];
+    var add_attr_unique_list = [];
+    var no_duplicate_value = 'Y'
+    $.each(validate_add_attributes, function (index, value) {
+        if ($.inArray(value, add_attr_unique_list) == -1) {
+            add_attr_unique_list.push(value);
+        } else {
+            if ($.inArray(value, add_attr_duplicates_list) == -1) {
+                add_attr_duplicates_list.push(value);
+            }
+        }
+    });
+    if (add_attr_duplicates_list.length != 0) {
+        //error_message = messageConstants["JMSG001"];
+              
+                var msg = "JMSG001";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+           }
+     else{
+         $.each(auth_obj, function (i, item) {
+            if (item.auth_obj_id.length == 0) {
+                      // error_message = messageConstants["JMSG002"] + "Authorization Object ID";
+                     
+                        var msg = "JMSG002";
+                        var msg_type ;
+                      msg_type = message_config_details(msg);
+                      $("#error_msg_id").prop("hidden", false)
+
+                      if(msg_type.message_type[0] == "ERROR"){
+                            display_message("error_msg_id", msg_type.messages_id_desc[0])
+                      }
+                      else if(msg_type.message_type[0] == "WARNING"){
+                         display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                      }
+                      else if(msg_type.message_type[0] == "INFORMATION"){
+                         display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                      }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
+
+            if (item.auth_level_ID.length == 0) {
+
+                        //error_message = messageConstants["JMSG002"] + "Authorization Level ID";
+                      
+                        var msg = "JMSG002";
+                        var msg_type ;
+                      msg_type = message_config_details(msg);
+                      $("#error_msg_id").prop("hidden", false)
+
+                      if(msg_type.message_type[0] == "ERROR"){
+                            display_message("error_msg_id", msg_type.messages_id_desc[0])
+                      }
+                      else if(msg_type.message_type[0] == "WARNING"){
+                         display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                      }
+                      else if(msg_type.message_type[0] == "INFORMATION"){
+                         display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                      }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
+        });
+    }
+
+    return [no_duplicate_value,error_message]
+}
+
+//validate by comparing  main table values and popup table values
+function maintable_validation(validate_add_attributes, main_table_low_value) {
+    var no_duplicate_entries = 'Y'
+    var error_message =''
+    var common = [];
+    jQuery.grep(validate_add_attributes, function (el) {
+        if (jQuery.inArray(el, main_table_low_value) != -1) {
+            common.push(el);
+        }
+    });
+    if (common.length != 0) {
+        //error_message = messageConstants["JMSG001"]
+              
+                var msg = "JMSG001";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+    }
+    return [no_duplicate_entries,error_message]
+}
     
 </script>
 

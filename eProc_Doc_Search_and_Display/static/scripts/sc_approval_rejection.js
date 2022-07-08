@@ -6,13 +6,15 @@ $(document).ready( function() {
 
 nav_bar_approvals();
 
+$('#search_button_id').click(function () {
+    OpenLoaderPopup();
+})
+
 // Function to approve/ reject sc's
 function approve_status(value){
-
+    OpenLoaderPopup();
     var manage_multi_status = {}
     manage_multi_status['status'] = value.id;
-
-    $('#hg_loader').modal('show');
     var status_result = ajax_approve_status(manage_multi_status);
     
     if(status_result) {

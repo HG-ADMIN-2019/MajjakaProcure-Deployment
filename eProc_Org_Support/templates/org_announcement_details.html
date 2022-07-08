@@ -38,7 +38,7 @@
                         <div class="alert alert-success display-none" id="org_announcement_update_success" role="alert"></div>
                         <!--    Basic Data      -->
                         <div class="card">
-                            <h5 class="card-header">Organizational Announcement Data</h5>
+<!--                            <h5 class="card-header">Organizational Announcement Data</h5>-->
 
                             <div class="card-body">
                                 <div class="row">
@@ -85,7 +85,7 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label> From Date</label><span class="hg_required"></span><br>
-                                        {{from_date|date:'Y-m-d H:i'}}
+                                        {{from_date|date:'Y-m-d'}}
                                         <input type="date" class="form-control hg_edit_display_mode" name="from_date" id="from_date" value="{{from_date}}" disabled>
                                     </div>
 
@@ -152,9 +152,9 @@
                               <div id="org_edit_button">
                                 <button type="button" class="btn btn-primary" onclick="edit_org_announcement_data();"><i class="fas fa-pencil-alt"></i> edit</button>
 <!--                                <button id="org_delete_button" type="button" class="btn btn-primary" onclick="delete_org_announcement_data();"><i class="fas fa-pencil-alt"></i> DELETE</button>-->
-                            <button class="btn btn-primary" id="org_delete_button" value="org_delete" data-toggle="modal" data-target="#id_delete_confirm_popup">
-                        <i class="fa fa-trash"></i> DELETE
-                    </button>
+<!--                            <button class="btn btn-primary" id="org_delete_button" value="org_delete" data-toggle="modal" data-target="#id_delete_confirm_popup">-->
+<!--                        <i class="fa fa-trash"></i> DELETE-->
+<!--                    </button>-->
                               </div>
                         </div>
 

@@ -12,6 +12,7 @@ Author:
 # convert string to datetime format
 import datetime
 from decimal import Decimal
+from decimal import Decimal
 
 
 def get_date_value(str_value):
@@ -79,6 +80,14 @@ def type_cast_array_str_to_float(str_array):
     :return:
     """
     return [float(str_data) for str_data in str_array]
+
+def type_cast_array_str_to_decimal(str_array):
+    """
+
+    :param str_array:
+    :return:
+    """
+    return [Decimal(str_data) for str_data in str_array]
 
 
 def type_cast_array_float_to_str(str_array):

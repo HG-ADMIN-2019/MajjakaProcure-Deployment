@@ -106,71 +106,6 @@ $(".remove_upload_data").click(() => {
 });
 
 
-//validate by comparing  main table values and popup table values
-function maintable_validation(validate_add_attributes, main_table_low_value) {
-    var no_duplicate_entries = 'Y'
-    var error_message =''
-    var common = [];
-    jQuery.grep(validate_add_attributes, function (el) {
-        if (jQuery.inArray(el, main_table_low_value) != -1) {
-            common.push(el);
-        }
-    });
-    if (common.length != 0) {
-        error_message = messageConstants["JMSG001"]
-        no_duplicate_entries = 'N'
-    }
-    return [no_duplicate_entries,error_message]
-}
-
-// validating the  popup table for duplicate entries
-function compare_table_for_duplicate_entries(validate_add_attributes, auth_obj) {
-    add_attr_duplicates = false;
-    var error_message = ''
-    var add_attr_duplicates_list = [];
-    var add_attr_unique_list = [];
-    var no_duplicate_value = 'Y'
-    $.each(validate_add_attributes, function (index, value) {
-        if ($.inArray(value, add_attr_unique_list) == -1) {
-            add_attr_unique_list.push(value);
-        } else {
-            if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                add_attr_duplicates_list.push(value);
-            }
-        }
-    });
-    if (add_attr_duplicates_list.length != 0) {
-        error_message = messageConstants["JMSG001"];
-        no_duplicate_value = 'N'
-    }
-     else{
-         $.each(auth_obj, function (i, item) {
-//            if (item.auth_obj_id.length == 0) {
-//                error_message = messageConstants["JMSG002"] + "Authorization Object ID";
-//                no_duplicate_value = 'N'
-//                return [no_duplicate_value,error_message]
-//            }
-//
-//            if (item.auth_level_desc.length == 0) {
-//
-//                error_message = messageConstants["JMSG002"] + "Authorization Level Description";
-//                no_duplicate_value = 'N'
-//                return [no_duplicate_value,error_message]
-//            }
-//
-//               if (item.auth_level_ID.length == 0) {
-//
-//                error_message = messageConstants["JMSG002"] + "Authorization Level ID";
-//                no_duplicate_value = 'N'
-//                return [no_duplicate_value,error_message]
-//            }
-
-        });
-        
-    } 
-
-    return [no_duplicate_value,error_message]
-}
 
 function display_error_message(error_message){
 
@@ -276,14 +211,3 @@ $('#save_id').click(function () {
     $('#id_save_confirm_popup').modal('show');
 });
 
- function GetSelectedTextValue(authobject) {
-        var selectedText = authobject.options[authobject.selectedIndex].innerHTML;
-        var selectedValue = authobject.value;
-        var selectedId = (authobject.id).split('-')[1];
-         $.each(rendered_auth_obj_id, function(i, item){
-            if(selectedValue == item.field_type_id){
-                $('#description-'+selectedId).val(item.field_type_desc);
-            }
-        });
-
-    }

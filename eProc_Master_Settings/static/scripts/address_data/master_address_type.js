@@ -153,63 +153,6 @@ $(".remove_upload_data").click(() => {
 });
 
 
-//validate by comparing  main table values and popup table values
-function maintable_validation(addresstype_data, main_table_low_value) {
-    var no_duplicate_entries = 'Y'
-    var error_message =''
-    var dup_entry = " ";
- $.each(addresstype_data, function (i, item) {
-        $.each(main_table_low_value, function (j, item1) {
-            if((item.address_number == item1.address_number) && (item.address_type == item1.address_type)){
-                dup_entry = "1"
-            }
-        });
-     });
-         if((dup_entry == "1"))
-        {
-        error_message = messageConstants["JMSG001"]
-        no_duplicate_entries = 'N'
-        }
-    return [no_duplicate_entries,error_message]
-
-}
-
-
-// validating the  popup table for duplicate entries
-function compare_table_for_duplicate_entries(validate_add_attributes, address_type) {
-    add_attr_duplicates = false;
-    var error_message = ''
-    var add_attr_duplicates_list = [];
-    var add_attr_unique_list = [];
-    var no_duplicate_value = 'Y'
-    $.each(validate_add_attributes, function (index, value) {
-        if ($.inArray(value, add_attr_unique_list) == -1) {
-            add_attr_unique_list.push(value);
-        }
-        else {
-            if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                add_attr_duplicates_list.push(value);
-            }
-        }
-    });
-    if (add_attr_duplicates_list.length != 0) {
-        error_message = messageConstants["JMSG001"];
-        no_duplicate_value = 'N'
-    }
-    else{
-        $.each(address_type, function (i, item) {
-
-            if (item.address_number.length == 0) {
-                error_message = messageConstants["JMSG002"] + "Address Number";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
-        });
-    }
-
-    return [no_duplicate_value,error_message]
-}
-
 function display_error_message(error_message){
 
     $('#error_message').text(error_message);

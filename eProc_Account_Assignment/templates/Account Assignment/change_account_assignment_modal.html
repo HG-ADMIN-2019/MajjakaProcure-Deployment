@@ -165,7 +165,7 @@ function select_acc() {
     var acc_type = split_acc[0];
     var item_currency = '{{requester_currency}}'
     {% if is_document_detail %}
-    var item_prod_cat = $('#prod_cat-'+rendered_item_guid[parseInt(edit_row_index)-1]).text();
+    var item_prod_cat = $('#prod_cat_id-'+rendered_item_guid[parseInt(edit_row_index)-1]).text();
     console.log(rendered_item_guid[parseInt(edit_row_index)-1])
     var item_total_value = $('#ScIem-value-'+rendered_item_guid[parseInt(edit_row_index)-1]).text();
     {% endif %}

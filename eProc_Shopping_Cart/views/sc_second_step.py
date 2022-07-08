@@ -25,7 +25,9 @@ from eProc_Basic.Utilities.functions.get_system_setting_attributes import *
 from eProc_Basic.Utilities.functions.guid_generator import guid_generator
 from eProc_Basic.Utilities.functions.json_parser import JsonParser
 from eProc_Basic.Utilities.messages.messages import MSG109, MSG134
+from eProc_Emails.Utilities.email_notif_generic import appr_notify
 from eProc_Price_Calculator.Utilities.price_calculator_generic import calculate_item_total_value
+from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder
 from eProc_Ship_To_Bill_To_Address.Utilites.ship_to_bill_to_generic import ShipToBillToAddress
 from eProc_Shopping_Cart.Shopping_Cart_Forms.call_off_forms.limit_form import UpdateLimitItem
 from eProc_Shopping_Cart.Utilities.save_order_edit_sc import SaveShoppingCart, CheckForScErrors
@@ -49,6 +51,7 @@ from eProc_Calendar_Settings.Utilities.calender_settings_generic import *
 from eProc_Basic.Utilities.functions.get_db_query import get_user_currency
 from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_currency
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
+from eProc_Workflow.Utilities.work_flow_specific import update_appr_status
 
 django_query_instance = DjangoQueries()
 
@@ -70,6 +73,9 @@ def review_page(request):
     username = getUsername(request)
     prod_desc = ''
     total_item_value = []
+    actual_price_list = []
+    discount_value_list = []
+    tax_value_list = []
     catalog_qty = None
     manager_details = []
     holiday_list = []
@@ -96,7 +102,9 @@ def review_page(request):
     item_detail_list = []
     requester_first_name = requester_field_info(username, 'first_name')
     sc_check_instance = CheckForScErrors(client, username)
-    sc_check_instance.document_number_check(object_id_list)
+    sc_check_instance.document_sc_transaction_check(object_id_list)
+    sc_check_instance.po_transaction_check(object_id_list)
+
     sc_check_instance.calender_id_check(default_calendar_id)
 
     # Get default shopping cart name
@@ -126,21 +134,33 @@ def review_page(request):
         item_details = {}
         item_number = i + 1
         requester_user_id = items['username']
-        product_category = items['prod_cat']
+        product_category = items['prod_cat_id']
         lead_time = items['lead_time']
         supplier_id = items['supplier_id']
         call_off = items['call_off']
 
         sc_check_instance.check_for_prod_cat(product_category, company_code, item_number)
-        if call_off != CONST_CO03:
+        if call_off != CONST_PR_CALLOFF:
             sc_check_instance.check_for_supplier(supplier_id, product_category, company_code, item_number)
 
-        if call_off == CONST_CO01:
+        if call_off == CONST_CATALOG_CALLOFF:
             product_id = items['int_product_id']
             sc_check_instance.catalog_item_check(product_id, items['price'], lead_time, item_number, items['guid'],
                                                  items['quantity'])
-
-        if call_off not in [CONST_CO02, CONST_CO04]:
+        if item_currency != user_currency:
+            actual_price_list.append(
+                convert_currency(float(items['actual_price']) * items['quantity'], str(item_currency),
+                                 str(user_currency)))
+            discount_value_list.append(
+                convert_currency(items['discount_value'], str(item_currency), str(user_currency)))
+            tax_value_list.append(convert_currency(items['tax_value'], str(item_currency), str(user_currency)))
+            # gross_price_list.append(convert_currency(float(items['gross_price'])*items['quantity'], str(item_currency), str(user_currency)))
+        else:
+            actual_price_list.append(float(items['actual_price']) * items['quantity'])
+            discount_value_list.append(items['discount_value'])
+            tax_value_list.append(items['tax_value'])
+            # gross_price_list.append(float(items['gross_price'])*items['quantity'])
+        if call_off not in [CONST_FREETEXT_CALLOFF, CONST_LIMIT_ORDER_CALLOFF]:
             if len(holiday_list) == 0:
                 item_delivery_date = None
             else:
@@ -150,7 +170,7 @@ def review_page(request):
                                                              default_calendar_id,
                                                              client,
                                                              CartItemDetails)
-        elif call_off == CONST_CO02:
+        elif call_off == CONST_FREETEXT_CALLOFF:
             item_delivery_date = items['item_del_date']
 
         else:
@@ -165,7 +185,7 @@ def review_page(request):
         prod_cat_list.append(product_category)
         call_off_list.append(call_off)
         call_off = call_off
-        if call_off == CONST_CO04:
+        if call_off == CONST_LIMIT_ORDER_CALLOFF:
             overall_limit = items['overall_limit']
             quantity = None
             price_unit = None
@@ -189,7 +209,7 @@ def review_page(request):
             prod_cat_list.append(product_category)
             call_off_list.append(call_off)
             call_off = call_off
-            if call_off == CONST_CO04:
+            if call_off == CONST_LIMIT_ORDER_CALLOFF:
                 overall_limit = items['overall_limit']
                 quantity = None
                 price_unit = None
@@ -268,7 +288,8 @@ def review_page(request):
         if manager_detail:
             manager_details, approver_id = get_users_first_name(manager_detail)
 
-        if (CONST_CO02 in call_off_list) or (CONST_CO03 in call_off_list) or (CONST_CO04 in call_off_list):
+        if (CONST_FREETEXT_CALLOFF in call_off_list) or (CONST_PR_CALLOFF in call_off_list) or (
+                CONST_LIMIT_ORDER_CALLOFF in call_off_list):
             completion_work_flow = get_completion_work_flow(client, prod_cat_list, default_cmp_code)
             sc_completion_flag = True
     else:
@@ -288,7 +309,7 @@ def review_page(request):
         }).values()
     )
     for items in cart_items:
-        if items['call_off'] == CONST_CO01:
+        if items['call_off'] == CONST_CATALOG_CALLOFF:
             items['image_url'] = get_image_url(items['int_product_id'])
         else:
             items['image_url'] = ''
@@ -297,7 +318,12 @@ def review_page(request):
     cart_items = zip(cart_items, total_item_value)
     sys_attributes_instance = sys_attributes(client)
     shopping_cart_errors = sc_check_instance.get_shopping_cart_errors()
-    print(cart_items)
+
+    # total price detail
+    actual_price = round(sum(actual_price_list), 2)
+    discount_value = round(sum(discount_value_list), 2)
+    tax_value = round(sum(tax_value_list), 2)
+
     context = {
         'shopping_cart_errors': shopping_cart_errors,
         'highest_item_number': highest_item_number + 1,
@@ -317,6 +343,9 @@ def review_page(request):
         'cart_name': cart_name,
         'inc_nav': True,
         'cart_items': cart_items,
+        'actual_price': format(actual_price, '.2f'),
+        'discount_value': format(discount_value, '.2f'),
+        'tax_value': format(tax_value, '.2f'),
         'requester_currency': global_variables.GLOBAL_REQUESTER_CURRENCY,
         'gl_acc_item_level_default': accounting_data['gl_acc_item_level_default'],
         'receiver_name': receiver_name,
@@ -427,6 +456,8 @@ def order_shopping_cart(request):
                 status = CONST_SC_HEADER_APPROVED
             else:
                 status = CONST_SC_HEADER_AWAITING_APPROVAL
+                # temp = {'status': status+'-'+header_guid+'-'+'01'}
+                # header_status, sc_header_instance = update_appr_status(temp)
 
         sc_details = save_sc_data.save_header_details(status)
         update_user_info(request)
@@ -434,8 +465,31 @@ def order_shopping_cart(request):
 
         if sc_details[0]:
             save_sc_data.save_item_details(request)
+            # print(save_sc_data.cart_item_guid)
+            django_query_instance.django_filter_delete_query(CartItemDetails,
+                                                             {'guid__in': save_sc_data.cart_item_guid,
+                                                              'client': global_variables.GLOBAL_CLIENT})
             save_sc_data.eform_item_guid.clear()
             save_sc_data.cart_guid.clear()
+
+            if status == CONST_SC_HEADER_APPROVED:
+                sc_header_instance = django_query_instance.django_get_query(ScHeader,
+                                                                            {'client': global_variables.GLOBAL_CLIENT,
+                                                                             'doc_number': sc_details[0]})
+                create_purchase_order = CreatePurchaseOrder(sc_header_instance)
+                create_purchase_order.create_po()
+            # function to send SC Approval email
+            #  check for sc_completion_flag == true  , if not send mail
+            if sc_completion_flag == 'False':
+                auto_app_flag = 0
+                for app_type in manager_detail:
+                    if app_type['app_id_value'] == 'Auto':
+                        auto_app_flag = 1
+                if auto_app_flag == 0:
+                    context = get_SC_details_email(header_guid)
+                    context['manager_details'] = manager_detail
+                    context['step_num_inc'] = 1
+                    appr_notify(context, 'SC_APPROVAL', client)
         else:
             return JsonResponse({'error_ms': sc_details[1]}, status=400)
 

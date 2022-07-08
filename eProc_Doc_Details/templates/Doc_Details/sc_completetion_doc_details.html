@@ -7,95 +7,105 @@
 
 {% block maincontent %}
 
-<!--Display header based on document type-->
+<!--Display header based on document type-->        
 
-<!-- <div class="sc-status-header">
-    <div class="sc-status-page-title">
-        <h5 id="document_header">Display Shopping Cart</h5>
-    </div>
-</div> -->
-
-<div class="mt-3 m-4">
+<!-- <div class="mt-3 m-4">
     <div class="sc-status-page-title">
         <h3 id="document_header">Display Shopping Cart</h5>
     </div>
-</div>
+</div> -->
 
 <div class="container-fluid">
-    <div class="mo-doc-header">
-        <div class="card">
-            <div class="card-body mo-doc-header__doc-details" >
-                {% for hdr in hdr_det %}
-                <input id="header_guid" value="{{ hdr.guid }}" hidden>
-    
-                <div class="mo-doc-details-wrapper">
-                    <p><span>Document Number: </span> <span id="document_number">{{ hdr.doc_number }}</span></p>
-                    <p><span>Document Name: </span><span id="ScHeader-description-{{ hdr.guid }}">{{ hdr.description }}</span></p>
-                    <p><span>Created On:</span> <span>{{ hdr.created_at }}</span></p>
-                    <p><span>Created By:</span> <span>{{ requester_first_name }}</span></p>
-    
-                    {% if hdr.status == 'APPROVED' %}
-                    <p><span>Status: </span> <span class="badge badge-pill badge_status_approved">APPROVED</span></p>
-                    {% elif hdr.status == 'SAVED' %}
-                    <p><span>Status: </span> <span class="badge badge-pill badge_status_save">SAVED</span></p>
-                    {% elif hdr.status == 'REJECT' %}
-                    <p><span>Status: </span> <span class="badge badge-pill badge_status_rejected">REJECTED</span></p>
-                    {% elif hdr.status == 'PURCHASER_WORKLIST' %}
-                    <p><span>Status: </span> <span class="badge badge-pill badge_status_purch_wrkl">IN PURCHASER's WORK LIST</span></p>
-                    {% endif %}
-                </div>
-                <span hidden id="requester_hidden_span">{{hdr.requester}}</span>
-                {% endfor %}
-            </div>
-        </div>
 
-        <div class="mo-doc-header__alerts-wrapper">
+    <div class="mo-doc-button-container">
+        <h3>Complete Shopping Cart #{{hdr_det.0.doc_number}}</h3>
+        <div hidden>
             {% for hdr in hdr_det %}
-            {% if hdr.status == 'AWAITING_APPROVAL' %}
-            <div class="alert alert-success" role="alert">Shopping cart {{hdr.description}} with number {{hdr.doc_number}} submitted successfully</div>
+            <h5 class="mb-3" hidden>Buy on Behalf: <input type="text" id="shopping_cart_requester" value="{{hdr.requester}}" disabled style="border: none;"></h5>
+            {% endfor %}
+
+            <h5 class="mb-3" hidden>Silent PO: <input type="checkbox" id="silent_po" class="hg_disabled" disabled></h5>
+        </div>
+        <div id="display_div_id" class="">
+            <button id="id_cancel_sc" class="btn btn-outline-primary" onclick="window.close()" type="button">
+                <i class="fas fa-times"></i> close
+            </button>
+            <button class="btn btn-primary" data-toggle="modal" data-target="#add_approver_note">
+                <i class="far fa-sticky-note"></i> view approver note
+            </button>
+            <button id="id_check_sc" onclick="check_shopping_cart('check', 'sc_data', highest_item_acc_asgn_cat, highest_item_change_acc_value);" class="btn btn-primary hide_in_display_mode">
+                <i class="fa fa-check" aria-hidden="true"></i> check
+            </button>
+            <button id="id_save_sc" class="btn btn-primary hide_in_display_mode">
+                <i class="fa fa-save"aria-hidden="true"></i> save
+            </button>
+            <button id="id_submit_sc" class="btn btn-primary hide_in_display_mode">
+                <i class="fas fa-sign-in-alt" aria-hidden="true"></i> submit
+            </button>             
+            {% for hdr in hdr_det %}
+            {% if hdr.status == 'PURCHASER_WORKLIST' %}
+            <button id="id_edit_sc" class="btn btn-primary">
+                <i class="fas fa-edit"></i> edit
+            </button>
             {% endif %}
             {% endfor %}
-            <div id="sc_error_messages" class="alert alert-danger"  style="display: none;" role="alert"></div>
-            <div id="sc_warning_messages" class="alert alert-warning"  style="display: none;" role="alert"></div>
-            <div id="sc_success_messages" class="alert alert-success"  style="display: none;" role="alert"></div>    
         </div>
-
     </div>
 
     <div class="mo-doc-body-wrapper">
 
-        <div class="elements-space-between mt-4 mr-2 ml-2 mb-3">
-            <div>
-                {% for hdr in hdr_det %}
-                <h5 class="mb-3" hidden>Buy on Behalf: <input type="text" id="shopping_cart_requester" value="{{hdr.requester}}" disabled style="border: none;"></h5>
-                {% endfor %}
+        <div class="mo-doc-header">
+            <div class="card card-shadow-1">
+                <div class="card-body mo-doc-header__doc-details" >
+                    {% for hdr in hdr_det %}
+                    <input id="header_guid" value="{{ hdr.guid }}" hidden>
 
-                <h5 class="mb-3" hidden>Silent PO: <input type="checkbox" id="silent_po" class="hg_disabled" disabled></h5>
+                    <div class="row">
+                        <div class="col-md">
+                            <span class="po-header-label">Document Name</span><br>
+                            <span class="po-header-desc" id="ScHeader-description-{{ hdr.guid }}">{{ hdr.description }}</span>
+                        </div>
+                        <div class="col-md">
+                            <span class="po-header-label">Document Number</span><br>
+                            <span class="po-header-desc" id="document_number">{{ hdr.doc_number }}</span>
+                        </div>
+                        <div class="col-md">
+                            <span class="po-header-label">Created On</span><br>
+                            <span class="po-header-desc">{{ hdr.created_at }}</span>
+                        </div>
+                        <div class="col-md">
+                            <span class="po-header-label">Created By</span><br>
+                            <span class="po-header-desc">{{ requester_first_name }}</span>
+                        </div>
+                        <div class="col-md">
+                            <span class="po-header-label">Status</span><br>
+                            {% if hdr.status == 'APPROVED' %}
+                            <span class="badge badge-pill badge_status_approved">APPROVED</span>
+                            {% elif hdr.status == 'SAVED' %}
+                            <span class="badge badge-pill badge_status_save">SAVED</span>
+                            {% elif hdr.status == 'REJECT' %}
+                            <span class="badge badge-pill badge_status_rejected">REJECTED</span>
+                            {% elif hdr.status == 'PURCHASER_WORKLIST' %}
+                            <span class="badge badge-pill badge_status_purch_wrkl">IN PURCHASER's WORK LIST</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <span hidden id="requester_hidden_span">{{hdr.requester}}</span>
+                    {% endfor %}
+                </div>
             </div>
-            <div id="display_div_id" class="mo-doc-header__button-wrapper">
-                <button id="id_cancel_sc" class="btn btn-outline-primary" onclick="window.close()" type="button">
-                    <i class="fas fa-times"></i> close
-                </button>
-                <button class="btn btn-primary" data-toggle="modal" data-target="#add_approver_note">
-                    <i class="far fa-sticky-note"></i> approver note
-                </button>
-                <button id="id_check_sc" onclick="check_shopping_cart('check', 'sc_data', highest_item_acc_asgn_cat, highest_item_change_acc_value);" class="btn btn-primary hide_in_display_mode">
-                    <i class="fa fa-check" aria-hidden="true"></i> check
-                </button>
-                <button id="id_save_sc" class="btn btn-primary hide_in_display_mode">
-                    <i class="fa fa-save"aria-hidden="true"></i> save
-                </button>
-                <button id="id_submit_sc" class="btn btn-primary hide_in_display_mode">
-                    <i class="fas fa-sign-in-alt" aria-hidden="true"></i> submit
-                </button>             
+    
+            <div class="mo-doc-header__alerts-wrapper">
                 {% for hdr in hdr_det %}
-                {% if hdr.status == 'PURCHASER_WORKLIST' %}
-                <button id="id_edit_sc" class="btn btn-primary">
-                    <i class="fas fa-edit"></i> edit
-                </button>
+                {% if hdr.status == 'AWAITING_APPROVAL' %}
+                <div class="alert alert-success" role="alert">Shopping cart {{hdr.description}} with number {{hdr.doc_number}} submitted successfully</div>
                 {% endif %}
                 {% endfor %}
+                <div id="sc_error_messages" class="alert alert-danger"  style="display: none;" role="alert"></div>
+                <div id="sc_warning_messages" class="alert alert-warning"  style="display: none;" role="alert"></div>
+                <div id="sc_success_messages" class="alert alert-success"  style="display: none;" role="alert"></div>    
             </div>
+    
         </div>
 
         <!--  Item overview card section  -->
@@ -107,9 +117,9 @@
                         <i class="fa fa-plus" aria-hidden="true"></i> add new item 
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" onclick="add_item_to_saved_cart('Catalog')" href="#">Catalog</a>
-                        <a class="dropdown-item" onclick="add_item_to_saved_cart('Free Text')" href="#">Free Text</a>
-                        <a class="dropdown-item" onclick="add_item_to_saved_cart('Requisition')" href="#">Requisition</a>
+                        <a class="dropdown-item" onclick="add_item_to_saved_cart('01')" href="#">Catalog</a>
+                        <a class="dropdown-item" onclick="add_item_to_saved_cart('02')" href="#">Free Text</a>
+                        <a class="dropdown-item" onclick="add_item_to_saved_cart('03')" href="#">Requisition</a>
                     </div>
                 </div>
 
@@ -358,7 +368,7 @@
         </div>
     </div>
 </div>
-
+{{ total_value_of_item_converted|json_script:"total_value_of_item_converted" }}
 <!--  start of manager detail pop up-->
 {% include 'Workflow/manager_detail_modal.html' %}
 
@@ -416,11 +426,15 @@
         rendered_quantity.push('{{item.quantity|safe}}');
         rendered_catalog_qty.push('{{item.catalog_qty|safe}}');
         var eform_id = '{{item.eform_id|safe}}';
+        var call_off = '{{item.call_off|safe}}'
         if(eform_id == ''){
             rendered_eform.push('None');
         }
-        else{
+        else if(call_off == '02'){
             rendered_eform.push('{{item.eform_id|safe}}');
+        }
+        else{
+            rendered_eform.push('None');
         }
         {% endfor %}
         {% for sc_addr in del_addr %}
@@ -504,7 +518,7 @@
             }
         });
 
-        total_value_of_item_converted = {{total_value_of_item_converted|safe}};
+        total_value_of_item_converted = JSON.parse(document.getElementById('total_value_of_item_converted').textContent);
         get_update_converted_value_class = document.getElementsByClassName('update_converted_value');
         for(j = 0; j < get_update_converted_value_class.length; j++) {
             get_update_converted_value_class[j].innerHTML = total_value_of_item_converted[j].toFixed(2)
@@ -516,6 +530,7 @@
 
     // Ajax request to send selected address from drop-down to views (sc_second_step.py)
     function selectAddress() {
+        OpenLoaderPopup();
         var addr = document.getElementById("ship_address");
         ship_adr = addr.options[addr.selectedIndex].value;
         $.ajax({
@@ -540,7 +555,7 @@
                 $("#ScAddresses-country_code-" + rendered_sc_addr[item_detail_visible_div]).addClass('sc_changed');
                 $("#ScAddresses-region-" + rendered_sc_addr[item_detail_visible_div]).val(response["new_ship_add"][5]);
                 $("#ScAddresses-region-" + rendered_sc_addr[item_detail_visible_div]).addClass('sc_changed');
-
+                CloseLoaderPopup();
 
             }
         })
@@ -549,6 +564,7 @@
     //==================================== START ON CLICK OF CHECK BUTTON========================================================
     // on click of check button
     function check_shopping_cart(type, sc_data, acc_default, acc_default_val) {
+        OpenLoaderPopup();
         $('#sc_error_messages').hide()
         $('#sc_success_messages').hide()
         $('#sc_warning_messages').hide()
@@ -577,7 +593,25 @@
                 manager_detail = response.manager_detail.length
                 sc_errors = response.sc_error
                 if (sc_errors.length == 0 && manager_detail != 0 && internal_supplier_error_itemNumber.length == 0) {
-                    $('#sc_success_messages').html(messageConstants["JMSG042"])
+                       
+                            var msg = "JMSG042";
+                            var msg_type ;
+                          msg_type = message_config_details(msg);
+                          $("#error_msg_id").prop("hidden", false)
+
+                          if(msg_type.message_type[0] == "ERROR"){
+                                display_message("error_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "WARNING"){
+                             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "INFORMATION"){
+                             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          var display = msg_type.messages_id_desc[0];
+                          $('#sc_success_messages').html(display)
+
+
                     $('#sc_success_messages').show()
                     if (type == 'submit' && manager_detail != 0) {
                         save_my_order_doc_detail('submit')
@@ -585,8 +619,25 @@
                 } else {
                     $('#sc_success_messages').hide()
                     if (type == 'submit') {
-                        error_messages += messageConstants["JMSG043"] ;
-                    }
+                            
+                                var msg = "JMSG046";
+                                var msg_type ;
+                              msg_type = message_config_details(msg);
+                              $("#error_msg_id").prop("hidden", false)
+
+                              if(msg_type.message_type[0] == "ERROR"){
+                                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+                              }
+                              else if(msg_type.message_type[0] == "WARNING"){
+                                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                              }
+                              else if(msg_type.message_type[0] == "INFORMATION"){
+                                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                              }
+                              var display = msg_type.messages_id_desc[0];
+                               error_messages += display ;
+
+                   }
                     for (i = 0; i < sc_errors.length; i++) {
                         dict_obj = sc_errors[i]
                         for (var key in dict_obj) {
@@ -618,7 +669,7 @@
                 } else{
                     $('#sc_error_messages').show()
                 }
-                $('#hg_loader').modal('hide');
+                CloseLoaderPopup();
             }
         });
 
@@ -629,6 +680,7 @@
     //==================================== START ON CLICK OF EDIT BUTTON======================================================================
 
     const update_delivery_date = (type, delivery_item_guid) => {
+        OpenLoaderPopup();
         update_date_requirements = {}
         if(type == 'on_lead_time_change'){
             update_item_guid = delivery_item_guid.split('-')[2]
@@ -677,6 +729,7 @@
                     });
                     document_edit_mode()
                 }
+                CloseLoaderPopup();
             },
             error: function (response) {
 
@@ -759,7 +812,7 @@
                     if(type == 'save'){
                         message_type = 'saved'
                     } else {message_type = 'submitted'}
-                    success_message = 'Shopping cart ' + response.document_detail.sc_name + ' with number ' + response.document_detail.document_number + ' ' + message_type +' successfully'
+                    success_message = 'Shopping cart ' + response.document_detail.sc_name + ' with number ' + response.document_detail.document_number + ' saved successfully'
                     $('#sc_success_messages').html(success_message);
                     $('#sc_success_messages').show();
                     scroll_top()
@@ -827,10 +880,44 @@
                 if (response.manager_detail) {
                     $.each(response.manager_detail, function (i, item) {
                         if (item == 'Auto') {
-                            error_msg = '<br><br><span>messageConstants["JMSG034"]</span>'
+                              
+                                var msg = "JMSG034";
+                                var msg_type ;
+                              msg_type = message_config_details(msg);
+                              $("#error_msg_id").prop("hidden", false)
+
+                              if(msg_type.message_type[0] == "ERROR"){
+                                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+                              }
+                              else if(msg_type.message_type[0] == "WARNING"){
+                                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                              }
+                              else if(msg_type.message_type[0] == "INFORMATION"){
+                                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                              }
+                              var display = msg_type.messages_id_desc[0];
+
+                            error_msg = '<br><br><span>display</span>'
                         }
                         else {
-                            error_msg = '<br><br><span>messageConstants["JMSG038"]</span>'
+                             
+                                var msg = "JMSG038";
+                                var msg_type ;
+                              msg_type = message_config_details(msg);
+                              $("#error_msg_id").prop("hidden", false)
+
+                              if(msg_type.message_type[0] == "ERROR"){
+                                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+                              }
+                              else if(msg_type.message_type[0] == "WARNING"){
+                                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                              }
+                              else if(msg_type.message_type[0] == "INFORMATION"){
+                                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                              }
+                              var display = msg_type.messages_id_desc[0];
+                               error_msg = '<br><br><span>display</span>'
+
                         }
                         double_angular = '<div class="workflow-overview__next-icon-container"><i class="fas fa-angle-double-right fa-3x"></i></div>';
                         manager_icon += '' + double_angular + '<div class="workflow-overview__user-icon-container"><div class="workflow-user-bg workflow-inactive"><i class="fas fa-user-tie fa-3x" aria-hidden="true"> </i></div><button type="button" class="button-workflow-user">' + item.first_name + '</button></div>';
@@ -849,7 +936,7 @@
                 $.each(rendered_item_guid, function (index, item_guid) {
                     $("#value-" + item_guid).html(response.value[index]);
                     $("#price_unit-" + item_guid).html(response.price_unit[index]);
-                    if (rendered_call_off[index] === "Catalog") {
+                    if (rendered_call_off[index] === "01") {
                         $("#catalog_qty-" + item_guid).html(response.catalog_qty[index]);
                     }
                     else {
@@ -886,6 +973,7 @@
         return result;
     }
     
+    const ajax_delete_cart_item_url = "{% url 'eProc_Shopping_Cart:edit_saved_shopping_cart' %}";
     // End of sc item details script
 
 
@@ -901,7 +989,7 @@ function display_acc_val(button) {
     var acc_field_item_guid = select_id.split("-")[2]
      var acc_type = document.getElementById(select_id).value;
     var acc_index = jQuery.inArray(acc_field_item_guid, rendered_acc_guid)
-    var item_prod_cat = $('#ScItem-prod_cat-'+rendered_item_guid[acc_index]).val()
+    var item_prod_cat = $('#ScItem-prod_cat_id-'+rendered_item_guid[acc_index]).val()
     var item_total_value =$('#ScItem-value-'+rendered_item_guid[acc_index]).val()
     var item_currency = $('#ScItem-currency-'+rendered_item_guid[acc_index]).val()
     $.ajax({

@@ -382,7 +382,7 @@ function remove_additional_class(eform_config_guid){
              $.each(eform_config.pricing, function (i, eform_pricing) {
                 var id_value = 'VARIANT_ADDITIONAL_PRICING-'+eform_config.eform_field_config_guid+'-'+eform_pricing.product_eform_pricing_guid+'';
                 $("#"+id_value ).removeClass("selected-vwap");
-                $("#"+id_value).addClass("dummy_class_price_data")
+                $("#"+id_value).removeClass("dummy_class_price_data")
              });
 
         }

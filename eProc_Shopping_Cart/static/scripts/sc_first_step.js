@@ -3,7 +3,7 @@ nav_bar_shop()
 
 $(document).ready(function(){
     $('#sc-proceed-checkout').click(function () {
-        $('#hg_loader').modal('show');
+        OpenLoaderPopup();
     });
 
     $('body').css('padding-top', '7rem');

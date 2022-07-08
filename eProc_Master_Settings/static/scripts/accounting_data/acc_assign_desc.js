@@ -173,73 +173,6 @@ $(".remove_upload_data").click(() => {
 });
 
 
-//validate by comparing  main table values and popup table values
-function maintable_validation(validate_add_attributes, main_table_low_value) {
-    var no_duplicate_entries = 'Y'
-    var error_message =''
-    var common = [];
-    jQuery.grep(validate_add_attributes, function (el) {
-        if (jQuery.inArray(el, main_table_low_value) != -1) {
-            common.push(el);
-        }
-    });
-    if (common.length != 0) {
-        error_message = messageConstants["JMSG001"]
-        no_duplicate_entries = 'N'
-    }
-    return [no_duplicate_entries,error_message]
-}
-
-// validating the  popup table for duplicate entries
-function compare_table_for_duplicate_entries(validate_add_attributes, aad) {
-    add_attr_duplicates = false;
-    var error_message = ''
-    var add_attr_duplicates_list = [];
-    var add_attr_unique_list = [];
-    var no_duplicate_value = 'Y'
-
-    $.each(validate_add_attributes, function (index, value) {
-        if ($.inArray(value, add_attr_unique_list) == -1) {
-            add_attr_unique_list.push(value);
-        } else {
-            if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                add_attr_duplicates_list.push(value);
-            }
-        }
-    });
-    if (add_attr_duplicates_list.length != 0) {
-       error_message = messageConstants["JMSG001"];
-        no_duplicate_value = 'N'
-        } else{
-        $.each(aad, function (i, item) {
-        if (aad.account_assign_value == 0) {
-        error_message = messageConstants["JMSG002"] + "Account Assignment  Category";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-        }
-    if (aad.description.length == 0) {
-         error_message = messageConstants["JMSG002"] + "Description";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-    }
-    });
-   }
-//    description = aad.description.replace(/\s\s+/g, ' ')
-//    if (description == " ") {
-//        $("#id_error_msg").prop("hidden", false)
-//        Error_msg = "";
-//        Error_msg = "Enter Valid data in Description";
-//        document.getElementById("id_error_msg").innerHTML = Error_msg;
-//        document.getElementById("id_error_msg").style.color = "Red";
-//        $('#id_save_confirm_popup').modal('hide');
-//        $('#myModal').modal('show');
-//        no_duplicate_value = 'N'
-//    }
-//    return no_duplicate_value
-return [no_duplicate_value,error_message]
-}
-
-//*******************************************************
 // on click add icon display the row in to add the new entries
 function add_popup_row() {
     $("#error_msg_id").css("display", "none")
@@ -374,6 +307,7 @@ $('#save_id').click(function () {
     $('#myModal').modal('hide');
     aad_data = new Array();
      validate_add_attributes = [];
+      var desc='';
       $("#id_popup_table TBODY TR").each(function () {
      var row = $(this);
             aad = {};

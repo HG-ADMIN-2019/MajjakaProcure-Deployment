@@ -116,3 +116,7 @@ function getSubReport(value) {
 
     }
 }
+
+$('#hg_user_report_search').click(function () {
+    OpenLoaderPopup();
+})

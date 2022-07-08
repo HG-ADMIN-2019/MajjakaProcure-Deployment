@@ -109,8 +109,8 @@ def requester_field_info(requester_user_name, field_name):
     """
 
     """
-    # client = global_variables.GLOBAL_CLIENT
-    # field_detail = (list(UserData.objects.filter(username=requester_user_name, client=client).values_list(field_name, flat=True)))[0]
+    # client = global_variables.GLOBAL_CLIENT field_detail = (list(UserData.objects.filter(
+    # username=requester_user_name, client=client).values_list(field_name, flat=True)))[0]
 
     try:
         client = global_variables.GLOBAL_CLIENT

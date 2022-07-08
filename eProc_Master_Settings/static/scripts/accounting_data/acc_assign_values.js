@@ -7,7 +7,7 @@ function onclick_add_button(button) {
     GLOBAL_ACTION = button.value
     $("#id_popup_tbody").empty();
     $('#myModal').modal('show');
-    basic_add_new_html = '<tr> <td><input type="checkbox" required></td> <td><input class="form-control" type="number" maxlength="40" name="Account Assignment Value" required></td><td><select class="form-control" id="acc_ass_val_dropdw">' + acc_ass_dropdwn + ' </select></td> <td ><select class="form-control" id="company_dropdw">' + company_dropdwn + '</select></td><td><input class="form-control" type="date" maxlength="10" name="Valid From Date" required></td> <td><input class="form-control" type="date" maxlength="10" name="Valid To Date" required></td>  <td hidden><input value=""></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr> <td><input type="checkbox" required></td> <td><input class="form-control" type="number"  minlength="4" maxlength="40" name="Account Assignment Value" required></td><td><select class="form-control" id="acc_ass_val_dropdw">' + acc_ass_dropdwn + ' </select></td> <td ><select class="form-control" id="company_dropdw">' + company_dropdwn + '</select></td><td><input class="form-control" type="date" maxlength="10" name="Valid From Date" required></td> <td><input class="form-control" type="date" maxlength="10" name="Valid To Date" required></td>  <td hidden><input value=""></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
     $("#id_del_ind_checkbox").prop("hidden", true);
@@ -100,7 +100,7 @@ function add_popup_row() {
     $(".modal").on("hidden.bs.modal", function() {
         $("#id_error_msg").html("");
     });
-    basic_add_new_html = '<tr> <td><input type="checkbox" required></td><td><input class="form-control" type="number" maxlength="40" name="Account Assignment Value" required></td><td><select class="form-control" id="acc_ass_val_dropdw">' + acc_ass_dropdwn + ' </select></td> <td ><select class="form-control" id="company_dropdw">' + company_dropdwn + '</select></td><td><input class="form-control" type="date" maxlength="10" name="Valid From Date" required></td> <td><input class="form-control" type="date" maxlength="10" name="Valid To Date" required></td>  <td hidden><input value=""></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr> <td><input type="checkbox" required></td><td><input class="form-control" type="number" minlength="4" maxlength="40" name="Account Assignment Value" required></td><td><select class="form-control" id="acc_ass_val_dropdw">' + acc_ass_dropdwn + ' </select></td> <td ><select class="form-control" id="company_dropdw">' + company_dropdwn + '</select></td><td><input class="form-control" type="date" maxlength="10" name="Valid From Date" required></td> <td><input class="form-control" type="date" maxlength="10" name="Valid To Date" required></td>  <td hidden><input value=""></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
    $('#id_popup_tbody').append(basic_add_new_html);
     if (GLOBAL_ACTION == "aav_upload") {
         $(".class_del_checkbox").prop("hidden", false);
@@ -136,25 +136,6 @@ function display_basic_db_data() {
     table_sort_filter('display_basic_table');
 }
 
-//validate by comparing  main table values and popup table values
-function maintable_validation(validate_add_attributes, main_table_low_value) {
-    var no_duplicate_entries = 'Y'
-    var error_message =''
-    var common = [];
-
-    jQuery.grep(validate_add_attributes, function(el) {
-        console.log(el)
-        if (jQuery.inArray(el, main_table_low_value) != -1) {
-            common.push(el);
-            console.log(common)
-        }
-    });
-    if (common.length != 0) {
-        error_message = messageConstants["JMSG001"]
-        no_duplicate_entries = 'N'
-    }
-    return [no_duplicate_entries,error_message]
-}
 
 function check_date_error(check_dates){
     date_error = "N"
@@ -162,8 +143,27 @@ function check_date_error(check_dates){
         var d1=new Date(value[0]); //yyyy-mm-dd
         var d2=new Date(value[1]); //yyyy-mm-dd
         if (d2< d1){
-            document.getElementById("id_error_msg").innerHTML = messageConstants["JMSG017"];
-            document.getElementById("id_error_msg").style.color = "Red";
+
+               
+                var msg = "JMSG017";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+                    var display = msg_type.messages_id_desc[0];
+                document.getElementById("id_error_msg").innerHTML = display;
+                document.getElementById("id_error_msg").style.color = "Red";
+
+
             $('#id_save_confirm_popup').modal('hide');
             $('#myModal').modal('show');
             date_error = 'Y'
@@ -171,56 +171,6 @@ function check_date_error(check_dates){
     })
     return date_error
 }
-
-// validating the  popup table for duplicate entries
-function compare_table_for_duplicate_entries(validate_add_attributes, aav) {
-    add_attr_duplicates = false;
-    var error_message = ''
-    var add_attr_duplicates_list = [];
-    var add_attr_unique_list = [];
-    var no_duplicate_value = 'Y'
-
-    $.each(validate_add_attributes, function(index, value) {
-        if ($.inArray(value, add_attr_unique_list) == -1) {
-            add_attr_unique_list.push(value);
-        } else {
-            if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                add_attr_duplicates_list.push(value);
-            }
-        }
-    });
-    if (add_attr_duplicates_list.length != 0) {
-        //$("#id_error_msg").prop("hidden", false)
-        error_message = messageConstants["JMSG001"];
-        no_duplicate_value = 'N'
-    } else{
-        $.each(aav, function (i, item) {
-        if (aav.account_assign_value == 0) {
-        error_message = messageConstants["JMSG002"] + "Account Assignment Value";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-        }
-//        $("#id_error_msg").prop("hidden", false)
-        if (aav.account_assign_cat.length == 0) {
-        error_message = messageConstants["JMSG002"] + "Account Assignment Category";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-        }
-         });
-    }
-     return [no_duplicate_value,error_message]
-}
-//        $("#id_error_msg").prop("hidden", false)
-//        Error_msg = "";
-//        Error_msg = messageConstants["JMSG002"] + "Account Assignment Category";
-//        document.getElementById("id_error_msg").innerHTML = Error_msg;
-//        document.getElementById("id_error_msg").style.color = "Red";
-//        $('#id_save_confirm_popup').modal('hide');
-//        $('#myModal').modal('show');
-//        no_duplicate_value = 'N'
-   //
-//  return [no_duplicate_value,error_message]
-//}
 
 $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");
@@ -288,7 +238,9 @@ $('#save_id').click(function () {
                 }
                  if(aav.account_assign_guid == undefined) {
                    aav.account_assign_guid = ''
-             }
+                 }
+
+
             validate_add_attributes.push(aav.account_assign_value);
             aav_data.push(aav);
         });
@@ -311,7 +263,24 @@ function check_date(aav) {
      $.each(aav, function (i, item) {
         if ((Date.parse(item.valid_to) < Date.parse(item.valid_from)) == true) {
         $("#id_error_msg").prop("hidden", false)
-        error_message = messageConstants["JMSG017"];
+       
+                var msg = "JMSG017";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+              var display = msg_type.messages_id_desc[0];
+              error_message = display;
+
         $('#id_save_confirm_popup').modal('hide');
         onclick_copy_update_button(item.account_assign_value);
         $('#myModal').modal('show');

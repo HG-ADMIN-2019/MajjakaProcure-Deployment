@@ -3,12 +3,13 @@ from gettext import Catalog
 
 from django.db.models import Q
 
-from eProc_Basic.Utilities.constants.constants import CONST_CATALOG_IMAGE_TYPE, CONST_SEARCH_COUNT
+from eProc_Basic.Utilities.constants.constants import CONST_CATALOG_IMAGE_TYPE, CONST_SEARCH_COUNT, CONST_CATALOG_CALLOFF
 from eProc_Basic.Utilities.functions.django_q_query import django_q_query
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Configuration.models import SupplierMaster, UnspscCategoriesCustDesc, ProductsDetail, Catalogs, ImagesUpload, \
-    FreeTextDetails
+    FreeTextDetails, CatalogMapping
+from eProc_Shopping_Cart.models import ScItem
 
 django_query_instance = DjangoQueries()
 
@@ -25,10 +26,10 @@ def get_product_detail_filter_list(filter_query, query_count):
                                                                                         'lead_time', 'unit', 'price',
                                                                                         'currency',
                                                                                         'long_desc', 'catalog_item',
-                                                                                        'product_type',
+                                                                                        'prod_type',
                                                                                         'price_on_request',
                                                                                         'price_unit', 'manufacturer',
-                                                                                        'manu_prod',
+                                                                                        'manu_part_num',
                                                                                         'brand', 'quantity_avail',
                                                                                         'quantity_min',
                                                                                         'offer_key',
@@ -47,6 +48,11 @@ def get_product_detail_filter_list(filter_query, query_count):
 
         else:
             product_id['image_url'] = ""
+
+        # Check if product is mapped in catalog
+        check_product_mapped_in_catalog(product_id)
+        # Check if product exists in catalog
+        check_product_exist_in_transaction_table(product_id)
 
     return product_details_query
 
@@ -115,6 +121,12 @@ def product_detail_search(**kwargs):
 
         else:
             product_id['image_url'] = ""
+
+        # Check if product is mapped in catalog
+        check_product_mapped_in_catalog(product_id)
+        # Check if product exists in catalog
+        check_product_exist_in_transaction_table(product_id)
+
     print(product_details_query)
     return product_details_query
 
@@ -140,6 +152,7 @@ def get_product_category_id(filter_value):
 
     return prod_cat_id_query
 
+
 def get_prod_cat_search_query(filter_value):
     """
 
@@ -149,6 +162,7 @@ def get_prod_cat_search_query(filter_value):
     if '*' not in filter_value:
         prod_cat_id_list.append(filter_value)
     return prod_cat_id_list
+
 
 def get_product_id_list(filter_value):
     """
@@ -226,7 +240,30 @@ def freetext_search(**kwargs):
     freetext_details_query = list(FreeTextDetails.objects.filter(supp_query, product_category_query,
                                                   freetext_id_query,
                                                   short_desc_query, client=global_variables.GLOBAL_CLIENT,
-                                                  del_ind=False).values('freetext_id', 'supp_art_no', 'supplier_id',
+                                                  del_ind=False).values('freetext_id', 'supp_product_id', 'supplier_id',
                                                                         'lead_time', 'description',
                                                                         'prod_cat_id').order_by('freetext_id')[:int(search_count)])
     return freetext_details_query
+
+
+def check_product_mapped_in_catalog(product_id):
+    if django_query_instance.django_existence_check(CatalogMapping, {'client': global_variables.GLOBAL_CLIENT,
+                                                                     'call_off': CONST_CATALOG_CALLOFF,
+                                                                     'item_id': product_id['product_id'],
+                                                                     'del_ind': False}):
+        product_id['mapped_in_catlog'] = True
+
+    else:
+        product_id['mapped_in_catlog'] = False
+    return
+
+
+def check_product_exist_in_transaction_table(product_id):
+    if django_query_instance.django_existence_check(ScItem, {'client': global_variables.GLOBAL_CLIENT,
+                                                             'call_off': CONST_CATALOG_CALLOFF,
+                                                             'int_product_id': product_id['product_id'],
+                                                             'del_ind': False}):
+        product_id['exist_in_transaction_table'] = True
+
+    else:
+        product_id['exist_in_transaction_table'] = False

@@ -29,9 +29,10 @@ def get_sc_app_data(request):
     :return:
     """
     update_user_info(request)
-    scheader_guid = request.POST.get('scheader_guid')
+    sc_app_guid_data = JsonParser_obj.get_json_from_req(request)
+    # sc_app_guid_data = request.POST.get('sc_app_guid_data')
     client = global_variables.GLOBAL_CLIENT
-    sc_app = django_query_instance.django_filter_only_query(ScApproval, {'header_guid': scheader_guid, 'client': client})
+    sc_app = django_query_instance.django_filter_only_query(ScPotentialApproval, {'sc_approval_guid': sc_app_guid_data['guid'], 'client': client})
     return JsonParser_obj.get_json_from_obj(sc_app)
 
 

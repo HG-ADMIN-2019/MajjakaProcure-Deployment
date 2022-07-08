@@ -24,7 +24,24 @@ function get_form_id_to_delete(element) {
 const edit_mode = () => {
     form_id = document.getElementById('form_id').value
     if(used_forms.includes(form_id)){
-        $('#save_error_div').html(messageConstants["JMSG022"] + form_id)
+             
+                    var msg = "JMSG022";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display = msg_type.messages_id_desc[0];
+                  $('#save_error_div').html(display + form_id)
+
         $('#save_error_div').show()
         scroll_top()
         return

@@ -5,35 +5,40 @@
 
 {% block maincontent %}
 
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
-
-
+<style>
+    .ui-autocomplete { z-index:2147483647; }
+</style>
 
     {% include 'root/loader.html' %}
 
-    <div class="container-fluid">
-        <div class="hg_wrapper">
-            <div>
-                <div class="hg_head1">Documents Report</div>
-                <hr class="hg_heading_hrborder">
-            </div>
+<div class="container-fluid">
+    <div class="mep-form_wrapper">
 
-            <div>
+        <div class="d-flex justify-content-between">
+            <h3>Documents Report</h3> 
+            <div></div>
+        </div>
+        <hr>
+
+        <div class="card card-shadow-1">
+            <div class="card-body">
                 <form method="POST" action="{% url 'eProc_Admin_Tool:doc_search_report' %}">
                     {% csrf_token %}
-
-                     {% if error_messages %}
+    
+                        {% if error_messages %}
                         <div class="alert alert-danger" id="err_msg">
-                             {% for  key, value in error_messages.items %}
+                                {% for  key, value in error_messages.items %}
                                 <span class="fieldWrapper">
                                     {{ value }}
                                 </span>
-                             {% endfor %}
+                                {% endfor %}
                         </div>
                     {% endif %}
-
-<!--                    {{ sform.non_field_errors }}-->
-
+    
+                    <!-- {{ sform.non_field_errors }}-->
+    
                     <div class="row">   
                         <div class="col-md">
                             <label>Document Type </label>
@@ -61,12 +66,10 @@
                         </div>
                     </div>
                     <br>   
-
+    
                     <div>
-                        <button class="btn btn-primary" type="reset" value="Reset"><i class="fas fa-sync-alt"></i>
-                            reset
-                        </button>
-
+                        <button class="btn btn-link" type="reset" value="Reset"> Clear filters</button>
+    
                         <button id="hg_doc_report_search" class="btn btn-primary" onclick="search_click()" type="submit" title="Please click to get the search details!">
                             <i class="fas fa-search"></i> search
                         </button>
@@ -74,25 +77,25 @@
                     
                 </form>
             </div>
-            <br>
-
-            <div class="search_result_count_card card">
-                {% if t_count > 0 %}
-                <div class="card-body" ><h6 class="card-title"> Total number of results found :{{t_count}}</h6>
-                </div>
-                {% endif %}
-                {% if t_count == 0 %}
-                <div class="card-body" ><h6 class="card-title"> No Results Found</h6>
-                </div>
-                {% endif %}
-            </div>
-
         </div>
-                    <!--    To Display Header Details only if there are any results-->
+        <br>
+
+        <div class="search_result_count_card card">
+            {% if t_count > 0 %}
+            <div class="card-body" ><h6 class="card-title"> Total number of results found :{{t_count}}</h6>
+            </div>
+            {% endif %}
+            {% if t_count == 0 %}
+            <div class="card-body" ><h6 class="card-title"> No Results Found</h6>
+            </div>
+            {% endif %}
+        </div>
+
+        <!--    To Display Header Details only if there are any results-->
         {% if t_count > 0 %}
 
-        <div class="hg_wrapper">
-            <table class="table hg-striped-table table_sort_filter_export_excel" id="doc_list" >
+        <div class="card mt-5">
+            <table class="table table_sort_filter_export_excel" id="doc_list" >
                 <thead class="thead-light">
                 <tr>
                     {% if inp_doc_type == 'SC' %}
@@ -122,21 +125,20 @@
                 <tbody>
                 <!--   Looping over the cart_items to get individual fields         -->
                 {% for items,encrypted_header_guid in results %}
-                 {% if items.status != 'SAVED' %}
-                   {% if inp_doc_type == 'SC' %}
-
+                    {% if items.status != 'SAVED' %}
+                    {% if inp_doc_type == 'SC' %}
                 <tr>
-                    <td scope="row"><a href="{% url 'eProc_Doc_Details:my_order_doc_details' sc_completion_flag inp_doc_type encrypted_header_guid 'display' 'my_order' %}">{{ items.doc_number }}</a></td>
+                    <td scope="row"><a href="{% url 'eProc_Doc_Details:my_order_doc_details' sc_completion_flag 'SC' encrypted_header_guid 'display' 'my_order' %}" target="_blank">{{ items.doc_number }}</a></td>
                     <td scope="row">{{ items.description }}</td>
                     {% if items.status == 'AWAITING_APPROVAL'%}
                         <td scope="row"> <span >WAITING FOR APPROVAL</span></td>
-                     {% elif items.status == 'SAVED' %}
+                        {% elif items.status == 'SAVED' %}
                         <td scope="row"> <span>SAVED</span></td>
-                     {% elif items.status == 'APPROVED' %}
+                        {% elif items.status == 'APPROVED' %}
                         <td scope="row"> <span>APPROVED</span></td>
-                     {% elif items.status == 'PURCHASER_WORKLIST' %}
+                        {% elif items.status == 'PURCHASER_WORKLIST' %}
                         <td scope="row"> <span>IN PURCHASER's WORK LIST</span></td>
-                     {% elif items.status == 'REJECTED' %}
+                        {% elif items.status == 'REJECTED' %}
                         <td scope="row"> <span>REJECTED</span></td>
                     {% endif %}
                     <td scope="row">{{ items.total_value }}</td>
@@ -147,20 +149,146 @@
                     <td scope="row">{{ items.ordered_at }}</td>
                     <td scope="row" hidden>{{ items.changed_at }}</td>
                     <td scope="row" hidden>{{ items.changed_by }}</td>
-
                 </tr>
                 {% endif %}
-                 {% endif %}
+                    {% endif %}
                 {% endfor %}
                 </tbody>
             </table>
         </div>
         {% endif %}
-                
+
+    </div>        
+</div>
+<!-- start of username popup -->
+<div class="modal fade" id="get_username_popup">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Select User</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group">
+                            <input class="form-control py-2 border-right-0 border" type="search" placeholder="Search User" id="created_by" name="created_by" value="" >
+                             <div class="input-group-append">
+                            <button class="btn btn-primary" id="created-by-submit" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="select_username"  data-dismiss="modal"><i class="fa fa-check" aria-hidden="true"></i> select</button>
+            </div>
+
+        </div>
     </div>
+</div>
+<!-- end of username popup -->
 
 <div class="hg_spacer2"> &nbsp;</div>
 
+<script>
+<!-- var len = {{results|safe}};-->
+$(document).ready( function() {
+<!--    console.log(len);-->
+    // display admin role submenu
+    nav_bar_admin()
+    // Script to generate sort and filter feature for tables
+    table_sort_filter_export_excel();
+    // Loader implementation on search button
+    $('#hg_doc_report_search').click(function() {
+        $('#hg_loader').modal('show');
+    });
+
+    $('select option:first-child').attr("selected", "selected");
+
+    // user search autocomplete
+    $("#created_by, #id_requester").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+            url  : "{% url 'eProc_Doc_Details:auto_complete_goods_receiver' %}",
+                dataType: "json",
+                data: {
+                    term : request.term,
+                },
+                success: function(data) {
+                    response(data);
+                }
+            });
+        },
+        min_length: 3,
+    });
+});
+
+ $("#created_by").on('input',function(e) {
+     res = document.getElementById("created_by").value;
+     user_auto(res);
+    });
+
+   function user_auto(res) {
+   $.ajax({
+            url  : "{% url 'eProc_Doc_Details:auto_complete_goods_receiver' %}",
+                dataType: "json",
+                type: "GET",
+                data: {term : res },
+                success: function(data) {
+                        console.log(data);
+                        $("#created_by, #id_requester").autocomplete({
+                        source: data
+                       });
+                }
+            });
+         }
+    var requested_by , created_by;
+   $('#id_created_by').click(function () {
+    $("#get_username_popup").modal('show');
+        created_by = true;
+    });
+    $("#id_requester").click(function(){
+        $("#get_username_popup").modal('show');
+        requested_by = true;
+    });
+
+  $("#select_username").click(function(){
+        $("#get_username_popup").modal('hide');
+      //  $('#hg_loader').modal('show');
+        var flag =  $(this);
+        var username_value = document.getElementById('created_by').value;
+        console.log(flag.id);
+        var split_name = username_value.split(' ');
+        var first_name = split_name[0];
+        var email_id = split_name.pop();
+        console.log(email_id);
+        $.ajax({
+                url  : "{% url 'eProc_Admin_Tool:get_username' %}",
+                type: 'POST',
+                data: JSON.stringify(email_id),
+                dataType: "json",
+                success: function(response) {
+                        console.log(response);
+                        if(created_by){
+                            document.getElementById('id_created_by').value = response;
+                            created_by = false;
+                       }
+                       if(requested_by){
+                            document.getElementById('id_requester').value = response;
+                            requested_by = false;
+                       }
+                }
+            });
+    });
+
+</script>
 <script src="{% static 'scripts/doc_report.js' %}"></script>
 
 {% if inc_footer %}

@@ -1,0 +1,561 @@
+{% extends 'root/base.html' %}
+{% load static %}
+{% block title %} Purchase Order Split Types (Application Settings) {% endblock %}
+{% block maincontent %}
+
+{% include 'root/loader.html' %}
+
+    <div class="container-fluid">
+        <div class="configuration-table_wrapper">
+
+            <div class="elements-space-between">
+                <h3>Maintain Purchase Order Split Types</h3>
+                <div>
+                    <button type="button" id="id_add_data" value="ADD" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
+                        <i class="fa fa-plus"></i> add Purchase Order split type
+                    </button>
+                      <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                        <i class="fas fa-times"></i> close
+                    </button>
+                </div>
+            </div>
+            
+            <hr>
+            
+            <div class="configuration-table_section">
+                <div id="err_msg_app_settings"> </div>
+                <div id="err_msg_app_settings_t" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
+
+                <div class="table-container tcw-60">
+                    <div class="edit-button-section mb-4">
+                        <button class="btn btn-secondary btn-sm" id="id_edit_data" onclick="onclick_edit_button()">
+                            <i class="fas fa-edit"></i> edit
+                        </button> 
+                        <button class="btn btn-outline-danger btn-sm" id="id_delete_data" value="DELETE" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
+                            <i class="fa fa-trash"></i> delete
+                        </button>
+
+                        <button class="btn btn-secondary btn-sm" id="id_cancel_data" style="display:none;" type="button" onclick="display_basic_db_data()">
+                            <i class="fas fa-times"></i> cancel
+                        </button>
+                    </div>
+
+                    <table id="display_basic_table" class="class_basic_aac_table table table-bordered custom-table">
+                        <thead id="id_aac_table_header">
+                            <tr>
+                                <th id="hg_select_checkbox" hidden>
+                                    <!--            Select all checkbox-->
+                                    <div id="id_check_all" style="display:none;">
+                                        <INPUT type="checkbox" onchange="checkAll(this)" name="chk[]">
+                                    </div>
+                                </th>
+                                <th>Type</th>
+                                    <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody id="id_aac_tbody">
+                            {% for aac in upload_acc_assign_categories %}
+                            <tr>
+                                <td class="class_select_checkbox" hidden><input type="checkbox" class="checkbox_check" onclick="valueChanged()" required></td>
+                                <td>{{ aac.po_split_type}}</td>
+                                <td>{{aac.po_split_type_desc}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <!--end of display basic aac table-->
+                </div>
+            </div>
+        </div>
+
+        <!--modal popup for Add,copy,update and upload-->
+        <div class="modal fade" id="myModal" style="overflow:auto;">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title"> Maintain Purchase Order Split Type</h5>
+                        <button type="button" class="close remove_upload_data" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body scrollbox">
+                        <div id="id_del_add_button" class="mb-4">
+                            <button class="btn btn-primary" type="button" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row </button>
+                            <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash"></i> delete</button>
+                        </div>
+
+                        <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
+                        <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
+                        <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
+                            <p id="id_error_msg_aac_code"></p>
+                            <p id="id_error_msg_aac_name"></p>
+                            <p id="id_error_msg_aac_length"></p>
+                        </div>
+                         <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
+                    <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
+                    <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
+
+                        <table class="class_popup_table table table-bordered mt-2" id="id_popup_table">
+                            <thead>
+                                <tr>
+                                    <th id="header_select">Select</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                    <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
+                                </tr>
+                            </thead>
+                            <tbody id=id_popup_tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                       
+					  <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                        <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
+                      
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--end of modal popup for Add,copy,update and upload-->
+
+        <!-- modal popup to upload the csv file; save confirmation popup; delete confirmation popup -->
+        {% include 'configuration_common_pop_up.html' %}
+
+        <div>
+            {% if messages %} {% for message in messages %} {% if message.tags == 'success' %}
+            <div style="color: green; ">{{ message }}</div>
+            {% endif %} {% if message.tags == 'error' %}
+            <div style="color: red; ">{{ message }}</div>
+            {% endif %} {% if message.tags == 'info' %}
+            <div style="color: Black bold"><b>{{ message }}</b> </div>
+            {% endif %} {% endfor %} {% endif %}
+        </div>
+    </div>
+
+    <script>
+
+        var rendered_aac_data = {{upload_acc_assign_categories|safe}};
+        var rendered_aac_values = {{dropdown_acct_assmt_values|safe}};
+        var rendered_aac_values_onload = {{dropdown_acct_assmt_values_onload|safe}};
+        var aac_data_array = {}
+        var main_table_aac_value = [];
+        var aac = '';
+        var edit_basic_data = '';
+        var GLOBAL_ACTION = '';
+        var no_duplicate_entries = 'Y'
+        var Tablename = uiConstants["CONST_TABLENAME_AAC"]
+        var appname = uiConstants["CONST_APPNAME01"]
+        var db_header_data = uiConstants["CONST_HEADER_DATA_ACC"]
+
+        var aac_dropdown='';
+        var aac_dropdown_onload='';
+        function dropdown_value(){
+        aac_dropdown = '';
+        $.each(rendered_aac_values, function(i, item){
+        aac_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
+        });
+        }
+        aac_dropdown_onload='';
+         $.each(rendered_aac_values_onload, function(i, item){
+        aac_dropdown_onload += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
+        });
+
+        //**********************
+        // validate and save for add,copy,update and upload data
+        function popup_save_data() {
+			 $('#success_msg_id').empty()
+            $('#id_popup_table').DataTable().destroy();
+
+
+            var main_table_low_value = [];
+			 no_duplicate_entries = 'Y'
+    		no_duplicate_value = 'Y'
+		    var error_message = '';
+
+            $('#display_basic_table').DataTable().destroy();
+            $("#display_basic_table TBODY TR").each(function() {
+                var row = $(this);
+                var main_attribute = {};
+                main_attribute.account_assign_cat = row.find("TD").eq(1).html();
+                main_table_low_value.push(main_attribute.account_assign_cat);
+            });
+            table_sort_filter_page('display_basic_table');
+
+            [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, accasscat_data)
+			if (error_message){
+        		display_error_message(error_message)
+    		}
+    		else{
+             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+            }
+            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+                var add_basic_data = '';
+                var aac_data_array = accasscat_data;
+
+                $('#id_save_confirm_popup').modal('hide');
+			data = {'data':accasscat_data,'table_name':'PoSplitType','action':GLOBAL_ACTION}
+			OpenLoaderPopup();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function(Response) {
+                        rendered_aac_data = Response[0];
+                        rendered_aac_values = Response[2];
+                        display_basic_db_data();
+                        $('#myModal').modal('hide');
+					  //$('#id_error_msg').text(messageConstants["JMSG001"])
+                   	 $('#success_msg_id').text(Response[1])
+                   	  if(Response[1].message_type[0]== 'SUCCESS'){
+                          $('#success_msg_id').text(Response[1].message_desc[0])
+                      }
+                        $("#err_msg_app_settings_t").prop("hidden", false)
+                        table_sort_filter('id_popup_table');
+                        setTimeout(function() {
+                            $("#err_msg_app_settings_t").prop("hidden", true);
+                        }, 5000)
+						 table_sort_filter('id_popup_table');
+						 CloseLoaderPopup();
+                    }
+                });
+
+            }
+			else if (error_message){
+            display_error_message(error_message)
+
+    	}
+	}
+        }
+
+        //delete the selected row in db................
+        var main_table_po_split_checked = [];
+
+        function main_table_delete() {
+            $('#success_msg_id').empty()
+		    GLOBAL_ACTION = 'DELETE'
+		    var Tabledata = {
+                "Dbl_clck_tbl_id": 'upload_accasscat'
+            };
+            $('#display_basic_table').DataTable().destroy();
+            $("#display_basic_table TBODY TR").each(function() {
+                var row = $(this);
+                var po_split_type_dic = {};
+                po_split_type_dic.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+                if(po_split_type_dic.del_ind){
+                    po_split_type_dic.po_split_type = row.find("TD").eq(1).html();
+                    po_split_type_dic.po_split_type_desc = row.find("TD").eq(2).html();
+                    main_table_po_split_checked.push(po_split_type_dic);
+                }
+            });
+        	$('#id_delete_confirm_popup').modal('hide');
+		    data = {'data':main_table_po_split_checked,'table_name':'PoSplitType','action':GLOBAL_ACTION}
+		    OpenLoaderPopup();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(Response) {
+                    rendered_aac_data = Response[0];
+                    rendered_aac_values = Response[2];
+                    display_basic_db_data();
+                     $('#success_msg_id').text(Response[1])
+                     if(Response[1].message_type[0]== 'SUCCESS'){
+                         $('#success_msg_id').text(Response[1].message_desc[0])
+                    }
+					$("#err_msg_app_settings_t").prop("hidden",false)
+					 table_sort_filter('id_popup_table');
+                    setTimeout(function() {
+                        $("#err_msg_app_settings_t").prop("hidden", true);
+                    }, 5000)
+                     table_sort_filter('id_popup_table');
+                     CloseLoaderPopup();
+                }
+            });
+        }
+        //*************************
+
+        //check function restricting special char and diaplay the data count of csv file
+        function check_data() {
+            $('#id_popup_table').DataTable().destroy();
+            $("#id_check_success_messages").empty()
+            $("#id_check_error_messages").empty()
+            $("#id_check_success_messages").prop("hidden", true)
+            $("#id_check_error_messages").prop("hidden", true)
+            $("#id_check_special_character_messages").prop("hidden", true)
+            document.getElementById("id_error_msg_aac_code").innerHTML = "";
+            document.getElementById("id_error_msg_aac_name").innerHTML = "";
+            document.getElementById("id_error_msg_aac_length").innerHTML = "";
+            count = 0;
+            var aac_array = new Array
+            var DB_array = new Array
+            var aac_list = new Array
+            var aac_code_check = new Array
+            del_ind = ''
+            $("#id_popup_table TBODY TR").each(function() {
+                var row = $(this);
+
+                //*************** reading data from the pop-up ***************
+                description = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
+                account_assign_cat = row.find("TD").eq(1).find('select[type="text"]').val();
+                checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
+                if (checked_box) {
+                    del_ind = '1'
+                } else {
+                    del_ind = '0'
+                }
+                aac_list.push([account_assign_cat, description, del_ind])
+
+                var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+
+
+                //*************** checking for max length for aac code (max length = 5) ***************
+<!--                if (account_assign_cat.length > 5) {-->
+<!--                    document.getElementById("id_error_msg_aac_length").innerHTML = messageConstants["JMSG004"] + "Account Assignment Category";-->
+<!--                    $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");-->
+<!--                    count = count + 1;-->
+<!--                }-->
+
+                //*************** checking for special characters for aac code ***************
+<!--                 if (format.test(account_assign_cat)) {-->
+<!--                    document.getElementById("id_error_msg_aac_code").innerHTML = messageConstants["JMSG003"] + "Account Assignment Category";-->
+<!--                    $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");-->
+<!--                    count = count + 1;-->
+<!--                } else {-->
+<!--                    $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");-->
+<!--                }-->
+
+                //*************** checking for special characters for aac name ***************
+                if (format.test(description)) {
+                    document.getElementById("id_error_msg_aac_name").innerHTML = messageConstants["JMSG003"] + "Description";
+                    $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                    count = count + 1;
+                } else {
+                    $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+                }
+
+                if (aac_code_check.includes(account_assign_cat)) {
+                    $(row).css("background-color", "#f8d7da");
+                    //$(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                    //$(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
+
+                } else {
+                    $(row).css("background-color", "");
+                }
+
+                aac_code_check.push(account_assign_cat)
+            });
+
+            //*************** shows save button if there are no errors(special characters and max length) ***************
+            if (count == 0) {
+                $("#id_check_special_character_messages").prop("hidden", true)
+                $("#save_id").prop("hidden", false);
+            }
+            popup_data_dict = {
+                'data_list': aac_list,
+                'Tablename': Tablename,
+                'appname': appname,
+                'db_header_data': db_header_data
+            }
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Basic_Settings:check_data' %}",
+                data: JSON.stringify(popup_data_dict),
+                success: function(response) {
+                    table_sort_filter_popup_pagination('id_popup_table')
+                    $("#id_check_special_character_messages").prop("hidden", false)
+                    if (count == 0) {
+                        $("#id_check_special_character_messages").prop("hidden", true)
+                    }
+
+                    //*************** retrieving data counts from views ***************
+                    check_messages = response
+                    var newArrayDataOfOjbect = Object.values(check_messages)
+                    $("#id_check_success_messages").prop("hidden", false)
+
+                    //*************** if pop-up data count is greater than zero ***************
+                    if (newArrayDataOfOjbect[1] > 0) {
+                        $("#id_check_success_messages").append('<p>' + messageConstants["JMSG010"] + newArrayDataOfOjbect[0] + '</p>')
+                        $("#id_check_success_messages").append('<p>' + messageConstants["JMSG011"] + newArrayDataOfOjbect[1] + '</p>')
+                        $("#id_check_success_messages").append('<p>' + messageConstants["JMSG012"] + newArrayDataOfOjbect[3] + '</p>')
+                        $("#id_check_success_messages").append('<p>' + messageConstants["JMSG013"] + newArrayDataOfOjbect[4] + '</p>')
+                        $("#id_check_success_messages").append('<p>' + messageConstants["JMSG014"] + newArrayDataOfOjbect[5] + '</p>')
+
+                        //*************** if duplicate data data count is greater than zero ***************
+                        if (newArrayDataOfOjbect[2] > 0) {
+                            $("#id_check_error_messages").prop("hidden", false)
+                            $("#id_check_error_messages").append('<p>' + messageConstants["JMSG015"] + newArrayDataOfOjbect[2] + '</p>')
+                            $("#id_check_error_messages").append('<p style = "font-weight: bold;">' + messageConstants["JMSG001"] + ' </p>')
+                            $("#save_id").prop("hidden", true);
+                            $("#id_delete_duplicate").show()
+                        } else {
+                            $("#id_check_error_messages").prop("hidden", true)
+                            $("#id_delete_duplicate").hide()
+                        }
+                    }
+                    //*************** if pop-up data count is zero ***************
+                    else {
+                        $("#id_check_success_messages").hide()
+                        $("#id_check_error_messages").prop("hidden", false)
+                        $("#id_check_error_messages").append('<p>' + messageConstants["JMSG006"] + '</p>')
+                        $("#save_id").prop("hidden", true);
+                    }
+                }
+            });
+        }
+
+//*******************************************************
+// on click add icon display the row in to add the new entries
+function add_popup_row() {
+    dropdown_value();
+    basic_add_new_html = '';
+    var display_db_data = '';
+    $('#id_popup_table').DataTable().destroy();
+    $(".modal").on("hidden.bs.modal", function () {
+        $("#id_error_msg").html("");
+    });
+    basic_add_new_html = '<tr ><td><input type="checkbox" required></td>'+
+    '<td><select type="text" class="input form-control" id="aaccode" name="aaccode">'+ aac_dropdown +'</select></td>'+
+    '<td><input class="input form-control" type="text" maxlength="255"  name="aacname"   required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    $('#id_popup_tbody').append(basic_add_new_html);
+    if (GLOBAL_ACTION == "aac_upload") {
+        $(".class_del_checkbox").prop("hidden", false);
+    }
+    table_sort_filter('id_popup_table');
+}
+
+//onclick of add button display myModal popup and set GLOBAL_ACTION button value
+function onclick_add_button(button) {
+    dropdown_value();
+    $("#error_msg_id").css("display", "none")
+    $( "#header_select").prop( "hidden", false );
+    GLOBAL_ACTION = button.value
+    $("#id_popup_tbody").empty();
+    $('#myModal').modal('show');
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
+    '<td><select type="text" class="input form-control" id="aaccode" name="aaccode">'+ aac_dropdown +'</select></td>'+
+    '<td><input class="input form-control" type="text" maxlength="255" name="aacname"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    $('#id_popup_tbody').append(basic_add_new_html);
+    table_sort_filter('id_popup_table');
+    $("#header_select").prop("hidden", false);
+    $("#id_del_ind_checkbox").prop("hidden", true);
+    document.getElementById("id_del_add_button").style.display = "block";
+    $("#save_id").prop("hidden", false);
+}
+
+       function GetReferrer() {
+             window.history.back();
+              var preUrl = document.referrer;
+              console.log(preUrl);
+              window.open('', '_self', '').close();
+<!--               var win = window.open(preUrl);-->
+<!--                win.focus();-->
+              if (preUrl == null)
+                     return "The previous page url is empty";
+               else
+                     return preUrl;
+       }
+
+
+       // validating the  popup table for duplicate entries
+function compare_table_for_duplicate_entries(validate_add_attributes, aac) {
+    add_attr_duplicates = false;
+    var error_message = ''
+    var add_attr_duplicates_list = [];
+    var add_attr_unique_list = [];
+    var no_duplicate_value = 'Y'
+    $.each(validate_add_attributes, function (index, value) {
+        if ($.inArray(value, add_attr_unique_list) == -1) {
+            add_attr_unique_list.push(value);
+        } else {
+            if ($.inArray(value, add_attr_duplicates_list) == -1) {
+                add_attr_duplicates_list.push(value);
+            }
+        }
+    });
+    console.log(aac);
+    if (add_attr_duplicates_list.length != 0) {
+        //$("#id_error_msg").prop("hidden", false)
+       var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+                var msg = "JMSG001";
+                var msg_type ;
+              msg_type = message_config_details(msg, url_new);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+
+    }
+  else {
+         $.each(aac, function (i, item) {
+            if (item.account_assign_cat.length == 0) {
+                //error_message = messageConstants["JMSG002"] + "Account Assignment Category";
+                 var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+                var msg = "JMSG002";
+                var msg_type ;
+              msg_type = message_config_details(msg, url_new);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
+            if (item.description.length == 0) {
+                //error_message = messageConstants["JMSG002"] + "Description";
+                var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+                var msg = "JMSG002";
+                var msg_type ;
+              msg_type = message_config_details(msg, url_new);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
+         });
+    }
+
+    return [no_duplicate_value,error_message]
+}
+
+    </script>
+
+    <script src="{% static 'scripts/upload_acc_assign_cat.js' %}"></script>
+
+{% endblock %}

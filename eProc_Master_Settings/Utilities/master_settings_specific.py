@@ -1,6 +1,7 @@
 from eProc_Basic.Utilities.functions.camel_case import convert_to_camel_case
 from eProc_Basic.Utilities.functions.image_type_funtions import get_image_type
 from eProc_Basic.Utilities.functions.log_function import update_log_info
+from eProc_Basic.Utilities.functions.messages_config import get_msg_desc
 
 from eProc_Org_Model.Utilities import client
 from eProc_Org_Model.models import OrgModel
@@ -30,7 +31,8 @@ def save_auth_group_data_into_db(auth_group_data):
                                                        'authorization_group_changed_at': datetime.today(),
                                                        'authorization_group_changed_by': global_variables.GLOBAL_LOGIN_USERNAME}
                                                       )
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for auth_group_detail in auth_group_data['data']:
             # if entry is not exists in db
@@ -73,7 +75,8 @@ def save_auth_group_data_into_db(auth_group_data):
         # if guid == '':
         # guid = guid_generator()
         bulk_create_entry_db(AuthorizationGroup, auth_group_db_list)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(AuthorizationGroup, {'del_ind': False},
                                              ['auth_grp_guid', 'auth_obj_grp', 'auth_grp_desc', 'auth_level',
                                               'auth_obj_id'
@@ -94,7 +97,8 @@ def save_roles_data_into_db(roles_data):
                                                       {'del_ind': True,
                                                        'user_roles_changed_at': datetime.today(),
                                                        'user_roles_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for roles_detail in roles_data['data']:
             # if entry is not exists in db
@@ -111,14 +115,15 @@ def save_roles_data_into_db(roles_data):
             else:
                 django_query_instance.django_update_query(UserRoles,
                                                           {'role': roles_detail['role']},
-                                                          {'role':convert_to_camel_case( roles_detail['role']),
+                                                          {'role': roles_detail['role'],
                                                            'role_desc': roles_detail['role_desc'],
                                                            'user_roles_changed_at': datetime.today(),
                                                            'user_roles_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                                            'del_ind': False})
         bulk_create_entry_db(UserRoles, roles_db_list)
         fieldtypedesc_instance.update_usedFlag(roles_type_field)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(UserRoles, {'del_ind': False}, ['role', 'role_desc'])
     upload_fieldtypedesc = fieldtypedesc_instance.get_field_type_desc_values(FieldTypeDesc,
                                                                              {'del_ind': False, 'used_flag': False,
@@ -139,7 +144,8 @@ def save_address_data_into_db(address_data):
                                                        'org_address_changed_at': datetime.today(),
                                                        'org_address_changed_by': global_variables.GLOBAL_LOGIN_USERNAME}
                                                       )
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for address_detail in address_data['data']:
             # if entry is not exists in db
@@ -206,7 +212,8 @@ def save_address_data_into_db(address_data):
                                                            'client': client,
                                                            'del_ind': False})
         bulk_create_entry_db(OrgAddress, address_db_list)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(OrgAddress, {'del_ind': False},
                                              ['address_guid', 'address_number', 'title', 'name1', 'name2',
                                               'street', 'area', 'landmark', 'city', 'postal_code', 'region',
@@ -228,7 +235,8 @@ def save_payterm_data_into_db(payterm_data):
                                                        'payterms_changed_at': datetime.today(),
                                                        'payterms_changed_by': global_variables.GLOBAL_LOGIN_USERNAME}
                                                       )
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for payterm_detail in payterm_data['data']:
             # if entry is not exists in db
@@ -261,7 +269,8 @@ def save_payterm_data_into_db(payterm_data):
         # if guid == '':
         # guid = guid_generator()
         bulk_create_entry_db(Payterms, payterm_db_list)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(Payterms, {'del_ind': False},
                                              ['payment_term_guid', 'payment_term_key',
                                               ])
@@ -288,7 +297,8 @@ def save_spend_limit_value_data_into_db(spend_limit_value_data):
                                                       {'del_ind': True,
                                                        'spend_limit_value_changed_at': datetime.today(),
                                                        'spend_limit_value_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for spend_limit_value_detail in spend_limit_value_data['data']:
             # if entry is not exists in db
@@ -333,7 +343,8 @@ def save_spend_limit_value_data_into_db(spend_limit_value_data):
                                                            'del_ind': False
                                                            })
         bulk_create_entry_db(SpendLimitValue, spend_limit_value_db_list)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(SpendLimitValue, {'del_ind': False},
                                              ['spend_lim_value_guid', 'spend_code_id', 'upper_limit_value',
                                               'company_id', 'currency_id'])
@@ -356,7 +367,8 @@ def save_approval_data_into_db(approval_data):
                                                        'approver_type_changed_at': datetime.today(),
                                                        'approver_type_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
         fieldtypedesc_instance.reset_usedFlag(appr_type_field)
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for approval_detail in approval_data['data']:
             appr_type_field = approval_detail['app_types']
@@ -386,7 +398,8 @@ def save_approval_data_into_db(approval_data):
                                                            })
         bulk_create_entry_db(ApproverType, approval_db_list)
         fieldtypedesc_instance.update_usedFlag(appr_type_field)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(ApproverType, {'del_ind': False},
                                              ['app_types', 'appr_type_desc'])
     upload_fieldtypedesc = fieldtypedesc_instance.get_field_type_desc_values(FieldTypeDesc,
@@ -411,7 +424,8 @@ def save_app_limit_value_data_into_db(applimval_data):
                                                        'approver_limit_value_changed_at': datetime.today(),
                                                        'approver_limit_value_changed_by': global_variables.GLOBAL_LOGIN_USERNAME}
                                                       )
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for applimval_detail in applimval_data['data']:
             # if entry is not exists in db
@@ -463,7 +477,8 @@ def save_app_limit_value_data_into_db(applimval_data):
         # if guid == '':
         # guid = guid_generator()
         bulk_create_entry_db(ApproverLimitValue, applimval_db_list)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(ApproverLimitValue, {'del_ind': False},
                                              ['app_lim_dec_guid', 'app_types',
                                               'app_code_id', 'upper_limit_value',
@@ -487,7 +502,8 @@ def save_app_limit_data_into_db(applim_data):
                                                        'approver_limit_changed_at': datetime.today(),
                                                        'approver_limit_changed_by': global_variables.GLOBAL_LOGIN_USERNAME}
                                                       )
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for applim_detail in applim_data['data']:
             # if entry is not exists in db
@@ -529,7 +545,8 @@ def save_app_limit_data_into_db(applim_data):
         # if guid == '':
         # guid = guid_generator()
         bulk_create_entry_db(ApproverLimit, applim_db_list)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(ApproverLimit, {'del_ind': False},
                                              ['app_guid', 'approver_username',
                                               'app_code_id',
@@ -552,7 +569,8 @@ def save_aad_data_into_db(aad_data):
                                                        'accounting_data_desc_changed_at': datetime.today(),
                                                        'accounting_data_desc_changed_by': global_variables.GLOBAL_LOGIN_USERNAME}
                                                       )
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for aad_detail in aad_data['data']:
             # if entry is not exists in db
@@ -600,7 +618,8 @@ def save_aad_data_into_db(aad_data):
         # if guid == '':
         # guid = guid_generator()
         bulk_create_entry_db(AccountingDataDesc, aad_db_list)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(AccountingDataDesc, {'del_ind': False},
                                              ['acc_desc_guid', 'account_assign_value',
                                               'description',
@@ -623,7 +642,8 @@ def save_workflow_acc_data_into_db(wfacc_data):
                                                       {'del_ind': True,
                                                        'workflow_acc_changed_at': datetime.today(),
                                                        'workflow_acc_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for wfacc_detail in wfacc_data['data']:
             # if entry is not exists in db
@@ -672,7 +692,8 @@ def save_workflow_acc_data_into_db(wfacc_data):
                                                            'client': OrgClients.objects.get(client=client),
                                                            })
         bulk_create_entry_db(WorkflowACC, wfacc_db_list)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(WorkflowACC, {'del_ind': False},
                                              ['workflow_acc_guid', 'acc_value', 'company_id', 'app_username',
                                               'sup_company_id',
@@ -695,7 +716,8 @@ def save_payment_desc_data_into_db(payment_desc_data):
                                                       {'del_ind': True,
                                                        'payterms_desc_changed_at': datetime.today(),
                                                        'payterms_desc_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for payment_desc_detail in payment_desc_data['data']:
             # if entry is not exists in db
@@ -735,7 +757,8 @@ def save_payment_desc_data_into_db(payment_desc_data):
                                                            'client': client
                                                            })
         bulk_create_entry_db(Payterms_desc, payment_desc_db_list)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(Payterms_desc, {'del_ind': False},
                                              ['payment_term_guid', 'payment_term_key', 'day_limit',
                                               'description', 'language_id'])
@@ -754,7 +777,8 @@ def save_incoterms_data_into_db(incoterms_data):
                                                       {'del_ind': True,
                                                        'incoterms_changed_at': datetime.today(),
                                                        'incoterms_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for incoterms_detail in incoterms_data['data']:
             # if entry is not exists in db
@@ -782,7 +806,8 @@ def save_incoterms_data_into_db(incoterms_data):
                                                            'del_ind': False
                                                            })
         bulk_create_entry_db(Incoterms, incoterms_db_list)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(Incoterms, {'del_ind': False},
                                              ['incoterm_key', 'description'])
     return upload_response, message
@@ -804,7 +829,8 @@ def save_aav_data_into_db(aav_data):
                                                        'accounting_data_changed_at': datetime.today(),
                                                        'accounting_data_changed_by': global_variables.GLOBAL_LOGIN_USERNAME}
                                                       )
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for aav_detail in aav_data['data']:
             # if entry is not exists in db
@@ -847,7 +873,8 @@ def save_aav_data_into_db(aav_data):
                                                            'del_ind': False})
 
         bulk_create_entry_db(AccountingData, aav_db_list)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(AccountingData, {'del_ind': False},
                                              ['account_assign_guid', 'account_assign_value',
                                               'account_assign_cat', 'valid_from',
@@ -868,7 +895,8 @@ def save_purgrp_data_into_db(pggrp_data):
                                                        'org_pgroup_changed_at': datetime.today(),
                                                        'org_pgroup_changed_by': global_variables.GLOBAL_LOGIN_USERNAME}
                                                       )
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for pggrp_detail in pggrp_data['data']:
             # if entry is not exists in db
@@ -907,7 +935,8 @@ def save_purgrp_data_into_db(pggrp_data):
                                                            'del_ind': pggrp_detail['del_ind']})
 
         bulk_create_entry_db(OrgPGroup, pggrp_data_db_list)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(OrgPGroup, {'del_ind': False},
                                              ['pgroup_guid', 'pgroup_id',
                                               'description', 'porg_id','object_id' ])
@@ -967,7 +996,8 @@ def save_purorg_data_into_db(pgorg_data):
                                                            'del_ind': pgorg_detail['del_ind']})
 
         bulk_create_entry_db(OrgPorg, pgorg_data_db_list)
-        message = MSG112
+        msgid = 'MSG100'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(OrgPorg, {'del_ind': False},
                                              ['porg_guid', 'porg_id',
                                               'description','company_id', 'object_id'])
@@ -991,7 +1021,8 @@ def save_orgnode_types_data_into_db(orgnode_data):
                                                        'org_node_types_changed_by': global_variables.GLOBAL_LOGIN_USERNAME}
                                                       )
             fieldtypedesc_instance.reset_usedFlag(nod_type_field)
-            message = MSG113
+            msgid = 'MSG113'
+            message = get_msg_desc(msgid)
     else:
         for orgnode_detail in orgnode_data['data']:
             # if entry is not exists in db
@@ -1028,14 +1059,15 @@ def save_orgnode_types_data_into_db(orgnode_data):
 
         bulk_create_entry_db(OrgNodeTypes, orgnode_data_db_list)
         fieldtypedesc_instance.update_usedFlag(nod_type_field)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
 
     upload_response = get_configuration_data(OrgNodeTypes, {'del_ind': False, 'client': global_variables.GLOBAL_CLIENT},
                                              ['node_type_guid', 'node_type',
                                               'description'])
     upload_fieldtypedesc = fieldtypedesc_instance.get_field_type_desc_values(FieldTypeDesc,
                                                                              {'del_ind': False, 'used_flag': False,
-                                                                              'field_name': 'node_type'},
+                                                                              'field_name': 'org_node_types'},
                                                                              ['field_type_id', 'field_type_desc'])
 
     return upload_response, message, upload_fieldtypedesc
@@ -1058,7 +1090,8 @@ def save_orgattributes_data_into_db(attr_data):
                                                       )
 
             fieldtypedesc_instance.reset_usedFlag(att_type_field)
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for attr_detail in attr_data['data']:
             # if entry is not exists in db
@@ -1098,7 +1131,8 @@ def save_orgattributes_data_into_db(attr_data):
 
         bulk_create_entry_db(OrgAttributes, attr_data_db_list)
         fieldtypedesc_instance.update_usedFlag(att_type_field)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(OrgAttributes, {'del_ind': False},
                                              ['attribute_id', 'attribute_name',
                                               'range_indicator', 'multiple_value',
@@ -1115,7 +1149,7 @@ def save_orgattributes_data_into_db(attr_data):
 def save_authorobject_data_into_db(authobj_data):
     authobj_data_db_list = []
     fieldtypedesc_instance = FieldTypeDescription()
-    # fieldtypedesc_instance1 = FieldTypeDescription()
+     # fieldtypedesc_instance1 = FieldTypeDescription()
     auth_obj_field = ''
     auth_type_field = ''
     if authobj_data['action'] == CONST_ACTION_DELETE:
@@ -1133,7 +1167,8 @@ def save_authorobject_data_into_db(authobj_data):
                                                       )
             fieldtypedesc_instance.reset_usedFlag(auth_obj_field)
             fieldtypedesc_instance.reset_usedFlag(auth_type_field)
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for authobj_detail in authobj_data['data']:
             # if entry is not exists in db
@@ -1168,7 +1203,8 @@ def save_authorobject_data_into_db(authobj_data):
         bulk_create_entry_db(AuthorizationObject, authobj_data_db_list)
         fieldtypedesc_instance.update_usedFlag(auth_obj_field)
         fieldtypedesc_instance.update_usedFlag(auth_type_field)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(AuthorizationObject, {'del_ind': False},
                                              ['auth_obj_id','auth_level_ID',
                                               'auth_level'])
@@ -3163,7 +3199,8 @@ def save_product_cat_cust_desc_data_into_db(prodcatdesc_data):
                                                       {'del_ind': True,
                                                        'unspsc_categories_cust_desc_changed_at': datetime.today(),
                                                        'unspsc_categories_cust_desc_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for prodcatdesc_detail in prodcatdesc_data['data']:
             # if entry is not exists in db
@@ -3201,7 +3238,8 @@ def save_product_cat_cust_desc_data_into_db(prodcatdesc_data):
                                                            'del_ind': prodcatdesc_detail['del_ind'],
                                                            'client': OrgClients.objects.get(client=client)})
         bulk_create_entry_db(UnspscCategoriesCustDesc, prodcatdesc_db_list)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(UnspscCategoriesCustDesc, {'del_ind': False},
                                              ['prod_cat_desc_guid', 'prod_cat_id', 'category_desc', 'language_id'])
 
@@ -3221,7 +3259,8 @@ def save_work_flow_schema_data_into_db(workflowschema_data):
                                                       {'del_ind': True,
                                                        'workflow_schema_changed_at': datetime.today(),
                                                        'workflow_schema_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for workflowschema_detail in workflowschema_data['data']:
             wrksch_type_field = workflowschema_detail['workflow_schema']
@@ -3259,7 +3298,8 @@ def save_work_flow_schema_data_into_db(workflowschema_data):
                                                            'del_ind': workflowschema_detail['del_ind']})
         bulk_create_entry_db(WorkflowSchema, workflowschema_db_list)
         fieldtypedesc_instance.update_usedFlag(wrksch_type_field)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(WorkflowSchema, {'del_ind': False},
                                              ['workflow_schema_guid', 'workflow_schema', 'company_id', 'app_types'])
     upload_fieldtypedesc = fieldtypedesc_instance.get_field_type_desc_values(FieldTypeDesc,
@@ -3281,7 +3321,8 @@ def save_spend_limit_data_into_db(spendlimit_data):
                                                       {'del_ind': True,
                                                        'spend_limit_id_changed_at': datetime.today(),
                                                        'spend_limit_id_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
 
         for spendlimit_detail in spendlimit_data['data']:
@@ -3311,7 +3352,8 @@ def save_spend_limit_data_into_db(spendlimit_data):
                                                            'client': OrgClients.objects.get(client=client),
                                                            'del_ind': spendlimit_detail['del_ind']})
         bulk_create_entry_db(SpendLimitId, spendlimit_db_list)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(SpendLimitId, {'del_ind': False},
                                              ['spend_guid', 'spend_code_id', 'spender_username', 'company_id'])
 
@@ -3331,7 +3373,8 @@ def save_address_type_data_into_db(addresstype_data):
                                                       {'del_ind': True,
                                                        'org_address_map_created_at': datetime.today(),
                                                        'org_address_map_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
 
         for addresstype_detail in addresstype_data['data']:
@@ -3372,7 +3415,8 @@ def save_address_type_data_into_db(addresstype_data):
         bulk_create_entry_db(OrgAddressMap, addresstype_db_list)
         fieldtypedesc_instance.update_usedFlag(address_type_field)
 
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(OrgAddressMap, {'del_ind': False},
                                              ['address_guid', 'address_number', 'address_type',
                                               'company_id','valid_from','valid_to'])
@@ -3396,7 +3440,8 @@ def save_glaccount_data_into_db(glaccount_data):
                                                        'determine_gl_account_created_at': datetime.today(),
                                                        'determine_gl_account_created_by': global_variables.GLOBAL_LOGIN_USERNAME})
 
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
 
         for glaccount_detail in glaccount_data['data']:
@@ -3407,7 +3452,7 @@ def save_glaccount_data_into_db(glaccount_data):
                 guid = guid_generator()
                 glaccount_db_dictionary = {'det_gl_acc_guid': guid,
                                            'prod_cat_id': glaccount_detail['prod_cat_id'],
-                                           'gl_acc_num': glaccount_detail['gl_account'],
+                                           'gl_acc_num': glaccount_detail['gl_acc_num'],
                                            'gl_acc_default': glaccount_detail['gl_acc_default'],
                                            'account_assign_cat': AccountAssignmentCategory.objects.
                                                get(account_assign_cat=glaccount_detail['account_assign_cat']),
@@ -3430,7 +3475,7 @@ def save_glaccount_data_into_db(glaccount_data):
                                                           {'det_gl_acc_guid': glaccount_detail[
                                                               'det_gl_acc_guid'],
                                                            'prod_cat_id': glaccount_detail['prod_cat_id'],
-                                                           'gl_acc_num': glaccount_detail['gl_account'],
+                                                           'gl_acc_num': glaccount_detail['gl_acc_num'],
                                                            'gl_acc_default': glaccount_detail['gl_acc_default'],
                                                            'account_assign_cat': AccountAssignmentCategory.objects.
                                                           get(account_assign_cat=glaccount_detail[
@@ -3445,7 +3490,8 @@ def save_glaccount_data_into_db(glaccount_data):
                                                            'client': OrgClients.objects.get(client=client),
                                                            'del_ind': glaccount_detail['del_ind']})
         bulk_create_entry_db(DetermineGLAccount, glaccount_db_list)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(DetermineGLAccount, {'del_ind': False},
 
                                              ['det_gl_acc_guid', 'prod_cat_id', 'gl_acc_num',
@@ -3507,7 +3553,8 @@ def save_company_data_into_db(company_data):
                                                        'org_companies_changed_at': datetime.today(),
                                                        'org_companies_changed_by': global_variables.GLOBAL_LOGIN_USERNAME}
                                                       )
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for company_detail in company_data['data']:
             # if entry is not exists in db
@@ -3515,7 +3562,6 @@ def save_company_data_into_db(company_data):
                                                                 {'company_id': company_detail['company_id']}):
                 guid = guid_generator()
                 company_db_dictionary = {'company_guid': guid,
-                                         'object_id':'',
                                          'name1':convert_to_camel_case(company_detail['name1']),
                                          'name2':convert_to_camel_case(company_detail['name2']),
                                          'company_id': company_detail['company_id'],
@@ -3546,7 +3592,8 @@ def save_company_data_into_db(company_data):
         # if guid == '':
         # guid = guid_generator()
         bulk_create_entry_db(OrgCompanies, company_db_list)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
 
     upload_response = get_configuration_data(OrgCompanies, {'del_ind': False},
                                              ['object_id','company_guid', 'name1', 'name2', 'company_id'])
@@ -3565,7 +3612,8 @@ def save_product_cat_cust_data_into_db(prodcat_data):
                                                       {'del_ind': True,
                                                        'unspsc_categories_cust_changed_at': datetime.today(),
                                                        'unspsc_categories_cust_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for prodcat_detail in prodcat_data['data']:
             # if entry is not exists in db
@@ -3595,7 +3643,8 @@ def save_product_cat_cust_data_into_db(prodcat_data):
                                                            'del_ind': prodcat_detail['del_ind'],
                                                            'client': OrgClients.objects.get(client=client)})
         bulk_create_entry_db(UnspscCategoriesCust,prodcat_db_list)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(UnspscCategoriesCust, {'del_ind': False},
                                              ['prod_cat_guid', 'prod_cat_id'])
 
@@ -3616,14 +3665,16 @@ def save_auth_data_into_db(auth_data):
                                                        'authorization_changed_by': global_variables.GLOBAL_LOGIN_USERNAME}
                                                       )
             fieldtypedesc_instance.reset_usedFlag(auth_type_field)
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
     else:
         for auth_detail in auth_data['data']:
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(Authorization,
                                                                 {'auth_obj_grp': auth_detail
-                                                                 ['auth_obj_grp'],
-                                                                 'auth_type': auth_detail['auth_type']}):
+                                                                 ['auth_obj_grp']
+                                                                 }):
+
                 guid = guid_generator()
                 auth_db_dictionary = {'auth_guid': guid,
                                       'auth_obj_grp': auth_detail['auth_obj_grp'],
@@ -3641,8 +3692,8 @@ def save_auth_data_into_db(auth_data):
             else:
 
                 django_query_instance.django_update_query(Authorization,
-                                                          {'auth_obj_grp': auth_detail['auth_obj_grp'],
-                                                           'auth_type': auth_detail['auth_type']},
+                                                          {'auth_obj_grp': auth_detail['auth_obj_grp']
+                                                           },
                                                           {
                                                               'auth_obj_grp': auth_detail['auth_obj_grp'],
                                                               'auth_type': auth_detail['auth_type'],
@@ -3654,15 +3705,70 @@ def save_auth_data_into_db(auth_data):
         # guid = number_range_data['account_assign_guid']
         # if guid == '':
         # guid = guid_generator()
-        bulk_create_entry_db(Authorization, auth_db_list)
+        bulk_create_entry_db(Authorization,auth_db_list)
         fieldtypedesc_instance.update_usedFlag(auth_type_field)
-        message = MSG112
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
     upload_response = get_configuration_data(Authorization, {'del_ind': False},
-                                             ['auth_guid', 'auth_obj_grp', 'auth_type', 'role',
+                                             ['auth_guid', 'auth_obj_grp', 'auth_type', 'role'
                                               ])
     upload_fieldtypedesc = fieldtypedesc_instance.get_field_type_desc_values(FieldTypeDesc,
                                                                              {'del_ind': False, 'used_flag': False,
                                                                               'field_name': 'auth_obj_grp'},
                                                                              ['field_type_id', 'field_type_desc'])
     return upload_response, message,upload_fieldtypedesc
+
+
+def save_orgattributes_level_data_into_db(orgattlevel_data):
+    orgattlevel_db_list = []
+    client = global_variables.GLOBAL_CLIENT
+    if orgattlevel_data['action'] == CONST_ACTION_DELETE:
+        for orgattlevel_detail in orgattlevel_data['data']:
+            django_query_instance.django_update_query(OrgModelNodetypeConfig,
+                                                      {'node_type': orgattlevel_detail['node_type'],
+                                                       'node_values': orgattlevel_detail['node_values']},
+                                                      {'del_ind': True,
+                                                       'org_model_nodetype_config_changed_at': datetime.today(),
+                                                       'org_model_nodetype_config_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
+        msgid = 'MSG113'
+        message = get_msg_desc(msgid)
+    else:
+        for orgattlevel_detail in orgattlevel_data['data']:
+            # if entry is not exists in db
+            if not django_query_instance.django_existence_check(OrgModelNodetypeConfig,
+                                                                {'node_type': orgattlevel_detail['node_type'],
+                                                                 'node_values': orgattlevel_detail['node_values']}):
+
+
+                guid = guid_generator()
+                prodcatdesc_db_dictionary = {'org_model_nodetype_config_guid': guid,
+                                             'node_type': orgattlevel_detail['node_type'],
+                                             'node_values': orgattlevel_detail['node_values'],
+                                             'org_model_nodetype_config_created_at': datetime.today(),
+                                             'org_model_nodetype_config_created_by': global_variables.GLOBAL_LOGIN_USERNAME,
+                                             'org_model_nodetype_config_changed_at': datetime.today(),
+                                             'org_model_nodetype_config_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
+                                             'client': client
+                                             }
+
+                orgattlevel_db_list.append(prodcatdesc_db_dictionary)
+            else:
+                django_query_instance.django_update_query(OrgModelNodetypeConfig,
+                                                          {'node_type': orgattlevel_detail['node_type'],
+                                                           'org_model_nodetype_config_guid': orgattlevel_detail[
+                                                               'org_model_nodetype_config_guid']},
+                                                          {'node_type': orgattlevel_detail['node_type'],
+                                                           'node_values': orgattlevel_detail['node_values'],
+                                                           'org_model_nodetype_config_changed_at': datetime.today(),
+                                                           'org_model_nodetype_config_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
+                                                           'del_ind': orgattlevel_detail['del_ind'],
+                                                           'client': OrgClients.objects.get(client=client)})
+        bulk_create_entry_db(OrgModelNodetypeConfig, orgattlevel_db_list)
+        msgid = 'MSG112'
+        message = get_msg_desc(msgid)
+    upload_response = get_configuration_data(OrgModelNodetypeConfig, {'del_ind': False},
+                                             ['org_model_nodetype_config_guid', 'node_type', 'node_values'])
+
+    return upload_response, message
+
 

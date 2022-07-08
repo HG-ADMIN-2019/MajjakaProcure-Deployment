@@ -566,7 +566,7 @@ table th {
 }
 
 #sidenav__listitem-config .sidenav__icon-container {
-  background-color: #7084c4;
+  background-color: #ff4800;
 }
 
 #sidenav__listitem-settings .sidenav__icon-container {
@@ -1575,6 +1575,18 @@ table.table-change-address tbody td {
   font-weight: bold;
 }
 
+#accounting_report_table_wrapper .row:nth-child(1), #sup_tab_wrapper .row:nth-child(1), #user_report_table_wrapper .row:nth-child(1), #approval_report_table_wrapper .row:nth-child(1), #doc_list_wrapper .row:nth-child(1), #user_tab_wrapper .row:nth-child(1) {
+  margin-right: 1px;
+  margin-left: 1px;
+  margin-top: 15px;
+}
+
+#accounting_report_table_wrapper .row:nth-child(3), #sup_tab_wrapper .row:nth-child(3), #user_report_table_wrapper .row:nth-child(3), #approval_report_table_wrapper .row:nth-child(3), #doc_list_wrapper .row:nth-child(3), #user_tab_wrapper .row:nth-child(3) {
+  margin-right: 1px;
+  margin-left: 1px;
+  margin-bottom: 15px;
+}
+
 .user-roles__header {
   font-family: 'Nunito', sans-serif;
   font-weight: 600;
@@ -1631,6 +1643,7 @@ table.table-change-address tbody td {
 
 .hg-icon-blue-primary {
   color: #007bff;
+  cursor: pointer;
 }
 
 .add-note-internal {
@@ -1733,6 +1746,27 @@ table.table-change-address tbody td {
   padding: 0 10px;
 }
 
+.cart-value-card {
+  margin: 0 2rem 2rem;
+}
+
+.cart-value-card .cart-value-section {
+  display: flex;
+  justify-content: space-between;
+}
+
+.cart-value-card .cart-value-label {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.cart-value-card .cart-value-desc {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 20px;
+}
+
 .myorder-saved-sc-header {
   width: 100%;
   padding: 25px 20px 30px;
@@ -1740,7 +1774,7 @@ table.table-change-address tbody td {
 }
 
 .mo-doc-header {
-  margin: 1rem 0.5rem 0.5rem;
+  margin: 1.5rem 0.5rem;
 }
 
 .mo-doc-header__alerts-wrapper {
@@ -1772,7 +1806,9 @@ table.table-change-address tbody td {
 
 .mo-doc-button-container {
   display: flex;
-  flex-direction: row;
+  justify-content: space-between;
+  margin: 1.5rem 0.5rem 0.5rem;
+  flex-wrap: wrap;
 }
 
 .mo-doc-button-container .mo-doc-button-group__approval {
@@ -1865,6 +1901,7 @@ button.hide_in_display_mode {
 .sc-completion-item-detail .prev-next-btn-group {
   display: flex;
   gap: 1rem;
+  width: 40%;
 }
 
 .sc-completion-item-detail .prev-next-btn-group .btn-round {
@@ -1874,6 +1911,7 @@ button.hide_in_display_mode {
   background: #F0F8FF;
   color: #007bff;
   padding: 0;
+  flex-shrink: 0;
 }
 
 .sc-completion-item-detail .prev-next-btn-group .btn-round:hover {
@@ -3164,4 +3202,87 @@ button.hide_in_display_mode {
 
 .product-image-section .product-image-section__select-img .image-thumbnail.prod-img-selected {
   border: 2px solid #0094FF;
+}
+
+.desc-section-bottom {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  margin-top: 1rem;
+}
+
+.hg-icon-blue-primary.hg-delete-icon-disabled {
+  cursor: not-allowed;
+  color: #a9a9a9;
+}
+
+#product_detail_tab_wrapper .row:nth-child(1), #freetext_table_wrapper .row:nth-child(1), #catalog_main_table_id_wrapper .row:nth-child(1) {
+  margin-right: 1px;
+  margin-left: 1px;
+  margin-top: 15px;
+}
+
+#product_detail_tab_wrapper .row:nth-child(3), #freetext_table_wrapper .row:nth-child(3), #catalog_main_table_id_wrapper .row:nth-child(3) {
+  margin-right: 1px;
+  margin-left: 1px;
+  margin-bottom: 15px;
+}
+
+.po-header-label {
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.po-header-desc {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.po-header-desc__status {
+  font-size: 90% !important;
+}
+
+.sub-tabs .sub-tab-link.text-size-x-small {
+  font-size: 1em;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.card.po-value-card {
+  background: #E9F5EC;
+  border: 1px solid rgba(0, 140, 48, 0.47);
+}
+
+.po-value-section {
+  display: flex;
+  justify-content: space-between;
+}
+
+.po-value-label {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  color: #155724;
+}
+
+.po-value-desc {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 20px;
+  color: #155724;
+}
+
+.sub-tabs.h-scrollbar {
+  overflow: auto;
+  overflow-y: hidden;
+}
+
+.item-description.text-overflow-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

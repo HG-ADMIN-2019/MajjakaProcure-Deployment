@@ -104,7 +104,7 @@ def calculate_delivery_date(guid, lead_time, supplier_id, calender_id, client, m
             get_supplier_working_days = django_query_instance.django_get_query(SupplierMaster,
                                                                                {'supplier_id': supplier_id,
                                                                                 'client': client})
-            supplier_working_days = get_supplier_working_days.working_days
+            supplier_working_days = get_supplier_working_days.delivery_days
             if supplier_working_days == '' or supplier_working_days is None:
                 return None
 

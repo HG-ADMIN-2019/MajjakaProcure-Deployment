@@ -252,7 +252,24 @@
             let check_data = document.getElementsByClassName("hg_check_filled")
             for (let i = 0; i < check_data.length; i++) {
                 if (check_data[i].value === undefined || check_data[i].value === "") {
-                    document.getElementById("err_prd_ser").innerHTML = messageConstants["JMSG020"];
+                 
+                    var msg = "JMSG020";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                        var display1 = msg_type.messages_id_desc[0];
+                    document.getElementById("err_prd_ser").innerHTML = display1;
+
                     document.getElementById("err_prd_ser").style.color = "red"
                     validations_to_add = "X"
                     break;

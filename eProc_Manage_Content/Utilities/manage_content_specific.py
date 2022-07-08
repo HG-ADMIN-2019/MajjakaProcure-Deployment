@@ -3,8 +3,8 @@ import datetime
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 
-from eProc_Basic.Utilities.constants.constants import CONST_PRODUCT_SPECIFICATION, CONST_CO01, CONST_CO02, \
-    CONST_SEARCH_COUNT, CONST_VARIANT_WITHOUT_PRICING, CONST_CATALOG_ITEM_EFORM, CONST_DROPDOWN_DATA_TYPE, \
+from eProc_Basic.Utilities.constants.constants import CONST_PRODUCT_SPECIFICATION, CONST_CATALOG_CALLOFF, CONST_FREETEXT_CALLOFF, \
+    CONST_SEARCH_COUNT, CONST_VARIANT_WITHOUT_PRICING, CONST_CATALOG_ITEM_VARIANT, CONST_DROPDOWN_DATA_TYPE, \
     CONST_QUANTITY_BASED_DISCOUNT, CONST_VARIANT_BASE_PRICING, CONST_VARIANT_ADDITIONAL_PRICING, CONST_OPERATOR_PLUS, \
     CONST_OPERATOR_PERCENTAGE
 from eProc_Basic.Utilities.functions.append_delimiter import append_delimiter
@@ -44,16 +44,6 @@ def save_product_details_eform(eform_configured, product_id):
                                                              {'eform_id': eform_id,
                                                               'client': global_variables.GLOBAL_CLIENT,
                                                               'del_ind': False})
-
-        #     eform_field_config_guid_list = DjangoQueries().django_filter_value_list_ordered_by_distinct_query(
-        #         EformFieldConfig,
-        #         {'eform_id': eform_id,
-        #          'client': global_variables.GLOBAL_CLIENT},
-        #         'eform_field_config_guid',
-        #         None)
-        # eform_configured_list, form_id, pricing_list = product_eform_into_query_dictionary_list(eform_configured,
-        #                                                                                         eform_field_config_guid_list,
-        #                                                                                         eform_id)
         eform_configured_list, form_id, pricing_list = product_eform_price_query_dictionary_list(eform_configured,
                                                                                                  eform_id)
         print(form_id)
@@ -118,7 +108,7 @@ def save_catalog_to_db(catalog_data):
                                                        'catalog_id': data['catalog_id']},
                                                       {'name': data['name'],
                                                        'description': data['description'],
-                                                       'product_type': data['product_type']})
+                                                       'prod_type': data['product_type']})
             catalog_id.append(data['catalog_id'])
         catalog_data_response = django_query_instance.django_filter_query(Catalogs,
                                                                           {'client': global_variables.GLOBAL_CLIENT,
@@ -132,7 +122,7 @@ def save_catalog_to_db(catalog_data):
                                   'catalog_id': data['catalog_id'],
                                   'name': data['name'],
                                   'description': data['description'],
-                                  'product_type': data['product_type']}
+                                  'prod_type': data['product_type']}
             django_query_instance.django_create_query(Catalogs, catalog_dictionary)
 
     return catalog_data_response
@@ -167,7 +157,7 @@ class CatalogMappingAction:
             {'catalog_id': self.catalog_id,
              'client': global_variables.GLOBAL_CLIENT,
              'del_ind': False,
-             'call_off': CONST_CO01},
+             'call_off': CONST_CATALOG_CALLOFF},
             'item_id', None)
         filter_queue = ~Q(product_id__in=assign_product_id_list)
         product_id_detail_list = django_query_instance.django_queue_query(ProductsDetail,
@@ -183,7 +173,7 @@ class CatalogMappingAction:
             {'catalog_id': self.catalog_id,
              'client': global_variables.GLOBAL_CLIENT,
              'del_ind': False,
-             'call_off': CONST_CO02},
+             'call_off': CONST_FREETEXT_CALLOFF},
             'item_id', None)
         filter_queue = ~Q(freetext_id__in=assign_product_id_list)
         freetext_id_detail_list = django_query_instance.django_queue_query(FreeTextDetails,
@@ -199,7 +189,7 @@ class CatalogMappingAction:
             {'catalog_id': self.catalog_id,
              'client': global_variables.GLOBAL_CLIENT,
              'del_ind': False,
-             'call_off': CONST_CO01},
+             'call_off': CONST_CATALOG_CALLOFF},
             'item_id',
             ['item_id'])
         product_id_detail_list = django_query_instance.django_filter_query(ProductsDetail,
@@ -217,7 +207,7 @@ class CatalogMappingAction:
             {'catalog_id': self.catalog_id,
              'client': global_variables.GLOBAL_CLIENT,
              'del_ind': False,
-             'call_off': CONST_CO02},
+             'call_off': CONST_FREETEXT_CALLOFF},
             'item_id',
             ['item_id'])
         freetext_id_detail_list = django_query_instance.django_filter_query(FreeTextDetails,
@@ -233,8 +223,8 @@ class CatalogMappingAction:
         """
         create_list = []
         if catalog_mapping_info['action'] == "ASSIGN":
-            self.assign_catalog_item_to_catalog_mapping(catalog_mapping_info['product_id_list'], CONST_CO01)
-            self.assign_catalog_item_to_catalog_mapping(catalog_mapping_info['freetext_id_list'], CONST_CO02)
+            self.assign_catalog_item_to_catalog_mapping(catalog_mapping_info['product_id_list'], CONST_CATALOG_CALLOFF)
+            self.assign_catalog_item_to_catalog_mapping(catalog_mapping_info['freetext_id_list'], CONST_FREETEXT_CALLOFF)
 
         elif catalog_mapping_info['action'] == "UNASSIGN":
             item_list = catalog_mapping_info['product_id_list'] + catalog_mapping_info['freetext_id_list']
@@ -288,19 +278,19 @@ def update_prod_detail(product_details_query):
         product_detail['product_transaction'] = False
         if django_query_instance.django_existence_check(CartItemDetails,
                                                         {'int_product_id': product_detail['product_id'],
-                                                         'call_off': CONST_CO01,
+                                                         'call_off': CONST_CATALOG_CALLOFF,
                                                          'client': global_variables.GLOBAL_CLIENT}
                                                         ) or django_query_instance.django_existence_check(ScItem,
                                                                                                           {
-                                                                                                              'int_prod_id':
+                                                                                                              'int_product_id':
                                                                                                                   product_detail[
                                                                                                                       'product_id'],
-                                                                                                              'call_off': CONST_CO01,
+                                                                                                              'call_off': CONST_CATALOG_CALLOFF,
                                                                                                               'client': global_variables.GLOBAL_CLIENT}
                                                                                                           ):
             if django_query_instance.django_existence_check(CatalogMapping,
                                                             {'item_id': product_detail['product_id'],
-                                                             'call_off': CONST_CO01,
+                                                             'call_off': CONST_CATALOG_CALLOFF,
                                                              'client': global_variables.GLOBAL_CLIENT}):
                 product_detail['product_transaction'] = True
         product_detail['encrypted_product_id'] = encrypt(product_detail['product_id'])
@@ -325,7 +315,7 @@ def product_eform_price_query_dictionary_list(eform_configured, eform_id):
         if eform_data['field_type'] == CONST_VARIANT_WITHOUT_PRICING:
             price_flag = False
         eform_field_dictionary = {'pk': eform_guid,
-                                  'eform_type': CONST_CATALOG_ITEM_EFORM,
+                                  'eform_type': CONST_CATALOG_ITEM_VARIANT,
                                   'dropdown_pricetype': eform_data['field_type'],
                                   'eform_field_name': eform_data['field_name'],
                                   'eform_field_datatype': CONST_DROPDOWN_DATA_TYPE,

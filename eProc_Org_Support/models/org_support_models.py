@@ -1,7 +1,14 @@
 from django.db import models
 
 
-class OrgAnnouncements(models.Model):
+class DBQueriesOrgannsmt:
+    @staticmethod
+    def get_annsmt_details_by_fields(client, obj, subject_query, status_query, priority_query):
+        return list(OrgAnnouncements.objects.filter(subject_query, status_query, priority_query, client=client,
+                                                    del_ind=False).values().order_by('announcement_id'))
+
+
+class OrgAnnouncements(models.Model, DBQueriesOrgannsmt):
     unique_announcement_id = models.CharField(db_column='UNIQUE_ANNOUNCEMENT_ID', primary_key=True, max_length=32,
                                               null=False, default=None)
     announcement_id = models.CharField(db_column='ANNOUNCEMENT_ID', null=True, max_length=10)

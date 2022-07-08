@@ -5,8 +5,8 @@ from eProc_Basic.Utilities.messages.messages import *
 
 class SearchForm(forms.Form):
     doc_types = (
-        ('SC', 'Shopping Cart'),
-        # ('PO', 'Purchase Order')
+        ('DOC01', 'Shopping Cart'),
+        ('DOC02', 'Purchase Order')
     )
     doc_type = forms.ChoiceField(
         label='Select Document Type',

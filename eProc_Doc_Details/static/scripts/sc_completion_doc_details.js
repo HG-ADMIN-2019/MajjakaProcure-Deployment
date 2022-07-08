@@ -181,7 +181,7 @@ function show_item_detail_div() {
         $("#ScItem-catalog_qty-" + rendered_item_guid[item_detail_visible_div]).prop("disabled", false);
         $("#ScItem-quantity-" + rendered_item_guid[item_detail_visible_div]).prop("disabled", false);
         $("#ScItem-goods_recep-" + rendered_item_guid[item_detail_visible_div]).prop("disabled", false);
-        $("#ScItem-good_marking-" + rendered_item_guid[item_detail_visible_div]).prop("disabled", false);
+        $("#ScItem-goods_marking-" + rendered_item_guid[item_detail_visible_div]).prop("disabled", false);
         // Accounting data
         $("#ScAccounting-acc_cat-" + rendered_acc_guid[item_detail_visible_div]).prop("disabled", false);
         $("#ScAccounting-cost_center-" + rendered_acc_guid[item_detail_visible_div]).prop("disabled", false);
@@ -216,11 +216,11 @@ function show_item_detail_div() {
         $("#ScItem-pref_supplier-" + rendered_item_guid[item_detail_visible_div]).prop("disabled", false);
         $("#ScItem-supplier_id-" + rendered_item_guid[item_detail_visible_div] + "-drop-ft").prop("disabled", false);
 
-        if (rendered_call_off[item_detail_visible_div] === "Catalog" || rendered_call_off[item_detail_visible_div] === "Freetext") {
+        if (rendered_call_off[item_detail_visible_div] === "01" || rendered_call_off[item_detail_visible_div] === "02") {
         //if (sc_calloff === "Catalog" || sc_calloff === "Freetext") {
             $("#ScItem-payment_term-" + rendered_item_guid[item_detail_visible_div]).prop("disabled", false);
         }
-        if (rendered_call_off[item_detail_visible_div] == 'PR') {
+        if (rendered_call_off[item_detail_visible_div] == '03') {
             $("#ScItem-description-" + rendered_item_guid[item_detail_visible_div]).prop("disabled", false);
             $("#ScItem-price-" + rendered_item_guid[item_detail_visible_div]).prop("disabled", false);
             $("#ScItem-price_unit-" + rendered_item_guid[item_detail_visible_div]).prop("disabled", false);
@@ -322,7 +322,7 @@ $("#id_cancel_sc").on("click", function () {
         $("#ScItem-quantity-" + rendered_item_guid[i]).prop("disabled", true);
         $("#ScItem-goods_recep-" + rendered_item_guid[i]).prop("disabled", true);
         $("#ScItem-item_del_date-" + rendered_item_guid[i]).prop("disabled", true);
-        $("#ScItem-good_marking-" + rendered_item_guid[i]).prop("disabled", true);
+        $("#ScItem-goods_marking-" + rendered_item_guid[i]).prop("disabled", true);
         // Accounting data
         $("#ScAccounting-dist_perc-" + rendered_acc_guid[i]).prop("disabled", true);
         $("#ScAccounting-acc_cat-" + rendered_acc_guid[i]).prop("disabled", true);
@@ -398,7 +398,7 @@ function get_data_for_check() {
         }
         var acc_val_info = change_acc_value_id + rendered_acc_guid[i];
         var gl_num_info = 'ScAccounting-gl_acc_num-' + rendered_acc_guid[i];
-        var prod_cat_info = 'prod_cat-' + rendered_item_guid[incremented_i - 1];
+        var prod_cat_info = 'prod_cat_id-' + rendered_item_guid[incremented_i - 1];
         supplier_info = document.getElementById(supp_id).innerHTML;
         data.item_num = incremented_i
         supplier_name = supplier_info.split(' - ')[1]
@@ -451,7 +451,7 @@ const document_edit_mode = () => {
         class_list = get_call_offs[call_off_item].className; 
         class_name = class_list.split(' ')[1];
         call_off_type = class_name.split('-')[1]
-        if(call_off_type === 'Catalog'){
+        if(call_off_type === '01'){
             $('.call_off-'+ call_off_type +'-acc_asgn_cat').prop('disabled', true);
             $('.call_off-'+ call_off_type +'-cc').prop('disabled', true);
             $('.call_off-'+ call_off_type +'-as').prop('disabled', true);
@@ -459,7 +459,7 @@ const document_edit_mode = () => {
             $('.call_off-'+ call_off_type +'-wbs').prop('disabled', true);
             $('.call_off-'+ call_off_type +'-gl_account').prop('disabled', true);
             $('.call_off-'+ call_off_type +'-gl_desc').prop('disabled', true);
-        } else if(call_off_type == 'PR'){
+        } else if(call_off_type == '03'){
             $('.call_off-PR-description').prop('disabled', false);
             $('.call_off-'+ call_off_type +'-acc_asgn_cat').prop('disabled', false);
             $('.call_off-'+ call_off_type +'-cc').prop('disabled', false);
@@ -568,7 +568,24 @@ $("#id_submit_sc").on("click", function () {
         supplier_id = get_supplier_class[i].value 
         item_number = rendered_item_guid.indexOf((get_supplier_class[i].id).split('-')[2])
         if(supplier_id == 'None' || supplier_id == ''){
-            supplier_error_message += 'Error at item ' + (item_number + 1) + messageConstants["JMSG005"] + "supplier"
+              
+                            var msg = "JMSG004";
+                            var msg_type ;
+                          msg_type = message_config_details(msg);
+                          $("#error_msg_id").prop("hidden", false)
+
+                          if(msg_type.message_type[0] == "ERROR"){
+                                display_message("error_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "WARNING"){
+                             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "INFORMATION"){
+                             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                          }
+
+                           var display8 = msg_type.messages_id_desc[0];
+            supplier_error_message += 'Error at item ' + (item_number + 1) + display8 + "supplier"
         }
     }
     if(supplier_error_message != ''){
@@ -601,8 +618,14 @@ function get_item_detail() {
     $.each(rendered_item_guid, function (index, item_guid) {
         // quantity
         quant_val = $("#ScItem-quantity-" + item_guid).val()
+        // get catalog quantity value
+        catalog_qty_val = $("#ScItem-catalog_qty-" + item_guid).val()
+        if (catalog_qty_val === undefined) {
+            catalog_qty_val = 0;
+        }
+        catalog_qty.push(catalog_qty_val);
         if (quant_val === undefined) {
-            quant_val = 1;
+            quant_val = catalog_qty_val;
         }
         quantity.push(quant_val);
 
@@ -627,12 +650,7 @@ function get_item_detail() {
         }
         overall_limit.push(overall_limit_val);
 
-        // get catalog quantity value
-        catalog_qty_val = $("#ScItem-catalog_qty-" + item_guid).val()
-        if (catalog_qty_val === undefined) {
-            catalog_qty_val = 0;
-        }
-        catalog_qty.push(catalog_qty_val);
+
     });
     return [quantity, price_unit, price, overall_limit, catalog_qty];
 }
@@ -732,7 +750,24 @@ const sc_completion_ui_checks = () => {
     }
     is_multiple_delivery_addresses = address_number_array.every( (val, i, arr) => val === arr[0] )
     if(!is_multiple_delivery_addresses){
-        warning_messages += messageConstants["JMSG026"];
+                  
+                    var msg = "JMSG026";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display = msg_type.messages_id_desc[0];
+                   warning_messages += display;
+
     }
     for(i = 0; i < get_multiple_account_asign_type.length; i++) {
         var decide_id = ''
@@ -757,11 +792,45 @@ const sc_completion_ui_checks = () => {
     }
     is_multiple_account_asign_type = account_asign_type_array.every( (val, i, arr) => val === arr[0] )
     if(!is_multiple_account_asign_type){
-        warning_messages += messageConstants["JMSG047"];
+               
+                    var msg = "JMSG047";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display = msg_type.messages_id_desc[0];
+                  warning_messages += display;
+
     } else {
         is_multiple_account_assignment_value = account_asign_value_array.every( (val, i, arr) => val === arr[0] )
         if(!is_multiple_account_assignment_value){
-            warning_messages += messageConstants["JMSG048"];
+              
+                    var msg = "JMSG048";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                     var display5 = msg_type.messages_id_desc[0];
+                    warning_messages += display5;
+
         }
     }
 
@@ -775,7 +844,25 @@ const sc_completion_ui_checks = () => {
     var error_messages = ''
 
     for(j = 0; j < internal_supplier_error_itemNumber.length; j++ ) {
-        error_messages += 'Error at item ' + internal_supplier_error_itemNumber[j] + ': ' + messageConstants["JMSG003"] + "Internal or supplier note" + '<br>'
+        var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+            var msg = "JMSG003";
+            var msg_type ;
+          msg_type = message_config_details(msg);
+          $("#error_msg_id").prop("hidden", false)
+
+          if(msg_type.message_type[0] == "ERROR"){
+                display_message("error_msg_id", msg_type.messages_id_desc[0])
+          }
+          else if(msg_type.message_type[0] == "WARNING"){
+             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+          }
+          else if(msg_type.message_type[0] == "INFORMATION"){
+             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+          }
+
+           var display5 = msg_type.messages_id_desc[0];
+          error_messages += 'Error at item ' + internal_supplier_error_itemNumber[j] + ': ' + display5 + "Internal or supplier note" + '<br>'
+
     }
 
     return error_messages
@@ -948,15 +1035,15 @@ function add_item_to_saved_cart(item_type) {
     url_remove_display = url_remove_display.join('/')
     localStorage.setItem('opened_document-' + doc_number_encrypted, url_remove_display)
 
-    if (item_type === 'Catalog') {
+    if (item_type === '01') {
         url = '/shop/products_services/All/' + 'doc_number-' + doc_number_encrypted
         location.href = url
     }
-    if (item_type === 'Free Text') {
+    if (item_type === '02') {
         url = '/shop/products_services/All/' + 'doc_number-' + doc_number_encrypted
         location.href = url
     }
-    if (item_type === 'Requisition') {
+    if (item_type === '03') {
         url = '/add_item/purchase_requisition/' + 'doc_number-' + doc_number_encrypted
         location.href = url
     }
@@ -966,28 +1053,39 @@ function add_item_to_saved_cart(item_type) {
 // Function to delete item in cart
 function delete_cart_item() {
     if (delete_item_guid) {
+        $('#delete_popup').modal('hide');
         delete_item_data = {};
         delete_item_data.del_item_guid = delete_item_guid;
         delete_item_data.total_value = document.getElementById('ScHeader-total_value-' + GLOBAL_HEADER_GUID).innerHTML;
         delete_item_data.header_guid = document.getElementById('header_guid').value;
-        $('#delete_popup').modal('hide')
+        
+        OpenLoaderPopup();
 
-        var delete_cart_item_result = ajax_delete_cart_item(delete_item_data);
-        location.reload();
-        window.opener.location.reload();
-        if (delete_cart_item_result){
-            if (response.count === 0) {
+        $.ajax({
+            type: 'POST',
+            url: ajax_delete_cart_item_url,
+            data: delete_item_data,
+            success: function(response){
+                if (response.count === 0) {
+                    window.opener.location.reload();
+                    window.close();
+                } else {
+                    document.getElementById("ScHeader-total_value-" + GLOBAL_HEADER_GUID).innerHTML = response.total_value;
+                    var get_item_number = $("[id^=item_number_]");
+                    var row = document.getElementById(delete_item_guid);
+                    row.parentNode.removeChild(row);
+                }
+                // loader keeps running in bg while page refreshes
+                location.reload();
                 window.opener.location.reload();
-                window.close()
-            } else {
-                document.getElementById("ScHeader-total_value-" + GLOBAL_HEADER_GUID).innerHTML = response.total_value
-                var get_item_number = $("[id^=item_number_]")
-                var row = document.getElementById(delete_item_guid);
-                row.parentNode.removeChild(row);
-            }
-        }
-    }
-}
+            },
+            error: function(error) {
+                console.log(error);
+                CloseLoaderPopup();
+            },
+        });
+    };
+};
 
 function update_description(id){
     var desc = $('#'+id).val()

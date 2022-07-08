@@ -4,48 +4,28 @@
 {% block title %} Purchase Order {% endblock %}
 
 {% block maincontent %}
+
 <style>
-    .po-header-label {
-        font-size: 16px;
-        font-style: normal;
-        font-weight: 600;
-        color: rgba(0, 0, 0, 0.5);
-    }
 
-    .po-header-desc {
-        font-style: normal;
-        font-weight: 600;
-        font-size: 18px;
+    .po-footer-info-container {
+        display: flex;
     }
-
-    .sub-tabs .sub-tab-link.text-size-x-small {
-        font-size: 1em;
+    .po-footer-info-pill {
+        padding: 5px 15px;
+        margin: 0 10px ;
+        border-radius: 30px;
         display: flex;
         align-items: center;
-        gap: 5px;
+        cursor: pointer;
     }
 
-    .po-value-card {
-        background: #E9F5EC;
-        border: 1px solid rgba(0, 140, 48, 0.47);
-    }
-    .po-value-section {
+    /* .related-doc-value-sec {
         display: flex;
-        justify-content: space-between;
-    }
+        flex-direction: column;
+    } */
 
-    .po-value-label {
-        font-style: normal;
-        font-weight: 600;
-        font-size: 16px;
-        color: #155724;
-    }
-
-    .po-value-desc {
-        font-style: normal;
-        font-weight: 600;
-        font-size: 20px;
-        color: #155724;
+    .card-body.card-related-doc {
+        padding: 1rem 1.25rem 1.25rem;
     }
 
 </style>
@@ -54,154 +34,164 @@
     <div style="padding: 1.5rem;">
 
         <div class="d-flex justify-content-between mb-3">
-            <h3>Purchase Order #000141341</h3>
+            <h3>Purchase Order #{{po_header_details.0.doc_number}}</h3>
             <div>
-                <a href="" target="_blank">
-                    <button class="btn btn-outline-primary"><span class="material-icons-outlined">print</span> Print PDF</button>
+                <a  href="{% url 'eProc_Purchase_Order:generate_po_details_pdf' po_header_details.0.doc_number %}" target="_blank">
+                    <button class="btn btn-primary"><i class="fas fa-print"></i> Print PDF</button>
                 </a>
             </div>
         </div>
 
-        <hr>
+        
 
         <div class="card card-shadow-1 mt-4">
             <div class="card-body">
-                <div class="row mb-5">
-                    <div class="col-3">
-                        <span class="po-header-label">PO Number</span><br>
-                        <span class="po-header-desc">000141341</span>
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <span class="po-header-label">Document Number</span><br>
+                        <span class="po-header-desc">{{po_header_details.0.doc_number}}</span>
                     </div>
-                    <div class="col-3">
-                        <span class="po-header-label">PO Name</span><br>
-                        <span class="po-header-desc">Smart LED tv - MDG</span>
+                    <div class="col-md-3">
+                        <span class="po-header-label">Document Name</span><br>
+                        <span class="po-header-desc">{{po_header_details.0.description}}</span>
                     </div>
-                    <div class="col-3">
+                    <div class="col-md-3">
                         <span class="po-header-label">Supplier</span><br>
-                        <span class="po-header-desc">SUP102 - Samsung India Pvt</span>
+                        <span class="po-header-desc">{{po_header_details.0.supplier_id}} - {{po_header_details.0.supplier_description}}</span>
                     </div>
-                    <div class="col-3">
-                        <span class="po-header-label">Date Created</span><br>
-                        <span class="po-header-desc">1st July 2022 </span>
+                    <div class="col-md-3">
+                        <span class="po-header-label">Created On</span><br>
+                        <span class="po-header-desc">{{po_header_details.0.created_at}}</span>
                     </div>
                 </div>
 
-                <div class="row mb-5">
-                    <div class="col-4">
+                <div class="row mb-4">
+                    <div class="col-md-3">
                         <span class="po-header-label">Shipping Address</span><br>
-                        <span class="po-header-desc">#76  Washington Street 225, Allianz Global Risks US W, Church Street, Bangalore </span>
+                        <span class="po-header-desc">
+                            {{po_header_level_address.title}} {{po_header_level_address.name1}}
+                            {{po_header_level_address.name2}}, {{po_header_level_address.street}}
+                            {{po_header_level_address.area}} {{po_header_level_address.landmark}}
+                            {{po_header_level_address.city}} {{po_header_level_address.postal_code}}
+                            {{po_header_level_address.region}} {{po_header_level_address.country_code}}
+                        </span>
                     </div>
-                    <div class="col-4">
-                        <span class="po-header-label">Invoicing Address</span><br>
-                        <span class="po-header-desc">#76  Washington Street 225, Allianz Global Risks US W, Church Street, Bangalore</span>
+                    <div class="col-md-3">
+                        <span class="po-header-label">Payment Terms</span><br>
+                        <span class="po-header-desc">{{po_header_details.0.payment_term}}</span>
                     </div>
-                    <div class="col-4">
-                        <span class="po-header-label">Location</span><br>
-                        <span class="po-header-desc">1212312312</span>
+                    <div class="col-md-3">
+                        <span class="po-header-label">Incoterm</span><br>
+                        <span class="po-header-desc">{{po_header_details.0.incoterm}} - {{po_header_details.0.incoterm_loc}}</span>
                     </div>
+                    <div class="col-md-3">
+                        <span class="po-header-label">Status</span><br>
+                        <span class="badge badge-pill badge_status_approved po-header-desc po-header-desc__status ">{{po_header_details.0.status}}</span>
+                    </div>
+
                 </div>
 
                 <div class="row mb-3">
-                    <div class="col-3">
-                        <span class="po-header-label">Requester</span><br>
-                        <span class="po-header-desc"> India employee</span>
+                    <div class="col-md-3">
+                        <span class="po-header-label">Requested By</span><br>
+                        <span class="po-header-desc"> {{po_header_details.0.requester}}</span>
                     </div>
-                    <div class="col-3">
+                    <div class="col-md-3">
                         <span class="po-header-label">Purchasing Organisation</span><br>
-                        <span class="po-header-desc">Purchasing Organisation EMEA</span>
+                        <span class="po-header-desc">{{po_header_details.0.porg_description}}</span>
                     </div>
-                    <div class="col-3">
+                    <div class="col-md-3">
                         <span class="po-header-label">Purchasing Group</span><br>
-                        <span class="po-header-desc">Purchasing Group EMEA</span>
-                    </div>
-                    <div class="col-3">
-                        <span class="po-header-label">Recipient</span><br>
-                        <span class="po-header-desc">Mr. Girish Yendamoori</span>
+                        <span class="po-header-desc">{{po_header_details.0.pgrp_description}}</span>
                     </div>
                 </div>
 
+            </div>
+            <div class="card-footer" style="border-top: none;">
+                <div class="po-footer-info-container">
+                    <span class="po-footer-info-pill badge_status_purch_wrkl">
+                        <i class="material-icons-outlined">description</i> Contains approval note
+                    </span>
+                </div>
             </div>
 
         </div>
 
         <div class="row mt-4">
-            <div class="col-8">
+            <div class="col-md-8">
                 <div class="card card-shadow-1">
                     <div class="card-body elements-space-between">
-                        <h5>Line Items</h5>
+                        <h5>Items Overview</h5>
                     </div>
                     <div>
                         <div class="table-responsive-lg">
                             <table class="table">
                                 <thead class="thead-light">
-                                    <tr>
-                                        <th>No.</th>
-                                        <th>Item</th>
-                                        <th>Description</th>
-                                        <th>Delivery Date</th>
-                                        <th>Price per unit</th>
-                                        <th>Quantity</th>
-                                        <th>Total</th>
-                                        <th>Action</th>
-                                    </tr>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Item</th>
+                                    <th style="width: 20%;">Description</th>
+                                    <th>Delivery Date</th>
+                                    <th>Price Unit</th>
+                                    <th>Unit</th>
+                                    <th>Price per unit</th>
+                                    <th>Quantity</th>
+                                    <th>Total</th>
+                                </tr>
 
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>
-                                            <a href="#" onclick="">
-                                                <img class="sc-item-table__item-img" onerror='this.src="/static/images/no-image-cropped.png"' src="/static/images/sam_tv.jpg">
-                                            </a>
-                                        </td>
-                                        <td>Smart LED Television </td>
-                                        <td>10 July 2022</td>
-                                        <td>INR 1000 / EACH </td>
-                                        <td>2</td>
-                                        <td>INR 50,000</td>
-                                        <td><span class="material-icons-outlined">
-                                            more_horiz
-                                            </span></td>
+                                {% for po_item_detail in po_item_details %}
+                                <tr>
+                                    <td>{{po_item_detail.po_item_num}}</td>
+                                    <td>
+                                        <a href="#" onclick="view_detail('{{ po_item_detail.int_product_id}}','{{ po_item_detail.po_item_guid}}')">
+                                            <img class="sc-item-table__item-img" onerror='this.src="/static/images/no-image-cropped.png"' src="/media/{{po_item_detail.image_url}}">
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <div id="desc-{{items.guid}}">
+                                            {% if po_item_detail.call_off == '01'%}
+                                            <a href="#" onclick="view_detail('{{ po_item_detail.int_product_id}}','{{ po_item_detail.po_item_guid}}')">{{ po_item_detail.description }}</a>
+                                            {% else %}
+                                            <a  >{{ po_item_detail.description }}</a>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>{{po_item_detail.item_del_date|date:'Y-m-d'}}</td>
+                                    <td>{{po_item_detail.price_unit}}</td>
+                                    <td>{{po_item_detail.unit}}</td>
+                                    <td>{{po_item_detail.price}} {{po_item_detail.currency}} </td>
+                                    <td>{{po_item_detail.quantity}}</td>
+                                    <td>{{po_item_detail.value}} {{po_header_details.0.currency}}</td>
 
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>
-                                            <a href="#" onclick="">
-                                                <img class="sc-item-table__item-img" onerror='this.src="/static/images/no-image-cropped.png"' src="/static/images/sam_buds.jpg">
-                                            </a>
-                                        </td>
-                                        <td>Samsung galaxy buds</td>
-                                        <td>10 July 2022</td>
-                                        <td>INR 1000 / EACH </td>
-                                        <td>2</td>
-                                        <td>INR 2000</td>
-                                        <td><span class="material-icons-outlined">
-                                            more_horiz
-                                            </span></td>
-
-                                    </tr>
-
+                                </tr>
+                                {% endfor %}
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-4">
+            <div class="col-md-4">
                 <div class="card card-shadow-1 po-value-card">
                     <div class="card-body">
                         <div class="po-value-section">
                             <span class="po-value-label">Total Value (Net)</span>
-                            <span class="po-value-desc" >52,000 INR</span>
+                            <span class="po-value-desc" >{{actual_price}} INR</span>
+                        </div>
+                        <div class="po-value-section">
+                            <span class="po-value-label">Total Discount</span>
+                            <span class="po-value-desc" >- <span id="discount_value">{{discount_value}}</span> INR </span>
                         </div>
                         <div class="po-value-section">
                             <span class="po-value-label">Total Tax</span>
-                            <span class="po-value-desc" >2000 INR</span>
+                            <span class="po-value-desc" >{{tax_value}} INR</span>
                         </div>
                         <hr>
                         <div class="po-value-section">
                             <span class="po-value-label">Total Value (Gross)</span>
-                            <span class="po-value-desc" >54,000 INR</span>
+                            <span class="po-value-desc" >{{po_header_details.0.total_value}} INR</span>
                         </div>
                     </div>
                 </div>
@@ -211,20 +201,22 @@
             <div class="col">
                 <div class="card sc-completion-item-detail card-shadow-1">
 
+                    {% for itm in po_item_details %}
                     <div class="hg_class_prod_desc card-body">
                         <div class="prev-next-btn-group">
                             <button class="btn btn-round" onclick="item_detail_previous(this)">
                                 <i id="{{forloop.counter0}}" class="fas fa-arrow-left" title="Previous Item"></i>
                             </button>
-                            <span class="item-description">Item - 1 - Smart LED Television </span>
+                            <span class="item-description text-overflow-ellipsis">Item - {{ forloop.counter }} - {{itm.description}}</span>
                             <button class="btn btn-round" onclick="item_detail_next(this)">
                                 <i id="{{forloop.counter}}" class="fas fa-arrow-right" title="Next Item"></i>
                             </button>
                         </div>
                     </div>
+                    {% endfor %}
 
                     <div>
-                        <ul class="sub-tabs">
+                        <ul class="sub-tabs h-scrollbar">
                             <li data-tab-target="#item_basic_information" class="sub-tab active">
                                 <div class="sub-tab-link text-size-x-small">
                                     <i class="material-icons">info</i><span> Basic Details</span>
@@ -255,6 +247,11 @@
                                     <i class="fas fa-address-card"></i><span> Shipping Address Details</span>
                                 </div>
                             </li>
+                            <li data-tab-target="#related_document" class="sub-tab">
+                                <div class="sub-tab-link text-size-x-small">
+                                    <i class="fas fa-address-card"></i><span> Related Documents</span>
+                                </div>
+                            </li>
                             <li data-tab-target="#item_efrom_details" class="sub-tab" id="eform_tab">
                                 <div class="sub-tab-link text-size-x-small">
                                     <i class="material-icons">list_alt</i><span> eForm Details</span>
@@ -263,6 +260,7 @@
                         </ul>
 
                         <div class="tab-content">
+                            {% for itm in po_item_details %}
                             <div id="item_basic_information" data-tab-content class="active">
                                 <div class="m-4">
 
@@ -273,103 +271,119 @@
                                             <div class="col">
                                                 <h4>Identification</h4>
                                                 <div class="form-group row">
+                                                    <label class="col-4 col-form-label">Item Type</label>
+                                                    <div class="col-8">
+                                                        <input type="text" class="form-control" name="{{itm.prod_type}}" value="{{itm.prod_type}}"
+                                                               id="ScItem-prod_type-{{itm.guid}}" disabled>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
                                                     <label class="col-4 col-form-label">Description</label>
                                                     <div class="col-8">
                                                         <input class="form-control call_off-{{itm.call_off}}-description" type="text" name="{{itm.description}}"
-                                                            value="Smart LED Television" id="ScItem-description-{{itm.guid}}" onchange="update_description(this.id);" disabled>
+                                                               value="{{itm.description}}" id="ScItem-description-{{itm.guid}}" onchange="update_description(this.id);" disabled>
                                                     </div>
                                                 </div>
 
                                                 <div class="form-group row">
                                                     <label class="col-4 col-form-label">Product Category</label>
                                                     <div class="col-8">
-                                                        <input type="text" class="form-control call_off-{{itm.call_off}}-prod_cat" name="{{itm.prod_cat}}" value="10000000"
-                                                            id="ScItem-prod_cat-{{itm.guid}}" disabled>
+                                                        <input type="text" class="form-control call_off-{{itm.call_off}}-prod_cat" name="{{itm.prod_cat_id}}" value="{{itm.prod_cat_id}}"
+                                                               id="ScItem-prod_cat-{{itm.guid}}" disabled>
                                                     </div>
                                                 </div>
+                                                {% if itm.call_off in '01' or itm.call_off in '02'%}
+                                                <div class="form-group row">
+                                                    <label class="col-4 col-form-label">Catalog</label>
+                                                    <div class="col-8">
+                                                        <input type="text" class="form-control" name="{{itm.catalog_id}}"
+                                                               value="{{itm.catalog_id}} - {{itm.catalog_name}}" id="ScItem-catalog_id-{{itm.guid}}" disabled>
+                                                    </div>
+                                                </div>
+                                                {% endif %}
 
                                                 <div class="mt-3">
-                                                    <h5 class="h4">Organization</h4>
-                                                        <div class="form-group row">
-                                                            <label class="col-4 col-form-label">Company Code</label>
-                                                            <div class="col-8">
-                                                                <input type="text" class="form-control" name="{{itm.comp_code}}"
-                                                                    value="1000" id="ScItem-comp_code-{{itm.guid}}" disabled>
-                                                            </div>
+                                                    <h5 class="h4">Organization</h5>
+                                                    <div class="form-group row">
+                                                        <label class="col-4 col-form-label">Company Code</label>
+                                                        <div class="col-8">
+                                                            <input type="text" class="form-control" name="{{itm.company_code_id}}"
+                                                                   value="{{itm.company_code_id}}" id="ScItem-comp_code-{{itm.guid}}" disabled>
                                                         </div>
-                                                        <div class="form-group row">
-                                                            <label class="col-4 col-form-label">Purchasing Organization</label>
-                                                            <div class="col-8">
-                                                                <input type="text" class="form-control" name="{{itm.purch_org}}"
-                                                                    value="PO100" id="ScItem-purch_org-{{itm.guid}}" disabled>
-                                                            </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-4 col-form-label">Purchasing Organization</label>
+                                                        <div class="col-8">
+                                                            <input type="text" class="form-control" name="{{itm.porg_description}}"
+                                                                   value="{{itm.porg_description}}" id="ScItem-purch_org-{{itm.guid}}" disabled>
                                                         </div>
-                                                        <div class="form-group row">
-                                                            <label class="col-4 col-form-label">Purchasing Group</label>
-                                                            <div class="col-8">
-                                                                <select name="{{itm.purch_grp}}" id="ScItem-purch_grp-{{itm.guid}}" class="form-control" disabled>
-                                                                    
-                                                                    <option>PG100</option>
-                                                                    
-                                                                </select>
-                                                            </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-4 col-form-label">Purchasing Group</label>
+                                                        <div class="col-8">
+                                                            <select name="{{itm.pgrp_description}}" id="ScItem-purch_grp-{{itm.guid}}" class="form-control" disabled>
+
+                                                                <option>{{itm.pgrp_description}}</option>
+
+                                                            </select>
                                                         </div>
+                                                    </div>
                                                 </div>
 
                                                 <div class="mt-3">
                                                     <h4>Further Properties</h4>
                                                     <div class="form-group row">
-                                                        <label class="col-4 col-form-label">Supplier Article Number</label>
+                                                        <label class="col-4 col-form-label">Supplier Product Number</label>
                                                         <div class="col-8">
-                                                            <input type="text" class="form-control" name="{{itm.supp_prod_num}}"
-                                                                value="2113123" id="ScItem-supp_prod_num-{{itm.guid}}" disabled>
+                                                            <input type="text" class="form-control" name="{{itm.supp_product_id}}"
+                                                                   value="{{itm.supp_product_id}}" id="ScItem-supp_product_id-{{itm.guid}}" disabled>
                                                         </div>
                                                     </div>
                                                     <div class="form-group row">
                                                         <label class="col-4 col-form-label">Required on</label>
                                                         <div class="col-8">
                                                             <input type="text" class="form-control" name="{{itm.required_on}}"
-                                                                value="2022-05-19" id="ScItem-required_on-{{itm.guid}}" disabled>
+                                                                   value="{{itm.required_on}}" id="ScItem-required_on-{{itm.guid}}" disabled>
                                                         </div>
                                                     </div>
                                                     <div class="form-group row">
                                                         <label class="col-4 col-form-label">UNSPSC</label>
                                                         <div class="col-8">
-                                                            <input type="text" class="form-control" name="{{itm.unspsc}}" value="10000000"
-                                                                id="ScItem-unspsc-{{itm.guid}}" disabled>
+                                                            <input type="text" class="form-control" name="{{itm.prod_cat_id}}" value="{{itm.prod_cat_id}}"
+                                                                   id="ScItem-prod_cat_id-{{itm.guid}}" disabled>
                                                         </div>
                                                     </div>
                                                     <div class="form-group row">
                                                         <label class="col-4 col-form-label">Contract no.</label>
                                                         <div class="col-8">
                                                             <input type="text" class="form-control" name="{{itm.ctr_num}}"
-                                                                value="5782636" id="ScItem-supplier_contact-{{itm.guid}}" disabled>
+                                                                   value="{{itm.ctr_num}}" id="ScItem-supplier_contact-{{itm.guid}}" disabled>
                                                         </div>
                                                     </div>
                                                     <div class="form-group row">
                                                         <label class="col-4 col-form-label">Contract Name</label>
                                                         <div class="col-8">
                                                             <input type="text" class="form-control" name="{{itm.ctr_item_num}}"
-                                                                value="AppleIndia" id="ScItem-supplier_name-{{itm.guid}}" disabled>
+                                                                   value="{{itm.ctr_item_num}}" id="ScItem-supplier_name-{{itm.guid}}" disabled>
                                                         </div>
                                                     </div>
                                                     {% if itm.silent_po %}
-                                                    <div class="form-group row">
+                                                    <div class="form-group row" hidden>
                                                         <label class="col-4 col-form-label">Silent PO</label>
                                                         <div class="col-8">
                                                             <div class="form-check">
                                                                 <input class="form-check-input" type="checkbox" name="{{itm.silent_po}}"
-                                                                    id="ScItem-silent_po-{{itm.guid}}_check" checked disabled>
+                                                                       id="ScItem-silent_po-{{itm.guid}}_check" checked disabled>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     {% else %}
-                                                    <div class="form-group row">
+                                                    <div class="form-group row" hidden>
                                                         <label class="col-4 col-form-label">Silent PO</label>
                                                         <div class="col-8">
                                                             <div class="form-check">
                                                                 <input class="form-check-input" type="checkbox" name="{{itm.silent_po}}"
-                                                                    id="ScItem-silent_po-{{itm.guid}}" disabled>
+                                                                       id="ScItem-silent_po-{{itm.guid}}" disabled>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -383,30 +397,17 @@
                                                 <div class="form-group row">
                                                     <label class="col-4 col-form-label">Price/Currency/Price Unit</label>
                                                     <div class="col">
-                                                        <input type="text" class="form-control" name="{{itm.price}}" value="50,000" id="ScItem-price-{{itm.guid}}" onchange="approve_tab_click_trigger_wf(event,this.id,'PRICING_TYPE')" disabled>
+                                                        <input type="text" class="form-control" name="{{itm.price}}" value="{{itm.price}}" id="ScItem-price-{{itm.guid}}" onchange="approve_tab_click_trigger_wf(event,this.id,'PRICING_TYPE')" disabled>
                                                     </div>
                                                     <div class="col">
-                                                        <input type="text" class="form-control" name="{{itm.currency}}" value="INR" id="ScItem-currency-{{itm.guid}}" disabled>
+                                                        <input type="text" class="form-control" name="{{itm.currency}}" value="{{itm.currency}}" id="ScItem-currency-{{itm.guid}}" disabled>
                                                     </div>
                                                     <div class="col">
-                                                        <input type="text" class="form-control" name="{{itm.price_unit}}" value="EACH" id="ScItem-price_unit-{{itm.guid}}" disabled>
+                                                        <input type="text" class="form-control" name="{{itm.price_unit}}" value="{{itm.price_unit}}" id="ScItem-price_unit-{{itm.guid}}" disabled>
                                                     </div>
                                                 </div>
 
-                                                {% if itm.call_off == "Catalog"%}
-                                                <span id="product_id-{{forloop.counter}}-{{itm.int_prod_id}}-{{itm.lead_time}}-{{itm.price}}" hidden></span>
 
-                                                <div class="form-group row">
-                                                    <label class="col-4 col-form-label">Quantity/Unit</label>
-                                                    <div class="col">
-                                                        <input type="text" class="form-control call_off-{{itm.call_off}}-quantity" name="{{itm.catalog_qty}}" value="{{itm.catalog_qty}}"
-                                                            id="ScItem-catalog_qty-{{itm.guid}}" onchange="approve_tab_click_trigger_wf(event,this.id,'PRICING_TYPE')" disabled>
-                                                    </div>
-                                                    <div class="col">
-                                                        <input type="text" class="form-control" name="{{itm.unit}}" value="{{itm.unit}}" id="ScItem-unit-{{itm.guid}}" disabled>
-                                                    </div>
-                                                </div>
-                                                {% else %}
                                                 <div class="form-group row">
                                                     <label class="col-4 col-form-label">Quantity/Unit</label>
                                                     <div class="col">
@@ -416,27 +417,26 @@
                                                         <input type="text" class="form-control" name="{{itm.unit}}" value="{{itm.unit}}" id="EACH" disabled>
                                                     </div>
                                                 </div>
-                                                {% endif %}
 
                                                 <div class="form-group row">
                                                     <label class="col-4 col-form-label">Total Item Value </label>
                                                     <div class="col-8">
-                                                        <input type="text" class="form-control" name="{{itm.value}}" value="52,000 " id="ScItem-value-{{itm.guid}}" disabled>
+                                                        <input type="text" class="form-control" name="{{itm.value}}" value="{{itm.value}}" id="ScItem-value-{{itm.guid}}" disabled>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <label class="col-4 col-form-label">Incoterm/location</label>
                                                     <div class="col">
-                                                        <input type="text" class="form-control" name="{{itm.incoterm}}" value="FCA" id="ScItem-incoterm-{{itm.guid}}" disabled>
+                                                        <input type="text" class="form-control" name="{{itm.incoterm}}" value="{{itm.incoterm}}" id="ScItem-incoterm-{{itm.guid}}" disabled>
                                                     </div>
                                                     <div class="col">
-                                                        <input type="text" class="form-control" name="{{itm.incoterm_loc}}" value="Office floor Marthahalli" id="ScItem-incoterm_loc-{{itm.guid}}" disabled>
+                                                        <input type="text" class="form-control" name="{{itm.incoterm_loc}}" value="{{itm.incoterm_loc}}" id="ScItem-incoterm_loc-{{itm.guid}}" disabled>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
-                                                    <label class="col-4 col-form-label">Goods Receiver </label>
+                                                    <label class="col-4 col-form-label">Goods/Services Recipient </label>
                                                     <div class="col-8">
-                                                        <input type="text" class="form-control" name="{{itm.goods_recep}}" value="Mr Girish Y" id="ScItem-goods_recep-{{itm.guid}}" disabled>
+                                                        <input type="text" class="form-control" name="{{itm.goods_recep}}" value="{{itm.goods_recep}}" id="ScItem-goods_recep-{{itm.guid}}" disabled>
                                                     </div>
                                                 </div>
                                                 {% if itm.call_off == 'PR' %}
@@ -450,19 +450,19 @@
                                                 <div class="form-group row">
                                                     <label class="col-4 col-form-label">Delivery Date </label>
                                                     <div class="col-8">
-                                                        <input type="text" class="form-control read_only_field" name="{{itm.item_del_date}}" value="2022-05-19" id="ScItem-item_del_date-{{itm.guid}}" disabled>
+                                                        <input type="text" class="form-control read_only_field" name="{{itm.item_del_date}}" value="{{itm.item_del_date|date:'Y-m-d'}}" id="ScItem-item_del_date-{{itm.guid}}" disabled>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <label class="col-4 col-form-label">Goods Marking</label>
                                                     <div class="col-8">
-                                                        <input type="text" class="form-control" name="{{itm.good_marking}}" value="None" id="ScItem-good_marking-{{itm.guid}}" disabled>
+                                                        <input type="text" class="form-control" name="{{itm.goods_marking}}" value="{{itm.goods_marking}}" id="ScItem-goods_marking-{{itm.guid}}" disabled>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <label class="col-4 col-form-label">Payment Terms </label>
                                                     <div class="col-8">
-                                                        <input type="text" class="form-control" name="{{itm.payment_term}}" value="6000" id="ScItem-payment_term-{{itm.guid}}" disabled>
+                                                        <input type="text" class="form-control" name="{{itm.payment_term}}" value="{{itm.payment_term}}" id="ScItem-payment_term-{{itm.guid}}" disabled>
                                                     </div>
                                                 </div>
                                             </div>
@@ -474,6 +474,7 @@
 
                             <div id="item_accountng_details" data-tab-content >
                                 <div class="m-4">
+                                    {% for po_accounting_detail in po_accounting_details %}
                                     <div class="hg_class_sc_acc_details">
 
                                         <div class="row">
@@ -483,27 +484,27 @@
                                                     <div class="form-group row">
                                                         <label class="col-4 col-form-label">Number </label>
                                                         <div class="col-8">
-                                                            <input type="text" class="form-control" name="{{sc_acc.acc_item_num}}"
-                                                                   value="1" id="ScAccounting-acc_item_num-{{sc_acc.guid}}" disabled>
+                                                            <input type="text" class="form-control" name="{{po_accounting_detail.acc_item_num}}"
+                                                                   value="{{po_accounting_detail.acc_item_num}}" id="ScAccounting-acc_item_num-{{po_accounting_detail.guid}}" disabled>
                                                         </div>
                                                     </div>
 
                                                     <div class="form-group row">
                                                         <label class="col-4 col-form-label">Percentage </label>
                                                         <div class="col-8">
-                                                            <input type="text" class="form-control" name="{{sc_acc.dist_perc}}"
-                                                                   value="100" id="ScAccounting-dist_perc-{{ sc_acc.guid }}" disabled>
+                                                            <input type="text" class="form-control" name="{{po_accounting_detail.dist_perc}}"
+                                                                   value="{{po_accounting_detail.dist_perc}}" id="ScAccounting-dist_perc-{{ po_accounting_detail.guid }}" disabled>
                                                         </div>
                                                     </div>
 
                                                     <div class="form-group row">
                                                         <label class="col-4 col-form-label">Account Assignment Category </label>
                                                         <div class="col-8">
-                                                            <select class="form-control check_multiple_account_asign_type" id="ScAccounting-acc_cat-{{ sc_acc.guid }}"
+                                                            <select class="form-control check_multiple_account_asign_type" id="ScAccounting-acc_cat-{{ po_accounting_detail.guid }}"
                                                                     onchange="display_acc_val(this)" class="hg_modal_select_field" disabled>
-                                                                
-                                                                <option value="CC - Cost Center">CC - Cost Center</option>
-                                                                
+
+                                                                <option value="CC - Cost Center">{{ po_accounting_detail.acc_cat }}</option>
+
                                                             </select>
                                                         </div>
                                                     </div>
@@ -512,9 +513,9 @@
                                                         <div class="form-group row">
                                                             <label class="col-4 col-form-label">Cost Center </label>
                                                             <div class="col-8" id="input_costcenter{{forloop.counter}}">
-                                                               
-                                                                <input type="text" id="ScAccounting-cost_center-{{ sc_acc.guid }}" class="hg_modal_select_field form-control" name="CC" value="4012 - Product Marketing" onclick="open_account_assign_values_modal(this);" disabled>
-                                                                
+
+                                                                <input type="text" id="ScAccounting-cost_center-{{ po_accounting_detail.guid }}" class="hg_modal_select_field form-control" name="{{po_accounting_detail.cost_center}}" value="{{po_accounting_detail.cost_center}}" onclick="open_account_assign_values_modal(this);" disabled>
+
                                                             </div>
                                                         </div>
                                                     </div>
@@ -523,13 +524,7 @@
                                                         <div class="form-group row">
                                                             <label class="col-4 col-form-label">Asset </label>
                                                             <div class="col-8" id="input_asset{{forloop.counter}}">
-                                                                {% if sc_acc.asset_number %}
-                                                                {% for acc_values in acc_value_append %}
-                                                                {% if acc_values.account_assign_value == sc_acc.asset_number %}
-                                                                <input type="text" id="ScAccounting-asset_number-{{ sc_acc.guid }}" class="hg_modal_select_field form-control" name="AS" value="{{acc_values.append_val}}" onclick="open_account_assign_values_modal(this);" disabled>
-                                                                {% endif %}
-                                                                {% endfor %}
-                                                                {% endif %}
+                                                                <input type="text" id="ScAccounting-asset_number-{{ po_accounting_detail.guid }}" class="hg_modal_select_field form-control" name="{{po_accounting_detail.asset_number}}" value="{{po_accounting_detail.asset_number}}" onclick="open_account_assign_values_modal(this);" disabled>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -539,13 +534,8 @@
                                                     <div class="form-group row">
                                                         <label class="col-4 col-form-label">Internal Order </label>
                                                         <div class="col-8" id="input_intorder{{forloop.counter}}">
-                                                            {% if sc_acc.internal_order %}
-                                                            {% for acc_values in acc_value_append %}
-                                                            {% if acc_values.account_assign_value == sc_acc.internal_order %}
-                                                            <input type="text" id="ScAccounting-internal_order-{{ sc_acc.guid }}" class="hg_modal_select_field form-control" name="OR" value="{{acc_values.append_val}}" onclick="open_account_assign_values_modal(this);" disabled>
-                                                            {% endif %}
-                                                            {% endfor %}
-                                                            {% endif %}
+
+                                                            <input type="text" id="ScAccounting-internal_order-{{ po_accounting_detail.guid }}" class="hg_modal_select_field form-control" name="{{ po_accounting_detail.internal_order}}" value="{{ po_accounting_detail.internal_order}}" onclick="open_account_assign_values_modal(this);" disabled>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -554,22 +544,16 @@
                                                     <div class="form-group row">
                                                         <label class="col-4 col-form-label">WBS </label>
                                                         <div class="col-8" id="input_wbs{{forloop.counter}}">
-                                                            {% if sc_acc.wbs_ele %}
-                                                            {% for acc_values in acc_value_append %}
-                                                            {% if acc_values.account_assign_value == sc_acc.wbs_ele %}
-                                                            <input type="text" id="ScAccounting-wbs_ele-{{ sc_acc.guid }}" class="hg_modal_select_field form-control" name="WBS" value="{{acc_values.append_val}}" onclick="open_account_assign_values_modal(this);" disabled>
-                                                            {% endif %}
-                                                            {% endfor %}
-                                                            {% endif %}
+                                                            <input type="text" id="ScAccounting-wbs_ele-{{ po_accounting_detail.guid }}" class="hg_modal_select_field form-control" name="{{po_accounting_detail.wbs_ele}}" value="{{po_accounting_detail.wbs_ele}}" onclick="open_account_assign_values_modal(this);" disabled>
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <div class="form-group row">
                                                     <label class="col-4 col-form-label">General Ledger Account </label>
-                                                    <div class="col-8"> 
-                                                        <input type="text" class="form-control" value="500001 - Demo" id="ScAccounting-gl_acc_num-{{ sc_acc.guid }}" class="hg_modal_select_field" disabled>
-                                                        
+                                                    <div class="col-8">
+                                                        <input type="text" class="form-control" value="{{po_accounting_detail.gl_acc_num}}" id="ScAccounting-gl_acc_num-{{ po_accounting_detail.guid }}" class="hg_modal_select_field" disabled>
+
                                                     </div>
                                                 </div>
 
@@ -577,8 +561,8 @@
                                                 <!--                            <label class="col-4 col-form-label">General Ledger Description: </label>-->
                                                 <!--                            <div class="col-8">-->
                                                 <!--                                {% for gl_acc_append in gl_acc_value_append %}-->
-                                                <!--                                {% if gl_acc_append.account_assign_value == sc_acc.gl_acc_num %}-->
-                                                <!--                                <input type="text" class="form-control" value="{{gl_acc_append.append_val}}" id="ScAccounting-gl_acc_num-{{ sc_acc.guid }}" class="hg_modal_select_field" disabled onclick="open_change_gl_account_modal(this.id);">-->
+                                                <!--                                {% if gl_acc_append.account_assign_value == po_accounting_detail.gl_acc_num %}-->
+                                                <!--                                <input type="text" class="form-control" value="{{gl_acc_append.append_val}}" id="ScAccounting-gl_acc_num-{{ po_accounting_detail.guid }}" class="hg_modal_select_field" disabled onclick="open_change_gl_account_modal(this.id);">-->
                                                 <!--                                {% endif %}-->
                                                 <!--                                {% endfor %}-->
                                                 <!--                            </div>-->
@@ -586,98 +570,94 @@
                                             </div>
                                         </div>
                                     </div>
+                                    {% endfor %}
                                 </div>
                             </div>
 
                             <div id="item_notes_and_attachments" data-tab-content >
                                 <div class="m-4">
-                                    <div class="card">
-                                        <div class="card-header item-table-action__header">
-                                            <span>Notes</span>
-                                        </div>
 
-                                        <div>
-                                            <div class="action-item-notes__buttons-section">
-                                                <button class="note_type add-note-internal" onclick="sup_int_note_tab(event, 'id_int_tab_content')">Internal Note</button>
-                                                <button class="note_type add-note-external" onclick="sup_int_note_tab(event, 'id_supp_tab_content')">Supplier Note</button>
-                                            </div>
-
-                                            <div id="id_supp_tab_content" class="hg_sup_int_note">
-
-                                                <div id="intbtn{{ forloop.counter }}" class="hg_tabContent hg_supp_note_content action-item-notes__textarea">
-
-                                                    <textarea class="add_notes_textarea" id="Notes-note_text-{{ supp_note.guid }}-S" rows="4" disabled>
-                                                        Supplier note: Need with packaging removed.
-                                                    </textarea>
-
+                                    <div class="row">
+                                        <div class="col">
+                                            <h4>Notes</h4>
+                                            <div class="card">
+                                                <div>
+                                                    <div class="action-item-notes__buttons-section">
+                                                        <button class="note_type add-note-internal" onclick="sup_int_note_tab(event, 'id_int_tab_content')">Internal Note</button>
+                                                        <button class="note_type add-note-external" onclick="sup_int_note_tab(event, 'id_supp_tab_content')">Supplier Note</button>
+                                                    </div>
+        
+                                                    <div id="id_supp_tab_content" class="hg_sup_int_note">
+                                                        {% for supp_note in supplier_notes %}
+                                                        <div id="intbtn{{ forloop.counter }}" class="hg_tabContent hg_supp_note_content action-item-notes__textarea">
+        
+                                                            <textarea class="add_notes_textarea" id="Notes-note_text-{{ supp_note.guid }}-S" rows="4" disabled>{{supp_note.note_text}}</textarea>
+        
+                                                        </div>
+                                                        {% endfor %}
+                                                    </div>
+        
+                                                    <div id="id_int_tab_content" class="hg_sup_int_note" style="display:none">
+                                                        {% for int_note in internal_notes %}
+                                                        <div id="supbtn{{ forloop.counter }}" class="hg_tabContent hg_int_note_content action-item-notes__textarea" style="display:none;">
+        
+                                                            <textarea class="add_notes_textarea" id="Notes-note_text-{{int_note.guid}}-I" rows="4" disabled>{{int_note.note_text}}</textarea>
+        
+                                                        </div>
+                                                        {% endfor %}
+                                                    </div>
                                                 </div>
-
                                             </div>
-
-                                            <div id="id_int_tab_content" class="hg_sup_int_note" style="display:none">
-
-                                                <div id="supbtn{{ forloop.counter }}" class="hg_tabContent hg_int_note_content action-item-notes__textarea" style="display:none;">
-
-                                                    <textarea class="add_notes_textarea" id="Notes-note_text-{{int_note.guid}}-I" rows="4" disabled>
-                                                        Internal note: Orderd televion for marketing devlopment teams
-                                                    </textarea>
-
+                                        </div>
+                                        <div class="col">
+                                            <h4>Attachments</h4>
+                                            <div class="card">
+                                                <div class="card-body">
+        
+                                                    {% if po_attachments %}
+                                                    {% for items in po_item_details %}
+        
+                                                    <div id="attachments-{{ forloop.counter }}" class="hg_tabContent hg_attachment_content action-item-notes__textarea">
+        
+                                                        {% for attachments in  po_attachments %}
+        
+                                                        {% if attachments.item_guid == items.po_item_guid %}
+                                                        <table class="table">
+                                                            <thead class="thead-light">
+                                                            <tr>
+                                                                <th>Name</th>
+                                                                <th>Type</th>
+                                                                <th>File</th>
+                                                                <th class="hg_is_hidden" hidden>Action</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody class="hg_attachment_table_tbody item_level_attachment-{{forloop.counter}}" id="attachment_tbody_id-{{forloop.counter}}">
+        
+                                                            <tr id="available_attachments-{{attachments.attachment_guid}}">
+                                                                <td><a href="{% url 'eProc_Notes_Attachments:attach_download' %}?path={{attachments.file_path}}">{{attachments.attachment_name}}</a>
+                                                                </td>
+                                                                <td>{% if attachments.type == 'I' %} Internal Use{% else %} External Use{% endif %}</td>
+                                                                <td>{{attachments.file_name}}</td>
+                                                                <td class="hg_is_hidden" hidden>
+                                                                    <i id="{{forloop.parentloop.counter}}-{{attachments.attachment_guid}}-{{attachments.item_guid}}"
+                                                                       onclick="delete_attachments(this)" class="fas fa-trash-alt attachment-icon"></i>
+                                                                </td>
+                                                            </tr>
+        
+                                                            </tbody>
+                                                        </table>
+        
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                    {% endfor %}
+                                                    {% else %}
+                                                    <div class="hg_class_attachement">
+                                                        <p class="p-3 bg-light text-dark">No attachments available</p>
+                                                    </div>
+                                                    {% endif%}
                                                 </div>
-
                                             </div>
-                                        </div>
-                                    </div>
-
-                                    <br>
-
-                                    <div class="card">
-                                        <div class="card-header item-table-action__header">
-                                            <span>Attachments</span>
-                                        </div>
-
-                                        <div class="card-body">
-                                            {% if sc_attachements %}
-                                            {% for items in itm_det %}
-
-                                            <div id="attachments-{{ forloop.counter }}" class="hg_tabContent hg_attachment_content action-item-notes__textarea">
-
-                                                {% for attachments in  sc_attachments %}
-
-                                                {% if attachments.item_guid == items.guid %}
-                                                <table>
-                                                    <thead>
-                                                    <tr>
-                                                        <th>Name</th>
-                                                        <th>Type</th>
-                                                        <th>File</th>
-                                                        <th class="hg_is_hidden" hidden>Action</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody class="hg_attachment_table_tbody item_level_attachment-{{forloop.counter}}" id="attachment_tbody_id-{{forloop.counter}}">
-
-                                                    <tr id="available_attachments-{{attachments.attachment_guid}}">
-                                                        <td><a href="{% url 'eProc_Notes_Attachments:attach_download' %}?path={{attachments.file_path}}">{{attachments.attachment_name}}</a>
-                                                        </td>
-                                                        <td>{% if attachments.type == 'I' %} Internal Use{% else %} External Use{% endif %}</td>
-                                                        <td>{{attachments.file_name}}</td>
-                                                        <td class="hg_is_hidden" hidden>
-                                                            <i id="{{forloop.parentloop.counter}}-{{attachments.attachment_guid}}-{{attachments.item_guid}}"
-                                                               onclick="delete_attachments(this)" class="fas fa-trash-alt attachment-icon"></i>
-                                                        </td>
-                                                    </tr>
-
-                                                    </tbody>
-                                                </table>
-
-                                                {% endif %}
-                                                {% endfor %}
-                                            </div>
-                                            {% endfor %}
-                                            {% else %}
-                                            <div class="hg_class_attachement">
-                                                <p class="p-3 bg-light text-dark">No attachments available</p>
-                                            </div>
-                                            {% endif%}
                                         </div>
                                     </div>
                                 </div>
@@ -771,7 +751,7 @@
 
                             <div id="item_shipping_address_details" data-tab-content >
                                 <div class="m-4">
-
+                                    {% for del_addrs in po_item_level_address %}
                                     <div class="hg_class_del_addrs">
                                         <h4 class="mt-3">Address Details</h4>
                                         <div class="row">
@@ -783,7 +763,7 @@
                                                     <label class="col-4 col-form-label">Name</label>
                                                     <div class="col-8">
                                                         <input type="text" class="form-control" name="{{del_addrs.name1}}"
-                                                               value="Girish" id="ScAddresses-name1-{{ del_addrs.guid }}" disabled>
+                                                               value="{{del_addrs.name1}}" id="ScAddresses-name1-{{ del_addrs.guid }}" disabled>
                                                     </div>
 
                                                 </div>
@@ -791,42 +771,42 @@
                                                     <label class="col-4 col-form-label">C/O</label>
                                                     <div class="col-8">
                                                         <input type="text" class="form-control" name="{{del_addrs.name2}}"
-                                                               value="Yendamoori" id="ScAddresses-name2-{{ del_addrs.guid }}" disabled>
+                                                               value="{{del_addrs.name2}}" id="ScAddresses-name2-{{ del_addrs.guid }}" disabled>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <label class="col-4 col-form-label">Fax Number</label>
                                                     <div class="col-8">
                                                         <input type="text" class="form-control" name="{{del_addrs.fax_number}}"
-                                                               value="1800222111" id="ScAddresses-fax_number-{{ del_addrs.guid }}" disabled>
+                                                               value="{{del_addrs.fax_number}}" id="ScAddresses-fax_number-{{ del_addrs.guid }}" disabled>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <label class="col-4 col-form-label">Street</label>
                                                     <div class="col-8">
                                                         <input type="text" class="form-control" name="{{del_addrs.street}}"
-                                                               value=" Washington Street 225" id="ScAddresses-street-{{ del_addrs.guid }}" disabled>
+                                                               value="{{del_addrs.street}}" id="ScAddresses-street-{{ del_addrs.guid }}" disabled>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <label class="col-4 col-form-label">Area</label>
                                                     <div class="col-8">
                                                         <input type="text" class="form-control" name="{{del_addrs.area}}"
-                                                               value="Allianz Global Risks US W" id="ScAddresses-area-{{ del_addrs.guid }}" disabled>
+                                                               value="{{del_addrs.area}}" id="ScAddresses-area-{{ del_addrs.guid }}" disabled>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <label class="col-4 col-form-label">Landmark</label>
                                                     <div class="col-8">
                                                         <input type="text" class="form-control" name="{{del_addrs.landmark}}"
-                                                               value="Church Street" id="ScAddresses-landmark-{{ del_addrs.guid }}" disabled>
+                                                               value="{{del_addrs.landmark}}" id="ScAddresses-landmark-{{ del_addrs.guid }}" disabled>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <label class="col-4 col-form-label">City</label>
                                                     <div class="col-8">
                                                         <input type="text" class="form-control" name="{{del_addrs.city}}"
-                                                               value="Bangalore" id="ScAddresses-city-{{ del_addrs.guid }}" disabled>
+                                                               value="{{del_addrs.city}}" id="ScAddresses-city-{{ del_addrs.guid }}" disabled>
                                                     </div>
                                                 </div>
 
@@ -836,55 +816,55 @@
                                                     <label class="col-4 col-form-label">Postal Code</label>
                                                     <div class="col-8">
                                                         <input type="text" class="form-control" name="{{del_addrs.postal_code}}"
-                                                               value="60606" id="ScAddresses-postalcode-{{ del_addrs.guid }}" disabled>
+                                                               value="{{del_addrs.postal_code}}" id="ScAddresses-postalcode-{{ del_addrs.guid }}" disabled>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <label class="col-4 col-form-label">Region</label>
                                                     <div class="col-8">
                                                         <input type="text" class="form-control" name="{{del_addrs.region}}"
-                                                               value="South" id="ScAddresses-region-{{ del_addrs.guid }}" disabled>
+                                                               value="{{del_addrs.region}}" id="ScAddresses-region-{{ del_addrs.guid }}" disabled>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <label class="col-4 col-form-label">Country Code</label>
                                                     <div class="col-8">
                                                         <input type="text" class="form-control" name="{{del_addrs.country_code}}"
-                                                               value="IN - India" id="ScAddresses-country_code-{{ del_addrs.guid }}" disabled>
+                                                               value="{{del_addrs.country_code}}" id="ScAddresses-country_code-{{ del_addrs.guid }}" disabled>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <label class="col-4 col-form-label">Language</label>
                                                     <div class="col-8">
                                                         <input type="text" class="form-control" name="{{del_addrs.language_id}}"
-                                                               value="EN - English" id="ScAddresses-language_id-{{ del_addrs.guid }}" disabled>
+                                                               value="{{del_addrs.language_id}}" id="ScAddresses-language_id-{{ del_addrs.guid }}" disabled>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <label class="col-4 col-form-label">Mobile Number</label>
                                                     <div class="col-8">
                                                         <input type="text" class="form-control" name="{{del_addrs.mobile_number}}"
-                                                               value="987654321" id="ScAddresses-mobile_number-{{ del_addrs.guid }}" disabled>
+                                                               value="{{del_addrs.mobile_number}}" id="ScAddresses-mobile_number-{{ del_addrs.guid }}" disabled>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <label class="col-4 col-form-label">Telephone Number</label>
                                                     <div class="col-8">
                                                         <input type="text" class="form-control" name="{{del_addrs.telephone_number}}"
-                                                               value="9912991299" id="ScAddresses-telephone_number-{{ del_addrs.guid }}" disabled>
+                                                               value="{{del_addrs.telephone_number}}" id="ScAddresses-telephone_number-{{ del_addrs.guid }}" disabled>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <label class="col-4 col-form-label">Email</label>
                                                     <div class="col-8">
                                                         <input type="text" class="form-control" name="{{del_addrs.email}}"
-                                                               value="girish@gmail.com" id="ScAddresses-email-{{ del_addrs.guid }}" disabled>
+                                                               value="{{del_addrs.email}}" id="ScAddresses-email-{{ del_addrs.guid }}" disabled>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-
+                                    {% endfor %}
                                     <div class="d-flex justify-content-end">
                                         <button  id="change_shipping_address_button" data-toggle="modal" data-target="#ChngShipAddr" class="btn btn-primary"
                                                  hidden><i class="far fa-edit"></i> Change Shipping Address</button>
@@ -894,13 +874,13 @@
 
                             <div id="item_efrom_details" data-tab-content >
                                 <div class="m-4">
-                                    {% for items in item_dictionary_list %}
+                                    {% for items in po_item_details %}
                                     <div id="display_eform-{{items.guid}}-{{ forloop.counter0 }}" class="hg_class_eform" style="display:none;">
                                         <div class="card-header">
                                             <span class="h5">Additional eForm Data</span>
                                         </div>
                                         <div class="card-body">
-                                            {% if items.call_off == 'Catalog'%}
+                                            {% if items.call_off == '02'%}
                                             {% if items.eform_id %}
                                             {% for eform_details in items.eform_data %}
                                             <div style="padding-bottom:5px;">
@@ -914,6 +894,91 @@
                                     {% endfor %}
                                 </div>
                             </div>
+                            <div id="related_document" data-tab-content >
+                                <div class="m-4">
+                                    
+                                    {% for items in po_item_details %}
+                                    <div class="hg_class_related_documents" >
+                                        <h4>History</h4>
+                                        <!-- <div class="row mt-4">
+                                            {% for related_document in items.related_documents%}
+                                            {% if related_document.po_item_guid_id == items.po_item_guid %}
+                                            <div class="col-md-3">
+                                                <div class="card card-shadow-1">
+                                                    <div class="card-body card-related-doc">
+                                                        <div class="" style="text-align: right;">
+                                                            <span class="text-muted">{{related_document.document}} Number </span>
+                                                            <span class="h5">
+                                                                <a href="{% url 'eProc_Doc_Details:my_order_doc_details' 'False' 'SC' related_document.encrypt_header_guid 'display' 'my_order' %}" target="_blank">
+                                                                    {{ related_document.document_number }}
+                                                                </a>
+                                                            </span>
+                                                        </div>
+                                                        <hr>
+                                                        <div class="related-doc-value-sec">
+                                                            <span class="text-muted ">{{related_document.document}} Name</span>
+                                                            <span class="h6">{{related_document.sc_name}}</span>
+                                                        </div>
+                                                        <div class="related-doc-value-sec">
+                                                            <span class="text-muted ">Date Created</span>
+                                                            <span class="h6">{{related_document.created_at|date:'Y-m-d'}}</span>
+                                                        </div>
+                                                        <div class="related-doc-value-sec">
+                                                            <span class="text-muted ">Created By</span>
+                                                            <span class="h6">{{related_document.created_by}}</span>
+                                                        </div>
+                                                        <div class="related-doc-value-sec">
+                                                            <span class="text-muted ">Net Value</span>
+                                                            <span class="h6">{{related_document.price}} </span><span class="h6"> {{related_document.currency}}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </div> -->
+                                        
+                                        
+                                        <div class="card-body">
+                                            <table class="table">
+                                                <thead>
+                                                <tr>
+                                                    <th>Document</th>
+                                                    <th>Name</th>
+                                                    <th>Document Number</th>
+                                                    <th>Status</th>
+                                                    <th>Date</th>
+                                                    <th>Quantity</th>
+                                                    <th>Unit</th>
+                                                    <th>Net Value</th>
+                                                    <th>Currency</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for related_document in items.related_documents%}
+                                                <!--                                                {{items.related_documents}}-->
+                                                {% if related_document.po_item_guid_id == items.po_item_guid %}
+                                                <tr>
+                                                    <td>{{related_document.document}}</td>
+                                                    <td>{{related_document.sc_name}}</td>
+                                                    <td><a href="{% url 'eProc_Doc_Details:my_order_doc_details' 'False' 'SC' related_document.encrypt_header_guid 'display' 'my_order' %}" target="_blank">{{ related_document.document_number }}</a></td>
+                                                    <td>{{related_document.status}}</td>
+                                                    <td>{{related_document.created_at|date:'Y-m-d'}}</td>
+                                                    <td>{{related_document.quantity}}</td>
+                                                    <td>{{related_document.unit}}</td>
+                                                    <td>{{related_document.price}}</td>
+                                                    <td>{{related_document.currency}}</td>
+                                                </tr>
+                                                {% endif %}
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endfor %}
                         </div>
                     </div>
 
@@ -924,14 +989,284 @@
 
     </div>
 </div>
-
+{% include 'ProductDetailPopup/basic_product_detail_popup.html' %}
 <script>
+    var acc_visible_div = 0;
+    var addr_visible_div = 0;
+    var sc_calloff = '';
+    var edit_flag = false;
+    var eform_display = false;
+    var item_detail_visible_div = 0;
+    var rendered_call_off = [];
+    var rendered_acc = [];
+    var rendered_acc_guid = [];
+    var rendered_item_guid = [];
+    var rendered_sc_addr = [];
+    var rendered_supp_note = [];
+    var rendered_int_note = [];
+    var rendered_price = [];
+    var rendered_price_unit = [];
+    var rendered_quantity = [];
+    var rendered_catalog_qty = [];
+    var rendered_eform = [];
+    var GLOBAL_MANAGER_DETAIL = [];
+    var internal_supplier_error_itemNumber = []
+    var highest_item_acc_asgn_cat = '';
+    var highest_item_change_acc_value = '';
+    var GLOBAL_TAB_ID = 'item_data';
+    var GLOBAL_ID_IGNORE_LIST = ['select_item']
+    // Store  header Guid and company code in global variable
+    var GLOBAL_SC_CO_CODE = '{{po_header_details.company_code_id}}';
+    var GLOBAL_HEADER_GUID = "{{po_header_details.guid}}";
+    var GLOBAL_DOCUMENT_NUMBER = "{{po_header_details.doc_number}}"
+    // store rendered highest item guid in global variable
+    //var GLOBAL_HIGHEST_ITEM_GUID = '{{highest_item_guid|safe}}';
+    var GLOBAL_HIGHEST_VALUE_ITEM_ROW
 
 $(document).ready(function () {
     $('#nav_menu_items').remove();
     $("body").css("padding-top", "3.7rem");
     NavigateTabs(); // Custom function to switch tabs
+    {% for item in po_item_details %}
+        rendered_call_off.push('{{item.call_off|safe}}');
+        rendered_item_guid.push('{{item.guid|safe}}');
+        rendered_price.push('{{item.price|safe}}');
+        rendered_price_unit.push('{{item.price_unit|safe}}');
+        rendered_quantity.push('{{item.quantity|safe}}');
+        rendered_catalog_qty.push('{{item.catalog_qty|safe}}');
+        var eform_id = '{{item.eform_id|safe}}';
+        var call_off = '{{item.call_off|safe}}'
+        if(eform_id == ''){
+            rendered_eform.push('None');
+        }
+        else if(call_off == '02'){
+            rendered_eform.push('{{item.eform_id|safe}}');
+        }
+        else{
+            rendered_eform.push('None');
+        }
+        {% endfor %}
+        {% for po_addr in po_item_level_address %}
+        rendered_sc_addr.push('{{po_addr.guid|safe}}');
+        {% endfor %}
+        {% for supp_note in supplier_notes %}
+        rendered_supp_note.push('{{supp_note.guid|safe}}');
+        {% endfor %}
+        {% for int_note in internal_notes %}
+        rendered_int_note.push('{{int_note.guid|safe}}');
+        {% endfor %}
+        {% for po_accounting_detail in po_accounting_details %}
+        rendered_acc.push('{{po_accounting_detail.acc_cat|safe}}');
+        rendered_acc_guid.push('{{po_accounting_detail.guid|safe}}');
+        {% endfor %}
+        {% for po_approver_detail in po_approver_details %}
+        GLOBAL_MANAGER_DETAIL.push('{{po_approver_detail.app_id|safe}}');
+        {% endfor %}
+        show_item_detail_div();
 });
+function sup_int_note_tab(evt, cityName) {
+    var i, tabcontent, note_tab;
+    sup_int_note = document.getElementsByClassName("hg_sup_int_note");
+    for (i = 0; i < sup_int_note.length; i++) {
+        sup_int_note[i].style.display = "none";
+    }
+    note_tab = document.getElementsByClassName("note_type");
+    for (i = 0; i < note_tab.length; i++) {
+        note_tab[i].style.backgroundColor = '#FFFFFF'
+        note_tab[i].style.color = '#000000'
+    }
+    document.getElementById(cityName).style.display = "block";
+    evt.target.style.backgroundColor = "#007bff";
+    evt.target.style.color = '#FFFFFF'
+}
+
+function show_item_detail_div() {
+
+    $(".hg_class_item_data").hide();
+    $(".hg_class_prod_desc").hide();
+    $(".hg_class_sc_acc_details").hide();
+    $(".hg_supp_note_content").hide();
+    $(".hg_int_note_content").hide();
+    $(".dummy_eform_class").hide();
+    $(".hg_attachment_content").hide();
+    $(".hg_class_del_addrs").hide();
+    $(".hg_class_related_documents").hide();
+    $(".hg_class_attachement").hide();
+    $(".hg_supplier_class").hide();
+    $(".hg_class_item_data:eq(" + item_detail_visible_div + ")").show();
+    $(".hg_class_prod_desc:eq(" + item_detail_visible_div + ")").show();
+    $(".hg_class_sc_acc_details:eq(" + item_detail_visible_div + ")").show();
+    $(".hg_supp_note_content:eq(" + item_detail_visible_div + ")").show();
+    $(".hg_int_note_content:eq(" + item_detail_visible_div + ")").show();
+    $(".hg_attachment_content:eq(" + item_detail_visible_div + ")").show();
+    $(".hg_class_del_addrs:eq(" + item_detail_visible_div + ")").show();
+    $(".hg_class_related_documents:eq(" + item_detail_visible_div + ")").show();
+    $(".hg_class_attachement:eq(" + item_detail_visible_div + ")").show();
+    $(".hg_supplier_class:eq(" + item_detail_visible_div + ")").show();
+    item_num = item_detail_visible_div + 1;
+    if (rendered_eform[item_detail_visible_div] !== "None") {
+        $('#eform_tab').show();
+        $('.hg_class_eform').hide()
+        $("#display_eform-" + rendered_item_guid[item_detail_visible_div]+"-"+item_detail_visible_div).show()
+        if (GLOBAL_TAB_ID == "eForm"){
+            document.getElementById("eForm").style.display = "block";
+        }
+    }
+    else{
+
+        //document.getElementById(GLOBAL_TAB_ID).style.display = "none";
+        $('#eform_tab').hide();
+        $('.hg_class_eform').hide()
+        if (GLOBAL_TAB_ID == "eForm"){
+            GLOBAL_TAB_ID ="item_data"
+            document.getElementById("item_tab_id").style.background = '#007BFF';
+            document.getElementById("item_tab_id").style.color = '#FFFFFF';
+            document.getElementById("eform_tab").style.background = '#FFFFFF';
+            document.getElementById("eform_tab").style.color = '#007BFF';
+            document.getElementById("item_data").style.display = "block";
+
+
+        }
+
+    }
+    if (edit_flag) {
+        // Item data
+        $('.pr_lead_time').prop('disabled', false)
+        $("#ScItem-purch_grp-" + rendered_item_guid[item_detail_visible_div]).prop("disabled", false);
+        $("#ScItem-silent_po-" + rendered_item_guid[item_detail_visible_div]).prop("disabled", false);
+        $("#ScItem-silent_po-" + rendered_item_guid[item_detail_visible_div]).prop("disabled", false);
+        $("#ScItem-catalog_qty-" + rendered_item_guid[item_detail_visible_div]).prop("disabled", false);
+        $("#ScItem-quantity-" + rendered_item_guid[item_detail_visible_div]).prop("disabled", false);
+        $("#ScItem-goods_recep-" + rendered_item_guid[item_detail_visible_div]).prop("disabled", false);
+        $("#ScItem-goods_marking-" + rendered_item_guid[item_detail_visible_div]).prop("disabled", false);
+        // Accounting data
+        $("#ScAccounting-acc_cat-" + rendered_acc_guid[item_detail_visible_div]).prop("disabled", false);
+        $("#ScAccounting-cost_center-" + rendered_acc_guid[item_detail_visible_div]).prop("disabled", false);
+        $("#ScAccounting-asset_number-" + rendered_acc_guid[item_detail_visible_div]).prop("disabled", false);
+        $("#ScAccounting-internal_order-" + rendered_acc_guid[item_detail_visible_div]).prop("disabled", false);
+        $("#ScAccounting-wbs_ele-" + rendered_acc_guid[item_detail_visible_div]).prop("disabled", false);
+        $("#ScAccounting-account_assign_value-" + rendered_acc_guid[item_detail_visible_div]).prop("disabled", false);
+        //$("#ScAccounting-gl_acc_num-" + rendered_acc_guid[item_detail_visible_div]).prop("disabled", false);
+        // delivery address
+        $("#ScAddresses-name1-" + rendered_sc_addr[item_detail_visible_div]).prop("disabled", false);
+        $("#ScAddresses-name2-" + rendered_sc_addr[item_detail_visible_div]).prop("disabled", false);
+        $("#ScAddresses-fax_number-" + rendered_sc_addr[item_detail_visible_div]).prop("disabled", false);
+        $("#ScAddresses-street-" + rendered_sc_addr[item_detail_visible_div]).prop("disabled", false);
+        $("#ScAddresses-area-" + rendered_sc_addr[item_detail_visible_div]).prop("disabled", false);
+        $("#ScAddresses-landmark-" + rendered_sc_addr[item_detail_visible_div]).prop("disabled", false);
+        $("#ScAddresses-city-" + rendered_sc_addr[item_detail_visible_div]).prop("disabled", false);
+        $("#ScAddresses-region-" + rendered_sc_addr[item_detail_visible_div]).prop("disabled", false);
+        $("#ScAddresses-country_code-" + rendered_sc_addr[item_detail_visible_div]).prop("disabled", false);
+        $("#ScAddresses-language_id-" + rendered_sc_addr[item_detail_visible_div]).prop("disabled", false);
+        $("#ScAddresses-mobile_number-" + rendered_sc_addr[item_detail_visible_div]).prop("disabled", false);
+        $("#ScAddresses-telephone_number-" + rendered_sc_addr[item_detail_visible_div]).prop("disabled", false);
+        $("#ScAddresses-email-" + rendered_sc_addr[item_detail_visible_div]).prop("disabled", false);
+        $("#ScAddresses-postalcode-" + rendered_sc_addr[item_detail_visible_div]).prop("disabled", false);
+
+        //Internal and external note
+        $("#Notes-note_text-" + rendered_int_note[item_detail_visible_div] + "-I").prop("disabled", false);
+        $("#Notes-note_text-" + rendered_supp_note[item_detail_visible_div] + "-S").prop("disabled", false);
+        //supplier data
+        $("#ScItem-supplier_id-" + rendered_item_guid[item_detail_visible_div] + "-drop").prop("disabled", false);
+        $("#ScItem-pref_supplier-" + rendered_item_guid[item_detail_visible_div] + "-drop").prop("disabled", false);
+        $("#ScItem-supplier_id-" + rendered_item_guid[item_detail_visible_div]).prop("disabled", false);
+        $("#ScItem-pref_supplier-" + rendered_item_guid[item_detail_visible_div]).prop("disabled", false);
+        $("#ScItem-supplier_id-" + rendered_item_guid[item_detail_visible_div] + "-drop-ft").prop("disabled", false);
+
+        if (rendered_call_off[item_detail_visible_div] === "01" || rendered_call_off[item_detail_visible_div] === "02") {
+        //if (sc_calloff === "Catalog" || sc_calloff === "Freetext") {
+            $("#ScItem-payment_term-" + rendered_item_guid[item_detail_visible_div]).prop("disabled", false);
+        }
+        if (rendered_call_off[item_detail_visible_div] == '03') {
+            $("#ScItem-description-" + rendered_item_guid[item_detail_visible_div]).prop("disabled", false);
+            $("#ScItem-price-" + rendered_item_guid[item_detail_visible_div]).prop("disabled", false);
+            $("#ScItem-price_unit-" + rendered_item_guid[item_detail_visible_div]).prop("disabled", false);
+        }
+
+    }
+}
+
+function item_detail_next(button) {
+    current_item_num = parseInt(button.id);
+    var item_count = rendered_call_off.length;
+    if (current_item_num >= item_count) {
+        current_item_num = 0;
+    }
+    sc_calloff = rendered_call_off[current_item_num];
+    sc_acc_cat = rendered_acc[current_item_num];
+
+    var item_count = $(".hg_class_item_data").length - 1
+    if (item_detail_visible_div == $(".hg_class_item_data").length - 1) {
+        item_detail_visible_div = 0;
+    }
+    else {
+        item_detail_visible_div++;
+    }
+    show_item_detail_div();
+}
+
+
+function item_detail_previous(button) {
+    current_item_num = parseInt(button.id) - 1;
+    var item_count = rendered_call_off.length;
+    if (current_item_num == -1) {
+        current_item_num = item_count - 1;
+    }
+    sc_calloff = rendered_call_off[current_item_num]
+    if (item_detail_visible_div == 0) {
+        item_detail_visible_div = $(".hg_class_item_data").length - 1;
+    }
+    else {
+        item_detail_visible_div--;
+    }
+    show_item_detail_div();
+}
+function show_image_div(){
+    $(".catalog_img").hide();
+    $(".catalog_img:eq(" + image_visible_div + ")").show();
+
+}
+
+// variant
+// [{'eform_field_data_guid': '217F7FB62CE54522B8C389C3B023A48C', 'cart_guid': 'E1C184B3E21440B693CE744F55B4CABD', 'favourite_cart_guid': None,
+// 'eform_id': '85615956', 'eform_type': 'CATALOG_ITEM_VARIANT', 'eform_field_name': 'Features', 'eform_field_data': 'ADA Patient Examination Tables',
+// 'eform_field_count': 3, 'eform_field_data_created_at': None, 'eform_field_data_created_by': None, 'eform_field_data_changed_at': None,
+// 'eform_field_data_changed_by': None, 'eform_field_data_source_system': '', 'eform_field_data_destination_system': '', 'del_ind': False, 'client_id': '700',
+// 'item_guid_id': '557AEB0D87824834974DAD90D6AA48D5', 'po_item_guid_id': 'B54FAB93A7614FF88D079A9F6CBF51BC', 'product_eform_pricing_guid_id':
+// '0E4683916BFA40208FFD242CE39F509C'}, 
+// {'eform_field_data_guid': 'F492348B0EB64F51827763BC181CCC60', 'cart_guid':'E1C184B3E21440B693CE744F55B4CABD', 'favourite_cart_guid': None, 
+// 'eform_id': '85615956', 'eform_type': 'CATALOG_ITEM_VARIANT',
+// 'eform_field_name': 'Color', 'eform_field_data': 'White', 'eform_field_count': 2, 'eform_field_data_created_at': None, 'eform_field_data_created_by': None,
+// 'eform_field_data_changed_at': None, 'eform_field_data_changed_by': None, 'eform_field_data_source_system': '', 'eform_field_data_destination_system': '',
+// 'del_ind': False, 'client_id': '700', 'item_guid_id': '557AEB0D87824834974DAD90D6AA48D5', 'po_item_guid_id': 'B54FAB93A7614FF88D079A9F6CBF51BC',
+// 'product_eform_pricing_guid_id': '0E4683916BFA40208FFD242CE39F509C'}]
+
+// // freetext eform
+// [{'eform_field_data_guid': '1FB8C31545E84B5D851261B14743B3B5', 'cart_guid': 'E5F19FECD3F74C7B850CCC3490A27047', 'favourite_cart_guid': None,
+// 'eform_id': '24509301', 'eform_type': 'FT_ITEM_EFORM', 'eform_field_name': 'Long Description', 'eform_field_data': 'long', 'eform_field_count': 1,
+// 'eform_field_data_created_at': None, 'eform_field_data_created_by': None, 'eform_field_data_changed_at': None, 'eform_field_data_changed_by': None,
+// 'eform_field_data_source_system': '', 'eform_field_data_destination_system': '', 'del_ind': False, 'client_id': '700', 'item_guid_id':
+// '88CF2DE2EC6E40F4BCEE08862DB3CE0A', 'po_item_guid_id': 'F88062D78D834973854E99F874B2156B', 'product_eform_pricing_guid_id': None},
+// {'eform_field_data_guid': '595543FD0F3B4A05BC9A224D068BCAD1', 'cart_guid': 'E5F19FECD3F74C7B850CCC3490A27047', 'favourite_cart_guid': None,
+// 'eform_id': '24509301', 'eform_type': 'FT_ITEM_EFORM', 'eform_field_name': 'Short Description', 'eform_field_data': 'short', 'eform_field_count': 0,
+// 'eform_field_data_created_at': None, 'eform_field_data_created_by': None, 'eform_field_data_changed_at': None, 'eform_field_data_changed_by': None,
+// 'eform_field_data_source_system': '', 'eform_field_data_destination_system': '', 'del_ind': False, 'client_id': '700', 'item_guid_id':
+// '88CF2DE2EC6E40F4BCEE08862DB3CE0A', 'po_item_guid_id': 'F88062D78D834973854E99F874B2156B', 'product_eform_pricing_guid_id': None}]
+
+
+// [{'guid': '6BF881A8F65B447CA5A8FFB7028EF3C8', 'item_num': 1, 'header_guid': None, 'item_guid': '12408ED862924472B670C0800E9AC588',
+// 'doc_num': '8014', 'note_type': 'Supplier Note', 'note_type_flag': None, 'note_text': '', 'notes_created_at': None, 'notes_created_by': None, 'notes_changed_at':
+// None, 'notes_changed_by': None, 'notes_source_system': '', 'notes_destination_system': '', 'del_ind': False, 'client_id': '700', 'document_type_id': 'DOC02'},
+
+// {'guid': '086097D1D59B4BF58B4ADDE8C96E1A1A', 'item_num': 2, 'header_guid': None, 'item_guid': 'B54FAB93A7614FF88D079A9F6CBF51BC', 'doc_num':
+// '8014', 'note_type': 'Supplier Note', 'note_type_flag': None, 'note_text': '', 'notes_created_at': None, 'notes_created_by': None, 'notes_changed_at': None,
+// 'notes_changed_by': None, 'notes_source_system': '', 'notes_destination_system': '', 'del_ind': False, 'client_id': '700', 'document_type_id': 'DOC02'},
+
+// {'guid': 'ACFDDB3A970145748B345478107AC61C', 'item_num': 3, 'header_guid': None, 'item_guid': 'F88062D78D834973854E99F874B2156B', 'doc_num': '8014',
+// 'note_type': 'Supplier Note', 'note_type_flag': None, 'note_text': '', 'notes_created_at': None, 'notes_created_by': None, 'notes_changed_at': None,
+// 'notes_changed_by': None, 'notes_source_system': '', 'notes_destination_system': '', 'del_ind': False, 'client_id': '700', 'document_type_id': 'DOC02'}]
+
+
 </script>
 
 {% endblock %}

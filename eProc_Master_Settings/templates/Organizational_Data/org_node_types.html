@@ -171,11 +171,10 @@
      
         function dropdown_value(){
             node_type_dropdown = '';
+            $.each(rendered_dropdown_values, function(i, item){
+                node_type_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
 
-        $.each(rendered_dropdown_values, function(i, item){
-            node_type_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
-           
-        });
+            });
         }
 
 
@@ -215,8 +214,8 @@
                     var orgnodetype_data_array =  orgnodetyp_data;
 
                     $('#id_save_confirm_popup').modal('hide');
-                data = {'data':orgnodetyp_data,'table_name':'OrgNodeTypes','action':GLOBAL_ACTION}
-
+                    data = {'data':orgnodetyp_data,'table_name':'OrgNodeTypes','action':GLOBAL_ACTION}
+                    OpenLoaderPopup();
                     $.ajax({
                         type: 'POST',
                         url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
@@ -229,24 +228,26 @@
                             display_basic_db_data();
                             dropdown_value();
                             $('#myModal').modal('hide');
-                            $('#id_error_msg').text(messageConstants["JMSG001"])
+                            //$('#id_error_msg').text(messageConstants["JMSG001"])
                             $('#success_msg_id').text(Response[1])
+                             if(Response[1].message_type[0]== 'SUCCESS'){
+                                $('#success_msg_id').text(Response[1].message_desc[0])
+                             }
                             $("#err_msg_app_settings_t").prop("hidden", false)
                             table_sort_filter('id_popup_table');
                             setTimeout(function() {
                                 $("#err_msg_app_settings_t").prop("hidden", true);
                             }, 5000)
                             table_sort_filter('id_popup_table');
+                            CloseLoaderPopup();
                         }
                     });
-
                 }
                 else if (error_message){
                     display_error_message(error_message)
                 } 
 
-            }
-                    
+            }                    
     }
 
         //delete the selected row in db................
@@ -272,8 +273,7 @@
             });
             document.getElementById('id_delete_confirm_popup').style.display = "none"
             data = {'data':main_table_org_node_type_checked,'table_name':'OrgNodeTypes','action':GLOBAL_ACTION}
-
-           
+            OpenLoaderPopup();
             $.ajax({
                 type: 'POST',
                 url: "{% url 'eProc_Configuration:create_update_application_data' %}",
@@ -285,10 +285,16 @@
                     rendered_dropdown_values = Response[2];
                     display_basic_db_data();
                     $('#success_msg_id').text(Response[1])
+                     if(Response[1].message_type[0]== 'SUCCESS'){
+                         $('#success_msg_id').text(Response[1].message_desc[0])
+                    }
                     $("#err_msg_app_settings_t").prop("hidden", false)
+                    table_sort_filter('id_popup_table');
                     setTimeout(function() {
                         $("#err_msg_app_settings_t").prop("hidden", true);
                     }, 5000)
+                    table_sort_filter('id_popup_table');
+                    CloseLoaderPopup();
                 }
             });
         }
@@ -326,7 +332,6 @@ function onclick_add_button(button) {
     $( "#header_select").prop( "hidden", false );
     GLOBAL_ACTION = button.value
     $('#id_popup_table').DataTable().destroy();
-    $('#myModal').modal('show');
     $("#id_popup_tbody").empty();
     $('#myModal').modal('show');
     basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control nodetype" id="nodetype-1"  name="nodetype" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ node_type_dropdown +'</select></td><td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td>'+'<td hidden>guid</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
@@ -340,7 +345,6 @@ function onclick_add_button(button) {
 // on click add icon display the row in to add the new entries
 function add_popup_row() {
  $("#error_msg_id").css("display", "none")
-    dropdown_value();
     basic_add_new_html = '';
     var display_db_data = '';
     var getid = $(".nodetype:last").attr("id");
@@ -385,6 +389,128 @@ function add_popup_row() {
                else
                      return preUrl;
        }
+
+
+// validating the  popup table for duplicate entries
+function compare_table_for_duplicate_entries(validate_add_attributes, org_node_type) {
+    add_attr_duplicates = false;
+    var error_message = ''
+    var add_attr_duplicates_list = [];
+    var add_attr_unique_list = [];
+    var no_duplicate_value = 'Y'
+    $.each(validate_add_attributes, function (index, value) {
+        if ($.inArray(value, add_attr_unique_list) == -1) {
+            add_attr_unique_list.push(value);
+        }
+         else {
+            if ($.inArray(value, add_attr_duplicates_list) == -1) {
+                add_attr_duplicates_list.push(value);
+            }
+        }
+    });
+    if (add_attr_duplicates_list.length != 0) {
+              
+                var msg = "JMSG001";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+
+    }
+    else{
+        $.each(org_node_type, function (i, item) {
+            if (item.node_type.length == 0) {
+                //error_message = messageConstants["JMSG002"] +"Node Type";
+                     
+                        var msg = "JMSG002";
+                        var msg_type ;
+                      msg_type = message_config_details(msg);
+                      $("#error_msg_id").prop("hidden", false)
+
+                      if(msg_type.message_type[0] == "ERROR"){
+                            display_message("error_msg_id", msg_type.messages_id_desc[0])
+                      }
+                      else if(msg_type.message_type[0] == "WARNING"){
+                         display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                      }
+                      else if(msg_type.message_type[0] == "INFORMATION"){
+                         display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                      }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
+            if (item.description.length == 0) {
+                //error_message = messageConstants["JMSG002"] + "Description";
+                     
+                        var msg = "JMSG002";
+                        var msg_type ;
+                      msg_type = message_config_details(msg);
+                      $("#error_msg_id").prop("hidden", false)
+
+                      if(msg_type.message_type[0] == "ERROR"){
+                            display_message("error_msg_id", msg_type.messages_id_desc[0])
+                      }
+                      else if(msg_type.message_type[0] == "WARNING"){
+                         display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                      }
+                      else if(msg_type.message_type[0] == "INFORMATION"){
+                         display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                      }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
+
+         });
+    }
+
+    return [no_duplicate_value,error_message]
+}
+
+//validate by comparing  main table values and popup table values
+function maintable_validation(validate_add_attributes, main_table_low_value) {
+    var no_duplicate_entries = 'Y'
+    var error_message =''
+    var common = [];
+    jQuery.grep(validate_add_attributes, function (el) {
+        if (jQuery.inArray(el, main_table_low_value) != -1) {
+            common.push(el);
+        }
+    });
+    if (common.length != 0) {
+        //error_message = messageConstants["JMSG001"]
+              
+                var msg = "JMSG001";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+    }
+    return [no_duplicate_entries,error_message]
+}
+
+
     </script>
 
     <script src="{% static 'scripts/organisational_data/org_node_type.js' %}"></script>

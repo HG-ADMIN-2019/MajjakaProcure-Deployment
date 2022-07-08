@@ -39,6 +39,7 @@
     $('#update_catalog_items').submit(function(e){
         $('#update_pop_up').modal('hide')
         e.preventDefault();
+        OpenLoaderPopup();
         quantity = document.getElementById("catalog_quantity").value
         price     = document.getElementById("cat_price_per_unit").value
         item_data = {
@@ -60,7 +61,7 @@
                 item_value_object[item_guid] = item_value
             }
             item_data['item_value_object'] = item_value_object
-            item_data['call_off'] = 'Catalog'
+            item_data['call_off'] = '01'
         }
 
         $.ajax({
@@ -73,10 +74,14 @@
                     $('.item_price-'+row_num).html(response.item_price);
                     //document.getElementById("price-"+guid).innerHTML        = response.price
                     document.getElementById("item_value_"+guid).innerHTML  = response.item_value
-                    document.getElementById("total_cart_value").innerHTML  = response.total_value 
+                    document.getElementById("total_cart_value").innerHTML  = response.total_value
+                    document.getElementById("tax_value").innerHTML = response.price_details.tax_value
+                    document.getElementById("discount_value").innerHTML = response.price_details.discount_value
+                    document.getElementById("actual_price").innerHTML = response.price_details.actual_price
                 } else {
                     update_catalog_item_info_at_doc_detail(response)
                 }
+                CloseLoaderPopup();
                 $('#update_modal_popup').modal('hide');
             }
         });

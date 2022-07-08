@@ -7,8 +7,8 @@ from django.http import Http404
 from Majjaka_eProcure import settings
 from eProc_Attributes.Utilities.attributes_generic import OrgAttributeValues
 from eProc_Basic.Utilities.constants.constants import CONST_SC_HEADER_APPROVED, CONST_COMPLETED, CONST_SC_APPR_APPROVED, \
-    CONST_SC_HEADER_AWAITING_APPROVAL, CONST_ACTIVE, CONST_AUTO, CONST_INITIATED, CONST_SC_APPR_OPEN, CONST_CO03, \
-    CONST_CALENDAR_ID, CONST_CO01
+    CONST_SC_HEADER_AWAITING_APPROVAL, CONST_ACTIVE, CONST_AUTO, CONST_INITIATED, CONST_SC_APPR_OPEN, CONST_PR_CALLOFF, \
+    CONST_CALENDAR_ID, CONST_CATALOG_CALLOFF
 from eProc_Basic.Utilities.functions.dict_check_key import checkKey
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.get_db_query import getClients, get_object_id_from_username
@@ -17,7 +17,7 @@ from eProc_Calendar_Settings.Utilities.calender_settings_generic import calculat
 from eProc_Configuration.models import ImagesUpload
 from eProc_Notes_Attachments.models import Attachments, Notes
 from eProc_Price_Calculator.Utilities.price_calculator_generic import calculate_item_total_value
-from eProc_Purchase_Order.models.purchase_order import PoHeader, PoItem, PoAccounting, PoApproval
+from eProc_Purchase_Order.models.purchase_order import *
 
 # Importing  the models from m_database app
 from eProc_Shopping_Cart.Utilities.shopping_cart_generic import update_eform_details_scitem, get_image_url
@@ -225,7 +225,7 @@ def save_update_sc(sc_data, db_table_name, db_name, pk_value, header_guid):
         item_guid[pk_value] = str(list(scitem.values())[0])
         if db_name == 'ScItem':
             item_instance = ScItem.objects.get(guid=item_guid[pk_value])
-            # if item_instance.call_off == CONST_CO03:
+            # if item_instance.call_off == CONST_PR_CALLOFF:
             #     calculate_delivery_date(item_guid[pk_value], int(item_instance.lead_time), scitem['supplier_id'],
             #                             default_calendar_id, global_variables.GLOBAL_CLIENT, ScItem)
 
@@ -370,8 +370,8 @@ def update_eform_scitem(header_guid):
                                                                      ['item_num'], None)
     item_dictionary_list = update_eform_details_scitem(item_dictionary_list)
     for item_dictionary in item_dictionary_list:
-        if item_dictionary['call_off'] == CONST_CO01:
-            item_dictionary['image_url'] = get_image_url(item_dictionary['int_prod_id'])
+        if item_dictionary['call_off'] == CONST_CATALOG_CALLOFF:
+            item_dictionary['image_url'] = get_image_url(item_dictionary['int_product_id'])
         else:
             item_dictionary['image_url'] = ''
     return item_dictionary_list

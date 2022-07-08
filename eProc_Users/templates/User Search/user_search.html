@@ -78,10 +78,10 @@
 </style>
 
 <div class="container-fluid">
-    <div class="hg_wrapper">
+    <div class="mep-form_wrapper">
 
-        <div class="elements-space-between">
-            <span class="hg_head1">Employee Management</span>
+        <div class="d-flex justify-content-between">
+            <h3>Employee Management</h3>
             <div>
                  <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Admin_Tool:extract_employee_template' %}'"type="button">
                     <i class="fas fa-download"></i> download template
@@ -96,87 +96,89 @@
             </div>
         </div>
 
-        <hr class="hg_heading_hrborder">
+        <hr>
 
-        <div>
-            <form method="POST" id="search_form" name="search_form">
-                {% csrf_token %}
-                <div class="row">
-                    <div class="col-md">
-                        <label for="">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" value="">
-                    </div>
-                    <div class="col-md">
-                        <label for="">First Name</label>
-                        <input type="text" class="form-control" id="first_name" name="first_name">
-                    </div>
-                    <div class="col-md">
-                        <label for="">Last Name</label>
-                        <input type="text" class="form-control" id="last_name" name='last_name'>
-                    </div>
-                    <div class="col-auto">
-                        <button class="button-search-users btn btn-primary" type="submit"
-                            title="Please click to get the search details!" onclick="reload()"><i class="fas fa-search"></i> search
-                        </button>
-                    </div>
-                </div>
-                <hr>
-                <div class="elements-space-between" data-toggle="collapse" data-target="#employee_adv_search">
-                    <span class="h5">Advanced Search</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div id="employee_adv_search" class="advanced-search-collapse collapse">
+        <div class="card card-shadow-1">
+            <div class="card-body">
+                <form method="POST" id="search_form" name="search_form">
+                    {% csrf_token %}
                     <div class="row">
-                        <div class="col-md-3">
-                            <label for="">Email</label>
-                            <input type="text" class="form-control" id="email" name="email">
-                        </div>
-                        <div class="col-md-3">
-                            <label for="">User Type</label>
-                            <select type="text" class="form-control" id="user_type" name="user_type">
-                                 {% for usertype in dropdown_usertype_values %}
-                                <option value="{{usertype.field_type_id}}">{{usertype.field_type_desc}}</option>
-                                {% endfor %}
-
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="">Employee Number</label>
-                            <input type="text" class="form-control" id="employee_id" name="employee_id">
+                        <div class="col-md">
+                            <label for="">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" value="">
                         </div>
                         <div class="col-md">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="user_locked">
-                                <label class="form-check-label" for="">
-                                    User Locked
-                                </label>
-                            </div>
+                            <label for="">First Name</label>
+                            <input type="text" class="form-control" id="first_name" name="first_name">
                         </div>
                         <div class="col-md">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="pwd_locked" name="pwd_locked" checked="True">
-                                <label class="form-check-label" for="">
-                                    Password Locked
-                                </label>
-                            </div>
+                            <label for="">Last Name</label>
+                            <input type="text" class="form-control" id="last_name" name='last_name'>
                         </div>
-                        <div class="col-md">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="is_active" checked>
-                                <label class="form-check-label" for="">
-                                    Active
-                                </label>
-                            </div>
+                        <div class="col-auto">
+                            <button class="button-search-users btn btn-primary" type="submit"
+                                title="Please click to get the search details!" onclick="reload()"><i class="fas fa-search"></i> search
+                            </button>
                         </div>
                     </div>
-                </div> 
-                <br>
-                <div class="row">
-                    <div class="col">
-                        <input type="reset" value="Clear filters" class="ip-form-clear-filters">
+                    <hr>
+                    <div class="elements-space-between" data-toggle="collapse" data-target="#employee_adv_search">
+                        <span class="h5">Advanced Search</span>
+                        <i class="fas fa-chevron-down"></i>
                     </div>
-                </div>   
-            </form>
+                    <div id="employee_adv_search" class="advanced-search-collapse collapse">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label for="">Email</label>
+                                <input type="text" class="form-control" id="email" name="email">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="">User Type</label>
+                                <select type="text" class="form-control" id="user_type" name="user_type">
+                                     {% for usertype in dropdown_usertype_values %}
+                                    <option value="{{usertype.field_type_id}}">{{usertype.field_type_desc}}</option>
+                                    {% endfor %}
+    
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="">Employee Number</label>
+                                <input type="text" class="form-control" id="employee_id" name="employee_id">
+                            </div>
+                            <div class="col-md">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="user_locked">
+                                    <label class="form-check-label" for="">
+                                        User Locked
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="pwd_locked" name="pwd_locked" checked="True">
+                                    <label class="form-check-label" for="">
+                                        Password Locked
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="is_active" checked>
+                                    <label class="form-check-label" for="">
+                                        Active
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                    <br>
+                    <div class="row">
+                        <div class="col">
+                            <input type="reset" value="Clear filters" class="ip-form-clear-filters">
+                        </div>
+                    </div>   
+                </form>
+            </div>
         </div>
 
         {% if employee_results.count > 0 %}
@@ -193,49 +195,48 @@
             </div>
         </div>
         {% endif %}
-    </div>
-    <div id="error_msg_div" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
 
-    {% if employee_results %}
-    <div class="hg_wrapper">
+        <div id="error_msg_div" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
+
+        {% if employee_results %}
+
         <button class="btn btn-primary  btn-sm"  title="Delete" id="id_delete_emp" value="emp_delete" data-toggle="modal" data-target="#id_delete_confirm_popup" style="display:none;" >
             <i class="fa fa-trash"></i> delete
-        </button>
-        <div>
-        <table id="user_tab" class="table hg-striped-table table_sort_filter_export_excel">
-            <thead class="thead-light">
-            <tr>
-                <th scope="col"> <input type="checkbox" onclick="checkAll(this)"></th>
-                <th> employee no </th>
-                <th> username </th>
-                <th> first name </th>
-                <th> last name </th>
-                <th> email </th>
-                <th> User Status</th>
-                <th> User Lock Status</th>
-                <th> User password Lock status</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-
-            <tbody id="user_tab_tbody">
-            {% for results, encrypted_email in employee_results %}
-            <tr id="tr_{{results.email}}">
-                <td><input type="checkbox" class="emp_checkbox" onclick="valueChanged();"></td>
-                <td><a href="{% url 'eProc_Admin_Tool:user_details_page' encrypted_email %}" id="{{results.employee_id}}" class="deletepop" target="_blank">{{results.employee_id}}</a></td>
-                <td>{{results.username}}</td>
-                <td>{{results.first_name}}</td>
-                <td>{{results.last_name}}</td>
-                <td>{{results.email}}</td>
-                <td>
-                    {% if results.is_active %}
-                      <label>Active</label>
-                    {% else %}
-                      <label>InActive</label>
-                    {% endif %}
-                </td>
-                <td>
-                    <label class="switch">
+        </button> 
+        <div class="card mt-5">
+            <table id="user_tab" class="table table_sort_filter_basic">
+                <thead class="thead-light">
+                <tr>
+                    <th> <input type="checkbox" onclick="checkAll(this)"></th>
+                    <th> employee no </th>
+                    <th> username </th>
+                    <th> first name </th>
+                    <th> last name </th>
+                    <th> email </th>
+                    <th> User Status</th>
+                    <th> User Lock Status</th>
+                    <th> User password Lock status</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody id="user_tab_tbody">
+                {% for results, encrypted_email in employee_results %}
+                <tr id="tr_{{results.email}}">
+                    <td><input type="checkbox" class="emp_checkbox" onclick="valueChanged();"></td>
+                    <td><a href="{% url 'eProc_Admin_Tool:user_details_page' encrypted_email %}" id="{{results.employee_id}}" class="deletepop" target="_blank">{{results.employee_id}}</a></td>
+                    <td>{{results.username}}</td>
+                    <td>{{results.first_name}}</td>
+                    <td>{{results.last_name}}</td>
+                    <td>{{results.email}}</td>
+                    <td>
+                        {% if results.is_active %}
+                        <label>Active</label>
+                        {% else %}
+                        <label>InActive</label>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <label class="switch">
                             <label class="toggle">
                                 {% if results.user_locked %}
                                 <input type="checkbox" id="{{results.employee_id}}-LOCKED" class="toggle-input" checked>
@@ -245,9 +246,9 @@
                                 <div class="toggle-controller default-success"></div>
                             </label>
                         </label>
-                </td>
-                <td>
-                     <label class="switch">
+                    </td>
+                    <td>
+                        <label class="switch">
                             <label class="toggle">
                                 {% if results.pwd_locked %}
                                 <input type="checkbox" id="{{results.employee_id}}-PWDLOCKED" class="toggle-input" checked>
@@ -257,16 +258,19 @@
                                 <div class="toggle-controller default-success"></div>
                             </label>
                         </label>
-                </td>
-                 <td><i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete User" id="{{results.email}}"
-                           onclick="get_user_detail_to_delete(this.id)" ></i></td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                    </td>
+                    <td>
+                        <i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete User" id="{{results.email}}"
+                            onclick="get_user_detail_to_delete(this.id)" ></i>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            </div>
         </div>
+        {% endif %}
     </div>
-    {% endif %}
 </div>
 
 <!--modal popup for user delete-->
@@ -305,8 +309,8 @@
                 <p>Are you sure you want to delete?.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" onclick="main_table_delete()" class="btn btn-primary"><i class="fas fa-check"></i> yes </button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fas fa-times"></i> Cancel</button>
+                <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                <button type="button" onclick="main_table_delete()" class="btn btn-primary"><i class="fas fa-check"></i> yes </button> 
             </div>
         </div>
     </div>
@@ -461,7 +465,7 @@
     <!--end of save confirmation popup-->
 
 <!--change confirmation popup-->
-    <div class="modal fade" id="id_confirm_popup">
+    <div class="modal fade" id="id_confirm_popup" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header" >
@@ -498,6 +502,7 @@ localStorage.setItem("last_name", document.getElementById("last_name").value);
 localStorage.setItem("email", document.getElementById("email").value);
 localStorage.setItem("user_type", document.getElementById("user_type").value);
 localStorage.setItem("employee_id", document.getElementById("employee_id").value);
+OpenLoaderPopup();
 }
 
 $('#pwd_locked').change(function(){
@@ -714,7 +719,25 @@ function onclick_display_csv_data() {
     }
     else{
         $("#id_error_msg_upload").prop("hidden",false)
-        document.getElementById("id_error_msg_upload").innerHTML = messageConstants["JMSG110"];
+              
+                    var msg = "JMSG110";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+
+                  var display = msg_type.messages_id_desc[0];
+                 document.getElementById("id_error_msg_upload").innerHTML = display;
+
         document.getElementById("id_error_msg_upload").style.color = "Red";
         $('#id_data_upload').modal('show');
     }
@@ -756,14 +779,51 @@ function check_data() {
 
             //*************** checking for max length for country code (max length = 2) ***************
             if(country_code.length >2){
-                document.getElementById("id_error_msg_country_length").innerHTML = messageConstants["JMSG004"]  + "Country Code";
+               var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+                var msg = "JMSG004";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+
+              var display = msg_type.messages_id_desc[0];
+             document.getElementById("id_error_msg_country_length").innerHTML = display  + "Country Code";
+
+
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
                 count = count +1;
             }
 
             //*************** checking for special characters for country code ***************
             else if(format.test(country_code)){
-                document.getElementById("id_error_msg_country_code").innerHTML = messageConstants["JMSG003"] + "Country Code";
+                var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+                var msg = "JMSG003";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+              var display4 = msg_type.messages_id_desc[0];
+              document.getElementById("id_error_msg_country_code").innerHTML = display4 + "Country Code";
+
+
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
                 count = count +1;
             }
@@ -773,7 +833,25 @@ function check_data() {
 
             //*************** checking for special characters for country name ***************
             if(format.test(country_name)){
-                document.getElementById("id_error_msg_country_name").innerHTML = messageConstants["JMSG003"] + "Country Name";
+               var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+                var msg = "JMSG003";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+
+              var display4 = msg_type.messages_id_desc[0];
+              document.getElementById("id_error_msg_country_name").innerHTML = display4 + "Country Name";
+
                 $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
                 count = count +1;
            }
@@ -820,19 +898,63 @@ function check_data() {
 
             //*************** if pop-up data count is greater than zero ***************
             if (newArrayDataOfOjbect[1]>0){
-                $("#id_check_success_messages").append('<p>' + messageConstants["JMSG010"] + newArrayDataOfOjbect[0] + '</p>')
-                $("#id_check_success_messages").append('<p>' + messageConstants["JMSG011"] + newArrayDataOfOjbect[1] + '</p>')
-                $("#id_check_success_messages").append('<p>' + messageConstants["JMSG012"] + newArrayDataOfOjbect[3] + '</p>')
-                $("#id_check_success_messages").append('<p>' + messageConstants["JMSG013"] + newArrayDataOfOjbect[4] + '</p>')
-                $("#id_check_success_messages").append('<p>' + messageConstants["JMSG014"] + newArrayDataOfOjbect[5] + '</p>')
-                $("#id_check_success_messages").append('<p>' + messageConstants["JMSG053"] + newArrayDataOfOjbect[6] + '</p>')
+               if (newArrayDataOfOjbect[1] > 0) {
+
+                           
+                             var msg = "JMSG010";
+                             var msg_type ;
+                             msg_type = message_config_details(msg);
+                             $("#error_msg_id").prop("hidden", false)
+                             var display = msg_type.messages_id_desc[0];
+
+                        $("#id_check_success_messages").append('<p>' + display + newArrayDataOfOjbect[0] + '</p>')
+
+                           
+                             var msg = "JMSG011";
+                             var msg_type ;
+                             msg_type = message_config_details(msg);
+                             $("#error_msg_id").prop("hidden", false)
+                             var display1 = msg_type.messages_id_desc[0];
+
+                        $("#id_check_success_messages").append('<p>' + display1 + newArrayDataOfOjbect[1] + '</p>')
+
+                           
+                             var msg = "JMSG012";
+                             var msg_type ;
+                             msg_type = message_config_details(msg);
+                             $("#error_msg_id").prop("hidden", false)
+                             var display2 = msg_type.messages_id_desc[0];
+                        $("#id_check_success_messages").append('<p>' + display2 + newArrayDataOfOjbect[3] + '</p>')
+                               
+                                 var msg = "JMSG013";
+                                 var msg_type ;
+                                 msg_type = message_config_details(msg);
+                                 $("#error_msg_id").prop("hidden", false)
+                                 var display3 = msg_type.messages_id_desc[0];
+                        $("#id_check_success_messages").append('<p>' + display3 + newArrayDataOfOjbect[4] + '</p>')
+                               
+                                 var msg = "JMSG014";
+                                 var msg_type ;
+                                 msg_type = message_config_details(msg);
+                                 $("#error_msg_id").prop("hidden", false)
+                                 var display4 = msg_type.messages_id_desc[0];
+                        $("#id_check_success_messages").append('<p>' + display4 + newArrayDataOfOjbect[5] + '</p>')
+                               
+                                 var msg = "JMSG053";
+                                 var msg_type ;
+                                 msg_type = message_config_details(msg);
+                                 $("#error_msg_id").prop("hidden", false)
+                                 var display5 = msg_type.messages_id_desc[0];
+	   				  $("#id_check_success_messages").append('<p>' + display5 + newArrayDataOfOjbect[6] + '</p>')
                 //*************** if duplicate data data count is greater than zero ***************
                 if(newArrayDataOfOjbect[2]>0){
-                    $("#id_check_error_messages").prop("hidden",false)
-                    $("#id_check_error_messages").append('<p>' + messageConstants["JMSG015"] + newArrayDataOfOjbect[2] + '</p>')
-                    $("#id_check_error_messages").append('<p style = "font-weight: bold;">' + messageConstants["JMSG001"] + ' </p>')
-                    $("#save_id").prop("hidden", true);
-                    $("#id_delete_duplicate").show()
+                  $("#id_check_error_messages").prop("hidden",false)
+                              
+                                 var msg = "JMSG015";
+                                 var msg_type ;
+                                 msg_type = message_config_details(msg);
+                                 $("#error_msg_id").prop("hidden", false)
+                                 var display6 = msg_type.messages_id_desc[0];
                 }
                 else{
                     $("#id_check_error_messages").prop("hidden",true)
@@ -842,9 +964,15 @@ function check_data() {
             //*************** if pop-up data count is zero ***************
             else{
                 $("#id_check_success_messages").hide()
-                $("#id_check_error_messages").prop("hidden",false)
-                $("#id_check_error_messages").append('<p>' + messageConstants["JMSG006"] + '</p>')
-                $("#save_id").prop("hidden", true);
+                        $("#id_check_error_messages").prop("hidden", false)
+                              
+                                 var msg = "JMSG006";
+                                 var msg_type ;
+                                 msg_type = message_config_details(msg);
+                                 $("#error_msg_id").prop("hidden", false)
+                                 var display8 = msg_type.messages_id_desc[0];
+                        $("#id_check_error_messages").append('<p>' + display8 + '</p>')
+                        $("#save_id").prop("hidden", true);
             }
         }
     });

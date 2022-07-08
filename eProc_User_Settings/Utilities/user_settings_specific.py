@@ -19,6 +19,7 @@ from eProc_Attributes.Utilities.attributes_generic import OrgAttributeValues
 from eProc_Attributes.Utilities.attributes_specific import sort_list_dictionary_key_values, \
     append_attribute_value_description, append_description_atrr_value_exists
 from eProc_Basic.Utilities.functions.insert_remove import list_remove_insert_first
+from eProc_Basic.Utilities.functions.messages_config import get_msg_desc
 from eProc_Basic.Utilities.functions.str_concatenate import concatenate_str, concatenate_array_str, split_str
 from eProc_Basic.Utilities.messages.messages import MSG001, MSG005, MSG115, MSG116, MSG117, MSG118
 from eProc_Basic.Utilities.constants.constants import *
@@ -639,7 +640,9 @@ class UserSettings:
                                          asg_role_default_list, org_company_default_list, purch_org_default_list,
                                          purch_grp_default_list, spending_limit_default_list,
                                          approver_limit_default_list]
-            error_msg = MSG001
+            # //error_msg = MSG001
+            msgid = 'MSG001'
+            error_msg = get_msg_desc(msgid)
 
             return user_setting_list, user_setting_default_list, error_msg
 

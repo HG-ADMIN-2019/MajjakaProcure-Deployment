@@ -50,7 +50,7 @@
                     <br>
                     <div>
                         <button class="btn btn-outline-primary" type="reset" value="Reset"><i class="fas fa-sync-alt"></i> &nbsp;reset</button>
-                        <button class="btn btn-primary" type="submit" title="Please click to get the search details!"><i class="fas fa-search"></i> &nbsp;search </button>
+                        <button class="btn btn-primary" type="submit" title="Please click to get the search details!" id="search_button_id"><i class="fas fa-search"></i> &nbsp;search </button>
                     </div>
                 </form>
             </div>
@@ -72,7 +72,7 @@
                         <div class="card-body"> 
                             
                             <div class="manager-approval-card__header">
-                                <span class="text-muted">Shopping Cart Number </span><span class="h4"><a href="{% url 'eProc_Doc_Details:my_order_doc_details' sc_completion_flag inp_doc_type header_app.9 'display' 'approvals'  %}" class="approval-cart-number" target="_blank">{{header_app.3}}</a></span>
+                                <span class="text-muted">Shopping Cart Number </span><span class="h4"><a href="{% url 'eProc_Doc_Details:my_order_doc_details' sc_completion_flag 'SC' header_app.9 'display' 'approvals'  %}" class="approval-cart-number" target="_blank">{{header_app.3}}</a></span>
                             </div>
                             <hr>
                             <!-- cart name -->

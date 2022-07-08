@@ -246,6 +246,16 @@ input::-webkit-inner-spin-button {
     var GLOBAL_PRODUCT_ID = '{{prod_detail.product_id}}';
     var GLOBAL_FROM_ID = '{{prod_detail.eform_id|safe}}';
 
+    $(document).ready(function () {
+        $(document)
+        .ajaxStart(function () {
+           
+        })
+        .ajaxStop(function () {
+            
+        });
+    });
+
 
 $(document).ready(function(){
     $('#nav_menu_items').remove();
@@ -391,7 +401,7 @@ function remove_additional_class(eform_config_guid){
              $.each(eform_config.pricing, function (i, eform_pricing) {
                 var id_value = 'VARIANT_ADDITIONAL_PRICING-'+eform_config.eform_field_config_guid+'-'+eform_pricing.product_eform_pricing_guid+'';
                 $("#"+id_value ).removeClass("selected-vwap");
-                $("#"+id_value).addClass("dummy_class_price_data")
+                $("#"+id_value).removeClass("dummy_class_price_data")
              });
 
         }
@@ -553,9 +563,10 @@ function on_change_quantity(action){
 }
 // Function to ADD TO CART from veiw product details pop up
 function add_catalog_popup(){
+    event.preventDefault();
     let catalog_item = {};
     catalog_item["prod_id"] = GLOBAL_PRODUCT_ID;
-    catalog_item["call_off"] = 'Catalog'
+    catalog_item["call_off"] = '01'
     catalog_item["quantity"] = document.getElementById("catalog_quantity").value;
     catalog_item['eform_id'] = ''
     catalog_item['eform_detail'] = ''
@@ -575,23 +586,34 @@ function add_catalog_popup(){
     }
 
     if(eform_check){
-        var add_catalog_response = ajax_catalog_product(catalog_item);
+        OpenLoaderPopup();
 
-        if (add_catalog_response) {
-            if (!is_edit) {
-                if(response.cart_count){
-                    //counter = document.getElementById('cart_counter').innerHTML
-                    $('#cart_counter').html(response.cart_count)
-                    item_added_to_cart_success_popup();
+        // ajax Function to add catalog product
+        $.ajax({
+            type: "POST",
+            url: "{% url 'eProc_Add_Item:update_or_create_item' 'create' %}",
+            dataType :'json',
+            data: JSON.stringify(catalog_item),
+            success: function(response){
+                if (!is_edit) {
+                    if (response.cart_count) {
+                        //counter = document.getElementById('cart_counter').innerHTML
+                        CloseLoaderPopup();
+                        $('#cart_counter').html(response.cart_count);
+                        item_added_to_cart_success_popup();
+                    }
+                } else {
+                    $('#confirm_add_item').modal('show')
                 }
-            } else {
-                $('#confirm_add_item').modal('show')
+                $('document').find('input:number').val('');
+            },
+            error: function(response) {
+                console.log(response);
             }
-            $('document').find('input:number').val('');
-        }
+        })
     }
     else{
-        alert("please enter all fields")
+        alert("please enter all fields");
     }
 }
 
@@ -606,12 +628,6 @@ function validate_eform(){
     return check_flag
 }
 
-// ajax Function to add catalog product
-function ajax_catalog_product(data) {
-    urlLink = "{% url 'eProc_Add_Item:update_or_create_item' 'create' %}";
-    let result = AjaxCallAPI(urlLink, data);
-    return result;
-}
 
 // get eform data
 function get_eform_data(){

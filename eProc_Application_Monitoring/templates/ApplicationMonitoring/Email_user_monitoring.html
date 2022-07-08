@@ -1,0 +1,349 @@
+{% extends 'root/base.html' %}
+{% load static %}
+
+{% block title %} Application Monitoring (Admin Tool) {% endblock %}
+
+{% block maincontent %}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+
+{% include 'root/loader.html' %}
+
+<div class="container-fluid">
+    <div class="mep-form_wrapper">
+
+        <div class="elements-space-between">
+            <h3>Email Monitoring</h3>
+            <div></div>
+        </div>
+
+        <ul class="sub-tabs">
+            <li data-tab-target="#basic_data_tab" class="sub-tab active">
+                <div class="sub-tab-link">
+                    <i class="fas fa-info-circle"></i><span> Internal Emails</span>
+                </div>
+            </li>
+            <li data-tab-target="#org_data_tab" class="sub-tab">
+                <div class="sub-tab-link">
+                    <i class="fas fa-sitemap"></i><span> External Emails</span>
+                </div>
+            </li>
+
+        </ul>
+
+        <div class="tab-content">
+            <div id="basic_data_tab" data-tab-content class="active">
+                <div class="mt-3">
+
+                    <!-- Display the success message upon successful registration-->
+                    <div>
+                        {% if messages %}
+                        <div class="alert alert-success">
+                            {% for message in messages %}
+                            <div class="{{ message.tags }}">{{ message }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="card card-shadow-1 mt-3">
+                        <div class="card-body">
+                            <form method="post" action="{% url 'eProc_Admin_Tool:email_user_monitoring' %}">
+                                {% csrf_token %}
+                                 {% if error_messages %}
+                                    <div class="alert alert-danger" id="err_msg">
+                                    {% for  key, value in error_messages.items %}
+                                        <span class="fieldWrapper">
+                                            {{ value }}
+                                        </span>
+                                    {% endfor %}
+                                    </div>
+                                 {% endif %}
+
+                                <!-- The new set up UI changes-->
+                                <div class="row" id="{{ email_user_monitoring_form.name }}" title="{{ email_user_monitoring_form.label }}">
+                                    <div class="col-md">
+                                        <label>Email Type </label>
+                                        {{ email_user_monitoring_form.email_types }}
+                                    </div>
+                                    <div class="col-md">
+                                        <label>From Date</label>
+                                        {{ email_user_monitoring_form.from_date }}
+                                    </div>
+                                    <div class="col-md">
+                                        <label>To Date</label>
+                                        {{ email_user_monitoring_form.to_date }}
+                                    </div>
+                                    <div class="col-md">
+                                        <label>Status</label>
+                                        {{ email_user_monitoring_form.email_status }}
+                                    </div>
+
+                                    <div class="col-auto my-1">
+                                        <button class="btn btn-primary button-search-users" id="hg_user_report_search" type="submit"
+                                                title="Please click to get the search details!" onclick="reload()"><i class="fas fa-search"></i> search
+                                        </button>
+                                    </div>
+                                </div>
+                                <br>
+
+                                <div>
+                                    <button class="btn btn-link" type="reset" value="Reset">clear filters</button>
+                                </div>
+
+                            </form>
+                    <!--User register form-->
+                </div>
+            </div>
+
+            <div id="org_data_tab" data-tab-content>
+                <div class="mt-3">
+                    <div class="card card-shadow-1 mt-3">
+                        <div class="card-body">
+                            <h3>External Emails</h3>
+                            <p>External Emails</p>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+            </div><br>
+            <div id="error_msg_div" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
+            <button class="btn btn-primary  btn-sm"  title="Delete" id="id_email_resend" value="email_resend" data-toggle="modal" data-target="#myModal" style="display:none;" >
+            <i></i> resend
+        </button>
+        {% if t_count > 0 %}
+        <div class="search_result_count_card card">
+            <div class="card-body">
+                <h6 class="card-title">Total number of results found
+                    :{{t_count}}</h6>
+            </div>
+        </div>
+        {% elif t_count == 0  %}
+        <div class="search_result_count_card card">
+            <div class="card-body">
+                <h6 class="card-title">No Results Found</h6>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if email_data %}
+        <div class="card mt-5">
+            <table class="table table_sort_filter_export_excel" id="id_email_user" >
+                <thead class="thead-light">
+                <tr>
+                    {% if inp_email_status == 1 %}
+                        <th hidden> <input type="checkbox" onclick="checkAll(this)"></th>
+                    {% elif inp_email_status == 2 %}
+                        <th> <input type="checkbox" onclick="checkAll(this)"></th>
+                    {% endif %}
+                    <th scope="col">Email Type</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Receiver Email</th>
+                    <th scope="col">Sent Date</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Error Type</th>
+                    <th scope="col" hidden>Email Contents Guid</th>
+                </tr>
+                </thead>
+                <tbody id="email_user_tbody">
+                <!--   Looping over the cart_items to get individual fields         -->
+                {% for items in email_data %}
+                <tr>
+                    {% if items.email_status == 1 %}
+                        <td hidden><input type="checkbox" class="email_checkbox" onclick="valueChanged();"></td>
+                    {% elif items.email_status == 2 %}
+                         <td><input type="checkbox" class="email_checkbox" onclick="valueChanged();"></td>
+                    {% endif %}
+                    <td scope="row">{{ items.object_type }}</td>
+                    <td scope="row">{{ items.username }}</td>
+                    <td scope="row">{{ items.receiver_email }}</td>
+                    <td scope="row">{{ items.email_user_monitoring_created_at }}</td>
+                    {% if items.email_status == 1 %}
+                        <td scope="row"> <span>SENT</span> </td>
+                    {% elif items.email_status == 2 %}
+                        <td scope="row"> <span>FAILED</span></td>
+                    {% elif items.email_status == 3 %}
+                        <td scope="row"> <span>PROCESSING</span></td>
+                    {% endif %}
+                    <td scope="row">{{ items.error_type }}</td>
+                    <td scope="row" hidden>{{ items.email_user_monitoring_guid }}</td>
+                </tr>
+
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% endif %}
+        </div>
+    </div>
+    </div>
+
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="d-flex justify-content-end">
+                <div>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                Are you sure you want to resend the Email?
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+                <button type="button" class="btn btn-primary" id="resend_email" onclick="resend()">Yes</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="hg_spacer2"> &nbsp; </div>
+
+
+<script>
+var inp_email_type = '{{inp_email_type | safe}}';
+var inp_email_status = '{{inp_email_status | safe}}';
+$(document).ready(function(){
+  $("#user_form_reset").click(function(){
+    $('#user_register_form')[0].reset();
+    $('#myModal').modal('hide');
+  });
+
+<!--  NavigateTabs(); // Custom function to switch tabs-->
+  nav_bar_admin();
+  $('#id_from_date').val(localStorage.getItem("from_date"));
+   $('#id_to_date').val(localStorage.getItem("to_date"));
+});
+
+// Get the element with id="defaultOpen" and click on it
+<!--document.getElementById("defaultOpen").click();-->
+
+$('#user_registration_submit').click(function () {
+    OpenLoaderPopup();
+});
+window.onload = function () {
+        emailType = inp_email_type;
+        emailStatus = inp_email_status;
+
+        $('#id_email_types').val(emailType).attr('selected', 'selected');
+        $('#id_email_status').val(emailStatus).attr('selected', 'selected');
+
+    }
+function reload()
+{
+    var from_date, to_date;
+    localStorage.setItem("from_date", document.getElementById("id_from_date").value);
+    localStorage.setItem("to_date", document.getElementById("id_to_date").value);
+    from_date = document.getElementByID('id_from_date');
+    to_date = document.getElementByID('id_to_date');
+    validate_date(from_date, to_date);
+    OpenLoaderPopup();
+}
+
+function validate_date(id_from_date, id_to_date){
+    if ((Date.parse(id_to_date) < Date.parse(id_from_date)) == true) {
+
+    }
+}
+    //onclick of select all checkbox
+function checkAll(ele) {
+    if (ele.checked) {
+        $('.email_checkbox').each(function() {
+            var disable_check = this.disabled
+            if(disable_check == false){
+                this.checked = true;
+                $("#id_email_resend").show();
+            }
+        });
+    }
+    else{
+        $('.email_checkbox').each(function() {
+            var disable_check = this.disabled
+            if(disable_check == false){
+                this.checked = false;
+                $("#id_email_resend").hide();
+            }
+        });
+    }
+}
+function valueChanged() {
+    if ($('.email_checkbox').is(":checked")) {
+        $("#id_email_resend").show();
+    } else {
+        $("#id_email_resend").hide();
+    }
+}
+function resend(){
+    main_table_email_checked = [];
+    var email_arr_obj ={};
+    var email_type, username, email;
+    $("#id_email_user TBODY TR").each(function () {
+        var row = $(this);
+        var check_status = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+        if(check_status){
+            email_arr_obj.email_type = row.find("TD").eq(1).html();
+            email_arr_obj.username = row.find("TD").eq(2).html();
+            email_arr_obj.email = row.find("TD").eq(3).html();
+            email_arr_obj.email_user_monitoring_guid = row.find("TD").eq(7).html();
+            main_table_email_checked.push(email_arr_obj);
+        }
+    });
+    console.log(main_table_email_checked);
+    data = main_table_email_checked
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'eProc_Emails:resend_user_mail' %}",
+        data:JSON.stringify(data),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (Response) {
+            display_email_data(Response.email_list);
+            $('#success_msg_id').text(Response.message)
+            $("#error_msg_div").prop("hidden",false)
+            $("#myModal").modal('hide');
+            $("#id_email_resend").hide();
+            setTimeout(function(){$("#error_msg_div").prop("hidden",true);},5000)
+
+        }
+    });
+}
+function display_email_data(email_list){
+    var email_detail_html = '';
+    $('#id_email_user').DataTable().destroy();
+    $("#email_user_tbody").empty();
+    var status;
+    $.each(email_list, function (i, email) {
+        if(email.email_status == 2){
+            status = 'FAILED';
+        }
+        if(email.email_status == 1){
+          status = 'SENT';
+          }
+        email_detail_html += '<tr><td><input type="checkbox" class="email_checkbox" onclick="valueChanged();"></td> '+
+         '<td>'+ email.object_type +'</td>'+
+         '<td>'+ email.username +'</td>'+
+         '<td>'+ email.receiver_email +'</td>'+
+         '<td>'+ email.email_user_monitoring_created_at +'</td>'+
+         '<td>' + status + '</td>'+
+         '<td>' + email.error_type + '</td>'+
+         '<td hidden>' + email.email_user_monitoring_guid + '</td></tr>';
+            });
+    $("#email_user_tbody").append(email_detail_html);
+    table_sort_filter('id_email_user');
+}
+
+</script>
+
+{% endblock %}

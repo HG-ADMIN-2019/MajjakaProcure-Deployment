@@ -47,6 +47,23 @@
                     <div class="nav-link" id="supplier_management_btn"><a href="{% url 'eProc_Admin_Tool:supplier_search' %}">Suppliers</a></div>
                     {% endif %}
                 </li>
+                <li class="nav-item" id="nav-application_monitoring">
+                    {% if sub_menu.APPLICATION_MONITOR %}
+                     <div class="dropdown">
+                        <div class="nav-link dropbtn" id="application_monitor_btn" >
+                            <a href="{% url 'eProc_Admin_Tool:application_monitoring' %}">Application Monitoring</a>
+                            <i class="material-icons" style="vertical-align: bottom;">keyboard_arrow_down </i>
+                        </div>
+                        <div class="dropdown-menu dropdown-content">
+                            <a class="dropdown-item" href="{% url 'eProc_Admin_Tool:email_user_monitoring' %}">Email</a>
+                            <a class="dropdown-item" href="{% url 'eProc_Admin_Tool:application_monitoring' %}">Application</a>
+                        </div>
+                    </div>
+
+
+<!--                    <div class="nav-link dropbtn" id="application_monitor_btn"><a href="{% url 'eProc_Admin_Tool:application_monitoring' %}">Application Monitoring</a></div>-->
+                    {% endif %}
+                </li>
 
 <!--                <li class="nav-item" id="nav-item__substitution">-->
 <!--                    {% if sub_menu.SUBSTITUTION %}-->

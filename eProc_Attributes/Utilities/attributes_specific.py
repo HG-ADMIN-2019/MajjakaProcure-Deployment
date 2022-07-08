@@ -299,6 +299,17 @@ def get_dropdown_value(client, attr_value):
                                                                    'transaction_type',
                                                                    'description')[0]
         return attribute_values_list
+    if attr_value == CONST_PO_TRANS_TYPE:
+        attr_val_desc_list = DjangoQueries.django_filter_query(TransactionTypes,
+                                                               {'client': client,
+                                                                'del_ind': False,
+                                                                'document_type':CONST_DOC_TYPE_PO},
+                                                               None,
+                                                               ['transaction_type', 'description'])
+        attribute_values_list = append_attribute_value_description(attr_val_desc_list,
+                                                                   'transaction_type',
+                                                                   'description')[0]
+        return attribute_values_list
     if attr_value == CONST_FC_TRANS_TYPE:
         attr_val_desc_list = DjangoQueries.django_filter_query(TransactionTypes,
                                                                {'client': client,
@@ -572,6 +583,17 @@ def get_attr_value_desc(attr_id, attr_value):
             attr_val_desc = list(TransactionTypes.objects.filter(client=client,
                                                                  del_ind=False,
                                                                  document_type=CONST_DOC_TYPE_SC,
+                                                                 transaction_type=attr_value).values_list('description',
+                                                                                                          flat=True))[0]
+            return attr_val_desc
+    if attr_id == CONST_PO_TRANS_TYPE:
+        if TransactionTypes.objects.filter(client=client,
+                                           del_ind=False,
+                                           document_type=CONST_DOC_TYPE_PO,
+                                           transaction_type=attr_value).exists():
+            attr_val_desc = list(TransactionTypes.objects.filter(client=client,
+                                                                 del_ind=False,
+                                                                 document_type=CONST_DOC_TYPE_PO,
                                                                  transaction_type=attr_value).values_list('description',
                                                                                                           flat=True))[0]
             return attr_val_desc

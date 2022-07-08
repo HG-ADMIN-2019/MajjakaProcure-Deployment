@@ -1,5 +1,6 @@
+
 from eProc_Attributes.Utilities.attributes_generic import OrgAttributeValues
-from eProc_Basic.Utilities.constants.constants import CONST_CALENDAR_ID, CONST_CO03, CONST_SC_HEADER_SAVED
+from eProc_Basic.Utilities.constants.constants import CONST_CALENDAR_ID, CONST_PR_CALLOFF, CONST_SC_HEADER_SAVED
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.get_db_query import get_requester_currency, get_object_id_from_username
 from eProc_Basic.Utilities.global_defination import global_variables
@@ -9,7 +10,7 @@ from eProc_Doc_Details.Utilities.details_specific import get_approver_list
 from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_currency
 from eProc_Price_Calculator.Utilities.price_calculator_generic import calculate_item_total_value, calculate_item_price
 from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_prod_by_id, get_highest_acc_detail, \
-    delete_approver_detail
+    delete_approver_detail, get_price_discount_tax
 from eProc_Shopping_Cart.Utilities.shopping_cart_specific import get_manger_detail
 from eProc_Shopping_Cart.context_processors import update_user_obj_id_list_info
 from eProc_Shopping_Cart.models import ScItem, ScHeader
@@ -53,11 +54,11 @@ class UpdateSavedItem:
         item_details['currency'] = currency
 
         if follow_up_action == 'Invoice & Confirmation Only':
-            item_details['ir_gr_ind'] = True
-            item_details['gr_ind'] = False
+            item_details['ir_gr_ind_limi'] = True
+            item_details['gr_ind_limi'] = False
         else:
-            item_details['ir_gr_ind'] = False
-            item_details['gr_ind'] = True
+            item_details['ir_gr_ind_limi'] = False
+            item_details['gr_ind_limi'] = True
 
         required = update_item_detail['required']
         start_date = update_item_detail['start_date']
@@ -128,7 +129,7 @@ class UpdateSavedItem:
             total_sc_value = sum(item_value)
 
             item_details['description'] = description
-            item_details['ext_product_id'] = ext_product_id
+            item_details['supp_product_id'] = ext_product_id
             item_details['value'] = converted_to_user_currency
             item_details['prod_cat_desc'] = prod_cat_desc
             item_details['unit'] = unit
@@ -219,7 +220,13 @@ class UpdateSavedItem:
         sc_item_instance = django_query_instance.django_get_query(ScItem, {'guid': guid})
         currency = sc_item_instance.currency
         item_value_object = update_item_detail['item_value_object']
-        price = calculate_item_price(guid, quantity)
+        price,discount_percentage,base_price,additional_pricing = calculate_item_price(guid, quantity)
+        actual_price, discount_value, tax_value, gross_price = get_price_discount_tax(price,
+                                                                                      base_price,
+                                                                                      additional_pricing,
+                                                                                      None,
+                                                                                      discount_percentage,
+                                                                                      quantity)
         item_total_value = calculate_item_total_value(call_off, quantity, None, 1, price, None)
         converted_to_user_currency = convert_currency(item_total_value, currency, self.requester_currency)
         if converted_to_user_currency:
@@ -239,7 +246,13 @@ class UpdateSavedItem:
         item_details['acc_value'] = ''
         item_details['total_sc_value'] = ''
         item_details['price'] = price
+        item_details['discount_percentage']= discount_percentage
+        item_details['discount_value'] = discount_value
+        item_details['gross_price'] =  gross_price
         sc_item_instance.price = price
+        sc_item_instance.discount_percentage= discount_percentage
+        sc_item_instance.discount_value = discount_value
+        sc_item_instance.gross_price = gross_price
         sc_item_instance.catalog_qty = quantity
         sc_item_instance.value = item_total_value
         sc_item_instance.save()
@@ -260,7 +273,7 @@ class UpdateSavedItem:
         if django_query_instance.django_existence_check(ScItem, {'client': global_variables.GLOBAL_CLIENT,
                                                                  'del_ind': False,
                                                                  'header_guid': self.sc_header_guid,
-                                                                 'call_off': CONST_CO03}):
+                                                                 'call_off': CONST_PR_CALLOFF}):
             sc_completion_flag = True
         save_sc_approval(approval_data[0], self.sc_header_guid, CONST_SC_HEADER_SAVED, sc_completion_flag)
         return item_details, item_total_value, total_sc_value, item_with_highest_value

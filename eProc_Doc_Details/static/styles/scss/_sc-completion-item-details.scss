@@ -12,6 +12,7 @@ button.hide_in_display_mode {
     .prev-next-btn-group {
         display: flex;
         gap: 1rem;
+        width: 40%;
 
         .btn-round {
             width: 30px;
@@ -20,6 +21,7 @@ button.hide_in_display_mode {
             background:#F0F8FF;
             color: #007bff;
             padding: 0;
+            flex-shrink: 0;
 
             &:hover {
                 background: #bee1ff;

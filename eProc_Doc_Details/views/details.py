@@ -17,12 +17,16 @@ from django.db import transaction
 from eProc_Account_Assignment.Utilities.account_assignment_generic import AccountAssignment, get_header_level_gl_acc, \
     get_acc_value_and_description_append, AccountAssignmentCategoryDetails
 from eProc_Basic.Utilities.functions.encryption_util import decrypt, encrypt
+from eProc_Basic.Utilities.functions.get_description import get_gl_acc_description
 from eProc_Basic.Utilities.functions.get_system_setting_attributes import *
 from eProc_Basic.Utilities.functions.ignore_duplicates import remove_duplicate_element_array
 from eProc_Basic.Utilities.functions.json_parser import JsonParser
 from eProc_Basic.decorators import authorize_view
 from eProc_Doc_Details.Utilities.update_saved_item import UpdateSavedItem
 from eProc_Doc_Search_and_Display.Utilities.search_display_specific import get_sc_header_app
+from eProc_Emails.Utilities.email_notif_generic import appr_notify
+from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder
+from eProc_Related_Documents.Utilities.related_documents_generic import get_item_level_related_documents
 from eProc_System_Settings.Utilities.system_settings_generic import sys_attributes
 from eProc_User_Settings.Utilities.user_settings_specific import append_attrlow_desc
 from django.http import HttpResponseForbidden, JsonResponse
@@ -35,7 +39,7 @@ from eProc_Notes_Attachments.Utilities.notes_attachments_generic import download
 from eProc_Price_Calculator.Utilities.price_calculator_generic import calculate_item_total_value, calculate_item_price
 from eProc_Shopping_Cart.Shopping_Cart_Forms.call_off_forms.limit_form import UpdateLimitItem
 from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_supplier_first_second_name, get_prod_cat, \
-    get_prod_by_id, update_eform_details_scitem
+    get_prod_by_id, update_eform_details_scitem, get_total_price_details, get_SC_details_email
 from eProc_Shopping_Cart.Utilities.shopping_cart_specific import get_manger_detail, get_prod_cat_dropdown, \
     get_users_first_name, update_supplier_uom_for_prod, update_supplier_uom
 from eProc_Shopping_Cart.context_processors import update_user_info
@@ -77,7 +81,11 @@ def my_order_doc_details(req, flag, type, guid, mode, access_type):
     sc_header_instance = {}
     total_value_of_item_converted = []
     requesters_currency = ''
+    actual_price_list = []
+    discount_value_list = []
+    tax_value_list = []
     total_val = 0
+    document_number=''
     template = 'Doc_Details/my_order_doc_details.html'
     # To validate access based on creator and requester
     update_user_info(req)
@@ -109,20 +117,33 @@ def my_order_doc_details(req, flag, type, guid, mode, access_type):
         return HttpResponseForbidden()
     item_dictionary_list = []
     for sc_items in sc_item_details:
-        item_details = {'prod_cat': sc_items.prod_cat, 'value': sc_items.value, 'guid': sc_items.guid}
+        item_details = {'prod_cat': sc_items.prod_cat_id, 'value': sc_items.value, 'guid': sc_items.guid}
         item_detail_list.append(item_details)
         item_price_per_unit = sc_items.price
         item_currency = sc_items.currency
 
         if item_currency is None:
             item_currency = requesters_currency
+
         if item_currency != requesters_currency:
             item_price_per_unit = convert_currency(item_price_per_unit, str(item_currency), str(requesters_currency))
+            actual_price_list.append(
+                convert_currency(float(sc_items.actual_price) * sc_items.quantity, str(item_currency),
+                                 str(requesters_currency)))
+            discount_value_list.append(
+                convert_currency(float(sc_items.discount_value), str(item_currency), str(requesters_currency)))
+            tax_value_list.append(convert_currency(float(sc_items.tax_value), str(item_currency), str(requesters_currency)))
+        else:
+            actual_price_list.append(float(sc_items.actual_price) * sc_items.quantity)
+            discount_value_list.append(float(sc_items.discount_value))
+            tax_value_list.append(float(sc_items.tax_value))
+
         item_value_list.append(item_price_per_unit)
         total_value_of_item_converted.append(item_price_per_unit)
     # append eform details to item
     item_dictionary_list = update_eform_scitem(header_guid)
     for item in item_dictionary_list:
+        item['related_documents'] = get_item_level_related_documents(item,CONST_DOC_TYPE_SC,item['po_doc_num'])
         item = update_supplier_uom_for_prod(item)
 
     for acc_detail in sc_accounting_details:
@@ -182,7 +203,10 @@ def my_order_doc_details(req, flag, type, guid, mode, access_type):
         is_approval_preview = True
     else:
         is_approval_preview = False
-
+        # total price detail
+    actual_price = sum(actual_price_list)
+    discount_value =sum(discount_value_list)
+    tax_value = sum(tax_value_list)
     context = {'type': type, 'guid': header_guid,
                'currency': django_query_instance.django_filter_only_query(Currency, {'del_ind': False}),
                'requester': requester_user_name, 'unit': UnitOfMeasures.objects.filter(del_ind=False),
@@ -192,6 +216,9 @@ def my_order_doc_details(req, flag, type, guid, mode, access_type):
                'hdr_det': sc_hdr_details, 'itm_det': sc_item_details, 'acc_det': sc_accounting_details,
                'requester_first_name': requester_first_name,
                'app_det': sc_approval_data,
+               'actual_price': actual_price,
+               'discount_value': discount_value,
+               'tax_value': tax_value,
                'item_dictionary_list': item_dictionary_list,
                'header_acc_detail': header_acc_detail,
                'header_level_acc_guid': header_level_acc_guid,
@@ -248,6 +275,9 @@ def docDetails(req, flag, type, guid, mode, access_type):
     item_detail_list = []
     total_value_of_item_converted = []
     gl_acc_num_list = []
+    actual_price_list = []
+    discount_value_list = []
+    tax_value_list = []
     header_level_gl_acc = ''
     doc_data = get_doc_details(type, guid)
     hdr_data = doc_data.get('hdr_data', None)
@@ -265,7 +295,7 @@ def docDetails(req, flag, type, guid, mode, access_type):
         if flag == 'True':
             if not check_for_prod_cat:
                 is_validated_for_prod_cat = validate_product_category_id_with_purchaser(sc_header_instance.co_code,
-                                                                                        items.prod_cat)
+                                                                                        items.prod_cat_id)
                 if is_validated_for_prod_cat:
                     check_for_prod_cat = True
         if flag == 'False':
@@ -279,6 +309,17 @@ def docDetails(req, flag, type, guid, mode, access_type):
             currency = get_user_currency(req)
         if currency != base_currency:
             price = convert_currency(price, str(currency), str(base_currency))
+            actual_price_list.append(
+                convert_currency(float(items.actual_price) * items.quantity, str(currency),
+                                 str(base_currency)))
+            discount_value_list.append(
+                convert_currency(float(items.discount_value), str(currency), str(base_currency)))
+            tax_value_list.append(convert_currency(float(items.tax_value), str(currency), str(base_currency)))
+        else:
+            actual_price_list.append(float(items.actual_price) * items.quantity)
+            discount_value_list.append(float(items.discount_value))
+            tax_value_list.append(float(items.tax_value))
+
         total_value_of_item_converted.append(price)
 
     if flag == 'True':
@@ -290,7 +331,10 @@ def docDetails(req, flag, type, guid, mode, access_type):
     addr_data = doc_data.get('addr_data', None)
     if flag == 'False':
         for acc_detail in acc_data:
+            acc_detail['gl_acc_num_desc'] = get_gl_acc_description(acc_detail['gl_acc_num'],sc_header_instance.co_code)
             gl_acc_num_list.append(acc_detail['gl_acc_num'])
+    for acc_detail in acc_data:
+        acc_detail['gl_acc_num_desc'] = get_gl_acc_description(acc_detail['gl_acc_num'],sc_header_instance.co_code)
 
         header_level_gl_acc = get_header_level_gl_acc(gl_acc_num_list)
 
@@ -394,7 +438,9 @@ def docDetails(req, flag, type, guid, mode, access_type):
             ct_ctr_value = get_attr_value(client, attr_id, user_object_id, True)
             acc_value_list = append_attrlow_desc(client, attr_id, description, ct_ctr_value, True)
             default_gl_account = get_gl_account_default_value(client, total_val, company_code, 'OR')
-
+    actual_price = round(sum(actual_price_list), 2)
+    discount_value = round(sum(discount_value_list), 2)
+    tax_value = round(sum(tax_value_list), 2)
     context = {
         'type': doc_type,
         'guid': doc_guid,
@@ -408,6 +454,9 @@ def docDetails(req, flag, type, guid, mode, access_type):
         'highest_item_guid': highest_item_guid,
         'item_detail_list': item_detail_list,
         'eform_info': eform_info,
+        'actual_price': actual_price,
+        'discount_value': discount_value,
+        'tax_value': tax_value,
         'item_dictionary_list': item_dictionary_list,
         'hdr_det': hdr_data,  # sc_header
         'itm_det': itm_data,
@@ -441,7 +490,7 @@ def docDetails(req, flag, type, guid, mode, access_type):
         'receiver_name': requester_user_name,
         'requester_currency': requester_currency,
         'sc_header_data': sc_header_data,
-        'total_val': total_val,
+        'total_val': format(float(total_val), '.2f'),
         'inc_nav': True,
         'inc_footer': True,
         'sc_appr': sc_appr,
@@ -560,6 +609,13 @@ def update_sc(request):
                                                               {'proc_lvl_sts': CONST_ACTIVE})
                     ScHeader.objects.update_or_create(guid=sc_header_guid,
                                                       defaults={'status': CONST_SC_HEADER_AWAITING_APPROVAL})
+                    if django_query_instance.django_existence_check(ScPotentialApproval,
+                                                                    {'client':global_variables.GLOBAL_CLIENT,
+                                                                     'sc_header_guid':sc_header_guid,
+                                                                     'app_id':CONST_AUTO}):
+
+                        create_purchase_order = CreatePurchaseOrder(sc_header_instance)
+                        create_purchase_order.create_po()
 
                 if doc_type == 'order':
                     # not with purchaser work list
@@ -619,6 +675,7 @@ def update_sc(request):
     document_detail = {}
     if sc_header_instance:
         document_detail = {'document_number': sc_header_instance.doc_number, 'sc_name': sc_header_instance.description}
+
     return JsonResponse({'sc_details': True, 'document_detail': document_detail})
 
 
@@ -653,10 +710,11 @@ def manger_detail(request):
                                                                                                  overall_limits,
                                                                                                  catalog_qtys,
                                                                                                  call_offs, sc_item):
-        if call_off == CONST_CO01:
-            price = calculate_item_price(sc_item_detail['guid'], catalog_qty)
+        if call_off == CONST_CATALOG_CALLOFF:
+            price_data = calculate_item_price(sc_item_detail['guid'], quantity)
+            price = price_data[0]
         item_price.append(price)
-        item_total = calculate_item_total_value(call_off, quantity, catalog_qty, price_unit, price, overall_limit)
+        item_total = calculate_item_total_value(call_off, quantity, quantity, price_unit, price, overall_limit)
         item_total_val.append(item_total)
     total_sc_value = sum(item_total_val)
     item_max_index = item_total_val.index(max(item_total_val))
@@ -674,7 +732,7 @@ def manger_detail(request):
     data['total_value'] = total_sc_value
     data['value'] = item_total_val
     data['quantity'] = quantities
-    data['catalog_qty'] = catalog_qtys
+    data['catalog_qty'] = quantities
     data['price_unit'] = price_units
     data['item_price'] = item_price
 
@@ -751,20 +809,20 @@ def update_delivery_date(request):
                 guid = item_guid.split('_')[2]
             item_details = ScItem.objects.get(guid=guid)
 
-            if item_details.call_off not in [CONST_CO02, CONST_CO04]:
-                if item_details.call_off == CONST_CO01:
+            if item_details.call_off not in [CONST_FREETEXT_CALLOFF, CONST_LIMIT_ORDER_CALLOFF]:
+                if item_details.call_off == CONST_CATALOG_CALLOFF:
                     supplier_id = item_details.pref_supplier
                 else:
                     supplier_id = item_details.supplier_id
 
             if 'supplier_id' in update_info:
-                if item_details.call_off == CONST_CO03:
+                if item_details.call_off == CONST_PR_CALLOFF:
                     if update_info['supplier_id'][count]:
                         supplier_id = update_info['supplier_id'][count]
                         payterm, incoterm = update_sc_with_supplier_data(supplier_id, item_details.guid)
                         updated_payment_incoterms[item_details.guid] = [payterm, incoterm]
 
-            if item_details.call_off != CONST_CO02 and item_details.call_off != CONST_CO04:
+            if item_details.call_off != CONST_FREETEXT_CALLOFF and item_details.call_off != CONST_LIMIT_ORDER_CALLOFF:
                 delivery_date = calculate_delivery_date(guid, int(item_details.lead_time), supplier_id,
                                                         default_calendar_id, client,
                                                         ScItem)
@@ -835,48 +893,77 @@ def update_saved_item(request):
     sc_header_guid = update_item_detail['sc_header_guid']
     item_guid = update_item_detail['guid']
     update_saved_item_instance = UpdateSavedItem(sc_header_guid, item_guid)
-
+    sc_header_detail = django_query_instance.django_get_query(ScHeader,
+                                                              {'client': global_variables.GLOBAL_CLIENT,
+                                                               'guid': sc_header_guid,
+                                                               'del_ind': False}
+                                                              )
     call_off = update_item_detail['call_off']
-    if call_off == CONST_CO04:
+    if call_off == CONST_LIMIT_ORDER_CALLOFF:
         supplier_id = update_item_detail['supplier_id']
         update_item_detail['supplier_id'] = None
         item_details, manager_detail, item_value_converted = update_saved_item_instance.update_limit_item(
             update_item_detail)
-
+        sc_item_details = django_query_instance.django_filter_query(ScItem,
+                                                                    {'client': global_variables.GLOBAL_CLIENT,
+                                                                     'guid': sc_header_guid},
+                                                                    None,
+                                                                    None)
+        price_details = get_total_price_details(sc_item_details, sc_header_detail.currency)
         item_details['pref_supplier'] = supplier_id
         return JsonResponse({'total_value': item_value_converted,
+                             'price_details': price_details,
                              'manager_detail': manager_detail, 'item_details': item_details}, status=201)
 
-    if call_off == CONST_CO03:
+    if call_off == CONST_PR_CALLOFF:
         item_details, total_sc_value, item_with_highest_value, item_delivery_date = update_saved_item_instance.update_pr_item(
             update_item_detail)
-
+        sc_item_details = django_query_instance.django_filter_query(ScItem,
+                                                                    {'client': global_variables.GLOBAL_CLIENT,
+                                                                     'guid': sc_header_guid},
+                                                                    None,
+                                                                    None)
+        price_details = get_total_price_details(sc_item_details, sc_header_detail.currency)
         if not item_details:
-            return JsonResponse({'error_message': total_sc_value}, status=400)
+            return JsonResponse({'error_message': total_sc_value, 'price_details': price_details}, status=400)
 
         return JsonResponse({
             'item_details': item_details, 'total_value': total_sc_value,
             'item_with_highest_value': item_with_highest_value, 'item_delivery_date': item_delivery_date
         }, status=201)
 
-    if call_off == CONST_CO02:
+    if call_off == CONST_FREETEXT_CALLOFF:
         item_details, eform_details, item_value, item_with_highest_value, total_sc_value = update_saved_item_instance.update_saved_freetext_item(
             update_item_detail)
 
         if not item_details:
             return JsonResponse({'error_message': total_sc_value}, status=400)
-
+        sc_item_details = django_query_instance.django_filter_query(ScItem,
+                                                                    {'client': global_variables.GLOBAL_CLIENT,
+                                                                     'guid': sc_header_guid},
+                                                                    None,
+                                                                    None)
+        price_details = get_total_price_details(sc_item_details, sc_header_detail.currency)
         return JsonResponse({
             'item_details': item_details, 'eform_details': eform_details, 'item_value': item_value,
+            'price_details': price_details,
             'item_with_highest_value': item_with_highest_value, 'total_sc_value': total_sc_value
         }, status=201)
 
-    if call_off == CONST_CO01:
+    if call_off == CONST_CATALOG_CALLOFF:
         item_details, item_value, total_sc_value, item_with_highest_value = update_saved_item_instance.update_saved_catalog_item(
             update_item_detail)
+
+        sc_item_details = django_query_instance.django_filter_query(ScItem,
+                                                                    {'client': global_variables.GLOBAL_CLIENT,
+                                                                     'guid': sc_header_guid},
+                                                                    None,
+                                                                    None)
+        price_details = get_total_price_details(sc_item_details, sc_header_detail.currency)
         return JsonResponse({
             'item_details': item_details,
             'item_value': item_value,
             'total_value': total_sc_value,
+            'price_details': price_details,
             'item_with_highest_value': item_with_highest_value,
         })

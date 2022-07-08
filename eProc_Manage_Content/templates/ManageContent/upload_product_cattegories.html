@@ -239,7 +239,7 @@
             <td hidden>{{pcattegories.price_on_request}}</td>
             <td hidden>{{pcattegories.price_unit}}</td>
             <td hidden>{{pcattegories.manufacturer}}</td>
-            <td hidden>{{pcattegories.manu_prod}}</td>
+            <td hidden>{{pcattegories.manu_part_num}}</td>
             <td hidden>{{pcattegories.brand}}</td>
             <td hidden>{{pcattegories.quantity_avail}}</td>
             <td hidden>{{pcattegories.quantity_min}}</td>
@@ -363,7 +363,23 @@
          window.msIDBKeyRange
 
          if (!window.indexedDB) {
-            window.alert(messageConstants["JMSG044"])
+              
+                var msg = "JMSG044";
+                var msg_type ;
+              msg_type = message_config_details(msg);
+              $("#error_msg_id").prop("hidden", false)
+
+              if(msg_type.message_type[0] == "ERROR"){
+                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "WARNING"){
+                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+              }
+              else if(msg_type.message_type[0] == "INFORMATION"){
+                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+              }
+              var display = msg_type.messages_id_desc[0];
+            window.alert(display)
          }
 
 
@@ -392,7 +408,24 @@ function clear_session_data(){
         localStorage.clear();
         var req = window.indexedDB.deleteDatabase('store_product_detail_images');
         req.onsuccess = function () {
-            alert(messageConstants["JMSG050"]);
+           
+                    var msg = "JMSG050";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display = msg_type.messages_id_desc[0];
+                   alert(display);
+
         };
     }
 //######################################### start Function to convert File type to base64 type ########################
@@ -450,16 +483,67 @@ async function save_to_index_db(){
                     };
                 }
                 else {
-                    error_message = messageConstants["JMSG041"] +  "200KB" ;
+                     
+                            var msg = "JMSG041";
+                            var msg_type ;
+                          msg_type = message_config_details(msg);
+                          $("#error_msg_id").prop("hidden", false)
+
+                          if(msg_type.message_type[0] == "ERROR"){
+                                display_message("error_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "WARNING"){
+                             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "INFORMATION"){
+                             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          var display = msg_type.messages_id_desc[0];
+                           error_message = display+  "200KB" ;
+
                 }
             }
             else {
-                error_message = messageConstants["JMSG032"];
+                  
+                    var msg = "JMSG032";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display = msg_type.messages_id_desc[0];
+                  error_message = display;
+
 
             }
          }
          else if(img1_default_flag == 1){
-            error_message = messageConstants["JMSG021"];
+                 
+                    var msg = "JMSG021";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display =  msg_type.messages_id_desc[0];
+                 error_message = display;
+
          }
 
         if (!error_message){
@@ -492,15 +576,66 @@ async function save_to_index_db(){
                         };
                     }
                     else {
-                        error_message = messageConstants["JMSG041"] +  "200KB" ;
+                          
+                            var msg = "JMSG041";
+                            var msg_type ;
+                          msg_type = message_config_details(msg);
+                          $("#error_msg_id").prop("hidden", false)
+
+                          if(msg_type.message_type[0] == "ERROR"){
+                                display_message("error_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "WARNING"){
+                             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "INFORMATION"){
+                             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          var display = msg_type.messages_id_desc[0];
+                           error_message = display +  "200KB" ;
+
                     }
                 }
                 else {
-                error_message = messageConstants["JMSG032"];
+               
+                    var msg = "JMSG032";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display = msg_type.messages_id_desc[0];
+                  error_message = display;
+
                 }
             }
             else if(img2_default_flag == 1){
-                error_message = messageConstants["JMSG021"];
+              
+                    var msg = "JMSG021";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display = msg_type.messages_id_desc[0];
+                 error_message = display;
+
             }
         }
 
@@ -535,15 +670,66 @@ async function save_to_index_db(){
                         };
                      }
                     else {
-                        error_message = messageConstants["JMSG041"] +  "200KB" ;
+                             
+                                var msg = "JMSG041";
+                                var msg_type ;
+                              msg_type = message_config_details(msg);
+                              $("#error_msg_id").prop("hidden", false)
+
+                              if(msg_type.message_type[0] == "ERROR"){
+                                    display_message("error_msg_id", msg_type.messages_id_desc[0])
+                              }
+                              else if(msg_type.message_type[0] == "WARNING"){
+                                 display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                              }
+                              else if(msg_type.message_type[0] == "INFORMATION"){
+                                 display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                              }
+                              var display = msg_type.messages_id_desc[0];
+                              error_message = display +  "200KB" ;
+
                     }
                 }
                 else {
-                    error_message = messageConstants["JMSG032"];
+                    
+                        var msg = "JMSG032";
+                        var msg_type ;
+                      msg_type = message_config_details(msg);
+                      $("#error_msg_id").prop("hidden", false)
+
+                      if(msg_type.message_type[0] == "ERROR"){
+                            display_message("error_msg_id", msg_type.messages_id_desc[0])
+                      }
+                      else if(msg_type.message_type[0] == "WARNING"){
+                         display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                      }
+                      else if(msg_type.message_type[0] == "INFORMATION"){
+                         display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                      }
+                      var display = msg_type.messages_id_desc[0];
+                      error_message = display;
+
                 }
             }
             else if(img3_default_flag == 1){
-                error_message = messageConstants["JMSG021"];
+                  
+                    var msg = "JMSG021";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display = msg_type.messages_id_desc[0];
+                  error_message = display;
+
             }
         }
         if (error_message){
@@ -554,7 +740,24 @@ async function save_to_index_db(){
         else {
             $('#id_prod_cat_error_msg').empty();
             $('#id_prod_cat_success_messages').empty();
-            $('#id_prod_cat_success_messages').html(messageConstants["JMSG019"]);
+             
+                    var msg = "JMSG019";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display = msg_type.messages_id_desc[0];
+                   $('#id_prod_cat_success_messages').html(display);
+
             document.getElementById('id_prod_cat_error_msg').style.display = 'none';
             document.getElementById('id_prod_cat_success_messages').style.display = 'block';
             $('#attachments_popup').modal('hide');
@@ -905,7 +1108,25 @@ function addproduct(){
             let check_data = document.getElementsByClassName("hg_check_filled")
             for (let i = 0; i < check_data.length; i++) {
                 if (check_data[i].value === undefined || check_data[i].value === "") {
-                    document.getElementById("err_prd_ser").innerHTML = messageConstants["JMSG020"];
+                  
+                    var msg = "JMSG020";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+
+                        var display = msg_type.messages_id_desc[0];
+                      document.getElementById("err_prd_ser").innerHTML = display;
+
                     document.getElementById("err_prd_ser").style.color = "red"
                     validations_to_add = "X"
                     break;

@@ -521,10 +521,10 @@ def extract_product_details(request):
     writer = csv.writer(response)
 
     writer.writerow(
-        ['CATALOG_ITEM', 'PRODUCT_NAME', 'PRODUCT_DESCRIPTION', 'SUPP_PROD_NUM', 'SUPPLIER_ID', 'SEARCH_TERM1',
+        ['CATALOG_ITEM', 'PRODUCT_NAME', 'PRODUCT_DESCRIPTION', 'supp_product_id ', 'SUPPLIER_ID', 'SEARCH_TERM1',
 
          'SEARCH_TERM2',
-         'MANUFACTURER', 'BRAND', 'OFFER_KEY', 'PRICE_ON_REQUEST', 'MANU_PROD', 'PRODUCT_TYPE', 'CATALOG_ID',
+         'MANUFACTURER', 'BRAND', 'OFFER_KEY', 'PRICE_ON_REQUEST', 'MANU_PART_NUM', 'PRODUCT_TYPE', 'CATALOG_ID',
 
          'LEAD_TIME', 'QUANTITY_AVAIL',
          'PRICE', 'PRICE_UNIT', 'PROD_CAT_ID', 'QUANTITY_MIN', 'CTR_NUM', 'CTR_ITEM_NUM', 'PRODUCT_STATUS', 'PRICE_1',
@@ -538,7 +538,7 @@ def extract_product_details(request):
                                                    'supplier_id',
                                                    'search_term1', 'search_term2', 'manufacturer', 'brand', 'offer_key',
 
-                                                   'price_on_request', 'manu_prod', 'catalog_id', 'product_type',
+                                                   'price_on_request', 'manu_part_num', 'catalog_id', 'product_type',
                                                    'lead_time',
                                                    'quantity_avail', 'price', 'price_unit', 'prod_cat_id',
                                                    'quantity_min',
@@ -654,7 +654,7 @@ def upload_product_cattegories(request):
                                                                            'lead_time', 'unit', 'price', 'currency',
                                                                            'long_desc', 'catalog_item', 'catalog_id',
                                                                            'product_type', 'price_on_request',
-                                                                           'price_unit', 'manufacturer', 'manu_prod',
+                                                                           'price_unit', 'manufacturer', 'manu_part_num',
                                                                            'brand', 'quantity_avail', 'quantity_min',
                                                                            'offer_key', 'country_of_origin', 'language',
                                                                            'unspsc', 'search_term1', 'search_term2',

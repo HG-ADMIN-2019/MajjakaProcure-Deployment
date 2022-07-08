@@ -4,63 +4,68 @@
 {% block title %} Account Assignments Report (Admin Tool) {% endblock %}
 
 {% block maincontent %}
-
-
-
-
-    {% include 'root/loader.html' %}
+{% include 'root/loader.html' %}
 
     <div class="container-fluid">
-        <div class="hg_wrapper">
-            <div>
-                <div class="hg_head1">Account Assignments Report</div>
-                <hr class="hg_heading_hrborder">
+        <div class="mep-form_wrapper">
+
+            <div class="d-flex justify-content-between">
+                <h3>Account Assignments Report</h3>
+                <div></div>
             </div>
-            
-            <div>
-                <form method="post" action="{% url 'eProc_Admin_Tool:accnt_report' %}">
-                    {% csrf_token %}
 
-                    <div class="row">
-                        <div class="col-md">
-                            <label>Company Number</label><br>
-                            <select name="comp_code_app" id="id_comp_code_app" class="form-control">
-                                <option value="null" selected="true" disabled="disabled">Select </option>
-                                {% for comp in comp_list %}<option value="{{ comp }}"> {{ comp }} </option>{% endfor %}
-                            </select>
+            <hr>
+
+            <div class="card card-shadow-1">
+                <div class="card-body">
+                    <form id="acct_form" method="post" action="{% url 'eProc_Admin_Tool:accnt_report' %}">
+                        {% csrf_token %}
+    
+                        <div class="row">
+                            <div class="col-md">
+                                <label>Company Number</label><br>
+                                <select name="comp_code_app" id="id_comp_code_app" class="form-control">
+<!--                                    <option value="null" selected="true" disabled="disabled">Select </option>-->
+                                    {% for comp in comp_list %}<option value="{{ comp.company_id }}"> {{ comp.company_id }} </option>{% endfor %}
+                                </select>
+                            </div>
+    
+                            <div class="col-md">
+                                <label>Account Assignment Category</label><br>
+                                <select name="acc_assgn_cat" id="id_acc_assgn_cat" class="multiple_select form-control" multiple data-selected-text-format="count" data-actions-box="true" title="Select..">
+                                    <!-- <option value="null" selected="true" disabled="disabled">Select </option>-->
+                                    {% for acc_cat in acc_value_array %}<option value="{{ acc_cat.account_assign_cat }}"> {{ acc_cat.account_assign_cat }}-{{acc_cat.description}}
+                                    </option>{% endfor %}
+                                </select>
+                            </div>
+    
+                            <div class="col-md">
+                                <label>Language</label><br>
+                                <select name="language" id="id_language" class="form-control">
+                                    <option value="null" selected="true" disabled="disabled">Select </option>
+                                    {% for lang in lang_list %}<option value="{{ lang }}"> {{ lang }} </option>{% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-auto my-1">
+                                <button id="hg_accnt_report_search" class="btn btn-primary button-search-users" type="submit"
+                                    title="Please click to get the search details!"><i class="fas fa-search"></i> search
+                                </button>
+                            </div>
                         </div>
-
-                        <div class="col-md">
-                            <label>Account Assignment Category</label><br>
-                            <select name="acc_assgn_cat" id="id_acc_assgn_cat" class="form-control">
-                                <option value="null" selected="true" disabled="disabled">Select </option>
-                                {% for acc_cat in acct_val_list %}<option value="{{ acc_cat }}"> {{ acc_cat }}
-                                </option>{% endfor %}
-                            </select>
+                        <br>
+    
+                        <div>
+                            <button class="btn btn-link" type="reset" value="Reset">Clear filters</button>
                         </div>
+                    </form>
 
-                        <div class="col-md">
-                            <label>Language</label><br>
-                            <select name="language" id="id_language" class="form-control">
-                                <option value="null" selected="true" disabled="disabled">Select </option>
-                                {% for lang in lang_list %}<option value="{{ lang }}"> {{ lang }} </option>{% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                    <br>
-
-                    <div>
-                        <button class="btn btn-primary" type="reset" value="Reset"><i class="fas fa-sync-alt"></i>
-                            reset</button>
-                        <button id="hg_accnt_report_search" class="btn btn-primary" type="submit"
-                            title="Please click to get the search details!"><i class="fas fa-search"></i> search
-                        </button>
-                    </div>
-                </form>
+                </div>
+                
             </div>
             <br>
-            
-            <div class="search_result_count_card card">
+
+            <!-- <div class="search_result_count_card card">
                 {% if t_count > 0 %}
                 <div class="card-body">
                     <h6 class="card-title"> Total number of results found :{{t_count}}</h6>
@@ -71,47 +76,89 @@
                     <h6 class="card-title"> No Results Found</h6>
                 </div>
                 {% endif %}
-            </div>
-        </div>
+            </div> -->
 
             <!--    To Display Header Details only if there are any results-->
-        {% if t_count > 0 %}
-        {% if final_list %}
-        <div  class="hg_wrapper">
-            <table id="accounting_tab" class="table hg-striped-table table_sort_filter_export_excel">
-                <thead class="thead-light">
-                    <tr>
-                        <th scope="col"> COMPANY Number </th>
-                        <th scope="col"> ACCOUNT ASSIGNMENT CATEGORY </th>
-                        <th scope="col"> ACCOUNT ASSIGNMENT VALUE </th>
-                        <th scope="col"> DESCRIPTION </th>
-                        <th scope="col"> LANGUAGE </th>
-                        <th scope="col"> VALID FROM </th>
-                        <th scope="col"> VALID TO</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for acc in final_list %}
-                    <tr>
-                        <td>{{acc.0}}</td>
-                        <td>{{acc.1.pk}}</td>
-                        <td>{{acc.2}}</td>
-                        <td>{{acc.3}}</td>
-                        <td>{{acc.4}}</td>
-                        <td>{{acc.5}}</td>
-                        <td>{{acc.6}}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+
+            {% if t_count > 0 %}
+            {% if final_list %}
+            <div class="card mt-5">
+                <table id="accounting_report_table" class="table table_sort_filter_export_excel">
+                    <thead class="thead-light">
+                        <tr>
+                            <th> company number </th>
+                            <th> account assignment category </th>
+                            <th> account assignment value </th>
+                            <th> description </th>
+                            <th> language </th>
+                            <th> valid from </th>
+                            <th> valid to</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for acc in final_list %}
+                        <tr>
+                            <td>{{acc.0}}</td>
+                            <td>{{acc.1.pk}}</td>
+                            <td>{{acc.2}}</td>
+                            <td>{{acc.3}}</td>
+                            <td>{{acc.4}}</td>
+                            <td>{{acc.5}}</td>
+                            <td>{{acc.6}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
             {% endif %}
             {% endif %}
+
+
         </div>
+
     </div>
 
 
 <div class="spacer2"> &nbsp; </div>
 
+<script>
+    var selected_status_value = '';
+    selected_status_value = '{{inp_account_assgn_cat | safe}}';
+    var selected_comp_value = '{{inp_comp_code | safe}}';
+    var selected_lang_value = '{{inp_lang | safe}}';
+    $('.multiple_select').selectpicker();
+    $('.multiple_select').selectpicker('val', selected_status_value);
+    // Function to retrieve data from session storage
+    window.onload = function () {
+        comp_code = selected_comp_value;
+        acc_assgn_cat = sessionStorage.getItem("ACC_ASSGN_CAT");
+        lang = sessionStorage.getItem("LANG");
+
+        $('#id_comp_code_app').val(comp_code).attr('selected', 'selected');
+        $('#id_acc_assgn_cat').val(selected_status_value).attr('selected', 'selected');
+        $('#id_language').val(selected_lang_value).attr('selected', 'selected');
+    }
+
+<!--    $("#hg_accnt_report_search").click(function(){-->
+<!--        var selected_acct_assmt =  $('#id_acc_assgn_cat').val();-->
+<!--        var comp_code  =  $('#id_comp_code_app').val();-->
+<!--        var lang  =  $('#id_language').val();-->
+<!--        var values = {};-->
+<!--        values = {'selected_acct_assmt':selected_acct_assmt, 'comp_code':comp_code, 'lang':lang};-->
+<!--        console.log(selected_acct_assmt);-->
+<!--        $.ajax({-->
+<!--                url  : "{% url 'eProc_Admin_Tool:get_acct_report' %}",-->
+<!--                type: 'POST',-->
+<!--                data: JSON.stringify(values),-->
+<!--                dataType: "json",-->
+<!--                success: function(response) {-->
+<!--                        alert("response");-->
+<!--                        console.log(response);-->
+<!--                }-->
+<!--            });-->
+<!--    });-->
+</script>
 <script src="{% static 'scripts/acctnt_report.js' %}"></script>
 
 {% if inc_footer %}

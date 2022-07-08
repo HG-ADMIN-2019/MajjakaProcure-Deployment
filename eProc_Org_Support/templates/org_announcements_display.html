@@ -5,115 +5,288 @@
 {% block maincontent %}
 
 <div class="container-fluid">
-    <div class="hg_wrapper">
+    <div class="mep-form_wrapper">
 
-        <div class="elements-space-between">
-            <span class="hg_head1">Bulletin Configuration</span>
+        <div class="d-flex justify-content-between">
+            <h3>Bulletin Configuration</h3>
             <div>
-                <button class="btn btn-primary" onclick="window.open(href = '{% url 'eProc_Org_Support:org_announcement_save' %}')">
-                    <i class="fas fa-user-plus"></i> 
+                <button class="btn btn-primary"
+                    onclick="window.open(href = '{% url 'eProc_Org_Support:org_announcement_save' %}')">
+                    <i class="fas fa-user-plus"></i>
                     add new announcement
                 </button>
             </div>
         </div>
 
-        <hr class="hg_heading_hrborder">
-        <div>
-            <form method="POST">
-                {% csrf_token %}
-                <div class="row">
-                    <div class="col-md">
-                        <label for="">Title/Description</label>
-                        <input type="text" class="form-control" id="announcement_subject" name="announcement_subject" >
-                    </div>
-                    <div class="col-md">
-                        <label for="">Status</label>
-                        <input type="text" class="form-control" id="announcement_status" name="announcement_status">
-                    </div>
-                    <div class="col-md">
-                        <label for="">Priority</label>
-                        <input type="text" class="form-control" id="announcement_priority" name='announcement_priority'>
-                    </div>
-                    <div class="col-auto my-1">
-                        <button class="button-search-users btn btn-primary" type="submit"
-                                title="Please click to get the search details!" onclick=""><i class="fas fa-search"></i> search
-                        </button>
-                    </div>
-                </div>
-              <div class="row">
-                    <div class="col">
-                        <input type="reset" value="Clear filters" class="ip-form-clear-filters">
-                    </div>
-                </div>
-            </form>
-        </div>
+        <hr>
 
-        {% if announcement_result1.count > 0  %}
-        <div class="search_result_count_card card">
+        <div class="card card-shadow-1">
             <div class="card-body">
-                <h6 class="card-title">Total number of results found
-                    :{{announcement_result1.count}}</h6>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md">
+                            <label for="">Title/Description</label>
+                            <input type="text" class="form-control" id="announcement_subject"
+                                name="announcement_subject">
+                        </div>
+                        <div class="col-md">
+                            <label for="">Status</label>
+                            <select type="text" class="form-control" id="announcement_status" name="status">
+                                {% for status in status_dropdown_values %}<option value="{{ status }}"> {{ status }}
+                                </option>{% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md">
+                            <label for="">Priority</label>
+                            <select type="text" class="form-control" id="priority" name='priority'>
+                                {% for priority in priority_dropdown_values %}<option value="{{ priority }}"> {{
+                                    priority }}
+                                </option>{% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-auto my-1">
+                            <button class="button-search-users btn btn-primary" type="submit"
+                                title="Please click to get the search details!" onclick="" id="search_announcements_button"><i class="fas fa-search"></i>
+                                search
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <input type="reset" value="Clear filters" class="ip-form-clear-filters">
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
-        {% elif announcement_result1.count == 0  %}
-        <div class="search_result_count_card card">
-            <div class="card-body">
-                <h6 class="card-title">No Results Found</h6>
-            </div>
-        </div>
+    </div>
+    <div class="d-flex justify-content-end mt-3 mb-3">
+        {% if announcement_result1.count > 0 %}
+        <h6 class="text-muted"> Total number of results found :{{announcement_result1.count}}</h6>
+        {% elif announcement_result1.count == 0 %}
+        <h6 class="text-muted"> No Results Found</h6>
         {% endif %}
     </div>
+    <div id="error_msg_div" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
+    {% if announcement_result1 %}
 
-    {% if announcement_result1  %}
+    <button class="btn btn-primary  btn-sm" title="Delete" id="id_delete_annsmt" value="annsmt_delete"
+        data-toggle="modal" data-target="#id_delete_confirm_popup" style="display:none;">
+        <i class="fa fa-trash"></i> delete
+    </button>
+    <div class="card mt-5">
 
-    <div class="hg_wrapper">
-        <table id="sup_tab" class="table hg-striped-table table_sort_filter_export_excel">
+        <table id="sup_tab" class="table qwsqwsqws">
             <thead class="thead-light">
-            <tr>
-                 <th hidden> GUID  </th>
-                <th> Bulletin Number  </th>
-                <th> Title  </th>
-                <th> DESCRIPTION </th>
-                <th> STATUS </th>
-                <th> PRIORITY </th>
-                <th> FROM DATE</th>
-                <th> TO DATE</th>
-            </tr>
+                <tr>
+                    <th> <input type="checkbox" onclick="checkAll(this)"></th>
+                    <th hidden> GUID </th>
+                    <th> Bulletin Number </th>
+                    <th> Title </th>
+                    <th> DESCRIPTION </th>
+                    <th> STATUS </th>
+                    <th> PRIORITY </th>
+                    <th> FROM DATE</th>
+                    <th> TO DATE</th>
+                    <th>Action</th>
+                </tr>
             </thead>
-            <tbody>
+            <tbody id="sup_tab_body">
 
-            {% for results in announcement_result1 %}
+                {% for results in announcement_result1 %}
 
-            <tr id="tr_{{results.announcement_subject}}">
-                <td hidden>{{results.unique_announcement_id}}</td>
-                <td><a style="color: #049ca2;" href="{% url 'eProc_Admin_Tool:org_announcement_details' results.unique_announcement_id %}" id="{{results.announcement_subject}}" class="deletepop" target="_blank">{{results.announcement_id}}</a> </td>
-                <td>{{results.announcement_subject}} </td>
-                <td>{{results.announcement_description}}</td>
-                <td>{{results.status}}</td>
-                <td>{{results.priority}}</td>
-                <td>{{results.announcement_from_date|date:'Y-m-d H:i'}}</td>
-                <td>{{results.announcement_to_date|date:'Y-m-d H:i'}}</td>
-            </tr>
-            {% endfor %}
+                <tr id="tr_{{results.announcement_subject}}">
+                    <td><input type="checkbox" class="annsmt_checkbox" onclick="valueChanged();"></td>
+                    <td hidden>{{results.unique_announcement_id}}</td>
+                    <td><a style="color: #049ca2;"
+                            href="{% url 'eProc_Admin_Tool:org_announcement_details' results.unique_announcement_id %}"
+                            id="{{results.unique_announcement_id}}" class="deletepop"
+                            target="_blank">{{results.announcement_id}}</a> </td>
+                    <td>{{results.announcement_subject}} </td>
+                    <td>{{results.announcement_description}}</td>
+                    <td>{{results.status}}</td>
+                    <td>{{results.priority}}</td>
+                    <td>{{results.announcement_from_date|date:'Y-m-d'}}</td>
+                    <td>{{results.announcement_to_date|date:'Y-m-d'}}</td>
+                    <td>
+                        <i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete Announcement"
+                            id="{{results.announcement_id}}" onclick="get_annsmt_detail_to_delete(this.id)"></i>
+                    </td>
+                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
-
     {% endif %}
+
 </div>
 
 
+</div>
+<!--modal popup for announcement delete-->
+<div class="modal fade" id="confirm_delete_pop_up" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Please Confirm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                You are about to delete "<span id="form_id_del"></span>". Are you sure?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="delete_announcement()">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--delete confirmation popup-->
+<div class="modal fade" id="id_delete_confirm_popup">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Please Confirm</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete?.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="main_table_delete()" class="btn btn-primary"><i class="fas fa-check"></i>
+                    yes </button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fas fa-times"></i>
+                    Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--end of delete confirmation popup-->
+
 <script>
 
-$(document).ready( function() {
-    nav_bar_admin();
-    table_sort_filter_export_excel();
-    console.log(document.getElementById("announcement_subject").value);
-    document.getElementById("announcement_subject").value = "";
+    $(document).ready(function () {
+        nav_bar_admin();
+        console.log(document.getElementById("announcement_subject").value);
+        document.getElementById("announcement_subject").value = "";
+        table_sort_filter_basic("qwsqwsqws")
+    });
 
-});
+
+    $('#search_announcements_button').click(function () {
+        OpenLoaderPopup();
+    })
 
 
+    function get_annsmt_detail_to_delete(element) {
+        data_delete = element;
+        document.getElementById("form_id_del").innerHTML = data_delete;
+        $('#confirm_delete_pop_up').modal('show')
+    }
+
+    // Function to delete announcement
+    function delete_announcement() {
+        var annsmt_info = [];
+        annsmt_info.push(data_delete);
+        $('#confirm_delete_pop_up').modal('hide');
+        data = annsmt_info;
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Admin_Tool:delete_org_announcement' %}",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (Response) {
+                display_annsmt_data(Response.results);
+                $("#error_msg_div").prop("hidden", false);
+                console.log(Response.success_message);
+                $('#success_msg_id').text(Response.success_message)
+                document.getElementById("success_msg_id").text = Response.success_message;
+                setTimeout(function () { $("#error_msg_div").prop("hidden", true); }, 5000)
+            }
+        });
+    }
+
+
+    function display_annsmt_data(annsmt_data) {
+        var org_annsmt_html = '';
+        $('#sup_tab').DataTable().destroy();
+        $("#sup_tab_body").empty();
+        $.each(annsmt_data, function (i, annsmt) {
+            if (annsmt.announcement_id) {
+                checkbox_input = '<input type="checkbox" class="annsmt_checkbox" onclick="valueChanged()" disabled >'
+            }
+            else {
+                checkbox_input = '<input type="checkbox" class="annsmt_checkbox" onclick="valueChanged()" >'
+            }
+            const date1 = new Date(annsmt.announcement_from_date);
+            const date2 = new Date(annsmt.announcement_to_date);
+            // get the date as a string
+            const from_date = date1.toLocaleDateString();
+            // console.log(date1.format('dd-m-yy'));
+            const to_date = date2.toLocaleDateString();
+                org_annsmt_html += '<tr id="' + annsmt.announcement_id + '"><td>' + checkbox_input + '</td> ' +
+                    '<td hidden>' + {{ annsmt.unique_announcement_id }} '+</td>' +
+            '<td><a href="#" id="' + annsmt.announcement_id + '" class="deletepop" target="_blank">' + annsmt.announcement_id + '</a></td>' +
+            '<td>' + annsmt.announcement_subject + '</td>' +
+            '<td>' + annsmt.announcement_description + '</td>' +
+            '<td>' + annsmt.status + '</td>' +
+            '<td>' + annsmt.priority + '</td>' +
+            '<td>' + from_date + '</td>' +
+            '<td>' + to_date + '</td>' +
+            '<td><i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete User" id="' + annsmt.announcement_id + '" onclick="get_annsmt_detail_to_delete(this.id)" ></i></td></tr>';
+        });
+        $("#sup_tab_body").append(org_annsmt_html);
+        table_sort_filter('sup_tab');
+    }
+
+
+    function main_table_delete() {
+        main_table_annsmt_checked = [];
+        $("#sup_tab TBODY TR").each(function () {
+            var row = $(this);
+            var abc = row.find("TD").eq(2).html();
+            console.log(abc);
+            var country_arr_obj = {};
+            var check_status = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+            if (check_status) {
+                main_table_annsmt_checked.push(abc);
+            }
+        });
+        $('#id_delete_confirm_popup').modal('hide');
+        data = main_table_annsmt_checked
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Admin_Tool:delete_org_announcement' %}",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (Response) {
+                display_annsmt_data(Response.results);
+                $('#success_msg_id').text(Response.success_message)
+                //document.getElementById("success_msg_id").text = Response.success_message;
+                $("#error_msg_div").prop("hidden", false)
+                setTimeout(function () { $("#error_msg_div").prop("hidden", true); }, 5000)
+            }
+        });
+    }
+
+
+    function valueChanged() {
+        if ($('.annsmt_checkbox').is(":checked")) {
+            $("#id_delete_annsmt").show();
+        } else {
+            $("#id_delete_annsmt").hide();
+        }
+    }
 
 </script>
 

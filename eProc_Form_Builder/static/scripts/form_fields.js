@@ -93,7 +93,24 @@ nav_bar_content_management() ;
 // Function to display create pop based on conditions
 const create_field_popup = () => {
     if (eform_configured.length == 10) {
-        $('#save_error_div').html(messageConstants["JMSG023"])
+                   
+                    var msg = "JMSG023";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var display = msg_type.messages_id_desc[0];
+                  $('#save_error_div').html(display)
+
         $('#save_error_div').show()
         scroll_top()
         return
@@ -209,7 +226,23 @@ const display_fields_from_array = () => {
 const create_popup_validations = (field_data_type) => {
     var error_message = ''
     if (document.getElementById('field_name').value == '') {
-        error_message = messageConstants["JMSG007"] + "field name";
+           
+                    var msg = "JMSG007";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                   var display5 = msg_type.messages_id_desc[0];
+        error_message = display5+ "field name";
         return error_message
     }
 
@@ -269,13 +302,47 @@ const handle_all_dropdown_changes = (element) => {
 
     if (element == 'date') {
         if (used_timeframe_array.length == 2) {
-            $('#create_error_div').html(messageConstants["JMSG023"])
+                  
+                    var msg = "JMSG023";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  var dispaly =  msg_type.messages_id_desc[0];
+                   $('#create_error_div').html(display)
+
             $('#create_error_div').show()
             $('#field_type').val('')
             return
         }
         if (used_timeframe_array.includes('On Date')) {
-            $('#create_error_div').html(messageConstants["JMSG023"])
+                
+                    var msg = "JMSG023";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                    var display = msg_type.messages_id_desc[0];
+                   $('#create_error_div').html(display)
+
             $('#create_error_div').show()
             $('#field_type').val('')
             return
@@ -304,23 +371,105 @@ const save_form_validation = (supplier_id, supplier_description, product_categor
     var save_form_errors = ''
     if (supplier_id == '') {
         is_valid = false
-        save_form_errors += messageConstants["JMSG005"] + "supplier ID";
+          
+                            var msg = "JMSG004";
+                            var msg_type ;
+                          msg_type = message_config_details(msg);
+                          $("#error_msg_id").prop("hidden", false)
+
+                          if(msg_type.message_type[0] == "ERROR"){
+                                display_message("error_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "WARNING"){
+                             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "INFORMATION"){
+                             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                          }
+
+                           var display8 = msg_type.messages_id_desc[0];
+        save_form_errors += display8+ "supplier ID";
     }
     if (supplier_description == '') {
         is_valid = false
-        save_form_errors += messageConstants["JMSG007"] + "supplier description";
+               
+                    var msg = "JMSG007";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                   var display5 = msg_type.messages_id_desc[0];
+        save_form_errors += display5+ "supplier description";
     }
     if (product_category == '') {
         is_valid = false
-        save_form_errors += messageConstants["JMSG005"] + "product category" ;
+          
+                            var msg = "JMSG004";
+                            var msg_type ;
+                          msg_type = message_config_details(msg);
+                          $("#error_msg_id").prop("hidden", false)
+
+                          if(msg_type.message_type[0] == "ERROR"){
+                                display_message("error_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "WARNING"){
+                             display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                          }
+                          else if(msg_type.message_type[0] == "INFORMATION"){
+                             display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                          }
+
+                           var display8 = msg_type.messages_id_desc[0];
+        save_form_errors += display8+ "product category" ;
     }
     if (supplier_article_number == '') {
         is_valid = false
-        save_form_errors += messageConstants["JMSG007"] + "supplier article number"
+           
+                    var msg = "JMSG007";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                   var display5 = msg_type.messages_id_desc[0];
+        save_form_errors += display5+ "supplier article number"
     }
     if (lead_time == '') {
         is_valid = false
-        save_form_errors += messageConstants["JMSG007"] + "lead time";
+           
+                    var msg = "JMSG007";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type[0] == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                  }
+                  else if(msg_type.message_type[0] == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                  }
+                   var display5 = msg_type.messages_id_desc[0];
+        save_form_errors += display5+ "lead time";
     }
     return is_valid, save_form_errors
 }

@@ -122,7 +122,7 @@ MSG121 = 'Password requirement not met: <br> Minimum length - 8 characters long 
          'Atleast one numeric value (0-9) <br> Atleast one Upper case and one lower case ' \
          'values (A-Z)(a-z) <br> Atleast one special character (!@#%)'
 MSG122 = 'Please enter a valid password'
-MSG123 = 'No Transaction type is maintained. Contact your admin'
+MSG123 = 'No SC Transaction type is maintained. Contact your admin'
 MSG124 = 'Invalid Currency'
 MSG125 = 'Item added to sc tables'
 MSG126 = 'Number ranges updated successfully'
@@ -191,4 +191,5 @@ MSG188 = 'Superior  accounting data is not maintained'
 MSG189 = 'Incorrect header fields. Please check your attached csv'
 MSG190 = 'Supplier ID Already Exists'
 MSG191 = 'Supplier Registration Number Already Exists'
-
+MSG192 = 'No PO Transaction type is maintained. Contact your admin'
+MSG0199 = 'Item cannot be added to cart successfully'

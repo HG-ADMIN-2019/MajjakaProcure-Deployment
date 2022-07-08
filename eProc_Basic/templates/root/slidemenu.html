@@ -34,7 +34,7 @@
         <li class="sidenav__listitem {% if is_purchase_active %}  sidenav__listitem-active {% endif %}" title="Purchase" id="sidenav__listitem-purchase">
             <a {% if shop_purchaser_flag %} href="{% url 'eProc_Doc_Search_and_Display:sc_completion_doc_search' %}" {% else %} href="{% url 'eProc_Doc_Search_and_Display:sc_completion_doc_search' %}" {% endif %}>
                 <div>
-                    <div class="sidenav__icon-container"><i class="fas fa-chalkboard-teacher fa-lg"></i></div>
+                    <div class="sidenav__icon-container"><i class="fas fa-people-carry"></i></div>
                 </div>
                 <p class="hg_link_text">Purchase</p>
             </a>
@@ -105,7 +105,7 @@
             </a>
         </li> -->
 
-        <li class="sidenav__listitem {% if is_configuration_active %} sidenav__listitem-active {% endif %}"" title="Configuration" id="sidenav__listitem-config">
+        <li class="sidenav__listitem {% if is_configuration_active %} sidenav__listitem-active {% endif %}" title="Configuration" id="sidenav__listitem-config">
             <a href="{% url 'eProc_Configuration:basic_settings' %}" >
                 <div>
                     <div class="sidenav__icon-container"><i class="fas fa-sliders-h fa-lg"></i></div>

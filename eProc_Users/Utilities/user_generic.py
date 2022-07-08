@@ -75,5 +75,5 @@ def user_detail_search(**kwargs):
     #     UserData.objects.filter(username_query, email_query, client=client,
     #                             del_ind=False
     #                             ).values().order_by('username'))
-    print(user_details_query)
+    # print(user_details_query)
     return user_details_query

@@ -8,34 +8,36 @@
 
 
 <div class="container-fluid">
-    <div class="hg_wrapper">
-        <div>
-            <div class="hg_head1">User Registration</div>
-            <hr class="hg_heading_hrborder">
+    <div class="mep-form_wrapper">
+
+        <div class="elements-space-between">
+            <h3>User Registration</h3> 
+            <div></div>
         </div>
 
-        <div class="card card-margin">
+        <ul class="sub-tabs">
+            <li data-tab-target="#basic_data_tab" class="sub-tab active">
+                <div class="sub-tab-link">
+                    <i class="fas fa-info-circle"></i><span> Basic Data</span>
+                </div>
+            </li>
+            <li data-tab-target="#org_data_tab" class="sub-tab">
+                <div class="sub-tab-link">
+                    <i class="fas fa-sitemap"></i><span> Organizational Information</span>
+                </div>
+            </li>
+            <li data-tab-target="#buisness_doc_tab" class="sub-tab">
+                <div class="sub-tab-link">
+                    <i class="fas fa-file-alt"></i><span> Business Document</span>
+                </div>
+            </li>
+        </ul>
 
-            <div class="card-header">
-                <ul class="nav nav-tabs card-header-tabs">
-                    <li class="nav-item">
-                        <a class="nav-link active" data-toggle="tab" href="#basic_data_tab">Basic Data</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#org_data_tab">Organizational data</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#buisness_doc_tab">Business Document</a>
-                    </li>
-                </ul>
-            </div>
+        <div class="tab-content">
+            <div id="basic_data_tab" data-tab-content class="active">
+                <div class="mt-3">
 
-            <div class="tab-content">
-
-                <div id="basic_data_tab" class="tab-pane active hg_tabcontent p-3">
-                   
-                    <!-- Display the success message upon successful registration-->
-                   
+                    <!-- Display the success message upon successful registration--> 
                     <div>
                         {% if messages %}
                         <div class="alert alert-success">
@@ -59,11 +61,18 @@
                             {% endfor%}
                         </div>
                         {% endif %}
+
+                        <div class="d-flex justify-content-end">
+                            <div>
+                                <button class="btn btn-primary" type="submit" title="Click here to Register" id="user_registration_submit"><i class="fas fa-check"></i> register</button>
+                            </div>
+                        </div>
                         
 
-                        <div class="card">
-                            <h5 class="card-header">Basic Data</h5>
+                        <div class="card card-shadow-1 mt-3">
+                            
                             <div class="card-body">
+                                <h5 class="card-title">Basic Data</h5>
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label>User Name:</label><span class="hg_required"></span><br>
@@ -108,11 +117,11 @@
                             </div>
                         </div>
                         
-                        <br>
                         <!--   contact information   -->
-                        <div class="card">
-                            <h5 class="card-header">Contact Information</h5>
+                        <div class="card card-shadow-1 mt-3">
+                            
                             <div class="card-body">
+                                <h5 class="card-title">Contact Information</h5>
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label>E-mail:</label><span class="hg_required"></span><br>
@@ -125,12 +134,12 @@
                                 </div>
                             </div>
                         </div>
-                        <br>
-
+                        
                         <!--   Addtional information   -->
-                        <div class="card">
-                            <h5 class="card-header">Extended Data</h5>
+                        <div class="card card-shadow-1 mt-3">
+                            
                             <div class="card-body">
+                                <h5 class="card-title">Extended Data</h5>
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label>Date Format:</label><span class="hg_required"></span><br>
@@ -147,26 +156,34 @@
                                 </div>
                             </div>
                         </div>
-                        <br>
-                        <div class="d-flex justify-content-end">
-                            <div>
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">reset</button>
-                                <button class="btn btn-primary" type="submit" title="Click here to Register" ><i class="fas fa-check"></i> register</button>
-                            </div>
-                        </div>
                         
                     </form>
                     <!--User register form-->
-                </div>
 
-                <div id="org_data_tab" class="tab-pane fade hg_tabcontent p-3">
-                    <h3>Organizational data</h3>
-                    <p>Organizational data.</p>
                 </div>
+            </div>
 
-                <div id="buisness_doc_tab" class="tab-pane fade hg_tabcontent p-3">
-                    <h3>Business Document</h3>
-                    <p>Business Document.</p>
+            <div id="org_data_tab" data-tab-content>
+                <div class="mt-3">
+                    <div class="card card-shadow-1 mt-3">
+                        <div class="card-body">
+                            <h3>Organizational data</h3>
+                            <p>Organizational data.</p>   
+                        </div>
+
+                    </div>
+                                     
+                </div>
+            </div>
+
+            <div id="buisness_doc_tab" data-tab-content>
+                <div class="mt-3">
+                    <div class="card card-shadow-1 mt-3">
+                        <div class="card-body">
+                            <h3>Business Document</h3>
+                            <p>Business Document.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -214,10 +231,15 @@ $(document).ready(function(){
   });
   $('#nav_menu_items').remove();
   $("body").css("padding-top", "4rem");
+  NavigateTabs(); // Custom function to switch tabs
 });
 
 // Get the element with id="defaultOpen" and click on it
 document.getElementById("defaultOpen").click();
+
+$('#user_registration_submit').click(function () {
+    OpenLoaderPopup();
+});
 
 </script>
 

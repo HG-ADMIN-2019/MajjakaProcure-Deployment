@@ -98,7 +98,7 @@ def save_product_details_images(request):
                 currency=Currency.objects.get(currency_id=data['currency']),
                 price=data['price'],
                 manufacturer=data['manufacturer'],
-                manu_prod=data['manu_prod'],
+                manu_part_num=data['manu_prod'],
                 unspsc=UnspscCategories.objects.get(prod_cat_id=data['unspsc']),
                 brand=data['brand'],
                 lead_time=data['lead_time'],
@@ -126,7 +126,7 @@ def save_product_details_images(request):
                                                                                          currency_id=data['currency']),
                                                                                      price=data['price'],
                                                                                      manufacturer=data['manufacturer'],
-                                                                                     manu_prod=data['manu_prod'],
+                                                                                     manu_part_num=data['manu_prod'],
                                                                                      unspsc=UnspscCategories.objects.get(
                                                                                          prod_cat_id=data['unspsc']),
                                                                                      brand=data['brand'],

@@ -510,7 +510,7 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 
                 {% include 'Doc_Details/add_item_confirmation_popup.html' %}
                 {% include 'ProductDetailPopup/product_complete_detail_popup.html' %}
-                <!-- start of goods receiver popup -->
+                <!-- start of Goods/Services Recipient popup -->
                 <div class="modal fade" id="sobo_user_popup">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
@@ -543,7 +543,7 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
                     </div>
                 </div>
             </div>
-                <!-- end of goods receiver popup -->
+                <!-- end of Goods/Services Recipient popup -->
 
                 <script src="{% static 'scripts/catalog.js' %}"></script>
                 <script>
@@ -749,8 +749,8 @@ function add_catalog(prd_id,encrypted_product_id, eform_id) {
     if(eform_id){
         if(document_number_data == 'create'){
             var url = "{% url 'eProc_Add_Item:get_product_service_product_details' 123 %}";
-            var href_link = url.replace('123', encrypted_product_id)
-             window.open(href_link,'_blank');
+            var href_link = url.replace('123', encrypted_product_id);
+            window.open(href_link,'_blank');
         }
         else{
             view_detail(prd_id, '');
@@ -759,7 +759,7 @@ function add_catalog(prd_id,encrypted_product_id, eform_id) {
     else{
         let catalog_item = {};
         catalog_item["prod_id"] = prd_id
-        catalog_item['call_off'] = 'Catalog'
+        catalog_item['call_off'] = '01'
         catalog_item["quantity"] = document.getElementById("Q"+prd_id).value
         catalog_item["document_number"] = document_number
         catalog_url = '/add_item/update_or_create_item/' + document_number
@@ -769,9 +769,10 @@ function add_catalog(prd_id,encrypted_product_id, eform_id) {
         if(add_catalog_response) {
             if (!is_edit && (document_number_data=='create' || document_number_data=='')) {
                 if(response.cart_count){
-                    counter = document.getElementById('cart_counter').innerHTML
-                    $('#cart_counter').html(add_catalog_response.cart_count)
-                    item_added_to_cart_success_popup()
+                    
+                    counter = document.getElementById('cart_counter').innerHTML;
+                    $('#cart_counter').html(add_catalog_response.cart_count);
+                    item_added_to_cart_success_popup();
                 } else if(response.error) {
                     alert( response.error)
                 }

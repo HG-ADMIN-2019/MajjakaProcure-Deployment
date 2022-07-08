@@ -10,7 +10,7 @@ function onclick_add_button(button) {
      $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
     $('#myModal').modal('show');
-    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="form-control"  type="text" pattern="[A-Z]" maxlength="6" onkeypress="return /[a-z]/i.test(event.key)" name="timezonecode" style="text-transform:uppercase;" required></td><td><input class="input form-control" type="text" maxlength="255" onkeypress="return /[a-z ]/i.test(event.key)" name="timezonename" required></td><td><input class="input form-control" type="text" maxlength="15" onkeypress="return /[a-z0-9 :+-]/i.test(event.key)" name="utcdifference"  style="text-transform:uppercase;" required></td><td><input class="input form-control" type="text" maxlength="10" onkeypress="return /[a-z ]/i.test(event.key)" name="daylightsave"  pattern="[A-Z]" style="text-transform:uppercase;"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="form-control"  type="text" pattern="[A-Z]" title="Minimum length is 3" minlength="3" maxlength="6" onkeypress="return /[a-z]/i.test(event.key)" name="timezonecode" style="text-transform:uppercase;" required></td><td><input class="input form-control" type="text" maxlength="255" onkeypress="return /[a-z ]/i.test(event.key)" name="timezonename" required></td><td><input class="input form-control" type="text" title="Minimum length is 15" minlength="15" maxlength="15" onkeypress="return /[a-z0-9 :+-]/i.test(event.key)" name="utcdifference"  style="text-transform:uppercase;" required></td><td><input class="input form-control" type="text" maxlength="10" onkeypress="return /[a-z ]/i.test(event.key)" name="daylightsave"  pattern="[A-Z]" style="text-transform:uppercase;"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
     $("#id_del_ind_checkbox").prop("hidden", true);
@@ -104,77 +104,6 @@ $(".remove_upload_data").click(() => {
 });
 
 
-//validate by comparing  main table values and popup table values
-function maintable_validation(validate_add_attributes, main_table_low_value) {
-    var no_duplicate_entries = 'Y'
-    var error_message =''
-    var common = [];
-    jQuery.grep(validate_add_attributes, function(el) {
-        if (jQuery.inArray(el, main_table_low_value) != -1) {
-            common.push(el);
-        }
-    });
-    if (common.length != 0) {
-        error_message = messageConstants["JMSG001"]
-
-        no_duplicate_entries = 'N'
-    }
-    return [no_duplicate_entries,error_message]
-}
-
-
-// validating the  popup table for duplicate entries
-function compare_table_for_duplicate_entries(validate_add_attributes, timezone) {
-    add_attr_duplicates = false;
-    var error_message = ''
-    var add_attr_duplicates_list = [];
-    var add_attr_unique_list = [];
-    var no_duplicate_value = 'Y'
-    $.each(validate_add_attributes, function(index, value) {
-        if ($.inArray(value, add_attr_unique_list) == -1) {
-            add_attr_unique_list.push(value);
-        } else {
-            if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                add_attr_duplicates_list.push(value);
-            }
-        }
-    });
-    if (add_attr_duplicates_list.length != 0) {
-       
-         error_message = messageConstants["JMSG001"];
-                 no_duplicate_value = 'N'
-                 
-         }
-        
-          else {
-         $.each(timezone, function (i, item) {
-            if (item.time_zone.length == 0) {
-                error_message = messageConstants["JMSG002"] + "Timezone";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
-            if (item.description.length == 0) {
-                error_message = messageConstants["JMSG002"] + "Description";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
-            if (item.utc_difference.length == 0) {
-                error_message = messageConstants["JMSG002"] + "UTC Difference";
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
-            utc_difference = item.utc_difference.replace(/\s\s+/g, ' ')
-            if (utc_difference == " ") {
-            error_message = messageConstants["JMSG002"] + "UTC Difference Name";
-             no_duplicate_value = 'N'
-             return [no_duplicate_value,error_message]
-           }
-         });
-     }
-        
-       
-    return [no_duplicate_value,error_message]
-}
 function display_error_message(error_message){
         $("#error_msg_id").css("display", "none")
         $('#error_message').text(error_message);
@@ -185,8 +114,6 @@ function display_error_message(error_message){
         $('#id_save_confirm_popup').modal('hide');
         $('#myModal').modal('show');
 }
-
-    
 
 
 
@@ -200,9 +127,9 @@ function add_popup_row() {
         $("#id_error_msg").html("no records found");
     });
     basic_add_new_html = '<tr ><td><input type="checkbox" required></td>'+
-    '<td><input class="input form-control" type="text" pattern="[A-Z]" maxlength="6" onkeypress="return /[a-z]/i.test(event.key)" name="timezonecode" style="text-transform:uppercase;" required></td>'+
+    '<td><input class="input form-control" type="text" pattern="[A-Z]" title="Minimum length is 3" minlength="3" maxlength="6" onkeypress="return /[a-z]/i.test(event.key)" name="timezonecode" style="text-transform:uppercase;" required></td>'+
     '<td><input class="input form-control" type="text" maxlength="255" onkeypress="return /[a-z ]/i.test(event.key)" name="timezonename"  required></td>'+
-    '<td><input class="input form-control" type="text" maxlength="15" onkeypress="return /[a-z0-9 +:-]/i.test(event.key)" name="utcdifference"  pattern="[A-Z]" style="text-transform:uppercase;" required></td>'+
+    '<td><input class="input form-control" type="text" title="Minimum length is 15" minlength="15" maxlength="15" onkeypress="return /[a-z0-9 +:-]/i.test(event.key)" name="utcdifference"  pattern="[A-Z]" style="text-transform:uppercase;" required></td>'+
     '<td><input class="input form-control" type="text" maxlength="10" onkeypress="return /[a-z ]/i.test(event.key)" name="daylightsave"  pattern="[A-Z]" style="text-transform:uppercase;" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     if (GLOBAL_ACTION == "timezone_upload") {

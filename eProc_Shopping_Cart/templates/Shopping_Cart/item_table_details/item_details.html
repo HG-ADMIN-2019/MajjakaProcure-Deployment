@@ -1,6 +1,5 @@
 {% load static %}
 
-
 <div id="sc_table_data">
     <div class="sc-more-btn-wrapper">
         <button class="btn btn-primary btn-sm" id="display_limit_item" style="display: none;">more</button>
@@ -34,7 +33,7 @@
                 <!-- <td>
                     <input {% if items.eform_id == None  or items.call_off == 'PR' %} disabled {% endif %} onchange="checkbox_onchange(this)" type="checkbox" name="select_item" id="select_item-{{items.call_off}}-{{items.guid}}-{% if items.call_off == 'Freetext' %}{% if not items.supplier_id in supplier %}eform{% endif %}{% endif %}-{{forloop.counter}}-{{items.eform_id}}">
                 </td> -->
-                <td id="prod_cat_{{forloop.counter}}" hidden>{{items.prod_cat}}</td>
+                <td id="prod_cat_{{forloop.counter}}" hidden>{{items.prod_cat_id}}</td>
                 <td scope="row" class="update_item_number" id="item_number_{{items.guid}}">{% if highest_item_number == forloop.counter %}<input id="highest_item" value="{{forloop.counter}}" hidden>{% endif %}{{ forloop.counter }}</td>
                 <td>
                     <a href="#" onclick="view_detail('{{ items.int_product_id}}','{{items.guid}}','{{items.catalog_id}}')">
@@ -43,18 +42,18 @@
                 </td>
                 <td >
                     <div id="desc_{{items.guid}}" class="desc-section-top">
-                        {% if items.call_off == 'Catalog'%}
+                        {% if items.call_off == '01'%}
                         <a href="#" id="product_id-{{forloop.counter}}-{{items.int_product_id}}" onclick="view_detail('{{ items.int_product_id}}','{{items.guid}}')">{{ items.description }}</a>
                         {% else %}
                         <a  >{{ items.description }}</a>
                         {% endif %}
                     </div>
                     <div {% if items.supplier_id == None %} class="display-none" {% else %} class="sc-item-table__supplier-desc" {% endif %} >by - <span id="supp_{{items.guid}}" hidden>{{ items.supplier_id }}</span><span>{{ items.supplier_desc }}</span></div>
-                    
+
                     <!-- Section to display change action icon, eform View Additional details button -->
                     <div class="desc-section-bottom">
                         {% if items.eform_id %}
-                        {% if items.call_off == 'Limit' or items.call_off == 'Freetext' or items.call_off == 'PR' %}
+                        {% if items.call_off == '04' or items.call_off == '02' or items.call_off == '03' %}
                         <button class="hg_button_edit" onclick="showSection(this, 'displayEform{{ forloop.counter }}')"> View Additional details</button>
                         {% endif %}
                         {% endif %}
@@ -65,16 +64,16 @@
                     </div>
                 </td>
                 <td id="item_call_off_type-{{items.guid}}">{{ items.call_off }}</td>
-                <td id="del_date-{{items.guid}}">{% if items.call_off == 'Limit' %}{% if items.start_date %}{{items.start_date|date:"Y-m-d"}}{% else %}{{items.item_del_date|date:"Y-m-d"}}{% endif %}{% else %}{{ items.item_del_date|date:"Y-m-d" }}{% endif %}</td>
+                <td id="del_date-{{items.guid}}">{% if items.call_off == '04' %}{% if items.start_date %}{{items.start_date|date:"Y-m-d"}}{% else %}{{items.item_del_date|date:"Y-m-d"}}{% endif %}{% else %}{{ items.item_del_date|date:"Y-m-d" }}{% endif %}</td>
                 <td>1</td>
-                <td id="unit_{{items.guid}}">{% if items.call_off == 'Limit' %}-{% else %}<span hidden>{{ items.unit }}</span><span>{{ items.unit_desc }}</span>{% endif %}</td>
+                <td id="unit_{{items.guid}}">{% if items.call_off == '04' %}-{% else %}<span hidden>{{ items.unit }}</span><span>{{ items.unit_desc }}</span>{% endif %}</td>
                 <!--            item price per unit-->
                 <td id="price_{{items.guid}}" >
-                    <span class="total_value">{% if items.call_off == 'Limit' %}-{% else %}<span class="item_price-{{forloop.counter}}">{{ items.price }}</span> / </span>{% if items.call_off == 'Freetext' %}<span id="currency"> {{requester_currency}}</span>{% else %}<span id="currency_{{items.guid}}">{{items.currency}}</span>{% endif %} {% endif %}
+                    <span class="total_value">{% if items.call_off == '04' %}-{% else %}<span class="item_price-{{forloop.counter}}">{{ items.price }}</span> / </span>{% if items.call_off == '02' %}<span id="currency"> {{requester_currency}}</span>{% else %}<span id="currency_{{items.guid}}">{{items.currency}}</span>{% endif %} {% endif %}
                 </td>
                 <td id="lead_time-{{forloop.counter}}" hidden>{{items.lead_time}}</td>
                 <!--            item total -->
-                <td>{% if items.call_off == 'Limit' %}
+                <td>{% if items.call_off == '04' %}
                     <span id="overall_limit" class="item_total_value">{{item_total_value}}</span>{% else %} <span id="item_value_{{items.guid}}" class="item_total_value">{{item_total_value}}</span>{% endif %} / {{requester_currency}}
                 </td>
                 <!--            item quantity-->
@@ -102,18 +101,18 @@
                             </a>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                                 <a class="dropdown-item notes{{ forloop.counter }}"
-                                onclick="showSection(this, 'notes{{ forloop.counter }}')" >Notes</a>
+                                   onclick="showSection(this, 'notes{{ forloop.counter }}')" >Notes</a>
                                 <a class="dropdown-item attachments{{ forloop.counter }}"
-                                onclick="showSection(this, 'attachments{{ forloop.counter }}')" >Attachments</a>
+                                   onclick="showSection(this, 'attachments{{ forloop.counter }}')" >Attachments</a>
                                 <a class="dropdown-item shipAddress{{ forloop.counter }}"
-                                onclick="showSection(this, 'shipAddress{{ forloop.counter }}')" >Shipping Address</a>
+                                   onclick="showSection(this, 'shipAddress{{ forloop.counter }}')" >Shipping Address</a>
                                 <a class="dropdown-item accoutingData{{ forloop.counter }}"
-                                onclick="showSection(this, 'accoutingData{{ forloop.counter }}')" >Cost Assignment</a>
+                                   onclick="showSection(this, 'accoutingData{{ forloop.counter }}')" >Cost Assignment</a>
                             </div>
                         </div>
                         {% endif %}
                     </div>
-                    
+
                 </td>
             </tr>
             <!--start of hideable content which lets the user add notes -->
@@ -185,7 +184,7 @@
                                         <div id="attachment_error{{ forloop.counter }}" class="alert alert-danger" style="display: none;"></div>
 
                                         <label><b>Type:</b></label><br>
-                                        <input class="form-check-input" name="toogle_me" type="radio" id="internal{{ forloop.counter }}">
+                                        <input class="form-check-input" name="toogle_me" type="radio" checked id="internal{{ forloop.counter }}">
                                         <label>For internal use </label>
                                         <input class="form-check-input" name="toogle_me" type="radio" id="external{{ forloop.counter }}">
                                         <label>For external use</label><br>
@@ -216,7 +215,7 @@
                                             </tr>
                                             </thead>
                                             <tbody class="hg_attachment_table_tbody" id="attachment_tbody_id-{{forloop.counter}}">
-        
+
                                             </tbody>
                                         </table>
                                     </div>
@@ -440,11 +439,38 @@
 </div>
 {% include 'ProductDetailPopup/basic_product_detail_popup.html' %}
 
-
-
-<div id="total_value" class="d-flex justify-content-end item-table-cart-value-section mr-3">
-    <p>Total for <span id="total_items"></span> items: <span id="total_cart_value" class="item-table-total-cart-value">{{total_value}}</span> <span id="total_cart_currency">{{request.user.currency_id}}</span></p>
+<!-- Cart value section -->
+<div class="row no-gutters justify-content-end">
+    <div class="col-lg-4">
+        <div class="card cart-value-card">
+            <div class="card-body">
+                <div class="cart-value-section">
+                    <span class="cart-value-label">Total Value (Net)</span>
+                    <span class="cart-value-desc" ><span id="actual_price">{{actual_price}}</span>{{request.user.currency_id}}</span>
+                </div>
+                <div class="cart-value-section">
+                    <span class="cart-value-label">Total Discount</span>
+                    <span class="cart-value-desc" >- <span id="discount_value">{{discount_value}}</span>{{request.user.currency_id}}</span>
+                </div>
+                <div class="cart-value-section">
+                    <span class="cart-value-label">Total Tax</span>
+                    <span class="cart-value-desc" > + <span id="tax_value">{{tax_value}}</span>{{request.user.currency_id}}</span>
+                </div>
+    
+                <hr>
+                <div id="total_value" class="cart-value-section">
+                    <span class="cart-value-label">Total Value (Gross) For <span id="total_items"></span> items:</span>
+                    <span  class="cart-value-desc" ><span id="total_cart_value">{{total_value}}</span> <span id="total_cart_currency"> {{request.user.currency_id}}</span></span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!--            <div id="total_value" class="d-flex justify-content-end item-table-cart-value-section mr-3">-->
+
+<!--                <p> Total value without tax for <span id="total_items"></span> items: <span id="total_cart_value" class="item-table-total-cart-value">{{total_value}}</span> <span id="total_cart_currency">{{request.user.currency_id}}</span></p>-->
+<!--            </div>-->
 
 <script src="{% static 'scripts/sc_item_details.js' %}"> </script>
 
@@ -468,6 +494,9 @@ function update_quantity(){
                 GLOBAL_QUANTITY = updated_quantity
                 $("#quantity_"+GLOBAL_ONCLICK_ITEM_GUID).html(response.quantity);
                 document.getElementById("total_cart_value").innerHTML = response.total;
+                document.getElementById("tax_value").innerHTML = response.price_details.tax_value
+                document.getElementById("discount_value").innerHTML = response.price_details.discount_value
+                document.getElementById("actual_price").innerHTML = response.price_details.actual_price
                 $('#prod_detail_popup').modal('hide');
             }
         });
@@ -485,6 +514,7 @@ var sc_first_step = {{ display_update_delete|yesno:"true,false" }};
 function delete_cart_item(){
     guid = delete_item_guid
     $('#sc-delete-single-item').modal('hide');
+    OpenLoaderPopup();
     $.ajax({
         type:'POST',
         url: "{% url 'eProc_Shopping_Cart:delete_item' %}",
@@ -501,6 +531,9 @@ function delete_cart_item(){
                 item_value     = document.getElementById("item_value_"+guid).innerHTML
                 up_total_value = parseFloat(total_value) - parseFloat(item_value)
                 document.getElementById("total_cart_value").innerHTML = up_total_value
+                document.getElementById("tax_value").innerHTML = response.price_details.tax_value
+                document.getElementById("discount_value").innerHTML = response.price_details.discount_value
+                document.getElementById("actual_price").innerHTML = response.price_details.actual_price
             }
 
             // Updates cart counter after deleting
@@ -518,6 +551,7 @@ function delete_cart_item(){
             for(let item_number = 0; item_number < item_number_class.length; item_number++) {
                 item_number_class[item_number].innerHTML = item_number + 1
             }
+            CloseLoaderPopup()
         },
         error: function(data){
         } 
@@ -551,7 +585,7 @@ function update(element, item_guid, product_category_id,row_count) {
         },
         success:function(response){
             // To get limit item details
-            if(call_off == 'Limit'){
+            if(call_off == '04'){
                 $('#update_pop_up').modal('show');
                 document.getElementById("update_limit_form").style.display  = "block";
                 document.getElementById("update_pr_form").style.display     = "none";
@@ -588,7 +622,7 @@ function update(element, item_guid, product_category_id,row_count) {
                 }
             }
             // To get Purchase requisition update form with values
-            if(call_off == 'PR'){
+            if(call_off == '03'){
                 $('#update_pop_up').modal('show');
                 document.getElementById("update_limit_form").style.display    = "none";
                 document.getElementById("update_freetext_form").style.display = "none";
@@ -608,7 +642,7 @@ function update(element, item_guid, product_category_id,row_count) {
                 document.getElementById("update-pr-quantity").value           = response.quantity
             }
             // To get freetext form with values
-            if (call_off == 'Freetext') {
+            if (call_off == '02') {
                 var texts = response.free_text_context.unit
                 $('#update_pop_up').modal('show');
                 document.getElementById("update_limit_form").style.display    = "none";
@@ -630,7 +664,7 @@ function update(element, item_guid, product_category_id,row_count) {
                 display_fields_from_array(response.eform_configured)
             }
 
-            if (call_off == 'Catalog') {
+            if (call_off == '01') {
                 $('#update_pop_up').modal('show');
                 document.getElementById("update_limit_form").style.display    = "none";
                 document.getElementById("update_freetext_form").style.display = "none";
@@ -733,7 +767,7 @@ function display_eform(element, item_number){
     var x = document.getElementById('display_eform_'+guid);
     var tbody_guid = 'display_eform_'+guid
     if(x.style.display === "none" ){
-        if((item_call_off == 'Catalog')||(item_call_off == 'Freetext')){
+        if((item_call_off == '01')||(item_call_off == '02')){
              $('.dummy_more_div_class').css('display','none');
             $('#'+tbody_guid).css('display','block');
             $('#item_info_tr-' + item_number).prop('hidden', false);
