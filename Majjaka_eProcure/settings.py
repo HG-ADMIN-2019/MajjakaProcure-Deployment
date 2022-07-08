@@ -88,6 +88,8 @@ INSTALLED_APPS = [
     'eProc_Application_Settings',
     'eProc_Content_Search',
     'eProc_Messages',
+    'eProc_Application_Monitoring',
+    'eProc_Related_Documents'
 ]
 
 AUTHENTICATION_BACKENDS = [

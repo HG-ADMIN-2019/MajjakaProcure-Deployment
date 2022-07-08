@@ -62,7 +62,8 @@ urlpatterns = [
     path('Majjaka-Shop/', include('eProc_Basic.urls')),
     path('configuration/master_settings/', include('eProc_Master_Settings.urls')),
     path('configuration/application_settings/', include('eProc_Application_Settings.urls')),
-    path('message-settings/', include('eProc_Messages.urls'))
+    path('message-settings/', include('eProc_Messages.urls')),
+    path('purchase_order/', include('eProc_Purchase_Order.urls'))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
