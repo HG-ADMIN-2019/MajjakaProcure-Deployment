@@ -1,0 +1,70 @@
+Establish Your Own Private Marketplace.
+    Majjaka's CaS (Content and Search) allows you to create, review and publish content for your purchasing needs.
+    Upload your content data either as a supplier user or a buyer user.
+    Review and approve/reject content based on your current supplier agreements.  
+    Create catalogs with approved products & services using the simple to use data management tools.
+    Configure your freetext items with eForms and publish your catalogs based on your company's purchasing policies.  
+    Majjaks's search component allows end user's to easily find products & services of their choice.
+    It also helps in identifying the available services with the existing suppliers.
+    End users can save their recurring purchases as favourite carts and easily transfer that to their shopping cart for check out.
+    Recently viewed products & services feature helps in future transactions.
+    Top purchased products & services in the organization helps with a quick feedback on the quality.
+       
+Making Procurement Simple
+    Majjaka's Shop enhances your end user experience by an intuitive and a consumer friendly interface for purchasing. 
+    Increase user adoption by eliminating 2/3 of the process steps with a 2 click shopping cart checkout process.
+    Assisted buying helps enduser in finding the correct product or service or supplier that he or she is looking for. 
+    Higher user adoption leads to better contract compliance there by fastening your return on investment 
+    It greatly reduce maverick buying by easy to use purchase requistions forms
+    Supports limit orders for long running agreements with suppliers.
+    Roles & authorizations have been defined based on best procurement practices, thereby reducing the need for custom development.
+    Highly flexible workflow set up for financial and commodity approvals.
+    Once a while manager users will find application usage pretty simple and can be accessed on any handheld device. 
+    Customer admins can easily set up application configuration & data maintenance for regular updates.
+    Integrated collaboration tools for communication, support, & transparency.
+    Emails & Notifications on registrations, approvals, orders, confirmations etc.
+    Application monitoring and admin reports for operational needs.
+
+Enhanced Control on End User Spending 
+    Majjaka's Org Model gives you the flexibility in controlling content visibility for your end users.                                   
+    Assign roles based on user's profile and nature of work in the organization.
+    Helps in streamlining of end user's spending behaviour by finding the relevant content.  
+    Personalizes end user's experience by allowing to configure user specific purchasing set up.
+    Can be also used for configuring separate or mixed purchasing set ups with in the same organization based on individual business needs.
+    Workload re-distribution can be easily established based on the categorization of the purchase.   
+    
+Supplier Self Services
+    Majjaka's S3 helps in managing all the activities related to supplier's enablement.
+    Supplier classification based on various attributes (Preferred for requisition, preferred for limit order, pre-qualified for sourcing etc)
+    Helps suppliers to upload buyer specific content into Majjaka's CaS.
+    Self service supplier registration and profile management.
+    Suppliers can view and respond to purchase orders from different buyers.
+    Incase of limit orders, suppliers can submit service entry sheets/timesheets for buyer's approval.
+    Collaboration tools for communication, queries & transparency.
+
+ERP Cloud Integration
+    Majjaka's Ice, the integration app can connect to multiple ERP systems.
+    An inbound connection is set up for accounting data, user data & supplier master data.
+    Account assignment categories such as cost centres, project numbers, generic account assignments are supported.
+    An outbound connection is established to send/recieve document data such as shopping carts, purchase order, change orders & goods reciept.
+
+Data Archival
+    Majjaka's History helps in regular archival of your procurement data.
+    Gives instant access to your historical data within your business context. 
+    Role based access with configurable options on the data visibility. Can be controlled based on your organization set up
+    Regular movement of active data to archival data reduces administrative costs, resource consumption and hardware costs.
+    It greatly enhances system performance, application's response time and system availability.
+    Ensures compliance and reduce risks by securing long-term archiving of your data needs for audit and compliance.
+    Total cost of ownership (TCO) of your IT landscape goes down. 
+
+
+
+  
+  
+
+  
+
+
+    
+
+ 
