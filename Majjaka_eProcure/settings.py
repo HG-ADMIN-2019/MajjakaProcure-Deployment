@@ -196,7 +196,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'mail.hiranya-garbha.com'
 EMAIL_PORT = 26
 EMAIL_HOST_USER = 'support@hiranya-garbha.com'
-EMAIL_HOST_PASSWORD = 'hgoffice'
+EMAIL_HOST_PASSWORD = 'Office@123'
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'Hiranya-Garbha <support@hiranya-garbha.com>'
 
